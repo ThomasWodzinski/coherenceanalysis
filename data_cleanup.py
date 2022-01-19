@@ -526,7 +526,7 @@ def get_images(hdf5_file_name, dataset_args):
       #print('file' + useful_dir + useful_hdf5_file_name + 'does exist')
       (pixis_dataset0, pinholes_dataset0, timestamp_dataset, daq_parameter_dataset) = get_datasets(useful_dir, useful_hdf5_file_name,None,None)
     else:
-      print('file' + useful_dir + useful_hdf5_file_name + 'does not exist')
+      print('file' + str(useful_dir) + useful_hdf5_file_name + 'does not exist')
 
     pixis_dataset = np.rot90(pixis_dataset0,axes=(1,2))
     pixis_avg = np.average(pixis_dataset, axis=0)
