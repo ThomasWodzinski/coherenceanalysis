@@ -1225,14 +1225,14 @@ def plot_data_and_simulation(run_plot_data_and_simulation,
                 fig.tight_layout()
                 
                 if savefigure == True:
-                    savefigure_dir = scratch_dir + str(settings_widget.label)
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label)
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
                     #savefigure_dir = scratch_dir + hdf5_file_name_image + '_ph_'+str(ph) + '_d_'+str(separation_um)
-                    savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
-                    savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/profiles_rec2d/'
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/profiles_rec2d/'
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
                     plt.savefig(savefigure_dir + '/' + 'yscan_a_' + hdf5_file_name_image \
@@ -1280,14 +1280,14 @@ def plot_data_and_simulation(run_plot_data_and_simulation,
 #                     ax.text(0.01, 0.99, textstr, transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=props)
 
                     if savefigure == True:
-                        savefigure_dir = scratch_dir + str(settings_widget.label)
+                        savefigure_dir = scratch_dir + str(dph_settings_widget.label)
                         if os.path.isdir(savefigure_dir) == False:
                             os.mkdir(savefigure_dir)
                         #savefigure_dir = scratch_dir + hdf5_file_name_image + '_ph_'+str(ph) + '_d_'+str(separation_um)
-                        savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
+                        savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
                         if os.path.isdir(savefigure_dir) == False:
                             os.mkdir(savefigure_dir)
-                        savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/profiles_rec2d_scan/'
+                        savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/profiles_rec2d_scan/'
                         if os.path.isdir(savefigure_dir) == False:
                             os.mkdir(savefigure_dir)
                         plt.savefig(savefigure_dir + '/' + 'profiles_rec2d_scan_' + hdf5_file_name_image \
@@ -1390,14 +1390,14 @@ def plot_data_and_simulation(run_plot_data_and_simulation,
                 
                 
                 if savefigure == True:
-                    savefigure_dir = scratch_dir + str(settings_widget.label)
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label)
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
                     #savefigure_dir = scratch_dir + hdf5_file_name_image + '_ph_'+str(ph) + '_d_'+str(separation_um)
-                    savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
-                    savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/profiles_rec2d/'
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/profiles_rec2d/'
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
                     plt.savefig(savefigure_dir + '/' + 'yscan_b_' + hdf5_file_name_image \
@@ -1485,13 +1485,13 @@ def plot_data_and_simulation(run_plot_data_and_simulation,
                 
                 if savefigure == True:
                     #savefigure_dir = scratch_dir + hdf5_file_name_image + '_ph_'+str(ph) + '_d_'+str(separation_um)
-                    savefigure_dir = scratch_dir + str(settings_widget.label)
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label)
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
-                    savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
-                    savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/deconv_a/'
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/deconv_a/'
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
                     plt.savefig(savefigure_dir + '/' + 'deconv_a_' + hdf5_file_name_image \
@@ -1523,14 +1523,14 @@ def plot_data_and_simulation(run_plot_data_and_simulation,
                 plt.title('d / $\mu$m = '+str(int(separation_um)) + ' coherence length $\\xi_x$ / $\mu$m = ' + str(round(xi_x_um_list[index_opt],2)) + ' $\\xi_y$ / $\mu$m = ' + str(round(xi_y_um_list[index_opt],2)), fontsize=16)
              
                 if savefigure == True:
-                    savefigure_dir = scratch_dir + str(settings_widget.label)
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label)
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
                     #savefigure_dir = scratch_dir + hdf5_file_name_image + '_ph_'+str(ph) + '_d_'+str(separation_um)
-                    savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
-                    savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/profiles/'
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/profiles/'
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
                     plt.savefig(savefigure_dir + '/' + 'profiles_' + hdf5_file_name_image \
@@ -1580,14 +1580,14 @@ def plot_data_and_simulation(run_plot_data_and_simulation,
                 #ax.text(0.01, 0.99, textstr, transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=props)
              
                 if savefigure == True:
-                    savefigure_dir = scratch_dir + str(settings_widget.label)
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label)
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
                     #savefigure_dir = scratch_dir + hdf5_file_name_image + '_ph_'+str(ph) + '_d_'+str(separation_um)
-                    savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
-                    savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/profiles_rec2d/'
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/profiles_rec2d/'
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
                     plt.savefig(savefigure_dir + '/' + 'profiles_rec2d_' + hdf5_file_name_image \
@@ -1627,14 +1627,14 @@ def plot_data_and_simulation(run_plot_data_and_simulation,
                 plt.imshow(np.log10(I_bp),cmap='jet')
                 
                 if savefigure == True:
-                    savefigure_dir = scratch_dir + str(settings_widget.label)
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label)
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
                     #savefigure_dir = scratch_dir + hdf5_file_name_image + '_ph_'+str(ph) + '_d_'+str(separation_um)
-                    savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
-                    savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/deconv_b/'
+                    savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/deconv_b/'
                     if os.path.isdir(savefigure_dir) == False:
                         os.mkdir(savefigure_dir)
                     plt.savefig(savefigure_dir + '/' + 'deconv_b_' + hdf5_file_name_image \
@@ -1735,7 +1735,7 @@ def plot_data_and_simulation(run_plot_data_and_simulation,
             
             # place a text box in upper left in axes coords
             if plot_simulation_fit == True:
-                textstr = settings_widget.label + '\n' \
+                textstr = dph_settings_widget.label + '\n' \
                         + 'imageid =' + str(imageid_loop) + '\n' \
                         + '$\lambda=$' + str(format(_lambda_nm, '.2f')) + '\n' \
                         + '$\lambda fit=$' + str(format(_lambda_nm_fit[imageid_loop], '.2f')) + '\n' \
@@ -1753,7 +1753,7 @@ def plot_data_and_simulation(run_plot_data_and_simulation,
                         + 'energy hall uJ = ' + str(format(energy_hall_uJ, '.2f')) + '\n' \
                         + 'pixis cts = ' + str(format(pixis_cts, '.2f'))
             else:
-                textstr = settings_widget.label + '\n' \
+                textstr = dph_settings_widget.label + '\n' \
                         + 'imageid =' + str(imageid_loop) + '\n' \
                         + '$\lambda=$' + str(format(_lambda_nm, '.2f')) + '\n' \
                         + 'sep = ' + str(separation_um) + 'um' + '\n' \
@@ -2068,13 +2068,13 @@ def plot_data_and_simulation(run_plot_data_and_simulation,
             if savefigure == True:
                 #savefigure_dir = scratch_dir + hdf5_file_name_image + '_ph_'+str(ph) + '_d_'+str(separation_um)
                 
-                savefigure_dir = scratch_dir + str(settings_widget.label)
+                savefigure_dir = scratch_dir + str(dph_settings_widget.label)
                 if os.path.isdir(savefigure_dir) == False:
                     os.mkdir(savefigure_dir)
-                savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
+                savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value))
                 if os.path.isdir(savefigure_dir) == False:
                     os.mkdir(savefigure_dir)
-                savefigure_dir = scratch_dir + str(settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/overview/'
+                savefigure_dir = scratch_dir + str(dph_settings_widget.label) + '/' + 'profilewidth_px_' + str(int(pixis_avg_width)) + '_' + 'bg_intervall_um_' + str(int(beamposition_horizontal_interval_widget.value)) + '/overview/'
                 if os.path.isdir(savefigure_dir) == False:
                     os.mkdir(savefigure_dir)
                 plt.savefig(savefigure_dir + '/'+ hdf5_file_name_image \
