@@ -267,7 +267,8 @@ if load_df_all == False:
                         df_selection.aperture5_mm.item(),
                         df_selection.aperture7_mm.item(),
                         df_selection['filter'].item())
-        size_GB = os.path.getsize(useful_dir + filename + '_' + str(df_selection.begin.item())+ 'to' + str(df_selection.end.item()) + '_useful.h5')/(1024*1024*1024)
+        size_GB = os.path.getsize(Path.joinpath(useful_dir, filename, '_' , str(df_selection.begin.item()), 'to', str(df_selection.end.item()), '_useful.h5'))/(1024*1024*1024)
+        
         size_sum_GB = size_sum_GB + size_GB
         size_left_GB = size_total_GB - size_sum_GB
 
@@ -430,11 +431,33 @@ df0 = pd.merge(df0, df_fits, on="timestamp_pulse_id", how="outer")
 
 
 
-
-
-
-
 # %% 
+
+
+def get_datasets(data_dir, hdf5_file_name, start, end):
+    hdf5_file = h5py.File(Path.joinpath(data_dir, hdf5_file_name), 'r')  # 'r' means that hdf5 file is open in read-only mode
+    pixis_dataset = hdf5_file['/Experiment/Camera/Pixis 1/image'][start:end]
+    pinholes_dataset = hdf5_file['/Experiment/Camera/FL24/Pinhole B/image'][start:end]
+    timestamp_dataset = hdf5_file['/Timing/time stamp/fl2user1'][start:end]
+    
+    daq_parameter_dataset = []
+    for parameter in daq_parameter:
+        daq_parameter_dataset.append(hdf5_file[parameter][start:end])
+    
+    hdf5_file.close()
+    return (pixis_dataset, pinholes_dataset, timestamp_dataset, daq_parameter_dataset)
+
+def get_hdf5_file_length(data_dir, hdf5_file_name):
+    hdf5_file = h5py.File(Path.joinpath(data_dir, hdf5_file_name), 'r')  # 'r' means that hdf5 file is open in read-only mode
+
+    length = hdf5_file['/Experiment/Camera/Pixis 1/image'].len()
+
+    hdf5_file.close()
+
+    return length
+
+
+
 def get_images(hdf5_file_name, dataset_args):
     
     begin = dataset_args[0]
@@ -460,7 +483,7 @@ def get_images(hdf5_file_name, dataset_args):
 
     useful_hdf5_file_name = hdf5_file_name + '_' + str(slice_beginning) + 'to' + str(slice_ending) + '_useful.h5'
 
-    if os.path.exists(useful_dir + useful_hdf5_file_name):
+    if os.path.exists(Path.joinpath(useful_dir, useful_hdf5_file_name)):
       #print('file' + useful_dir + useful_hdf5_file_name + 'does exist')
       (pixis_dataset0, pinholes_dataset0, timestamp_dataset, daq_parameter_dataset) = get_datasets(useful_dir, useful_hdf5_file_name,None,None)
     else:
