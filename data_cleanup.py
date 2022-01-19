@@ -431,9 +431,17 @@ df0 = pd.merge(df0, df_fits, on="timestamp_pulse_id", how="outer")
 
 
 
-# %% 
+# %% everything needed to display cleanup frontend
+
+m=1
+nm=1e-9*m
+um=1e-6*m
+mm=1e-3*m
+cm=1e-2*m
 
 
+def gaussianbeam(x, a, m ,w, offs):
+    return a*np.exp(-2*(x-m)**2/w**2) + offs
 
 daq_parameter=[
 'FL2/Photon Diagnostic/Wavelength/OPIS tunnel/Processed/mean wavelength',
