@@ -756,6 +756,57 @@ def get_pinholes_profiles(imageid,bgfactor,pinholes_rotation,centerx_px,centery_
     return pinholes_image_norm, pinholes_profile_alongx, pinholes_profile_alongx_avg, pinholes_profile_alongy, pinholes_profile_alongx_avg, pinholes_cts, pinholes_cm_x_px, pinholes_cm_y_px
 
 
+def simulation(x, shiftx_um, _lambda_nm, z_mm, d_um, w1_um,w2_um,I_w1,I_w2, I_Airy1, I_Airy2, sep_factor, gamma):
+
+    def Airy(x,a,_lambda,z,d):
+        Z = (1.22 * math.pi/_lambda) * a * (x-d)/z
+        f = (math.pi/_lambda)*(a**2/z)* (scipy.special.jv(1,Z)/Z)
+        return f
+
+    # Young's double pinholes experiment simulation
+
+    #% Parameters are from Andrej's thesis
+
+    # PIXIS 1024B: 13um pixelsize, 1024px, 13.3mmx13.3mm chip size
+
+    _lambda = _lambda_nm*1e-9# wavelength
+    w1 = w1_um*1e-6  # first slit width
+    w2 = w2_um*1e-6  # second slit width
+    z = z_mm*1e-3  # pinholess to detector #5896_
+    #gamma# degree of spatial coherence
+    d = d_um*1e-6 # slit separation
+    
+    #R = 1 / dx# rescale factor
+
+    #% Intensity simulation
+
+    shiftx = shiftx_um*1e-6
+
+    k = 2 * math.pi / _lambda
+    theta = - (k * (d * (x-shiftx) / z))
+    Partial_Coherence_Factor = gamma * np.cos(theta/2)**2
+
+    # The amplitudes of the wave field in the far field:
+
+    #Amp_1 = np.sqrt(I_w1) * Airy((x-shiftx), w1, _lambda, z, -d/2)
+    #Amp_2 = np.sqrt(I_w2) * Airy((x-shiftx), w2, _lambda, z, +d/2)
+    
+    Amp_1 = np.sqrt(I_w1) * Airy((x-shiftx), w1, _lambda, z, -d/2)
+    Amp_2 = np.sqrt(I_w2) * Airy((x-shiftx), w2, _lambda, z, +d/2)
+
+    #I_D = (Amp_1**2 + Amp_2**2) + 2 * abs(Amp_1) * abs(Amp_2) * Partial_Coherence_Factor
+    I_D = 0 \
+    + 0 * (Amp_1**2 + Amp_2**2) \
+    + 2 * abs(Amp_1) * abs(Amp_2) * Partial_Coherence_Factor \
+    + 0 * np.sqrt(I_Airy1) * Airy((x-shiftx), w1, _lambda, z, -d/2) \
+    + 0 * np.sqrt(I_Airy2) * Airy((x-shiftx), w2, _lambda, z, +d/2) \
+    + np.sqrt(I_Airy1) * Airy((x-shiftx), w1, _lambda, z, -d/2 * sep_factor)**2 \
+    + np.sqrt(I_Airy2) * Airy((x-shiftx), w2, _lambda, z, +d/2 * sep_factor)**2
+    I_D_normalized = I_D / np.max(I_D)
+
+    return I_D_normalized
+
+
 
 
 def plot_data_and_simulation(run_plot_data_and_simulation,
@@ -3033,4 +3084,6 @@ display(Javascript('''google.colab.output.setIframeHeight(0, true, {maxHeight: 5
 display(VBox([plot_data_and_simulation_interactive_input,
               plot_data_and_simulation_interactive_output]))
 ##1 maingui
+# %%
+
 # %%
