@@ -122,13 +122,13 @@ exec(open(dph_settings_py_file).read())
 
 
 datasets_widget_layout = widgets.Layout(width="100%")
-datasets_widget = widgets.Dropdown(options=datasets, layout=datasets_widget_layout)
+datasets_widget = widgets.Dropdown(options=datasets, layout=datasets_widget_layout, description='Dataset:')
 # settings_widget.observe(update_settings, names='value')
 # display(dph_settings_widget)
 
 
-dph_settings_widget_layout = widgets.Layout(width="100%")
-dph_settings_widget = widgets.Dropdown(options=dph_settings, layout=dph_settings_widget_layout)
+# dph_settings_widget_layout = widgets.Layout(width="100%")
+# dph_settings_widget = widgets.Dropdown(options=dph_settings, layout=dph_settings_widget_layout)
 # settings_widget.observe(update_settings, names='value')
 # display(dph_settings_widget)
 
@@ -142,6 +142,7 @@ dph_settings_bgsubtracted_widget_layout = widgets.Layout(width="100%")
 dph_settings_bgsubtracted_widget = widgets.Dropdown(
     options=dph_settings_bgsubtracted,
     layout=dph_settings_bgsubtracted_widget_layout,
+    description='Measurement:'
     # value=dph_settings_bgsubtracted[3],  # workaround, because some hdf5 files have no proper timestamp yet
 )
 # settings_widget.observe(update_settings, names='value')
