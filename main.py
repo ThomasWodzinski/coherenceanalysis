@@ -132,13 +132,17 @@ dph_settings_widget = widgets.Dropdown(options=dph_settings, layout=dph_settings
 # settings_widget.observe(update_settings, names='value')
 # display(dph_settings_widget)
 
-dph_settings_bgsubtracted = list(bgsubtracted_dir.glob("*.h5"))
+# dph_settings_bgsubtracted = list(bgsubtracted_dir.glob("*.h5"))
+dph_settings_bgsubtracted = []
+for pattern in ['*'+ s + '.h5' for s in datasets_widget.value]: 
+    dph_settings_bgsubtracted.extend(bgsubtracted_dir.glob(pattern))
+
 
 dph_settings_bgsubtracted_widget_layout = widgets.Layout(width="100%")
 dph_settings_bgsubtracted_widget = widgets.Dropdown(
     options=dph_settings_bgsubtracted,
     layout=dph_settings_bgsubtracted_widget_layout,
-    value=dph_settings_bgsubtracted[3],  # workaround, because some hdf5 files have no proper timestamp yet
+    # value=dph_settings_bgsubtracted[3],  # workaround, because some hdf5 files have no proper timestamp yet
 )
 # settings_widget.observe(update_settings, names='value')
 
@@ -1098,6 +1102,16 @@ def dph_settings_bgsubtracted_widget_changed(change):
 
 
 dph_settings_bgsubtracted_widget.observe(dph_settings_bgsubtracted_widget_changed, names="value")
+
+
+def datasets_widget_changed(change):
+    dph_settings_bgsubtracted = []
+    for pattern in ['*'+ s + '.h5' for s in datasets_widget.value]: 
+        dph_settings_bgsubtracted.extend(bgsubtracted_dir.glob(pattern))
+    dph_settings_bgsubtracted_widget.options=dph_settings_bgsubtracted
+    
+
+datasets_widget.observe(datasets_widget_changed, names="value")
 
 
 #%% getting all parameters from the file
