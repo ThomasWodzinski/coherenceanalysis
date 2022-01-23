@@ -3171,7 +3171,7 @@ daq_parameter=[
 # filename of bg file, imageids of bgs that were averaged, remove profile avg?
 
 #see https://stackoverflow.com/questions/50374409/save-list-of-numpy-arrays-onto-disk
-with h5py.File(bgsubtracted_dir + dph_settings_widget.label + '.h5', 'w', libver='latest') as hdf5_file_bgsubtracted:  # use 'latest' for performance
+with h5py.File(Path.joinpath(bgsubtracted_dir, str(dph_settings_widget.label + '.h5')), 'w', libver='latest') as hdf5_file_bgsubtracted:  # use 'latest' for performance
 
   # store the useful filename to be able to open the original files if needed later
   # from https://stackoverflow.com/a/43935389
@@ -3195,7 +3195,7 @@ with h5py.File(bgsubtracted_dir + dph_settings_widget.label + '.h5', 'w', libver
   # fill the datasets in the hdf5file
 
   
-  with h5py.File(useful_dir + hdf5_file_name_image_widget.value + '_' + str(dataset_image_args_widget.value[0]) +'to' + str(dataset_image_args_widget.value[1]) + '_useful.h5', 'r', libver='latest') as hdf5_file_useful:
+  with h5py.File(Path.joinpath(useful_dir, str(hdf5_file_name_image_widget.value + '_', str(dataset_image_args_widget.value[0]) + 'to', str(dataset_image_args_widget.value[1]) + '_useful.h5')), 'r', libver='latest') as hdf5_file_useful:
     print(useful_dir + hdf5_file_name_image_widget.value + '_' + str(dataset_image_args_widget.value[0]) +'to' + str(dataset_image_args_widget.value[1]) + '_useful.h5')
     i = 0
     for idx in imageid_sequence_by_energy_hall:
@@ -3211,7 +3211,7 @@ with h5py.File(bgsubtracted_dir + dph_settings_widget.label + '.h5', 'w', libver
       i = i + 1
   
     # create and fill dataset in hdf5 of daq parameters
-  with h5py.File(useful_dir + hdf5_file_name_image_widget.value + '_' + str(dataset_image_args_widget.value[0]) +'to' + str(dataset_image_args_widget.value[1]) + '_useful.h5', 'r', libver='latest') as hdf5_file_useful:
+  with h5py.File(Path.joinpath(useful_dir, str(hdf5_file_name_image_widget.value + '_' + str(dataset_image_args_widget.value[0]) + 'to' + str(dataset_image_args_widget.value[1]) + '_useful.h5')), 'r', libver='latest') as hdf5_file_useful:
     for j in range(len(daq_parameter)):
       hdf5_file_bgsubtracted_daq_parameter_dataset = hdf5_file_bgsubtracted.create_dataset(daq_parameter[j],(len(imageid_sequence_by_energy_hall),1),'float64')
       i = 0
@@ -3221,3 +3221,5 @@ with h5py.File(bgsubtracted_dir + dph_settings_widget.label + '.h5', 'w', libver
       
   print('done')
 
+
+# %%
