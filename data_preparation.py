@@ -3087,3 +3087,137 @@ display(VBox([plot_data_and_simulation_interactive_input,
 # %%
 
 # %%
+# see create useful datasets above ...
+# issue is, that the array of pixis images is in the ordered by enegy. the dataframe also needs to go into the hdf5 like all the other DAQ parameter
+# see also https://realpython.com/storing-images-in-python/
+
+# find those imageids for which there was a correpsonding background available
+imageid_sequence_by_energy_hall = get_imageids_with_bgs(beamposition_horizontal_interval_widget.value)
+
+
+
+# (pixis_image_norm, pixis_bg_std_norm, pixis_bg_std_avg, pixis_profile, pixis_profile_avg,
+#                  pixis_profile_avg_centerx_px, pixis_centerx_px, pixis_centery_px, pixis_profile_alongy,
+#                  pixis_cts, pixis_cm_x_px, pixis_cm_y_px, pinholes_bg_avg_dataset[imageid_loop], pixis_image_minus_bg_rot_cropped_counts_dataset[imageid_loop]) = get_pixis_profiles(imageid_loop,
+#                                                                                use_pixis_avg,
+#                                                                             pixis_bgfactor,
+#                                                                             pixis_avg_width,
+#                                                                             pixis_rotation,
+#                                                                             pixis_center_autofind,
+#                                                                             pixis_centerx_px,
+#                                                                             pixis_centery_px,
+#                                                                               cropforbp)
+# (pinholes_image_norm_dataset[imageid_loop], pinholes_profile_alongx,
+#              pinholes_profile_alongx_avg,
+#              pinholes_profile_alongy,
+#              pinholes_profile_alongx_avg,
+#              pinholes_cts, pinholes_cm_x_px[imageid_loop], pinholes_cm_y_px[imageid_loop]) = get_pinholes_profiles(imageid_loop,
+#                                                                   pinholes_bgfactor,
+#                                                                   pinholes_rotation,
+#                                                                   pinholes_centerx_px,
+#                                                                   pinholes_centery_px,
+#                                                                   pinholes_avg_width_alongy,
+#                                                                   pinholes_avg_width_alongx)
+            
+#             df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid'] == imageid_loop)), 'pinholes_cm_x_px'] = pinholes_cm_x_px[imageid_loop]
+#             df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid'] == imageid_loop)), 'pinholes_cm_y_px'] = pinholes_cm_y_px[imageid_loop]
+#             df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid'] == imageid_loop)), 'pixis_image_minus_bg_rot_cropped_counts'] = pixis_image_minus_bg_rot_cropped_counts_dataset[imageid_loop]
+            
+# return pinholes_image_norm, pinholes_profile_alongx, pinholes_profile_alongx_avg, pinholes_profile_alongy, pinholes_profile_alongx_avg, pinholes_cts, pinholes_cm_x_px, pinholes_cm_y_px
+# pixis_image_norm_dataset[imageid_loop] = pixis_image_norm
+#             pixis_profile_avg_dataset[imageid_loop] = pixis_profile_avg
+#             pixis_centery_px_dataset[imageid_loop] = pixis_centery_px
+
+
+daq_parameter=[
+               #'Timing/time stamp/fl2user1',
+            'FL2/Photon Diagnostic/Wavelength/OPIS tunnel/Processed/mean wavelength',
+            'FL2/Photon Diagnostic/Wavelength/OPIS tunnel/Processed/mean phtoton energy',    
+            'FL2/Electron Diagnostic/Undulator setting/SASE03 gap',
+            'FL2/Electron Diagnostic/Undulator setting/SASE04 gap',
+            'FL2/Electron Diagnostic/Undulator setting/SASE05 gap',
+            'FL2/Electron Diagnostic/Undulator setting/SASE06 gap',
+            'FL2/Electron Diagnostic/Undulator setting/SASE07 gap',
+            'FL2/Electron Diagnostic/Undulator setting/SASE08 gap',
+            'FL2/Electron Diagnostic/Undulator setting/SASE09 gap',
+            'FL2/Electron Diagnostic/Undulator setting/SASE10 gap',
+            'FL2/Electron Diagnostic/Undulator setting/SASE11 gap',
+            'FL2/Electron Diagnostic/Undulator setting/SASE12 gap',
+            'FL2/Electron Diagnostic/Undulator setting/SASE13 gap',
+            'FL2/Electron Diagnostic/Undulator setting/SASE14 gap',
+            'FL2/Electron Diagnostic/Undulator setting/set wavelength',
+            'FL2/Photon Diagnostic/GMD/Average energy/hall',
+            'FL2/Photon Diagnostic/GMD/Average energy/tunnel',
+            'FL2/Photon Diagnostic/GMD/Beam position/Average/position hall horizontal',
+            'FL2/Photon Diagnostic/GMD/Beam position/Average/position hall vertical',
+            'FL2/Photon Diagnostic/GMD/Beam position/Average/position tunnel horizontal',
+            'FL2/Photon Diagnostic/GMD/Beam position/Average/position tunnel vertical',
+            'FL2/Photon Diagnostic/GMD/Beam position/Pulse resolved/hall x',
+            'FL2/Photon Diagnostic/GMD/Beam position/Pulse resolved/hall y',
+            'FL2/Photon Diagnostic/GMD/Beam position/Pulse resolved/tunnel x',
+            'FL2/Photon Diagnostic/GMD/Beam position/Pulse resolved/tunnel y',
+            'FL2/Photon Diagnostic/GMD/Pulse resolved energy/energy aux hall',
+            'FL2/Photon Diagnostic/GMD/Pulse resolved energy/energy aux tunnel',
+            'FL2/Photon Diagnostic/GMD/Pulse resolved energy/energy hall',
+            'FL2/Photon Diagnostic/GMD/Pulse resolved energy/energy tunnel',
+            'FL2/Photon Diagnostic/GMD/Pulse resolved energy/position horizontal hall',
+            'FL2/Photon Diagnostic/GMD/Pulse resolved energy/position horizontal tunnel',
+            'FL2/Photon Diagnostic/GMD/Pulse resolved energy/position vertical hall',
+            'FL2/Photon Diagnostic/GMD/Pulse resolved energy/position vertical tunnel'
+            ]        
+
+
+# what else to add here?
+# filename of bg file, imageids of bgs that were averaged, remove profile avg?
+
+#see https://stackoverflow.com/questions/50374409/save-list-of-numpy-arrays-onto-disk
+with h5py.File(bgsubtracted_dir + dph_settings_widget.label + '.h5', 'w', libver='latest') as hdf5_file_bgsubtracted:  # use 'latest' for performance
+
+  # store the useful filename to be able to open the original files if needed later
+  # from https://stackoverflow.com/a/43935389
+  hdf5_file_useful_name = hdf5_file_name_image_widget.value + '_' + str(dataset_image_args_widget.value[0]) +'to' + str(dataset_image_args_widget.value[1]) + '_useful.h5'
+  dt = h5py.special_dtype(vlen=str)
+  hdf5_file_useful_name_dataset = hdf5_file_bgsubtracted.create_dataset('hdf5_file_useful_name', (100,), dtype=dt)
+  hdf5_file_useful_name_dataset[0] = hdf5_file_useful_name
+
+  # create the datasets in the hdf5 file
+  hdf5_file_bgsubtracted_dataset_imageid = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/imageid', (len(imageid_sequence_by_energy_hall),1))
+  
+  hdf5_file_bgsubtracted_dataset_pixis_image_norm = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/pixis_image_norm', (len(imageid_sequence_by_energy_hall),pixis_image_norm_dataset[0].shape[0],pixis_image_norm_dataset[0].shape[0]))
+  hdf5_file_bgsubtracted_dataset_pixis_profile_avg = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/pixis_profile_avg', (len(imageid_sequence_by_energy_hall),pixis_profile_avg_dataset[0].shape[0]))
+  hdf5_file_bgsubtracted_dataset_pixis_centery_px = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/pixis_centery_px', (len(imageid_sequence_by_energy_hall),1))
+  #hdf5_file_bgsubtracted_dataset_pinhole_image = hdf5_file_bgsubtracted.create_dataset('/Experiment/Camera/FL24/Pinhole B/image', (len(imageid_sequence_by_energy_hall),1280, 960),'uint16')
+
+  hdf5_file_bgsubtracted_dataset_timestamp = hdf5_file_bgsubtracted.create_dataset('/Timing/time stamp/fl2user1', (len(imageid_sequence_by_energy_hall),3),dtype='uint32')
+  # specify dataset like in the original to dtype='uint32', otherwise it's cast per default to dtype=float32
+  hdf5_file_beamposition_horizontal_interval = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/beamposition_horizontal_interval', (len(imageid_sequence_by_energy_hall),1))
+
+  # fill the datasets in the hdf5file
+
+  
+  with h5py.File(useful_dir + hdf5_file_name_image_widget.value + '_' + str(dataset_image_args_widget.value[0]) +'to' + str(dataset_image_args_widget.value[1]) + '_useful.h5', 'r', libver='latest') as hdf5_file_useful:
+    print(useful_dir + hdf5_file_name_image_widget.value + '_' + str(dataset_image_args_widget.value[0]) +'to' + str(dataset_image_args_widget.value[1]) + '_useful.h5')
+    i = 0
+    for idx in imageid_sequence_by_energy_hall:
+      print(idx)
+      hdf5_file_bgsubtracted_dataset_imageid[i] = idx
+      hdf5_file_bgsubtracted_dataset_pixis_image_norm[i] = pixis_image_norm_dataset[idx]
+      hdf5_file_bgsubtracted_dataset_pixis_profile_avg[i] = pixis_profile_avg_dataset[idx]  
+      hdf5_file_bgsubtracted_dataset_pixis_centery_px[i] = pixis_centery_px_dataset[idx] 
+      #hdf5_file_bgsubtracted_dataset_pinhole_image[i] = hdf5_file_useful['/Experiment/Camera/FL24/Pinhole B/image'][idx]     
+      hdf5_file_bgsubtracted_dataset_timestamp[i] = hdf5_file_useful['/Timing/time stamp/fl2user1'][idx]
+      print(hdf5_file_useful['/Timing/time stamp/fl2user1'][idx])
+      hdf5_file_beamposition_horizontal_interval[i] = beamposition_horizontal_interval_widget.value
+      i = i + 1
+  
+    # create and fill dataset in hdf5 of daq parameters
+  with h5py.File(useful_dir + hdf5_file_name_image_widget.value + '_' + str(dataset_image_args_widget.value[0]) +'to' + str(dataset_image_args_widget.value[1]) + '_useful.h5', 'r', libver='latest') as hdf5_file_useful:
+    for j in range(len(daq_parameter)):
+      hdf5_file_bgsubtracted_daq_parameter_dataset = hdf5_file_bgsubtracted.create_dataset(daq_parameter[j],(len(imageid_sequence_by_energy_hall),1),'float64')
+      i = 0
+      for idx in imageid_sequence_by_energy_hall:
+        hdf5_file_bgsubtracted_daq_parameter_dataset[i] = hdf5_file_useful[daq_parameter[j]][idx]
+        i = i + 1
+      
+  print('done')
+
