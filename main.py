@@ -100,6 +100,14 @@ if import_from_local_google_drive == True:
 
 """# Load dph settings and combinations"""
 
+datasets_py_file = str(Path.joinpath(data_dir, "datasets.py"))
+
+# Commented out IPython magic to ensure Python compatibility.
+# %run -i $dph_settings_py # see https://stackoverflow.com/a/14411126 and http://ipython.org/ipython-doc/dev/interactive/magics.html#magic-run
+# see also https://stackoverflow.com/questions/4383571/importing-files-from-different-folder to import as a module,
+# requires however that it is located in a folder with an empty __init__.py
+exec(open(datasets_py_file).read())
+
 dph_settings_py_file = str(Path.joinpath(data_dir, "dph_settings.py"))
 
 # Commented out IPython magic to ensure Python compatibility.
@@ -111,6 +119,12 @@ exec(open(dph_settings_py_file).read())
 # import sys
 # sys.path.append('g:\\My Drive\\PhD\\coherence\data\\dph_settings_package\\')
 # from dph_settings_package import dph_settings_module
+
+
+datasets_widget_layout = widgets.Layout(width="100%")
+datasets_widget = widgets.Dropdown(options=datasets, layout=datasets_widget_layout)
+# settings_widget.observe(update_settings, names='value')
+# display(dph_settings_widget)
 
 
 dph_settings_widget_layout = widgets.Layout(width="100%")
@@ -1135,6 +1149,7 @@ display(
     VBox(
         [
             HBox([fittingprogress_widget, statustext_widget]),
+            datasets_widget,
             dph_settings_bgsubtracted_widget,
             plotprofile_interactive_input,
             plotprofile_interactive_output,
