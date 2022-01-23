@@ -3084,7 +3084,50 @@ display(Javascript('''google.colab.output.setIframeHeight(0, true, {maxHeight: 5
 display(VBox([plot_data_and_simulation_interactive_input,
               plot_data_and_simulation_interactive_output]))
 ##1 maingui
-# %%
+# %% run through all images in the widget
+
+count = 0
+
+from datetime import datetime
+
+time_taken = 0
+
+text_widget = widgets.Text(
+    value='',
+    placeholder='Type something',
+    description='time left=',
+    disabled=False
+)
+
+progress_widget = widgets.FloatProgress(
+    value=0,
+    placeholder='Type something',
+    description='time left=',
+    disabled=False
+)
+
+display(widgets.HBox([progress_widget,text_widget]))
+progress_widget.value = 0
+
+for imageid_loop in imageid_widget.options:
+
+    time_left = (len(imageid_widget.options) - count) * time_taken
+    
+    text_widget.value = str(time_left)
+    
+    start = datetime.now()
+    
+    imageid_widget.value = imageid_loop
+    
+    progress_widget.value = round((count / len(imageid_widget.options)) * 100)
+
+    
+    end = datetime.now()
+    time_taken = end - start
+    
+    count = count + 1
+
+
 
 # %%
 # see create useful datasets above ...
@@ -3195,8 +3238,8 @@ with h5py.File(Path.joinpath(bgsubtracted_dir, str(dph_settings_widget.label + '
   # fill the datasets in the hdf5file
 
   
-  with h5py.File(Path.joinpath(useful_dir, str(hdf5_file_name_image_widget.value + '_', str(dataset_image_args_widget.value[0]) + 'to', str(dataset_image_args_widget.value[1]) + '_useful.h5')), 'r', libver='latest') as hdf5_file_useful:
-    print(useful_dir + hdf5_file_name_image_widget.value + '_' + str(dataset_image_args_widget.value[0]) +'to' + str(dataset_image_args_widget.value[1]) + '_useful.h5')
+  with h5py.File(Path.joinpath(useful_dir, str(hdf5_file_name_image_widget.value + '_' + str(dataset_image_args_widget.value[0]) + 'to' + str(dataset_image_args_widget.value[1]) + '_useful.h5')), 'r', libver='latest') as hdf5_file_useful:
+    print(Path.joinpath(useful_dir, str(hdf5_file_name_image_widget.value + '_' + str(dataset_image_args_widget.value[0]) + 'to' + str(dataset_image_args_widget.value[1]) + '_useful.h5')))
     i = 0
     for idx in imageid_sequence_by_energy_hall:
       print(idx)
