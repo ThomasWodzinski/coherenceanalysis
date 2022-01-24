@@ -3084,6 +3084,10 @@ display(Javascript('''google.colab.output.setIframeHeight(0, true, {maxHeight: 5
 display(VBox([plot_data_and_simulation_interactive_input,
               plot_data_and_simulation_interactive_output]))
 ##1 maingui
+
+
+
+
 # %% run through all images in the widget
 
 count = 0
