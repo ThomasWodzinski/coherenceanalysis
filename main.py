@@ -1213,3 +1213,4 @@ for dataset in list(datasets):
     plt.show()
 
 # %%
+# to do: iterate over each measurement to create errorbars for each separation measurement
