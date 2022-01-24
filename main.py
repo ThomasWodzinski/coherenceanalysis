@@ -1208,6 +1208,8 @@ for dataset in list(datasets):
 
     # create plot for the determined timestamps:
     plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['gamma_fit'])
+    plt.xlim(0,2000)
+    plt.ylim(0,1)
     plt.show()
 
 # %%
