@@ -1187,13 +1187,14 @@ with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
 
 timestamp_pulse_ids
 # %%
+# get all the files in a dataset
 files = []
 # for set in [list(datasets)[0]]:
-for set in [list(datasets)[0]]:
-    print(set)
-    for measurement in datasets[set]:
-        # print(measurement)
-        files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+dataset = list(datasets)[0]
+print(dataset)
+for measurement in datasets[set]:
+    # print(measurement)
+    files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
         
 # datasets[list(datasets)[0]][0]
 timestamp_pulse_ids = []
