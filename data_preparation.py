@@ -3075,7 +3075,7 @@ plot_data_and_simulation_interactive_output = interactive_output(plot_data_and_s
 
 
 #plot_data_and_simulation_interactive_output.layout.width = '100%'
-plot_data_and_simulation_interactive_output.layout.height = '2000px'
+plot_data_and_simulation_interactive_output.layout.height = '1000px'
 plot_data_and_simulation_interactive_output.layout.border = 'solid'
 
 from IPython.display import Javascript
