@@ -1188,7 +1188,7 @@ with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
 timestamp_pulse_ids
 # %%
 files = []
-
+# for set in [list(datasets)[0]]:
 for set in [list(datasets)[0]]:
     print(set)
     for measurement in datasets[set]:
@@ -1201,19 +1201,7 @@ for f in files:
     with h5py.File(f, "r") as hdf5_file:
         timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
-timestamp_pulse_ids
-# %%
-df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['pinholes'].unique()
-df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'].unique()
-df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um_fit']
-
-# %%
-
-# plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um_fit'])
-
 plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['gamma_fit'])
 plt.show()
-
-# %%
 
 # %%
