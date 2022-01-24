@@ -922,8 +922,8 @@ def plotprofile(
                 frameon=None,
             )
 
-        # if save_to_df == True:
-        #     df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid']==imageid)), 'gamma_fit'] = gamma_fit
+        if save_to_df == True:
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
         #     df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid']==imageid)), 'wavelength_nm_fit'] = wavelength_nm_fit
         #     df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid']==imageid)), 'd_um_at_detector'] = d_um_at_detector
         #     df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid']==imageid)), 'I_Airy1_fit'] = I_Airy1_fit
@@ -1179,13 +1179,13 @@ dph_settings_bgsubtracted_widget_changed(None)
 # How to get only the timestamp_pulse_id of the datasets?
 
 # name of dph_settings in datasets accessible by index:
-print(datasets[list(datasets)[0]][0])
+# print(datasets[list(datasets)[0]][0])
 
-timestamp_pulse_ids = []
-with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
-    timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+# timestamp_pulse_ids = []
+# with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
+#     timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
-timestamp_pulse_ids
+# timestamp_pulse_ids
 # %%
 # loop over all datasets and create coherence plots:
 for dataset in list(datasets):
