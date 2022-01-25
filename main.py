@@ -1214,3 +1214,33 @@ for dataset in list(datasets):
 
 # %%
 # to do: iterate over each measurement to create errorbars for each separation measurement
+
+
+
+# %% iterate over all images
+
+# delete all fits, create new df columns for new fits, etc.
+
+for imageid in imageid_profile_fit_widget.options:
+    imageid_profile_fit_widget.value = imageid
+
+
+# %% iterate over all measurements and images in a given dataset
+for measurement in dph_settings_bgsubtracted_widget.options:
+    dph_settings_bgsubtracted_widget.value = measurement
+    plotprofile_active_widget.value = True
+    for imageid in imageid_profile_fit_widget.options:
+        imageid_profile_fit_widget.value = imageid
+
+
+# %%
+# iterate over all datasets
+for dataset in list(datasets):
+    datasets_widget.value = dataset
+    plotprofile_active_widget.value = True
+print('done')
+# %%
+
+# %%
+
+# %%
