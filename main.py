@@ -924,8 +924,6 @@ def plotprofile(
 
         if save_to_df == True:
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_x_um'] = xi_x_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_y_um'] = xi_y_um
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit'] = wavelength_nm_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector'] = d_um_at_detector
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit'] = I_Airy1_fit
@@ -934,8 +932,12 @@ def plotprofile(
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_fit'] = w2_um_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_fit'] = shiftx_um_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] = x1_um_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] = x1_um_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] = x1_um_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_fit'] = x2_um_fit
+
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_x_um'] = xi_x_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_y_um'] = xi_y_um
+            
+            
 
 
         plt.show()
@@ -1218,7 +1220,7 @@ for dataset in list(datasets):
 
 
 # %%
-# loop over all datasets and delete gamma_fit:
+# loop over all datasets and delete all fits and deconvolution results:
 remove_fits_from_df = False
 if remove_fits_from_df == True:
     for dataset in list(datasets):
@@ -1240,6 +1242,20 @@ if remove_fits_from_df == True:
                 timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'gamma_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'wavelength_nm_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'd_um_at_detector'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'I_Airy1_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'I_Airy2_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'w1_um_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'w2_um_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'shiftx_um_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'x1_um_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'x2_um_fit'] = np.nan
+
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'xi_x_um'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'xi_y_um'] = np.nan
+        
+
 
 
 # %%
