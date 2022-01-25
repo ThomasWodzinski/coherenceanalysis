@@ -122,7 +122,7 @@ exec(open(dph_settings_py_file).read())
 
 
 datasets_widget_layout = widgets.Layout(width="100%")
-datasets_widget = widgets.Dropdown(options=datasets, layout=datasets_widget_layout, description='Dataset:')
+datasets_widget = widgets.Dropdown(options=list(datasets), layout=datasets_widget_layout, description='Dataset:')
 # settings_widget.observe(update_settings, names='value')
 # display(dph_settings_widget)
 
@@ -134,7 +134,7 @@ datasets_widget = widgets.Dropdown(options=datasets, layout=datasets_widget_layo
 
 # dph_settings_bgsubtracted = list(bgsubtracted_dir.glob("*.h5"))
 dph_settings_bgsubtracted = []
-for pattern in ['*'+ s + '.h5' for s in datasets_widget.value]: 
+for pattern in ['*'+ s + '.h5' for s in datasets[datasets_widget.value]]: 
     dph_settings_bgsubtracted.extend(bgsubtracted_dir.glob(pattern))
 
 
@@ -1107,7 +1107,7 @@ dph_settings_bgsubtracted_widget.observe(dph_settings_bgsubtracted_widget_change
 
 def datasets_widget_changed(change):
     dph_settings_bgsubtracted = []
-    for pattern in ['*'+ s + '.h5' for s in datasets_widget.value]: 
+    for pattern in ['*'+ s + '.h5' for s in datasets[datasets_widget.value]]: 
         dph_settings_bgsubtracted.extend(bgsubtracted_dir.glob(pattern))
     dph_settings_bgsubtracted_widget.options=dph_settings_bgsubtracted
     
