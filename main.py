@@ -1241,6 +1241,16 @@ for dataset in list(datasets):
 print('done')
 # %%
 
+
+# iterate over everything
+for dataset in list(datasets):
+    datasets_widget.value = dataset
+    plotprofile_active_widget.value = True
+    for measurement in dph_settings_bgsubtracted_widget.options:
+        dph_settings_bgsubtracted_widget.value = measurement
+        plotprofile_active_widget.value = True
+        for imageid in imageid_profile_fit_widget.options:
+            imageid_profile_fit_widget.value = imageid
 # %%
 
 # %%
