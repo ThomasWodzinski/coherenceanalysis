@@ -3240,16 +3240,16 @@ with h5py.File(Path.joinpath(bgsubtracted_dir, str(dph_settings_widget.label + '
   hdf5_file_useful_name_dataset[0] = hdf5_file_useful_name
 
   # create the datasets in the hdf5 file
-  hdf5_file_bgsubtracted_dataset_imageid = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/imageid', (len(imageid_sequence_by_energy_hall),1))
+  hdf5_file_bgsubtracted_dataset_imageid = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/imageid', (len(imageids_to_save),1))
   
-  hdf5_file_bgsubtracted_dataset_pixis_image_norm = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/pixis_image_norm', (len(imageid_sequence_by_energy_hall),pixis_image_norm_dataset[0].shape[0],pixis_image_norm_dataset[0].shape[0]))
-  hdf5_file_bgsubtracted_dataset_pixis_profile_avg = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/pixis_profile_avg', (len(imageid_sequence_by_energy_hall),pixis_profile_avg_dataset[0].shape[0]))
-  hdf5_file_bgsubtracted_dataset_pixis_centery_px = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/pixis_centery_px', (len(imageid_sequence_by_energy_hall),1))
-  #hdf5_file_bgsubtracted_dataset_pinhole_image = hdf5_file_bgsubtracted.create_dataset('/Experiment/Camera/FL24/Pinhole B/image', (len(imageid_sequence_by_energy_hall),1280, 960),'uint16')
+  hdf5_file_bgsubtracted_dataset_pixis_image_norm = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/pixis_image_norm', (len(imageids_to_save),pixis_image_norm_dataset[0].shape[0],pixis_image_norm_dataset[0].shape[0]))
+  hdf5_file_bgsubtracted_dataset_pixis_profile_avg = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/pixis_profile_avg', (len(imageids_to_save),pixis_profile_avg_dataset[0].shape[0]))
+  hdf5_file_bgsubtracted_dataset_pixis_centery_px = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/pixis_centery_px', (len(imageids_to_save),1))
+  #hdf5_file_bgsubtracted_dataset_pinhole_image = hdf5_file_bgsubtracted.create_dataset('/Experiment/Camera/FL24/Pinhole B/image', (len(imageids_to_save),1280, 960),'uint16')
 
-  hdf5_file_bgsubtracted_dataset_timestamp = hdf5_file_bgsubtracted.create_dataset('/Timing/time stamp/fl2user1', (len(imageid_sequence_by_energy_hall),3),dtype='uint32')
+  hdf5_file_bgsubtracted_dataset_timestamp = hdf5_file_bgsubtracted.create_dataset('/Timing/time stamp/fl2user1', (len(imageids_to_save),3),dtype='uint32')
   # specify dataset like in the original to dtype='uint32', otherwise it's cast per default to dtype=float32
-  hdf5_file_beamposition_horizontal_interval = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/beamposition_horizontal_interval', (len(imageid_sequence_by_energy_hall),1))
+  hdf5_file_beamposition_horizontal_interval = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/beamposition_horizontal_interval', (len(imageids_to_save),1))
 
   # fill the datasets in the hdf5file
 
@@ -3257,7 +3257,7 @@ with h5py.File(Path.joinpath(bgsubtracted_dir, str(dph_settings_widget.label + '
   with h5py.File(Path.joinpath(useful_dir, str(hdf5_file_name_image_widget.value + '_' + str(dataset_image_args_widget.value[0]) + 'to' + str(dataset_image_args_widget.value[1]) + '_useful.h5')), 'r', libver='latest') as hdf5_file_useful:
     print(Path.joinpath(useful_dir, str(hdf5_file_name_image_widget.value + '_' + str(dataset_image_args_widget.value[0]) + 'to' + str(dataset_image_args_widget.value[1]) + '_useful.h5')))
     i = 0
-    for idx in imageid_sequence_by_energy_hall:
+    for idx in imageids_to_save:
       print(idx)
       hdf5_file_bgsubtracted_dataset_imageid[i] = idx
       hdf5_file_bgsubtracted_dataset_pixis_image_norm[i] = pixis_image_norm_dataset[idx]
@@ -3272,9 +3272,9 @@ with h5py.File(Path.joinpath(bgsubtracted_dir, str(dph_settings_widget.label + '
     # create and fill dataset in hdf5 of daq parameters
   with h5py.File(Path.joinpath(useful_dir, str(hdf5_file_name_image_widget.value + '_' + str(dataset_image_args_widget.value[0]) + 'to' + str(dataset_image_args_widget.value[1]) + '_useful.h5')), 'r', libver='latest') as hdf5_file_useful:
     for j in range(len(daq_parameter)):
-      hdf5_file_bgsubtracted_daq_parameter_dataset = hdf5_file_bgsubtracted.create_dataset(daq_parameter[j],(len(imageid_sequence_by_energy_hall),1),'float64')
+      hdf5_file_bgsubtracted_daq_parameter_dataset = hdf5_file_bgsubtracted.create_dataset(daq_parameter[j],(len(imageids_to_save),1),'float64')
       i = 0
-      for idx in imageid_sequence_by_energy_hall:
+      for idx in imageids_to_save:
         hdf5_file_bgsubtracted_daq_parameter_dataset[i] = hdf5_file_useful[daq_parameter[j]][idx]
         i = i + 1
       
