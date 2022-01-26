@@ -1271,6 +1271,14 @@ for imageid in imageid_profile_fit_widget.options:
     imageid_profile_fit_widget.value = imageid
 
 
+
+# %% iterate over all images in a given measurement
+plotprofile_active_widget.value = True
+for imageid in imageid_profile_fit_widget.options:
+    imageid_profile_fit_widget.value = imageid
+
+
+
 # %% iterate over all measurements and images in a given dataset
 for measurement in dph_settings_bgsubtracted_widget.options:
     dph_settings_bgsubtracted_widget.value = measurement
