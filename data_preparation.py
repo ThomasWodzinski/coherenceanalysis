@@ -3242,8 +3242,8 @@ with h5py.File(Path.joinpath(bgsubtracted_dir, str(dph_settings_widget.label + '
   # create the datasets in the hdf5 file
   hdf5_file_bgsubtracted_dataset_imageid = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/imageid', (len(imageids_to_save),1))
   
-  hdf5_file_bgsubtracted_dataset_pixis_image_norm = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/pixis_image_norm', (len(imageids_to_save),pixis_image_norm_dataset[0].shape[0],pixis_image_norm_dataset[0].shape[0]))
-  hdf5_file_bgsubtracted_dataset_pixis_profile_avg = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/pixis_profile_avg', (len(imageids_to_save),pixis_profile_avg_dataset[0].shape[0]))
+  hdf5_file_bgsubtracted_dataset_pixis_image_norm = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/pixis_image_norm', (len(imageids_to_save),pixis_image_norm_dataset[imageids_to_save[0]].shape[0],pixis_image_norm_dataset[imageids_to_save[0]].shape[0]))
+  hdf5_file_bgsubtracted_dataset_pixis_profile_avg = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/pixis_profile_avg', (len(imageids_to_save),pixis_profile_avg_dataset[imageids_to_save[0]].shape[0]))
   hdf5_file_bgsubtracted_dataset_pixis_centery_px = hdf5_file_bgsubtracted.create_dataset('/bgsubtracted/pixis_centery_px', (len(imageids_to_save),1))
   #hdf5_file_bgsubtracted_dataset_pinhole_image = hdf5_file_bgsubtracted.create_dataset('/Experiment/Camera/FL24/Pinhole B/image', (len(imageids_to_save),1280, 960),'uint16')
 
