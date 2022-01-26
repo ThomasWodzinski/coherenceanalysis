@@ -3097,7 +3097,7 @@ imageids_excluded_py_file = str(Path.joinpath(data_dir, "imageids_excluded.py"))
 # requires however that it is located in a folder with an empty __init__.py
 exec(open(imageids_excluded_py_file).read())
 
-
+imageids_to_save = [ imageid for imageid in imageid_widget.options if imageid not in imageids_excluded[dph_settings_widget.label] ]
 # %% run through all images in the widget
 
 count = 0
@@ -3123,7 +3123,7 @@ progress_widget = widgets.FloatProgress(
 display(widgets.HBox([progress_widget,text_widget]))
 progress_widget.value = 0
 
-imageids_to_save = [ imageid for imageid in imageid_widget.options if imageid not in imageids_excluded[dph_settings_widget.label] ]
+
 for imageid_loop in imageids_to_save:
 
     time_left = (len(imageids_to_save) - count) * time_taken
