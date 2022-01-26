@@ -3087,6 +3087,16 @@ display(VBox([plot_data_and_simulation_interactive_input,
 
 
 
+# %% exclude images
+
+imageids_excluded_py_file = str(Path.joinpath(data_dir, "imageids_excluded.py"))
+
+# Commented out IPython magic to ensure Python compatibility.
+# %run -i $dph_settings_py # see https://stackoverflow.com/a/14411126 and http://ipython.org/ipython-doc/dev/interactive/magics.html#magic-run
+# see also https://stackoverflow.com/questions/4383571/importing-files-from-different-folder to import as a module,
+# requires however that it is located in a folder with an empty __init__.py
+exec(open(imageids_excluded_py_file).read())
+
 
 # %% run through all images in the widget
 
@@ -3113,9 +3123,10 @@ progress_widget = widgets.FloatProgress(
 display(widgets.HBox([progress_widget,text_widget]))
 progress_widget.value = 0
 
-for imageid_loop in imageid_widget.options:
+imageids_to_save = [ imageid for imageid in imageid_widget.options if imageid not in imageids_excluded[dph_settings_widget.label] ]
+for imageid_loop in imageids_to_save:
 
-    time_left = (len(imageid_widget.options) - count) * time_taken
+    time_left = (len(imageids_to_save) - count) * time_taken
     
     text_widget.value = str(time_left)
     
@@ -3123,13 +3134,14 @@ for imageid_loop in imageid_widget.options:
     
     imageid_widget.value = imageid_loop
     
-    progress_widget.value = round((count / len(imageid_widget.options)) * 100)
+    progress_widget.value = round((count / len(imageids_to_save)) * 100)
 
     
     end = datetime.now()
     time_taken = end - start
     
     count = count + 1
+
 
 
 
