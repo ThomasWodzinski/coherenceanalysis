@@ -1300,3 +1300,30 @@ for dataset in list(datasets):
 # %%
 
 # %%
+
+
+for dataset in list(datasets):
+    print(dataset)
+
+    # get all the files in a dataset:
+    files = []
+    # for set in [list(datasets)[0]]:
+    
+    for measurement in datasets[dataset]:
+        # print(measurement)
+        files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+    # get all the timestamps in these files:        
+    # datasets[list(datasets)[0]][0]
+    timestamp_pulse_ids = []
+    for f in files:
+        with h5py.File(f, "r") as hdf5_file:
+            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+    # create plot for the determined timestamps:
+    plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['gamma_fit'])
+    # plt.xlim(0,2000)
+    # plt.ylim(0,1)
+    plt.show()
+
+# %%
