@@ -3097,7 +3097,10 @@ imageids_excluded_py_file = str(Path.joinpath(data_dir, "imageids_excluded.py"))
 # requires however that it is located in a folder with an empty __init__.py
 exec(open(imageids_excluded_py_file).read())
 
-imageids_to_save = [ imageid for imageid in imageid_widget.options if imageid not in imageids_excluded[dph_settings_widget.label] ]
+if dph_settings_widget.label in imageids_excluded.keys():
+    imageids_to_save = [ imageid for imageid in imageid_widget.options if imageid not in imageids_excluded[dph_settings_widget.label] ]
+else:
+    imageids_to_save = imageid_widget.options
 # %% run through all images in the widget
 
 count = 0
