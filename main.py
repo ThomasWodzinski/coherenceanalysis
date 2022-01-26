@@ -122,7 +122,7 @@ exec(open(dph_settings_py_file).read())
 
 
 datasets_widget_layout = widgets.Layout(width="100%")
-datasets_widget = widgets.Dropdown(options=datasets, layout=datasets_widget_layout, description='Dataset:')
+datasets_widget = widgets.Dropdown(options=list(datasets), layout=datasets_widget_layout, description='Dataset:')
 # settings_widget.observe(update_settings, names='value')
 # display(dph_settings_widget)
 
@@ -134,7 +134,7 @@ datasets_widget = widgets.Dropdown(options=datasets, layout=datasets_widget_layo
 
 # dph_settings_bgsubtracted = list(bgsubtracted_dir.glob("*.h5"))
 dph_settings_bgsubtracted = []
-for pattern in ['*'+ s + '.h5' for s in datasets_widget.value]: 
+for pattern in ['*'+ s + '.h5' for s in datasets[datasets_widget.value]]: 
     dph_settings_bgsubtracted.extend(bgsubtracted_dir.glob(pattern))
 
 
@@ -922,17 +922,23 @@ def plotprofile(
                 frameon=None,
             )
 
-        # if save_to_df == True:
-        #     df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid']==imageid)), 'gamma_fit'] = gamma_fit
-        #     df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid']==imageid)), 'wavelength_nm_fit'] = wavelength_nm_fit
-        #     df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid']==imageid)), 'd_um_at_detector'] = d_um_at_detector
-        #     df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid']==imageid)), 'I_Airy1_fit'] = I_Airy1_fit
-        #     df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid']==imageid)), 'I_Airy2_fit'] = I_Airy2_fit
-        #     df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid']==imageid)), 'w1_um_fit'] = w1_um_fit
-        #     df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid']==imageid)), 'w2_um_fit'] = w2_um_fit
-        #     df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid']==imageid)), 'shiftx_um_fit'] = shiftx_um_fit
-        #     df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid']==imageid)), 'x1_um_fit'] = x1_um_fit
-        #     df0.loc[((df0['hdf5_file_name'] == hdf5_file_name_image_widget.value) & (df0['pinholes'] == dataset_image_args_widget.value[2]) & (df0['imageid']==imageid)), 'x2_um_fit'] = x2_um_fit
+        if save_to_df == True:
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit'] = wavelength_nm_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector'] = d_um_at_detector
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit'] = I_Airy1_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_fit'] = I_Airy2_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_fit'] = w1_um_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_fit'] = w2_um_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_fit'] = shiftx_um_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] = x1_um_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_fit'] = x2_um_fit
+
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_x_um'] = xi_x_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_y_um'] = xi_y_um
+            
+            
+
 
         plt.show()
         # fittingprogress_widget.value = 10
@@ -1107,7 +1113,7 @@ dph_settings_bgsubtracted_widget.observe(dph_settings_bgsubtracted_widget_change
 
 def datasets_widget_changed(change):
     dph_settings_bgsubtracted = []
-    for pattern in ['*'+ s + '.h5' for s in datasets_widget.value]: 
+    for pattern in ['*'+ s + '.h5' for s in datasets[datasets_widget.value]]: 
         dph_settings_bgsubtracted.extend(bgsubtracted_dir.glob(pattern))
     dph_settings_bgsubtracted_widget.options=dph_settings_bgsubtracted
     
@@ -1176,5 +1182,156 @@ dph_settings_bgsubtracted_widget_changed(None)
 
 # %%
 
+# How to get only the timestamp_pulse_id of the datasets?
+
+# name of dph_settings in datasets accessible by index:
+# print(datasets[list(datasets)[0]][0])
+
+# timestamp_pulse_ids = []
+# with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
+#     timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+# timestamp_pulse_ids
+# %%
+# loop over all datasets and create coherence plots:
+for dataset in list(datasets):
+    print(dataset)
+
+    # get all the files in a dataset:
+    files = []
+    # for set in [list(datasets)[0]]:
+    
+    for measurement in datasets[dataset]:
+        # print(measurement)
+        files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+    # get all the timestamps in these files:        
+    # datasets[list(datasets)[0]][0]
+    timestamp_pulse_ids = []
+    for f in files:
+        with h5py.File(f, "r") as hdf5_file:
+            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+    # create plot for the determined timestamps:
+    plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['gamma_fit'])
+    plt.xlim(0,2000)
+    plt.ylim(0,1)
+    plt.show()
+
+
+# %%
+# loop over all datasets and delete all fits and deconvolution results:
+remove_fits_from_df = False
+if remove_fits_from_df == True:
+    for dataset in list(datasets):
+        print(dataset)
+
+        # get all the files in a dataset:
+        files = []
+        # for set in [list(datasets)[0]]:
+        
+        for measurement in datasets[dataset]:
+            # print(measurement)
+            files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+        # get all the timestamps in these files:        
+        # datasets[list(datasets)[0]][0]
+        timestamp_pulse_ids = []
+        for f in files:
+            with h5py.File(f, "r") as hdf5_file:
+                timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'gamma_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'wavelength_nm_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'd_um_at_detector'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'I_Airy1_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'I_Airy2_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'w1_um_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'w2_um_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'shiftx_um_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'x1_um_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'x2_um_fit'] = np.nan
+
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'xi_x_um'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'xi_y_um'] = np.nan
+        
+
+
+
+# %%
+# to do: iterate over each measurement to create errorbars for each separation measurement
+
+
+
+# %% iterate over all images
+
+# delete all fits, create new df columns for new fits, etc.
+
+for imageid in imageid_profile_fit_widget.options:
+    imageid_profile_fit_widget.value = imageid
+
+
+
+# %% iterate over all images in a given measurement
+plotprofile_active_widget.value = True
+for imageid in imageid_profile_fit_widget.options:
+    imageid_profile_fit_widget.value = imageid
+
+
+
+# %% iterate over all measurements and images in a given dataset
+for measurement in dph_settings_bgsubtracted_widget.options:
+    dph_settings_bgsubtracted_widget.value = measurement
+    plotprofile_active_widget.value = True
+    for imageid in imageid_profile_fit_widget.options:
+        imageid_profile_fit_widget.value = imageid
+
+
+# %%
+# iterate over all datasets
+for dataset in list(datasets):
+    datasets_widget.value = dataset
+    plotprofile_active_widget.value = True
+print('done')
+# %%
+
+
+# iterate over everything
+for dataset in list(datasets):
+    datasets_widget.value = dataset
+    plotprofile_active_widget.value = True
+    for measurement in dph_settings_bgsubtracted_widget.options:
+        dph_settings_bgsubtracted_widget.value = measurement
+        plotprofile_active_widget.value = True
+        for imageid in imageid_profile_fit_widget.options:
+            imageid_profile_fit_widget.value = imageid
+# %%
+
+# %%
+
+
+for dataset in list(datasets):
+    print(dataset)
+
+    # get all the files in a dataset:
+    files = []
+    # for set in [list(datasets)[0]]:
+    
+    for measurement in datasets[dataset]:
+        # print(measurement)
+        files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+    # get all the timestamps in these files:        
+    # datasets[list(datasets)[0]][0]
+    timestamp_pulse_ids = []
+    for f in files:
+        with h5py.File(f, "r") as hdf5_file:
+            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+    # create plot for the determined timestamps:
+    plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['gamma_fit'])
+    # plt.xlim(0,2000)
+    # plt.ylim(0,1)
+    plt.show()
 
 # %%
