@@ -1,7 +1,7 @@
 # <codecell>
 # for colab notebook
 is_colab_notebook = False
-if is_colab_notebook == True
+if is_colab_notebook == True:
     ! git clone --branch develop https://github.com/ThomasWodzinski/coherence-analysis.git
     %cd coherence-analysis/
     ! pip install lmfit
