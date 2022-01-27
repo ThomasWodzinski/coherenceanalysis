@@ -1,9 +1,10 @@
-# %% imports
+# <codecell>
+# imports
 
 from coherencefinder.deconvolution_module import calc_sigma_F_gamma_um, deconvmethod, normalize
 from coherencefinder.fitting_module import Airy, find_sigma, fit_profile
 
-# %% other imports
+
 
 import time
 import numpy as np
@@ -68,7 +69,7 @@ import os.path
 # %matplotlib inline
 
 
-# %% Defining paths and loading files
+# Defining paths and loading files
 
 """# Mount drive and define paths"""
 
@@ -279,7 +280,7 @@ if load_df_fits_csv == True:
 df0 = pd.merge(df0, df_fits, on="timestamp_pulse_id", how="outer")
 
 
-#%% """# List all groups inside the hd5file"""
+# """# List all groups inside the hd5file"""
 
 # with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
 
@@ -289,7 +290,7 @@ df0 = pd.merge(df0, df_fits, on="timestamp_pulse_id", how="outer")
 #     hdf5_file.visit(printname)
 
 
-# %% """# display bgsubtracted images"""
+# """# display bgsubtracted images"""
 
 
 # with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
@@ -337,7 +338,7 @@ df0 = pd.merge(df0, df_fits, on="timestamp_pulse_id", how="outer")
 #     # why is this not giving the same profile?? in the GUI a width of 200 is defined. what was actually calculated?
 
 
-# %% creating frontend
+# creating frontend
 
 
 # Widget definitions
@@ -1121,7 +1122,7 @@ def datasets_widget_changed(change):
 datasets_widget.observe(datasets_widget_changed, names="value")
 
 
-#%% getting all parameters from the file
+# getting all parameters from the file
 
 
 with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
@@ -1180,7 +1181,7 @@ display(
 dph_settings_bgsubtracted_widget_changed(None)
 
 
-# %%
+# 
 
 # How to get only the timestamp_pulse_id of the datasets?
 
@@ -1192,7 +1193,7 @@ dph_settings_bgsubtracted_widget_changed(None)
 #     timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
 # timestamp_pulse_ids
-# %%
+# <codecell>
 # loop over all datasets and create coherence plots:
 for dataset in list(datasets):
     print(dataset)
@@ -1219,7 +1220,8 @@ for dataset in list(datasets):
     plt.show()
 
 
-# %%
+
+# <codecell>
 # loop over all datasets and delete all fits and deconvolution results:
 remove_fits_from_df = False
 if remove_fits_from_df == True:
@@ -1256,14 +1258,8 @@ if remove_fits_from_df == True:
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'xi_y_um'] = np.nan
         
 
-
-
-# %%
-# to do: iterate over each measurement to create errorbars for each separation measurement
-
-
-
-# %% iterate over all images
+# <codecell>
+# iterate over all images
 
 # delete all fits, create new df columns for new fits, etc.
 
@@ -1272,14 +1268,16 @@ for imageid in imageid_profile_fit_widget.options:
 
 
 
-# %% iterate over all images in a given measurement
+# <codecell>
+# iterate over all images in a given measurement
 plotprofile_active_widget.value = True
 for imageid in imageid_profile_fit_widget.options:
     imageid_profile_fit_widget.value = imageid
 
 
 
-# %% iterate over all measurements and images in a given dataset
+# <codecell>
+# # iterate over all measurements and images in a given dataset
 for measurement in dph_settings_bgsubtracted_widget.options:
     dph_settings_bgsubtracted_widget.value = measurement
     plotprofile_active_widget.value = True
@@ -1287,15 +1285,15 @@ for measurement in dph_settings_bgsubtracted_widget.options:
         imageid_profile_fit_widget.value = imageid
 
 
-# %%
+# <codecell>
 # iterate over all datasets
 for dataset in list(datasets):
     datasets_widget.value = dataset
     plotprofile_active_widget.value = True
 print('done')
-# %%
 
 
+# <codecell>
 # iterate over everything
 for dataset in list(datasets):
     datasets_widget.value = dataset
@@ -1305,11 +1303,10 @@ for dataset in list(datasets):
         plotprofile_active_widget.value = True
         for imageid in imageid_profile_fit_widget.options:
             imageid_profile_fit_widget.value = imageid
-# %%
-
-# %%
 
 
+# <codecell>
+# create plots fitting vs deconvolution
 for dataset in list(datasets):
     print(dataset)
 
