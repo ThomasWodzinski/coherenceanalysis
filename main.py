@@ -83,6 +83,7 @@ import os.path
 
 if is_colab_notebook == True:
     import_from_google_drive_in_colab = True
+    import_from_local_google_drive = False
 else:
     import_from_google_drive_in_colab = False
     import_from_local_google_drive = True
