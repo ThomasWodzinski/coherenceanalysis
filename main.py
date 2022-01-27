@@ -1,4 +1,12 @@
 # <codecell>
+# for colab notebook
+is_colab_notebook = False
+if is_colab_notebook == True
+    ! git clone --branch develop https://github.com/ThomasWodzinski/coherence-analysis.git
+    %cd coherence-analysis/
+    ! pip install lmfit
+# <codecell>
+
 # imports
 
 from coherencefinder.deconvolution_module import calc_sigma_F_gamma_um, deconvmethod, normalize
@@ -73,8 +81,10 @@ import os.path
 
 """# Mount drive and define paths"""
 
-
-import_from_google_drive_in_colab = False
+if is_colab_notebook == True:
+    import_from_google_drive_in_colab = True
+else:
+    import_from_google_drive_in_colab = False
 if import_from_google_drive_in_colab == True:
   # use data stored in own google drive location
   from google.colab import drive
