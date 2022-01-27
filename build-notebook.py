@@ -1,6 +1,6 @@
 # adpated from https://stackoverflow.com/a/35720002
 
-from IPython.nbformat import v3, v4
+from nbformat import v3, v4 
 
 with open("main.py") as fpin:
     text = fpin.read()
