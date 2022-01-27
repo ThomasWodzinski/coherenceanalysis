@@ -85,6 +85,7 @@ if is_colab_notebook == True:
     import_from_google_drive_in_colab = True
 else:
     import_from_google_drive_in_colab = False
+    import_from_local_google_drive = True
 if import_from_google_drive_in_colab == True:
   # use data stored in own google drive location
   from google.colab import drive
@@ -98,7 +99,7 @@ if import_from_google_drive_in_colab == True:
   #prebgsubtracted_dir
   #bgsubtracted_dir = Path.joinpath('/content/gdrive/MyDrive/PhD/coherence/data/scratch_cc/','bgsubtracted')
 
-import_from_local_google_drive = True
+
 if import_from_local_google_drive == True:
     data_dir = Path("g:/My Drive/PhD/coherence/data/")
     useful_dir = Path("g:/My Drive/PhD/coherence/data/useful/")
