@@ -405,8 +405,11 @@ def deconvmethod_2d_x(
         )
         # plt.plot(xdata, gaussianbeam(xdata, 1, popt_gauss[0] ,popt_gauss[1], 0), 'r-', label='fit: m=%5.1f px, w=%5.1f px' % tuple([popt_gauss[0] ,popt_gauss[1]]))
         ax.axhline(0, color="k")
+        ax.axvline(-(n/2-crop_px) * dX_1 * 1e3, color="k")
+        ax.axvline((n/2-crop_px) * dX_1 * 1e3, color="k")
         ax.set_xlabel("x / mm", fontsize=8)
         ax.set_ylabel("Intensity / a.u.", fontsize=8)
+        ax.set_ylim(-0.2,1.2)
         # ax.set_xlim([xdata[0], xdata[-1]])
 
     # determine chi2 distance
