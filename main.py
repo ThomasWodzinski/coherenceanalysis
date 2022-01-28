@@ -1222,7 +1222,7 @@ if remove_fits_from_df == True:
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'd_um_at_detector'] = np.nan
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'I_Airy1_fit'] = np.nan
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'I_Airy2_fit'] = np.nan
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'w1_um_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'w1_um_fit'] = np.nan
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'w2_um_fit'] = np.nan
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'shiftx_um_fit'] = np.nan
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'x1_um_fit'] = np.nan
