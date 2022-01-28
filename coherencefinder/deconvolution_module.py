@@ -329,8 +329,11 @@ def deconvmethod_2d_x(
             ax.plot(xdata, partiallycoherent_profile, "b-", label="measured partially coherent", linewidth=1)
             ax.plot(xdata, fullycoherent_profile, "r-", label="recovered fully coherent", linewidth=1)
             ax.axhline(0, color="k")
+            ax.axvline(-(n/2-crop_px) * dX_1 * 1e3, color="k")
+            ax.axvline((n/2-crop_px) * dX_1 * 1e3, color="k")
             ax.set_xlabel("x / mm", fontsize=8)
             ax.set_ylabel("Intensity / a.u.", fontsize=8)
+            ax.set_ylim(-0.2,1.2)
 
             # plt.title('d / $\mu$m = '+str(int(separation_um)) + ' coherence length $\\xi_x$ / $\mu$m = ' + str(round(xi_x_um_list[index_opt],2)) + ' $\\xi_y$ / $\mu$m = ' + str(round(xi_y_um_list[index_opt],2)), fontsize=16)
 
