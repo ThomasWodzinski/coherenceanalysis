@@ -301,7 +301,7 @@ def deconvmethod_2d_x(
         )
 
         fullycoherent_profile = fullycoherent_profile / np.max(
-            fullycoherent_profile[200:-200]
+            fullycoherent_profile[crop_px:-crop_px]
         )  # ignore what happens on the edges
 
         fullycoherent_profile_min = np.min(fullycoherent_profile[crop_px:-crop_px])  # ignore what happens on the edges
