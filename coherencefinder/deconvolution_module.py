@@ -213,6 +213,7 @@ def deconvmethod_2d_x(
     xi_um_guess,
     sigma_y_F_gamma_um_guess,
     crop_px,
+    sigma_x_F_gamma_um_multiplier,
     create_figure,
 ):
 
@@ -311,13 +312,13 @@ def deconvmethod_2d_x(
             # print(sigma_x_F_gamma_um_list)
             # print(fullycoherent_profile_min_list)
             ax70.scatter(sigma_x_F_gamma_um, fullycoherent_profile_min)
-            ax70.set_xlim([sigma_x_F_gamma_um_min, sigma_x_F_gamma_um_max])
-            ax70.set_ylim(
-                [
-                    -np.min(partiallycoherent_profile[crop_px:-crop_px]),
-                    np.min(partiallycoherent_profile[crop_px:-crop_px]),
-                ]
-            )
+            # ax70.set_xlim([sigma_x_F_gamma_um_min, sigma_x_F_gamma_um_max])
+            # ax70.set_ylim(
+            #     [
+            #         -np.min(partiallycoherent_profile[crop_px:-crop_px]),
+            #         np.min(partiallycoherent_profile[crop_px:-crop_px]),
+            #     ]
+            # )
             ax70.axhline(0, color="k")
             # plt.title('sigma_x_F_gamma=' + str(sigma_x_F_gamma_um) + ' sigma_y_F_gamma=' + str(sigma_y_F_gamma_um) + ' fullycoherent_profile_min=' + str(fullycoherent_profile_min))
 
@@ -341,7 +342,7 @@ def deconvmethod_2d_x(
         if fullycoherent_profile_min < 0:
             sigma_x_F_gamma_um = sigma_x_F_gamma_um / 2
         else:
-            sigma_x_F_gamma_um = sigma_x_F_gamma_um * 1.2
+            sigma_x_F_gamma_um = sigma_x_F_gamma_um * sigma_x_F_gamma_um_multiplier
 
         i = i + 1
 
@@ -356,6 +357,7 @@ def deconvmethod_2d_x(
     b = popt_func[1]
     c = popt_func[2]
 
+    time.sleep(5)
     sigma_x_F_gamma_um_opt = brenth(func, np.min(xdata), np.max(xdata), args=(a, b, c))
 
     if create_figure == True:
@@ -486,6 +488,7 @@ def deconvmethod(
     xi_um_guess,
     sigma_y_F_gamma_um_guess,
     crop_px,
+    sigma_x_F_gamma_um_multiplier,
     create_figure,
 ):
 
@@ -503,6 +506,7 @@ def deconvmethod(
             xi_um_guess,
             sigma_y_F_gamma_um_guess,
             crop_px,
+            sigma_x_F_gamma_um_multiplier,
             create_figure,
         )[-1],
         bounds=[sigma_y_F_gamma_um_guess / 4, sigma_y_F_gamma_um_guess * 2],
@@ -549,6 +553,7 @@ def deconvmethod(
         xi_um_guess,
         sigma_y_F_gamma_um_guess,
         crop_px,
+        sigma_x_F_gamma_um_multiplier,
         create_figure,
     )
 

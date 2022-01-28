@@ -333,6 +333,7 @@ statustext_widget = widgets.Text(value="", placeholder="status", description="",
 
 plotprofile_active_widget = widgets.Checkbox(value=False, description="active", disabled=False)
 do_deconvmethod_widget = widgets.Checkbox(value=False, description="do_deconvmethod", disabled=False)
+sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.2, description='sigma_x_F_gamma_um_multiplier_widget')
 
 imageid_profile_fit_widget = widgets.Dropdown(
     # options=imageid_widget.options,
@@ -428,6 +429,7 @@ normfactor_do_fit_widget = widgets.Checkbox(value=False, description="fit")
 def plotprofile(
     plotprofile_active,
     do_deconvmethod,
+    sigma_x_F_gamma_um_multiplier,
     hdf5_file_path,
     imageid,
     savefigure,
@@ -612,7 +614,7 @@ def plotprofile(
             # guess sigma_y_F_gamma_um based on the xi_um_guess assuming to be the beams intensity rms width
             sigma_y_F_gamma_um_guess = calc_sigma_F_gamma_um(xi_um_guess, n, dX_1, setting_wavelength_nm, False)
             crop_px = 200
-            create_figure = False
+            create_figure = True
 
             # Ignoring OptimizeWarning. Supressing warning as described in https://stackoverflow.com/a/14463362:
             with warnings.catch_warnings():
@@ -642,6 +644,7 @@ def plotprofile(
                     xi_um_guess,
                     sigma_y_F_gamma_um_guess,
                     crop_px,
+                    sigma_x_F_gamma_um_multiplier,
                     create_figure,
                 )
             deconvmethod_text_widget.value = r"%.2fum" % (xi_x_um) + r", %.2fum" % (xi_y_um)
@@ -929,6 +932,7 @@ column0 = widgets.VBox(
     [
         plotprofile_active_widget,
         do_deconvmethod_widget,
+        sigma_x_F_gamma_um_multiplier_widget,
         imageid_profile_fit_widget,
         savefigure_profile_fit_widget,
         save_to_df_widget,
@@ -996,6 +1000,7 @@ plotprofile_interactive_output = interactive_output(
     {
         "plotprofile_active": plotprofile_active_widget,
         "do_deconvmethod": do_deconvmethod_widget,
+        "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_widget,
         "hdf5_file_path": dph_settings_bgsubtracted_widget,
         "imageid": imageid_profile_fit_widget,
         "savefigure": savefigure_profile_fit_widget,
@@ -1197,7 +1202,7 @@ for dataset in list(datasets):
 
 # <codecell>
 # loop over all datasets and delete all fits and deconvolution results:
-remove_fits_from_df = False
+remove_fits_from_df = True
 if remove_fits_from_df == True:
     for dataset in list(datasets):
         print(dataset)
