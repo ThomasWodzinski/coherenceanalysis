@@ -372,14 +372,14 @@ def deconvmethod_2d_x(
     F_gamma = gauss2d(X1_axis / dX_1, Y1_axis / dY_1, sigma_x_F_gamma / dX_1, sigma_y_F_gamma / dX_1)
 
     fullycoherent_opt = restoration.wiener(partiallycoherent, F_gamma, 1)
-    fullycoherent_opt = fullycoherent_opt / np.max(fullycoherent_opt[200:-200, 200:-200])
+    fullycoherent_opt = fullycoherent_opt / np.max(fullycoherent_opt[crop_px:-crop_px, crop_px:-crop_px])
 
     fullycoherent_profile_opt = np.mean(
         fullycoherent_opt[pixis_centery_px - int(profilewidth / 2) : pixis_centery_px + int(profilewidth / 2), :],
         axis=0,
     )
     fullycoherent_profile_opt = fullycoherent_profile_opt / np.max(
-        fullycoherent_profile_opt[200:-200]
+        fullycoherent_profile_opt[crop_px:-crop_px]
     )  # ignore what happens on the edges
 
     F_gamma = gauss2d(
