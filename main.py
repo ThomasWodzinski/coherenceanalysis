@@ -934,6 +934,7 @@ column0 = widgets.VBox(
         plotprofile_active_widget,
         do_deconvmethod_widget,
         sigma_x_F_gamma_um_multiplier_widget,
+        crop_px_widget,
         imageid_profile_fit_widget,
         savefigure_profile_fit_widget,
         save_to_df_widget,
