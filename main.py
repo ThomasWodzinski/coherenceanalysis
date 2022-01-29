@@ -22,6 +22,7 @@ from coherencefinder.fitting_module import Airy, find_sigma, fit_profile
 
 
 import time
+from datetime import datetime
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -1270,10 +1271,13 @@ for imageid in imageid_profile_fit_widget.options:
 
 # <codecell>
 # iterate over all images in a given measurement
+start = datetime.now()
 plotprofile_active_widget.value = True
 for imageid in imageid_profile_fit_widget.options:
     imageid_profile_fit_widget.value = imageid
-
+end = datetime.now()
+time_taken = end - start
+print(time_taken)
 
 
 # <codecell>
@@ -1295,15 +1299,24 @@ print('done')
 
 # <codecell>
 # iterate over everything
+start = datetime.now()
 for dataset in list(datasets):
+    print(dataset)
     datasets_widget.value = dataset
     plotprofile_active_widget.value = True
     for measurement in dph_settings_bgsubtracted_widget.options:
+        print(measurement)
         dph_settings_bgsubtracted_widget.value = measurement
         plotprofile_active_widget.value = True
+        start_measurement = datetime.now()
         for imageid in imageid_profile_fit_widget.options:
             imageid_profile_fit_widget.value = imageid
-
+        end_measurement = datetime.now()
+        time_taken = end_measurement - start_measurement
+        print(time_taken)
+end = datetime.now()
+time_taken = end - start
+print(time_taken)
 
 # <codecell>
 # create plots fitting vs deconvolution
