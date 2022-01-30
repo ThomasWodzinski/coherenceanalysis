@@ -20,7 +20,6 @@ from coherencefinder.deconvolution_module import calc_sigma_F_gamma_um, deconvme
 from coherencefinder.fitting_module import Airy, find_sigma, fit_profile
 
 
-
 import time
 from datetime import datetime
 import numpy as np
@@ -1141,11 +1140,12 @@ def update_df_fits_csv_save_widget(change):
         df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
         save_df_fits = True
         if save_df_fits == True:
-            df_fits.to_csv(Path.joinpath(data_dir,str('df_fits_'+datetime.now()+'.csv')))
+            # df_fits.to_csv(Path.joinpath(data_dir,str('df_fits_'+datetime.now()+'.csv')))
+            df_fits.to_csv(Path.joinpath(data_dir,str('df_fits_test.csv')))
         df_fits_csv_save_widget.value = False
 
 df_fits_csv_save_widget.observe(update_df_fits_csv_save_widget, names='value')
-
+# not working, why? impement also which file to load/import, which ones to export/save, ...
 
 
 
