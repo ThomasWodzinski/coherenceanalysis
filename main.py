@@ -361,6 +361,16 @@ savefigure_profile_fit_widget = widgets.Checkbox(value=False, description="savef
 
 save_to_df_widget = widgets.Checkbox(value=False, description="save_to_df", disabled=False)
 
+df_fits_csv_save_widget = widgets.ToggleButton(
+    value=False,
+    description='save df_fits to csv',
+    disabled=False,
+    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+    tooltip='save df_fits to csv',
+    icon='check'
+)
+
+
 do_textbox_widget = widgets.Checkbox(value=False, description="do_textbox", disabled=False)
 
 textarea_widget = widgets.Textarea(value="info", placeholder="Type something", description="Fitting:", disabled=False)
@@ -957,6 +967,7 @@ column0 = widgets.VBox(
         imageid_profile_fit_widget,
         savefigure_profile_fit_widget,
         save_to_df_widget,
+        df_fits_csv_save_widget,
         do_textbox_widget,
     ]
 )
@@ -1121,6 +1132,21 @@ def datasets_widget_changed(change):
     
 
 datasets_widget.observe(datasets_widget_changed, names="value")
+
+
+
+def update_df_fits_csv_save_widget(change):
+    if df_fits_csv_save_widget.value == True:
+        # save fits to csv
+        df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
+        save_df_fits = True
+        if save_df_fits == True:
+            df_fits.to_csv(Path.joinpath(data_dir,str('df_fits_'+datetime.now()+'.csv')))
+        df_fits_csv_save_widget.value = False
+
+df_fits_csv_save_widget.observe(update_df_fits_csv_save_widget, names='value')
+
+
 
 
 # getting all parameters from the file
