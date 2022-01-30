@@ -395,9 +395,9 @@ def deconvmethod_2d_x(
         fullycoherent_profile_opt[crop_px:-crop_px]
     )  # ignore what happens on the edges
 
-    F_gamma = gauss2d(
-        X1_axis / dX_1, Y1_axis / dY_1, sigma_x_F_gamma_um_opt * 1e-6 / dX_1, sigma_y_F_gamma_um * 1e-6 / dX_1
-    )
+    # F_gamma = gauss2d(
+    #     X1_axis / dX_1, Y1_axis / dY_1, sigma_x_F_gamma_um_opt * 1e-6 / dX_1, sigma_y_F_gamma_um * 1e-6 / dX_1
+    # )
     gamma = fftpack.fftshift(fftpack.ifftn(fftpack.ifftshift(F_gamma)))
 
     partiallycoherent_rec = np.abs(convolve(fullycoherent_opt, F_gamma))
@@ -535,12 +535,12 @@ def deconvmethod(
                 sigma_y_F_gamma_um_guess,
                 crop_px,
                 sigma_x_F_gamma_um_multiplier,
+                scan_x,
                 create_figure,
             )[-1],
             bounds=[sigma_y_F_gamma_um_guess / 4, sigma_y_F_gamma_um_guess * 2],
             method="bounded",
-            options={"disp": 1, "maxiter": 0, "xatol": 1e-1},  # "disp": 3 to show info for all iterations
-            # options={"disp": 0, "maxiter": 50, "xatol": 1e-1},  # "disp": 3 to show info for all iterations
+            options={"disp": 0, "maxiter": 50, "xatol": 1e-1},  # "disp": 3 to show info for all iterations
         )
         
         # start = datetime.now()
@@ -556,36 +556,36 @@ def deconvmethod(
 
         # use the optimal sigma_y_F_gamma_um_guess to determine the corresponding sigma_x_F_gamma_um and with it the coherence lengths xi_x and xi_y
         sigma_y_F_gamma_um_guess = chi2distance_minimize_result_bounded.x
-    else:
-        (
-            partiallycoherent_profile,
-            fullycoherent_opt,
-            fullycoherent_profile_opt,
-            partiallycoherent_rec,
-            partiallycoherent_rec_profile,
-            sigma_x_F_gamma_um_opt,
-            sigma_y_F_gamma_um,
-            F_gamma,
-            abs_gamma,
-            xi_x_um,
-            xi_y_um,
-            I_bp,
-            dX_2,
-            chi2distance,
-        ) = deconvmethod_2d_x(
-            partiallycoherent,
-            z,
-            dX_1,
-            profilewidth,
-            pixis_centery_px,
-            wavelength,
-            xi_um_guess,
-            sigma_y_F_gamma_um_guess,
-            crop_px,
-            sigma_x_F_gamma_um_multiplier,
-            scan_x,
-            create_figure,
-        )
+    
+    (
+        partiallycoherent_profile,
+        fullycoherent_opt,
+        fullycoherent_profile_opt,
+        partiallycoherent_rec,
+        partiallycoherent_rec_profile,
+        sigma_x_F_gamma_um_opt,
+        sigma_y_F_gamma_um,
+        F_gamma,
+        abs_gamma,
+        xi_x_um,
+        xi_y_um,
+        I_bp,
+        dX_2,
+        chi2distance,
+    ) = deconvmethod_2d_x(
+        partiallycoherent,
+        z,
+        dX_1,
+        profilewidth,
+        pixis_centery_px,
+        wavelength,
+        xi_um_guess,
+        sigma_y_F_gamma_um_guess,
+        crop_px,
+        sigma_x_F_gamma_um_multiplier,
+        scan_x,
+        create_figure,
+    )
 
     return (
         partiallycoherent_profile,
