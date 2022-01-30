@@ -335,6 +335,8 @@ def deconvmethod_2d_x(
             ax.set_ylabel("Intensity / a.u.", fontsize=8)
             ax.set_ylim(-0.2,1.2)
 
+            plt.title('i='+str(i))
+
             # plt.title('d / $\mu$m = '+str(int(separation_um)) + ' coherence length $\\xi_x$ / $\mu$m = ' + str(round(xi_x_um_list[index_opt],2)) + ' $\\xi_y$ / $\mu$m = ' + str(round(xi_y_um_list[index_opt],2)), fontsize=16)
 
             # see https://stackoverflow.com/a/29675706
@@ -395,22 +397,7 @@ def deconvmethod_2d_x(
     )
     partiallycoherent_rec_profile = normalize(partiallycoherent_rec_profile)
 
-    if create_figure == True:
-        xdata = np.linspace((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, n)
-        ax.cla()
-        ax.plot(xdata, partiallycoherent_profile, "b-", label="measured partially coherent", linewidth=1)
-        ax.plot(xdata, fullycoherent_profile_opt, "r-", label="recovered fully coherent", linewidth=1)
-        ax.plot(
-            xdata, partiallycoherent_rec_profile, "g-", label="recovered partially coherent", linewidth=1,
-        )
-        # plt.plot(xdata, gaussianbeam(xdata, 1, popt_gauss[0] ,popt_gauss[1], 0), 'r-', label='fit: m=%5.1f px, w=%5.1f px' % tuple([popt_gauss[0] ,popt_gauss[1]]))
-        ax.axhline(0, color="k")
-        ax.axvline(-(n/2-crop_px) * dX_1 * 1e3, color="k")
-        ax.axvline((n/2-crop_px) * dX_1 * 1e3, color="k")
-        ax.set_xlabel("x / mm", fontsize=8)
-        ax.set_ylabel("Intensity / a.u.", fontsize=8)
-        ax.set_ylim(-0.2,1.2)
-        # ax.set_xlim([xdata[0], xdata[-1]])
+    
 
     # determine chi2 distance
     number_of_bins = 100
@@ -451,6 +438,25 @@ def deconvmethod_2d_x(
 
     A_bp = fftpack.fftshift(fftpack.ifftn(fftpack.ifftshift(np.sqrt(partiallycoherent))))  # amplitude
     I_bp = np.abs(A_bp) ** 2  # intensity
+
+
+    if create_figure == True:
+        xdata = np.linspace((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, n)
+        ax.cla()
+        ax.plot(xdata, partiallycoherent_profile, "b-", label="measured partially coherent", linewidth=1)
+        ax.plot(xdata, fullycoherent_profile_opt, "r-", label="recovered fully coherent", linewidth=1)
+        ax.plot(
+            xdata, partiallycoherent_rec_profile, "g-", label="recovered partially coherent", linewidth=1,
+        )
+        # plt.plot(xdata, gaussianbeam(xdata, 1, popt_gauss[0] ,popt_gauss[1], 0), 'r-', label='fit: m=%5.1f px, w=%5.1f px' % tuple([popt_gauss[0] ,popt_gauss[1]]))
+        ax.axhline(0, color="k")
+        ax.axvline(-(n/2-crop_px) * dX_1 * 1e3, color="k")
+        ax.axvline((n/2-crop_px) * dX_1 * 1e3, color="k")
+        ax.set_xlabel("x / mm", fontsize=8)
+        ax.set_ylabel("Intensity / a.u.", fontsize=8)
+        ax.set_ylim(-0.2,1.2)
+        # ax.set_xlim([xdata[0], xdata[-1]])
+        plt.title('chi2distanance='+str(chi2distance))
 
     return (
         partiallycoherent_profile,
@@ -517,7 +523,8 @@ def deconvmethod(
         )[-1],
         bounds=[sigma_y_F_gamma_um_guess / 4, sigma_y_F_gamma_um_guess * 2],
         method="bounded",
-        options={"disp": 0, "maxiter": 50, "xatol": 1e-1},  # "disp": 3 to show info for all iterations
+        options={"disp": 1, "maxiter": 0, "xatol": 1e-1},  # "disp": 3 to show info for all iterations
+        # options={"disp": 0, "maxiter": 50, "xatol": 1e-1},  # "disp": 3 to show info for all iterations
     )
     
     # start = datetime.now()
