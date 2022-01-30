@@ -278,7 +278,7 @@ def deconvmethod_2d_x(
     if create_figure == True:
         ax70.cla()
 
-    # guess sigma_x_F_gamma_um to be the same as the beams rms width
+    # to do: guess sigma_x_F_gamma_um to be the same as the beams rms width
     
     if scan_x == True:
         sigma_x_F_gamma_um_guess = calc_sigma_F_gamma_um(xi_um_guess, n, dX_1, wavelength * 1e9, False)
