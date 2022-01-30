@@ -346,6 +346,7 @@ statustext_widget = widgets.Text(value="", placeholder="status", description="",
 
 plotprofile_active_widget = widgets.Checkbox(value=False, description="active", disabled=False)
 do_deconvmethod_widget = widgets.Checkbox(value=False, description="do_deconvmethod", disabled=False)
+scan_x_widget = widgets.Checkbox(value=False, description="scan_x", disabled=False)
 sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.2, description='sigma_x_F_gamma_um_multiplier_widget')
 crop_px_widget = widgets.IntText(value=200, description='crop_px')
 
@@ -453,6 +454,7 @@ normfactor_do_fit_widget = widgets.Checkbox(value=False, description="fit")
 def plotprofile(
     plotprofile_active,
     do_deconvmethod,
+    scan_x,
     sigma_x_F_gamma_um_multiplier,
     crop_px,
     hdf5_file_path,
@@ -681,6 +683,7 @@ def plotprofile(
                     sigma_y_F_gamma_um_guess,
                     crop_px,
                     sigma_x_F_gamma_um_multiplier,
+                    scan_x,
                     create_figure,
                 )
             deconvmethod_text_widget.value = r"%.2fum" % (xi_x_um) + r", %.2fum" % (xi_y_um)
@@ -961,6 +964,7 @@ column0 = widgets.VBox(
     [
         plotprofile_active_widget,
         do_deconvmethod_widget,
+        scan_x_widget,
         sigma_x_F_gamma_um_multiplier_widget,
         crop_px_widget,
         imageid_profile_fit_widget,
@@ -1031,6 +1035,7 @@ plotprofile_interactive_output = interactive_output(
     {
         "plotprofile_active": plotprofile_active_widget,
         "do_deconvmethod": do_deconvmethod_widget,
+        "scan_x" : scan_x_widget,
         "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_widget,
         "crop_px" : crop_px_widget,
         "hdf5_file_path": dph_settings_bgsubtracted_widget,
