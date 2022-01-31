@@ -371,7 +371,11 @@ def deconvmethod_2d_x(
     c = popt_func[2]
 
     time.sleep(5)
-    sigma_x_F_gamma_um_opt = brenth(func, np.min(xdata), np.max(xdata), args=(a, b, c))
+    try:
+        sigma_x_F_gamma_um_opt = brenth(func, np.min(xdata), np.max(xdata), args=(a, b, c))
+    except:
+        sigma_x_F_gamma_um_opt = np.max(xdata)
+
 
     if create_figure == True:
         ax70.plot(np.array(sigma_x_F_gamma_um_list), func(np.array(sigma_x_F_gamma_um_list), a, b, c))
