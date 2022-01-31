@@ -472,7 +472,7 @@ def deconvmethod_2d_x(
         ax.set_ylabel("Intensity / a.u.", fontsize=8)
         ax.set_ylim(-0.2,1.2)
         # ax.set_xlim([xdata[0], xdata[-1]])
-        plt.title('chi2distanance='+str(chi2distance))
+        plt.title('chi2distance='+str(chi2distance))
 
     return (
         partiallycoherent_profile,
