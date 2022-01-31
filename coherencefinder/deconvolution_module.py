@@ -410,7 +410,8 @@ def deconvmethod_2d_x(
         partiallycoherent_rec[pixis_centery_px - int(profilewidth / 2) : pixis_centery_px + int(profilewidth / 2), :],
         axis=0,
     )
-    partiallycoherent_rec_profile = normalize(partiallycoherent_rec_profile)
+    partiallycoherent_rec_profile = partiallycoherent_rec_profile / np.max(partiallycoherent_rec_profile[crop_px:-crop_px])
+    
 
     
 
