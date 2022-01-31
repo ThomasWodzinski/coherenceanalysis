@@ -346,6 +346,7 @@ statustext_widget = widgets.Text(value="", placeholder="status", description="",
 
 plotprofile_active_widget = widgets.Checkbox(value=False, description="active", disabled=False)
 do_deconvmethod_widget = widgets.Checkbox(value=False, description="do_deconvmethod", disabled=False)
+xi_um_guess_widget = widgets.FloatText(value=475, description='xi_um_guess')
 scan_x_widget = widgets.Checkbox(value=False, description="scan_x", disabled=False)
 sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.2, description='sigma_x_F_gamma_um_multiplier_widget')
 crop_px_widget = widgets.IntText(value=200, description='crop_px')
@@ -454,6 +455,7 @@ normfactor_do_fit_widget = widgets.Checkbox(value=False, description="fit")
 def plotprofile(
     plotprofile_active,
     do_deconvmethod,
+    xi_um_guess,
     scan_x,
     sigma_x_F_gamma_um_multiplier,
     crop_px,
@@ -649,7 +651,7 @@ def plotprofile(
             profilewidth = 200  # pixis_avg_width  # defined where?
             pixis_centery_px = int(pixis_centery_px)
             wavelength = setting_wavelength_nm * 1e-9
-            xi_um_guess = 475
+            # xi_um_guess = 475
             # guess sigma_y_F_gamma_um based on the xi_um_guess assuming to be the beams intensity rms width
             sigma_y_F_gamma_um_guess = calc_sigma_F_gamma_um(xi_um_guess, n, dX_1, setting_wavelength_nm, False)
             create_figure = True
@@ -964,6 +966,7 @@ column0 = widgets.VBox(
     [
         plotprofile_active_widget,
         do_deconvmethod_widget,
+        xi_um_guess_widget,
         scan_x_widget,
         sigma_x_F_gamma_um_multiplier_widget,
         crop_px_widget,
@@ -1036,6 +1039,7 @@ plotprofile_interactive_output = interactive_output(
         "plotprofile_active": plotprofile_active_widget,
         "do_deconvmethod": do_deconvmethod_widget,
         "scan_x" : scan_x_widget,
+        "xi_um_guess" : xi_um_guess_widget,
         "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_widget,
         "crop_px" : crop_px_widget,
         "hdf5_file_path": dph_settings_bgsubtracted_widget,
