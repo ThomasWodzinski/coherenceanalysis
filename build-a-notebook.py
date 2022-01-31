@@ -8,6 +8,8 @@ with open("notebook_preamble.py") as fpin:
 with open("main.py") as fpin:
     text2 = fpin.read()
 
+# text2 = '# <codecell>\n%load main.py'
+
 text = text1 + '\n'
 text += text2
 

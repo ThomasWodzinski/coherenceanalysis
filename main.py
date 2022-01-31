@@ -1,3 +1,16 @@
+# <codecell>
+
+from pathlib import Path  # see https://docs.python.org/3/library/pathlib.html#basic-use
+
+## Define paths
+
+data_dir = Path("g:/My Drive/PhD/coherence/data/")
+useful_dir = Path("g:/My Drive/PhD/coherence/data/useful/")
+bgsubtracted_dir = Path("g:/My Drive/PhD/coherence/data/bgsubtracted/")
+print(useful_dir)
+scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
+# prebgsubtracted_dir
+# bgsubtracted_dir = Path.joinpath('/content/gdrive/MyDrive/PhD/coherence/data/scratch_cc/','bgsubtracted')
 
 # <codecell>
 
@@ -7,8 +20,8 @@ from coherencefinder.deconvolution_module import calc_sigma_F_gamma_um, deconvme
 from coherencefinder.fitting_module import Airy, find_sigma, fit_profile
 
 
-
 import time
+from datetime import datetime
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -333,6 +346,10 @@ statustext_widget = widgets.Text(value="", placeholder="status", description="",
 
 plotprofile_active_widget = widgets.Checkbox(value=False, description="active", disabled=False)
 do_deconvmethod_widget = widgets.Checkbox(value=False, description="do_deconvmethod", disabled=False)
+xi_um_guess_widget = widgets.FloatText(value=475, description='xi_um_guess')
+scan_x_widget = widgets.Checkbox(value=False, description="scan_x", disabled=False)
+sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.2, description='sigma_x_F_gamma_um_multiplier_widget')
+crop_px_widget = widgets.IntText(value=200, description='crop_px')
 
 imageid_profile_fit_widget = widgets.Dropdown(
     # options=imageid_widget.options,
@@ -344,6 +361,16 @@ imageid_profile_fit_widget = widgets.Dropdown(
 savefigure_profile_fit_widget = widgets.Checkbox(value=False, description="savefigure", disabled=False)
 
 save_to_df_widget = widgets.Checkbox(value=False, description="save_to_df", disabled=False)
+
+df_fits_csv_save_widget = widgets.ToggleButton(
+    value=False,
+    description='save df_fits to csv',
+    disabled=False,
+    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+    tooltip='save df_fits to csv',
+    icon='check'
+)
+
 
 do_textbox_widget = widgets.Checkbox(value=False, description="do_textbox", disabled=False)
 
@@ -428,6 +455,10 @@ normfactor_do_fit_widget = widgets.Checkbox(value=False, description="fit")
 def plotprofile(
     plotprofile_active,
     do_deconvmethod,
+    xi_um_guess,
+    scan_x,
+    sigma_x_F_gamma_um_multiplier,
+    crop_px,
     hdf5_file_path,
     imageid,
     savefigure,
@@ -600,6 +631,18 @@ def plotprofile(
                 
         fit_profile_text_widget.value = r"%.2fum" % (xi_um_fit)
 
+        if save_to_df == True:
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit'] = wavelength_nm_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector'] = d_um_at_detector
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit'] = I_Airy1_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_fit'] = I_Airy2_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_fit'] = w1_um_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_fit'] = w2_um_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_fit'] = shiftx_um_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] = x1_um_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_fit'] = x2_um_fit
+
         if do_deconvmethod == True:
             deconvmethod_text_widget.value = 'calculating ...'
             partiallycoherent = pixis_image_norm
@@ -608,11 +651,10 @@ def plotprofile(
             profilewidth = 200  # pixis_avg_width  # defined where?
             pixis_centery_px = int(pixis_centery_px)
             wavelength = setting_wavelength_nm * 1e-9
-            xi_um_guess = 475
+            # xi_um_guess = 475
             # guess sigma_y_F_gamma_um based on the xi_um_guess assuming to be the beams intensity rms width
             sigma_y_F_gamma_um_guess = calc_sigma_F_gamma_um(xi_um_guess, n, dX_1, setting_wavelength_nm, False)
-            crop_px = 200
-            create_figure = False
+            create_figure = True
 
             # Ignoring OptimizeWarning. Supressing warning as described in https://stackoverflow.com/a/14463362:
             with warnings.catch_warnings():
@@ -642,10 +684,16 @@ def plotprofile(
                     xi_um_guess,
                     sigma_y_F_gamma_um_guess,
                     crop_px,
+                    sigma_x_F_gamma_um_multiplier,
+                    scan_x,
                     create_figure,
                 )
             deconvmethod_text_widget.value = r"%.2fum" % (xi_x_um) + r", %.2fum" % (xi_y_um)
             # str(round(xi_x_um, 2)) + ', ' + str(round(xi_y_um, 2))
+
+            if save_to_df == True:
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_x_um'] = xi_x_um
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_y_um'] = xi_y_um
 
         # print('fringeseparation_px=' + str(round(fringeseparation_px,2)))
 
@@ -897,20 +945,9 @@ def plotprofile(
                 frameon=None,
             )
 
-        if save_to_df == True:
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit'] = wavelength_nm_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector'] = d_um_at_detector
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit'] = I_Airy1_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_fit'] = I_Airy2_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_fit'] = w1_um_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_fit'] = w2_um_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_fit'] = shiftx_um_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] = x1_um_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_fit'] = x2_um_fit
+        
 
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_x_um'] = xi_x_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_y_um'] = xi_y_um
+            
             
             
 
@@ -929,9 +966,14 @@ column0 = widgets.VBox(
     [
         plotprofile_active_widget,
         do_deconvmethod_widget,
+        xi_um_guess_widget,
+        scan_x_widget,
+        sigma_x_F_gamma_um_multiplier_widget,
+        crop_px_widget,
         imageid_profile_fit_widget,
         savefigure_profile_fit_widget,
         save_to_df_widget,
+        df_fits_csv_save_widget,
         do_textbox_widget,
     ]
 )
@@ -996,6 +1038,10 @@ plotprofile_interactive_output = interactive_output(
     {
         "plotprofile_active": plotprofile_active_widget,
         "do_deconvmethod": do_deconvmethod_widget,
+        "scan_x" : scan_x_widget,
+        "xi_um_guess" : xi_um_guess_widget,
+        "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_widget,
+        "crop_px" : crop_px_widget,
         "hdf5_file_path": dph_settings_bgsubtracted_widget,
         "imageid": imageid_profile_fit_widget,
         "savefigure": savefigure_profile_fit_widget,
@@ -1094,6 +1140,22 @@ def datasets_widget_changed(change):
     
 
 datasets_widget.observe(datasets_widget_changed, names="value")
+
+
+
+def update_df_fits_csv_save_widget(change):
+    if df_fits_csv_save_widget.value == True:
+        # save fits to csv
+        df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
+        save_df_fits = True
+        if save_df_fits == True:
+            # df_fits.to_csv(Path.joinpath(data_dir,str('df_fits_'+datetime.now()+'.csv')))
+            df_fits.to_csv(Path.joinpath(data_dir,str('df_fits_test.csv')))
+        df_fits_csv_save_widget.value = False
+
+df_fits_csv_save_widget.observe(update_df_fits_csv_save_widget, names='value')
+# not working, why? impement also which file to load/import, which ones to export/save, ...
+
 
 
 # getting all parameters from the file
@@ -1197,7 +1259,7 @@ for dataset in list(datasets):
 
 # <codecell>
 # loop over all datasets and delete all fits and deconvolution results:
-remove_fits_from_df = False
+remove_fits_from_df = True
 if remove_fits_from_df == True:
     for dataset in list(datasets):
         print(dataset)
@@ -1222,7 +1284,7 @@ if remove_fits_from_df == True:
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'd_um_at_detector'] = np.nan
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'I_Airy1_fit'] = np.nan
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'I_Airy2_fit'] = np.nan
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'w1_um_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'w1_um_fit'] = np.nan
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'w2_um_fit'] = np.nan
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'shiftx_um_fit'] = np.nan
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'x1_um_fit'] = np.nan
@@ -1244,10 +1306,13 @@ for imageid in imageid_profile_fit_widget.options:
 
 # <codecell>
 # iterate over all images in a given measurement
+start = datetime.now()
 plotprofile_active_widget.value = True
 for imageid in imageid_profile_fit_widget.options:
     imageid_profile_fit_widget.value = imageid
-
+end = datetime.now()
+time_taken = end - start
+print(time_taken)
 
 
 # <codecell>
@@ -1269,15 +1334,24 @@ print('done')
 
 # <codecell>
 # iterate over everything
+start = datetime.now()
 for dataset in list(datasets):
+    print(dataset)
     datasets_widget.value = dataset
     plotprofile_active_widget.value = True
     for measurement in dph_settings_bgsubtracted_widget.options:
+        print(measurement)
         dph_settings_bgsubtracted_widget.value = measurement
         plotprofile_active_widget.value = True
+        start_measurement = datetime.now()
         for imageid in imageid_profile_fit_widget.options:
             imageid_profile_fit_widget.value = imageid
-
+        end_measurement = datetime.now()
+        time_taken = end_measurement - start_measurement
+        print(time_taken)
+end = datetime.now()
+time_taken = end - start
+print(time_taken)
 
 # <codecell>
 # create plots fitting vs deconvolution

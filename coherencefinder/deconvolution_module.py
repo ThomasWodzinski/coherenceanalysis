@@ -213,6 +213,8 @@ def deconvmethod_2d_x(
     xi_um_guess,
     sigma_y_F_gamma_um_guess,
     crop_px,
+    sigma_x_F_gamma_um_multiplier,
+    scan_x,
     create_figure,
 ):
 
@@ -276,17 +278,24 @@ def deconvmethod_2d_x(
     if create_figure == True:
         ax70.cla()
 
-    # guess sigma_x_F_gamma_um to be the same as the beams rms width
-    sigma_x_F_gamma_um_guess = calc_sigma_F_gamma_um(xi_um_guess, n, dX_1, wavelength * 1e9, False)
-    sigma_x_F_gamma_um = sigma_x_F_gamma_um_guess
+    # to do: guess sigma_x_F_gamma_um to be the same as the beams rms width
+    
+    if scan_x == True:
+        sigma_x_F_gamma_um_guess = calc_sigma_F_gamma_um(xi_um_guess, n, dX_1, wavelength * 1e9, False)
+        sigma_x_F_gamma_um = sigma_x_F_gamma_um_guess
+    else:
+        sigma_x_F_gamma_um = sigma_y_F_gamma_um
 
     # for sigma_x_F_gamma_um in sigma_x_F_gamma_um_list:
     i = 0
     for factor in np.arange(1, 4):
 
+        if scan_x == False:
+            sigma_y_F_gamma_um = sigma_x_F_gamma_um
+
         sigma_x_F_gamma = sigma_x_F_gamma_um * 1e-6
         sigma_y_F_gamma = sigma_y_F_gamma_um * 1e-6
-
+        
         sigma_x_F_gamma_um_list.append(sigma_x_F_gamma_um)
 
         F_gamma = gauss2d(X1_axis / dX_1, Y1_axis / dY_1, sigma_x_F_gamma / dX_1, sigma_y_F_gamma / dX_1)
@@ -300,7 +309,7 @@ def deconvmethod_2d_x(
         )
 
         fullycoherent_profile = fullycoherent_profile / np.max(
-            fullycoherent_profile[200:-200]
+            fullycoherent_profile[crop_px:-crop_px]
         )  # ignore what happens on the edges
 
         fullycoherent_profile_min = np.min(fullycoherent_profile[crop_px:-crop_px])  # ignore what happens on the edges
@@ -311,13 +320,13 @@ def deconvmethod_2d_x(
             # print(sigma_x_F_gamma_um_list)
             # print(fullycoherent_profile_min_list)
             ax70.scatter(sigma_x_F_gamma_um, fullycoherent_profile_min)
-            ax70.set_xlim([sigma_x_F_gamma_um_min, sigma_x_F_gamma_um_max])
-            ax70.set_ylim(
-                [
-                    -np.min(partiallycoherent_profile[crop_px:-crop_px]),
-                    np.min(partiallycoherent_profile[crop_px:-crop_px]),
-                ]
-            )
+            # ax70.set_xlim([sigma_x_F_gamma_um_min, sigma_x_F_gamma_um_max])
+            # ax70.set_ylim(
+            #     [
+            #         -np.min(partiallycoherent_profile[crop_px:-crop_px]),
+            #         np.min(partiallycoherent_profile[crop_px:-crop_px]),
+            #     ]
+            # )
             ax70.axhline(0, color="k")
             # plt.title('sigma_x_F_gamma=' + str(sigma_x_F_gamma_um) + ' sigma_y_F_gamma=' + str(sigma_y_F_gamma_um) + ' fullycoherent_profile_min=' + str(fullycoherent_profile_min))
 
@@ -328,8 +337,13 @@ def deconvmethod_2d_x(
             ax.plot(xdata, partiallycoherent_profile, "b-", label="measured partially coherent", linewidth=1)
             ax.plot(xdata, fullycoherent_profile, "r-", label="recovered fully coherent", linewidth=1)
             ax.axhline(0, color="k")
+            ax.axvline(-(n/2-crop_px) * dX_1 * 1e3, color="k")
+            ax.axvline((n/2-crop_px) * dX_1 * 1e3, color="k")
             ax.set_xlabel("x / mm", fontsize=8)
             ax.set_ylabel("Intensity / a.u.", fontsize=8)
+            ax.set_ylim(-0.2,1.2)
+
+            plt.title('i='+str(i))
 
             # plt.title('d / $\mu$m = '+str(int(separation_um)) + ' coherence length $\\xi_x$ / $\mu$m = ' + str(round(xi_x_um_list[index_opt],2)) + ' $\\xi_y$ / $\mu$m = ' + str(round(xi_y_um_list[index_opt],2)), fontsize=16)
 
@@ -338,10 +352,14 @@ def deconvmethod_2d_x(
             clear_output(wait=True)
             # plt.show()
 
-        if fullycoherent_profile_min < 0:
-            sigma_x_F_gamma_um = sigma_x_F_gamma_um / 2
+        if fullycoherent_profile_min < 0 and i==0:
+            sigma_x_F_gamma_um = sigma_x_F_gamma_um / sigma_x_F_gamma_um_multiplier
         else:
-            sigma_x_F_gamma_um = sigma_x_F_gamma_um * 1.2
+            if i==0:
+                sigma_x_F_gamma_um = sigma_x_F_gamma_um * sigma_x_F_gamma_um_multiplier
+            else:
+                sigma_x_F_gamma_um = sigma_x_F_gamma_um_list[i-1] - fullycoherent_profile_min_list[i-1] * ( (sigma_x_F_gamma_um_list[i] - sigma_x_F_gamma_um_list[i-1])/(fullycoherent_profile_min_list[i]-fullycoherent_profile_min_list[i-1]) ) 
+
 
         i = i + 1
 
@@ -356,30 +374,38 @@ def deconvmethod_2d_x(
     b = popt_func[1]
     c = popt_func[2]
 
-    sigma_x_F_gamma_um_opt = brenth(func, np.min(xdata), np.max(xdata), args=(a, b, c))
+    time.sleep(5)
+    try:
+        sigma_x_F_gamma_um_opt = brenth(func, np.min(xdata), np.max(xdata), args=(a, b, c))
+    except:
+        sigma_x_F_gamma_um_opt = np.max(xdata)
+
 
     if create_figure == True:
         ax70.plot(np.array(sigma_x_F_gamma_um_list), func(np.array(sigma_x_F_gamma_um_list), a, b, c))
         ax70.axvline(sigma_x_F_gamma_um_opt)
 
     sigma_x_F_gamma = sigma_x_F_gamma_um_opt * 1e-6
-    sigma_y_F_gamma = sigma_y_F_gamma_um * 1e-6
+    if scan_x == False:
+        sigma_y_F_gamma = sigma_x_F_gamma
+    else:
+        sigma_y_F_gamma = sigma_y_F_gamma_um * 1e-6
     F_gamma = gauss2d(X1_axis / dX_1, Y1_axis / dY_1, sigma_x_F_gamma / dX_1, sigma_y_F_gamma / dX_1)
 
     fullycoherent_opt = restoration.wiener(partiallycoherent, F_gamma, 1)
-    fullycoherent_opt = fullycoherent_opt / np.max(fullycoherent_opt[200:-200, 200:-200])
+    fullycoherent_opt = fullycoherent_opt / np.max(fullycoherent_opt[crop_px:-crop_px, crop_px:-crop_px])
 
     fullycoherent_profile_opt = np.mean(
         fullycoherent_opt[pixis_centery_px - int(profilewidth / 2) : pixis_centery_px + int(profilewidth / 2), :],
         axis=0,
     )
     fullycoherent_profile_opt = fullycoherent_profile_opt / np.max(
-        fullycoherent_profile_opt[200:-200]
+        fullycoherent_profile_opt[crop_px:-crop_px]
     )  # ignore what happens on the edges
 
-    F_gamma = gauss2d(
-        X1_axis / dX_1, Y1_axis / dY_1, sigma_x_F_gamma_um_opt * 1e-6 / dX_1, sigma_y_F_gamma_um * 1e-6 / dX_1
-    )
+    # F_gamma = gauss2d(
+    #     X1_axis / dX_1, Y1_axis / dY_1, sigma_x_F_gamma_um_opt * 1e-6 / dX_1, sigma_y_F_gamma_um * 1e-6 / dX_1
+    # )
     gamma = fftpack.fftshift(fftpack.ifftn(fftpack.ifftshift(F_gamma)))
 
     partiallycoherent_rec = np.abs(convolve(fullycoherent_opt, F_gamma))
@@ -388,21 +414,10 @@ def deconvmethod_2d_x(
         partiallycoherent_rec[pixis_centery_px - int(profilewidth / 2) : pixis_centery_px + int(profilewidth / 2), :],
         axis=0,
     )
-    partiallycoherent_rec_profile = normalize(partiallycoherent_rec_profile)
+    partiallycoherent_rec_profile = partiallycoherent_rec_profile / np.max(partiallycoherent_rec_profile[crop_px:-crop_px])
+    
 
-    if create_figure == True:
-        xdata = np.linspace((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, n)
-        ax.cla()
-        ax.plot(xdata, partiallycoherent_profile, "b-", label="measured partially coherent", linewidth=1)
-        ax.plot(xdata, fullycoherent_profile_opt, "r-", label="recovered fully coherent", linewidth=1)
-        ax.plot(
-            xdata, partiallycoherent_rec_profile, "g-", label="recovered partially coherent", linewidth=1,
-        )
-        # plt.plot(xdata, gaussianbeam(xdata, 1, popt_gauss[0] ,popt_gauss[1], 0), 'r-', label='fit: m=%5.1f px, w=%5.1f px' % tuple([popt_gauss[0] ,popt_gauss[1]]))
-        ax.axhline(0, color="k")
-        ax.set_xlabel("x / mm", fontsize=8)
-        ax.set_ylabel("Intensity / a.u.", fontsize=8)
-        # ax.set_xlim([xdata[0], xdata[-1]])
+    
 
     # determine chi2 distance
     number_of_bins = 100
@@ -444,6 +459,25 @@ def deconvmethod_2d_x(
     A_bp = fftpack.fftshift(fftpack.ifftn(fftpack.ifftshift(np.sqrt(partiallycoherent))))  # amplitude
     I_bp = np.abs(A_bp) ** 2  # intensity
 
+
+    if create_figure == True:
+        xdata = np.linspace((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, n)
+        ax.cla()
+        ax.plot(xdata, partiallycoherent_profile, "b-", label="measured partially coherent", linewidth=1)
+        ax.plot(xdata, fullycoherent_profile_opt, "r-", label="recovered fully coherent", linewidth=1)
+        ax.plot(
+            xdata, partiallycoherent_rec_profile, "g-", label="recovered partially coherent", linewidth=1,
+        )
+        # plt.plot(xdata, gaussianbeam(xdata, 1, popt_gauss[0] ,popt_gauss[1], 0), 'r-', label='fit: m=%5.1f px, w=%5.1f px' % tuple([popt_gauss[0] ,popt_gauss[1]]))
+        ax.axhline(0, color="k")
+        ax.axvline(-(n/2-crop_px) * dX_1 * 1e3, color="k")
+        ax.axvline((n/2-crop_px) * dX_1 * 1e3, color="k")
+        ax.set_xlabel("x / mm", fontsize=8)
+        ax.set_ylabel("Intensity / a.u.", fontsize=8)
+        ax.set_ylim(-0.2,1.2)
+        # ax.set_xlim([xdata[0], xdata[-1]])
+        plt.title('chi2distance='+str(chi2distance))
+
     return (
         partiallycoherent_profile,
         fullycoherent_opt,
@@ -460,6 +494,9 @@ def deconvmethod_2d_x(
         dX_2,
         chi2distance,
     )
+
+
+
 
 
 # adapted from https://stackoverflow.com/a/54791154
@@ -486,44 +523,49 @@ def deconvmethod(
     xi_um_guess,
     sigma_y_F_gamma_um_guess,
     crop_px,
+    sigma_x_F_gamma_um_multiplier,
+    scan_x,
     create_figure,
 ):
 
     # chi2distance_minimize_result = minimize_and_store(sigma_y_F_gamma_um_guess, calc_chi2distance)
     
-    # find the minimal chi2 distance depending on sigma_y_F_gamma_um_guess
-    chi2distance_minimize_result_bounded = optimize.minimize_scalar(
-        lambda sigma_y_F_gamma_um_guess: deconvmethod_2d_x(
-            partiallycoherent,
-            z,
-            dX_1,
-            profilewidth,
-            pixis_centery_px,
-            wavelength,
-            xi_um_guess,
-            sigma_y_F_gamma_um_guess,
-            crop_px,
-            create_figure,
-        )[-1],
-        bounds=[sigma_y_F_gamma_um_guess / 4, sigma_y_F_gamma_um_guess * 2],
-        method="bounded",
-        options={"disp": 0, "maxiter": 50, "xatol": 1e-1},  # "disp": 3 to show info for all iterations
-    )
-    
-    # start = datetime.now()
-    # chi2distance_minimize_result_brent = optimize.minimize_scalar(
-    #     calc_chi2distance,
-    #     bracket=[sigma_y_F_gamma_um_guess / 4, sigma_y_F_gamma_um_guess * 2],
-    #     method="brent",
-    #     options={"maxiter": 50, "xtol": 1e-1},
-    # )
-    
-    # see https://stackoverflow.com/questions/16739065/how-to-display-progress-of-scipy-optimize-function
-    # print(chi2distance_minimize_result_brent)
+    if scan_x == True:
+        # find the minimal chi2 distance depending on sigma_y_F_gamma_um_guess
+        chi2distance_minimize_result_bounded = optimize.minimize_scalar(
+            lambda sigma_y_F_gamma_um_guess: deconvmethod_2d_x(
+                partiallycoherent,
+                z,
+                dX_1,
+                profilewidth,
+                pixis_centery_px,
+                wavelength,
+                xi_um_guess,
+                sigma_y_F_gamma_um_guess,
+                crop_px,
+                sigma_x_F_gamma_um_multiplier,
+                scan_x,
+                create_figure,
+            )[-1],
+            bounds=[sigma_y_F_gamma_um_guess / 4, sigma_y_F_gamma_um_guess * 2],
+            method="bounded",
+            options={"disp": 0, "maxiter": 50, "xatol": 1e-1},  # "disp": 3 to show info for all iterations
+        )
+        
+        # start = datetime.now()
+        # chi2distance_minimize_result_brent = optimize.minimize_scalar(
+        #     calc_chi2distance,
+        #     bracket=[sigma_y_F_gamma_um_guess / 4, sigma_y_F_gamma_um_guess * 2],
+        #     method="brent",
+        #     options={"maxiter": 50, "xtol": 1e-1},
+        # )
+        
+        # see https://stackoverflow.com/questions/16739065/how-to-display-progress-of-scipy-optimize-function
+        # print(chi2distance_minimize_result_brent)
 
-    # use the optimal sigma_y_F_gamma_um_guess to determine the corresponding sigma_x_F_gamma_um and with it the coherence lengths xi_x and xi_y
-    sigma_y_F_gamma_um_guess = chi2distance_minimize_result_bounded.x
-
+        # use the optimal sigma_y_F_gamma_um_guess to determine the corresponding sigma_x_F_gamma_um and with it the coherence lengths xi_x and xi_y
+        sigma_y_F_gamma_um_guess = chi2distance_minimize_result_bounded.x
+    
     (
         partiallycoherent_profile,
         fullycoherent_opt,
@@ -549,6 +591,8 @@ def deconvmethod(
         xi_um_guess,
         sigma_y_F_gamma_um_guess,
         crop_px,
+        sigma_x_F_gamma_um_multiplier,
+        scan_x,
         create_figure,
     )
 
