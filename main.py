@@ -89,6 +89,8 @@ import os.path
 """# Load dph settings and combinations"""
 
 datasets_py_file = str(Path.joinpath(data_dir, "datasets.py"))
+# datasets_py_file = str(Path.joinpath(data_dir, "datasets_deconvolution_failing.py"))
+# datasets_py_file = str(Path.joinpath(data_dir, "datasets_fitting_failing.py"))
 
 # Commented out IPython magic to ensure Python compatibility.
 # %run -i $dph_settings_py # see https://stackoverflow.com/a/14411126 and http://ipython.org/ipython-doc/dev/interactive/magics.html#magic-run
