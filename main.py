@@ -1129,7 +1129,7 @@ def dph_settings_bgsubtracted_widget_changed(change):
         beamsize_text_widget.value = r"%.2fum" % (pinholes_bg_avg_sy_um,)
 
 
-dph_settings_bgsubtracted_widget.observe(dph_settings_bgsubtracted_widget_changed, names="value")
+dph_settings_bgsubtracted_widget.observe(dph_settings_bgsubtracted_widget_changed, names="label")
 
 
 def datasets_widget_changed(change):
