@@ -89,6 +89,8 @@ import os.path
 """# Load dph settings and combinations"""
 
 datasets_py_file = str(Path.joinpath(data_dir, "datasets.py"))
+# datasets_py_file = str(Path.joinpath(data_dir, "datasets_deconvolution_failing.py"))
+# datasets_py_file = str(Path.joinpath(data_dir, "datasets_fitting_failing.py"))
 
 # Commented out IPython magic to ensure Python compatibility.
 # %run -i $dph_settings_py # see https://stackoverflow.com/a/14411126 and http://ipython.org/ipython-doc/dev/interactive/magics.html#magic-run
@@ -417,7 +419,7 @@ wavelength_nm_range_widget = widgets.FloatRangeSlider(
 )
 z_mm_range_widget = widgets.FloatRangeSlider(min=5000.0, max=6000.0, value=[5770.0, 5790], description="z_mm")
 d_um_range_widget = widgets.FloatRangeSlider(min=50, max=1337, value=[50.0, 1337.0], description="d_um")
-gamma_range_widget = widgets.FloatRangeSlider(min=0, max=2.0, value=[0.2, 1.0], description="gamma")
+gamma_range_widget = widgets.FloatRangeSlider(min=0, max=2.0, value=[0.01, 1.0], description="gamma")
 w1_um_range_widget = widgets.FloatRangeSlider(min=5, max=20, value=[8, 15], description="w1_um")
 w2_um_range_widget = widgets.FloatRangeSlider(min=5, max=20, value=[8, 15], description="w2_um")
 I_Airy1_range_widget = widgets.FloatRangeSlider(min=0, max=10, value=[0.2, 1.5], description="I_Airy1")
