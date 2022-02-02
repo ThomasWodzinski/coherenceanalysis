@@ -348,7 +348,7 @@ statustext_widget = widgets.Text(value="", placeholder="status", description="",
 
 plotprofile_active_widget = widgets.Checkbox(value=False, description="active", disabled=False)
 do_deconvmethod_widget = widgets.Checkbox(value=False, description="do_deconvmethod", disabled=False)
-xi_um_guess_widget = widgets.FloatText(value=475, description='xi_um_guess')
+xi_um_guess_widget = widgets.FloatText(value=500, description='xi_um_guess')
 scan_x_widget = widgets.Checkbox(value=False, description="scan_x", disabled=False)
 sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.2, description='sigma_x_F_gamma_um_multiplier_widget')
 crop_px_widget = widgets.IntText(value=200, description='crop_px')
