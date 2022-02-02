@@ -378,106 +378,124 @@ def deconvmethod_2d_x(
     try:
         sigma_x_F_gamma_um_opt = brenth(func, np.min(xdata), np.max(xdata), args=(a, b, c))
     except:
-        sigma_x_F_gamma_um_opt = np.max(xdata)
-
-
+        sigma_x_F_gamma_um_opt = np.nan
+              
+    
     if create_figure == True:
         ax70.plot(np.array(sigma_x_F_gamma_um_list), func(np.array(sigma_x_F_gamma_um_list), a, b, c))
         ax70.axvline(sigma_x_F_gamma_um_opt)
 
-    sigma_x_F_gamma = sigma_x_F_gamma_um_opt * 1e-6
-    if scan_x == False:
-        sigma_y_F_gamma = sigma_x_F_gamma
-    else:
-        sigma_y_F_gamma = sigma_y_F_gamma_um * 1e-6
-    F_gamma = gauss2d(X1_axis / dX_1, Y1_axis / dY_1, sigma_x_F_gamma / dX_1, sigma_y_F_gamma / dX_1)
+    if sigma_x_F_gamma_um_opt > 0:
 
-    fullycoherent_opt = restoration.wiener(partiallycoherent, F_gamma, 1)
-    fullycoherent_opt = fullycoherent_opt / np.max(fullycoherent_opt[crop_px:-crop_px, crop_px:-crop_px])
+        sigma_x_F_gamma = sigma_x_F_gamma_um_opt * 1e-6
+        if scan_x == False:
+            sigma_y_F_gamma = sigma_x_F_gamma
+        else:
+            sigma_y_F_gamma = sigma_y_F_gamma_um * 1e-6
+        F_gamma = gauss2d(X1_axis / dX_1, Y1_axis / dY_1, sigma_x_F_gamma / dX_1, sigma_y_F_gamma / dX_1)
 
-    fullycoherent_profile_opt = np.mean(
-        fullycoherent_opt[pixis_centery_px - int(profilewidth / 2) : pixis_centery_px + int(profilewidth / 2), :],
-        axis=0,
-    )
-    fullycoherent_profile_opt = fullycoherent_profile_opt / np.max(
-        fullycoherent_profile_opt[crop_px:-crop_px]
-    )  # ignore what happens on the edges
+        fullycoherent_opt = restoration.wiener(partiallycoherent, F_gamma, 1)
+        fullycoherent_opt = fullycoherent_opt / np.max(fullycoherent_opt[crop_px:-crop_px, crop_px:-crop_px])
 
-    # F_gamma = gauss2d(
-    #     X1_axis / dX_1, Y1_axis / dY_1, sigma_x_F_gamma_um_opt * 1e-6 / dX_1, sigma_y_F_gamma_um * 1e-6 / dX_1
-    # )
-    gamma = fftpack.fftshift(fftpack.ifftn(fftpack.ifftshift(F_gamma)))
-
-    partiallycoherent_rec = np.abs(convolve(fullycoherent_opt, F_gamma))
-    partiallycoherent_rec = normalize(partiallycoherent_rec)
-    partiallycoherent_rec_profile = np.mean(
-        partiallycoherent_rec[pixis_centery_px - int(profilewidth / 2) : pixis_centery_px + int(profilewidth / 2), :],
-        axis=0,
-    )
-    partiallycoherent_rec_profile = partiallycoherent_rec_profile / np.max(partiallycoherent_rec_profile[crop_px:-crop_px])
-    
-
-    
-
-    # determine chi2 distance
-    number_of_bins = 100
-    hist1, bin_edges1 = np.histogram(partiallycoherent.ravel(), bins=np.linspace(0, 1, number_of_bins))
-    hist2, bin_edges2 = np.histogram(partiallycoherent_rec.ravel(), bins=np.linspace(0, 1, number_of_bins))
-    chi2distance = chi2_distance(hist1, hist2)
-
-    xdata = list(range(n))
-    ydata = fullycoherent[pixis_centery_px, :]
-    ydata = ydata / np.max(ydata)
-
-    abs_gamma = np.abs(gamma)
-    abs_gamma = abs_gamma / np.max(abs_gamma)
-
-    xdata = list(range(n))
-    ydata = abs_gamma[int(n / 2), :]
-    p0 = (int(n / 2), 1)
-    try:
-        popt_gauss, pcov_gaussian = curve_fit(lambda x, m, w: gaussianbeam(x, 1, m, w, 0), xdata, ydata, p0)
-    except:
-        1
-    xi_x_px = popt_gauss[1] / 2
-    xi_x_um = xi_x_px * dX_2 * 1e6
-
-    xdata = list(range(n))
-    ydata = abs_gamma[:, int(n / 2)]
-    p0 = (int(n / 2), 1)
-    try:
-        popt_gauss, pcov_gaussian = curve_fit(lambda x, m, w: gaussianbeam(x, 1, m, w, 0), xdata, ydata, p0)
-    except:
-        1
-    xi_y_px = popt_gauss[1] / 2
-    xi_y_um = xi_y_px * dX_2 * 1e6
-
-    # print(str(round(xi_x_um, 2)) + "," + str(round(xi_y_um, 2)))
-
-    # print('coherence length xi/um = ' + str(xi_um))
-
-    A_bp = fftpack.fftshift(fftpack.ifftn(fftpack.ifftshift(np.sqrt(partiallycoherent))))  # amplitude
-    I_bp = np.abs(A_bp) ** 2  # intensity
-
-
-    if create_figure == True:
-        xdata = np.linspace((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, n)
-        ax.cla()
-        ax.plot(xdata, partiallycoherent_profile, "b-", label="measured partially coherent", linewidth=1)
-        ax.plot(xdata, fullycoherent_profile_opt, "r-", label="recovered fully coherent", linewidth=1)
-        ax.plot(
-            xdata, partiallycoherent_rec_profile, "g-", label="recovered partially coherent", linewidth=1,
+        fullycoherent_profile_opt = np.mean(
+            fullycoherent_opt[pixis_centery_px - int(profilewidth / 2) : pixis_centery_px + int(profilewidth / 2), :],
+            axis=0,
         )
-        # plt.plot(xdata, gaussianbeam(xdata, 1, popt_gauss[0] ,popt_gauss[1], 0), 'r-', label='fit: m=%5.1f px, w=%5.1f px' % tuple([popt_gauss[0] ,popt_gauss[1]]))
-        ax.axhline(0, color="k")
-        ax.axvline(-(n/2-crop_px) * dX_1 * 1e3, color="k")
-        ax.axvline((n/2-crop_px) * dX_1 * 1e3, color="k")
-        ax.set_xlabel("x / mm", fontsize=8)
-        ax.set_ylabel("Intensity / a.u.", fontsize=8)
-        ax.set_ylim(-0.2,1.2)
-        # ax.set_xlim([xdata[0], xdata[-1]])
-        plt.title('chi2distance='+str(chi2distance))
+        fullycoherent_profile_opt = fullycoherent_profile_opt / np.max(
+            fullycoherent_profile_opt[crop_px:-crop_px]
+        )  # ignore what happens on the edges
 
+        # F_gamma = gauss2d(
+        #     X1_axis / dX_1, Y1_axis / dY_1, sigma_x_F_gamma_um_opt * 1e-6 / dX_1, sigma_y_F_gamma_um * 1e-6 / dX_1
+        # )
+        gamma = fftpack.fftshift(fftpack.ifftn(fftpack.ifftshift(F_gamma)))
+
+        partiallycoherent_rec = np.abs(convolve(fullycoherent_opt, F_gamma))
+        partiallycoherent_rec = normalize(partiallycoherent_rec)
+        partiallycoherent_rec_profile = np.mean(
+            partiallycoherent_rec[pixis_centery_px - int(profilewidth / 2) : pixis_centery_px + int(profilewidth / 2), :],
+            axis=0,
+        )
+        partiallycoherent_rec_profile = partiallycoherent_rec_profile / np.max(partiallycoherent_rec_profile[crop_px:-crop_px])
+        
+
+        
+
+        # determine chi2 distance
+        number_of_bins = 100
+        hist1, bin_edges1 = np.histogram(partiallycoherent.ravel(), bins=np.linspace(0, 1, number_of_bins))
+        hist2, bin_edges2 = np.histogram(partiallycoherent_rec.ravel(), bins=np.linspace(0, 1, number_of_bins))
+        chi2distance = chi2_distance(hist1, hist2)
+
+        xdata = list(range(n))
+        ydata = fullycoherent[pixis_centery_px, :]
+        ydata = ydata / np.max(ydata)
+
+        abs_gamma = np.abs(gamma)
+        abs_gamma = abs_gamma / np.max(abs_gamma)
+
+        xdata = list(range(n))
+        ydata = abs_gamma[int(n / 2), :]
+        p0 = (int(n / 2), 1)
+        try:
+            popt_gauss, pcov_gaussian = curve_fit(lambda x, m, w: gaussianbeam(x, 1, m, w, 0), xdata, ydata, p0)
+        except:
+            1
+        xi_x_px = popt_gauss[1] / 2
+        xi_x_um = xi_x_px * dX_2 * 1e6
+
+        xdata = list(range(n))
+        ydata = abs_gamma[:, int(n / 2)]
+        p0 = (int(n / 2), 1)
+        try:
+            popt_gauss, pcov_gaussian = curve_fit(lambda x, m, w: gaussianbeam(x, 1, m, w, 0), xdata, ydata, p0)
+        except:
+            1
+        xi_y_px = popt_gauss[1] / 2
+        xi_y_um = xi_y_px * dX_2 * 1e6
+
+        # print(str(round(xi_x_um, 2)) + "," + str(round(xi_y_um, 2)))
+
+        # print('coherence length xi/um = ' + str(xi_um))
+
+        A_bp = fftpack.fftshift(fftpack.ifftn(fftpack.ifftshift(np.sqrt(partiallycoherent))))  # amplitude
+        I_bp = np.abs(A_bp) ** 2  # intensity
+
+
+        if create_figure == True:
+            xdata = np.linspace((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, n)
+            ax.cla()
+            ax.plot(xdata, partiallycoherent_profile, "b-", label="measured partially coherent", linewidth=1)
+            ax.plot(xdata, fullycoherent_profile_opt, "r-", label="recovered fully coherent", linewidth=1)
+            ax.plot(
+                xdata, partiallycoherent_rec_profile, "g-", label="recovered partially coherent", linewidth=1,
+            )
+            # plt.plot(xdata, gaussianbeam(xdata, 1, popt_gauss[0] ,popt_gauss[1], 0), 'r-', label='fit: m=%5.1f px, w=%5.1f px' % tuple([popt_gauss[0] ,popt_gauss[1]]))
+            ax.axhline(0, color="k")
+            ax.axvline(-(n/2-crop_px) * dX_1 * 1e3, color="k")
+            ax.axvline((n/2-crop_px) * dX_1 * 1e3, color="k")
+            ax.set_xlabel("x / mm", fontsize=8)
+            ax.set_ylabel("Intensity / a.u.", fontsize=8)
+            ax.set_ylim(-0.2,1.2)
+            # ax.set_xlim([xdata[0], xdata[-1]])
+            plt.title('chi2distance='+str(chi2distance))
+
+    else:
+        fullycoherent_opt = np.nan
+        fullycoherent_profile_opt = np.nan
+        partiallycoherent_rec = np.nan
+        partiallycoherent_rec_profile = np.nan
+        sigma_x_F_gamma_um_opt = np.nan
+        sigma_y_F_gamma_um = np.nan
+        F_gamma = np.nan
+        abs_gamma = np.nan
+        xi_x_um = np.nan
+        xi_y_um = np.nan
+        I_bp = np.nan
+        dX_2 = np.nan
+        chi2distance = np.nan
+
+    # decide what to return if it fails ...
     return (
         partiallycoherent_profile,
         fullycoherent_opt,
