@@ -374,7 +374,6 @@ def deconvmethod_2d_x(
     b = popt_func[1]
     c = popt_func[2]
 
-    time.sleep(5)
     try:
         sigma_x_F_gamma_um_opt = brenth(func, np.min(xdata), np.max(xdata), args=(a, b, c))
     except:
