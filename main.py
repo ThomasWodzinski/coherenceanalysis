@@ -248,8 +248,9 @@ fits_header_list3 = [
     "zeta_x",
     "zeta_x_fit",
 ]
-fits_header_list4 = ["xi_y_um_fit", "zeta_y", "zeta_y_fit"]
-fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3
+fits_header_list4 = ["xi_y_um_fit", "zeta_y", "zeta_y_fit", "xi_um_fit"]
+
+fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4
 
 
 # fits_header_list1 already exists in saved csv, only adding fits_header_list2, only initiate when
@@ -635,6 +636,7 @@ def plotprofile(
 
         if save_to_df == True:
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit'] = xi_um_fit  # add this first to the df_fits dataframe
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit'] = wavelength_nm_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector'] = d_um_at_detector
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit'] = I_Airy1_fit
@@ -1273,11 +1275,36 @@ for dataset in list(datasets):
             timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
     # create plot for the determined timestamps:
-    plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['gamma_fit'])
+    plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['gamma_fit'],color='blue')
     plt.xlim(0,2000)
     plt.ylim(0,1)
     plt.show()
 
+# <codecell>
+# loop over all datasets and create coherence plots:
+for dataset in list(datasets):
+    print(dataset)
+
+    # get all the files in a dataset:
+    files = []
+    # for set in [list(datasets)[0]]:
+    
+    for measurement in datasets[dataset]:
+        # print(measurement)
+        files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+    # get all the timestamps in these files:        
+    # datasets[list(datasets)[0]][0]
+    timestamp_pulse_ids = []
+    for f in files:
+        with h5py.File(f, "r") as hdf5_file:
+            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+    # create plot for the determined timestamps:
+    plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'],color='blue')
+    plt.xlim(0,2000)
+    
+    plt.show()
 
 
 # <codecell>
@@ -1315,6 +1342,8 @@ if remove_fits_from_df == True:
 
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'xi_x_um'] = np.nan
         df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'xi_y_um'] = np.nan
+
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'xi_um_fit'] = np.nan
         
 
 # <codecell>
@@ -1397,9 +1426,38 @@ for dataset in list(datasets):
             timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
     # create plot for the determined timestamps:
-    plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['gamma_fit'])
+    plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['gamma_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
     # plt.xlim(0,2000)
     # plt.ylim(0,1)
     plt.show()
+
+# %%
+
+# <codecell>
+# create plots showing those measurements where the deconvolution algorithm did not cross zero
+for dataset in list(datasets):
+    print(dataset)
+
+    # get all the files in a dataset:
+    files = []
+    # for set in [list(datasets)[0]]:
+    
+    for measurement in datasets[dataset]:
+        # print(measurement)
+        files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+    # get all the timestamps in these files:        
+    # datasets[list(datasets)[0]][0]
+    timestamp_pulse_ids = []
+    for f in files:
+        with h5py.File(f, "r") as hdf5_file:
+            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+    # create plot for the determined timestamps:
+    plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0['xi_x_um'].isin([np.nan]))]['separation_um'], df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0['xi_x_um'].isin([np.nan]))]['gamma_fit'],color='blue')
+    plt.xlim(0,2000)
+    plt.ylim(0,1)
+    plt.show()
+
 
 # %%
