@@ -248,8 +248,9 @@ fits_header_list3 = [
     "zeta_x",
     "zeta_x_fit",
 ]
-fits_header_list4 = ["xi_y_um_fit", "zeta_y", "zeta_y_fit"]
-fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3
+fits_header_list4 = ["xi_y_um_fit", "zeta_y", "zeta_y_fit", "xi_um_fit"]
+
+fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4
 
 
 # fits_header_list1 already exists in saved csv, only adding fits_header_list2, only initiate when
@@ -635,6 +636,7 @@ def plotprofile(
 
         if save_to_df == True:
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit'] = xi_um_fit  # add this first to the df_fits dataframe
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit'] = wavelength_nm_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector'] = d_um_at_detector
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit'] = I_Airy1_fit
