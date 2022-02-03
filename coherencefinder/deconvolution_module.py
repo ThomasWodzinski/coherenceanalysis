@@ -358,7 +358,7 @@ def deconvmethod_2d_x(
             if i==0:
                 sigma_x_F_gamma_um = sigma_x_F_gamma_um * sigma_x_F_gamma_um_multiplier
             else:
-                sigma_x_F_gamma_um = sigma_x_F_gamma_um_list[0] - fullycoherent_profile_min_list[i-1] * ( (sigma_x_F_gamma_um_list[i] - sigma_x_F_gamma_um_list[i-1])/(fullycoherent_profile_min_list[i]-fullycoherent_profile_min_list[i-1]) ) 
+                sigma_x_F_gamma_um = sigma_x_F_gamma_um_list[0] - 2.0* fullycoherent_profile_min_list[i-1] * ( (sigma_x_F_gamma_um_list[i] - sigma_x_F_gamma_um_list[i-1])/(fullycoherent_profile_min_list[i]-fullycoherent_profile_min_list[i-1]) ) 
 
 
         i = i + 1
