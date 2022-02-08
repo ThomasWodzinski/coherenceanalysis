@@ -256,7 +256,7 @@ fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + f
 # fits_header_list1 already exists in saved csv, only adding fits_header_list2, only initiate when
 initiate_df_fits = True
 # if initiate_df_fits == True:
-# df0 = df0.reindex(columns = df0.columns.tolist() + fits_header_list2)
+    # df0 = df0.reindex(columns = df0.columns.tolist() + fits_header_list)
 # df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
 
 # load saved df_fits from csv
