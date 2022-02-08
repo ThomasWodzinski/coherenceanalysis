@@ -1772,6 +1772,81 @@ for dataset in list(datasets):
     else:
         j=0
         i=i+1
+# %%
+
+# measurement = '2017-11-27T1529 8.0nm 45uJ 12Und. KOAS=PMMA 1047um (3d) ap5=7.0 ap7=50.0 (bg3cd) ap5=7.0 ap7=50.0'
+measurement = '2017-11-27T1529 8.0nm 45uJ 12Und. KOAS=PMMA 0707um (1d) ap5=7.0 ap7=50.0 (bg1cd) ap5=7.0 ap7=50.0'
+
+# get all the files in a dataset:
+files = []
+files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+for f in files:
+        timestamp_pulse_ids = []
+        with h5py.File(f, "r") as hdf5_file:
+            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+            timestamp_pulse_ids_dataset.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
+y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)]['gamma_fit'].max() for x in x]
+
+print(x)
+print(y)
+# %%
+
+# %% find the imageids for the highest and lowest gamma_fit (those images where the fitting seemed to have issues)
+
+# measurement = '2017-11-27T1529 8.0nm 45uJ 12Und. KOAS=PMMA 1047um (3d) ap5=7.0 ap7=50.0 (bg3cd) ap5=7.0 ap7=50.0'
+# measurement = '2017-11-27T1529 8.0nm 45uJ 12Und. KOAS=PMMA 0707um (1d) ap5=7.0 ap7=50.0 (bg1cd) ap5=7.0 ap7=50.0'
+measurement = '2017-11-26T2300 18.0nm 70uJ 7Und. KOAS=1.5mm 1047um (3b) ap5=7.0 ap7=1.5 (bg3ab) ap5=7.0 ap7=1.5'
+
+# get all the files in a dataset:
+files = []
+files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+for f in files:
+        timestamp_pulse_ids = []
+        with h5py.File(f, "r") as hdf5_file:
+            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+            
+
+x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um']
+y = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['gamma_fit']
+plt.scatter(x,y)
+
+gamma_fit_max = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['gamma_fit'].max()
+gamma_fit_min = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['gamma_fit'].min()
+print(gamma_fit_max)
+
+imageid_max = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0['gamma_fit']==gamma_fit_max)][['imageid', 'separation_um', 'gamma_fit', 'xi_x_um']]
+imageid_min = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0['gamma_fit']==gamma_fit_min)][['imageid', 'separation_um', 'gamma_fit', 'xi_x_um']]
+# df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'gamma_fit'] = np.nan
+# imageid_max = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0["gamma_fit"]==1.0)][['imageid', 'separation_um', 'gamma_fit']]
+
+print(imageid_max)
+print(imageid_min)
+
+
+
+# %% Remove gamma_fit in the dataframe for certain imageids
+
+
+
+measurement = '2017-11-26T2300 18.0nm 70uJ 7Und. KOAS=1.5mm 1047um (3b) ap5=7.0 ap7=1.5 (bg3ab) ap5=7.0 ap7=1.5'
+
+# get all the files in a dataset:
+files = []
+files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+for f in files:
+        timestamp_pulse_ids = []
+        with h5py.File(f, "r") as hdf5_file:
+            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+imageids_to_remove = [61]
+
+df0.loc[(df0['imageid'].isin(imageids_to_remove)), 'gamma_fit'] = np.nan
+
 # %% remove duplicated index and columns
 df0 = df0.loc[:,~df0.columns.duplicated()]
 df0 = df0[~df0.index.duplicated()]
