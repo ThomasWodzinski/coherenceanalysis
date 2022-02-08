@@ -1896,8 +1896,20 @@ df0 = df0.loc[:,~df0.columns.duplicated()]
 df0 = df0[~df0.index.duplicated()]
 
 
+# %% plot the beamsizes ...
+
+fig = plt.figure(figsize=[6, 8], constrained_layout=True)
+
+gs = gridspec.GridSpec(nrows=4, ncols=2, figure=fig)
+gs.update(hspace=0, wspace=0.0)
+
+
+
+i=0
+j=0
 for dataset in list(datasets):
-    print(dataset)
+   
+    ax = plt.subplot(gs[i,j])
 
     # get all the files in a dataset:
     files = []
@@ -1915,10 +1927,23 @@ for dataset in list(datasets):
             timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
     # create plot for the determined timestamps:
-    plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0['xi_x_um'].isin([np.nan]))]['separation_um'], df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0['xi_x_um'].isin([np.nan]))]['gamma_fit'],color='blue')
-    plt.xlim(0,2000)
-    plt.ylim(0,1)
-    plt.show()
 
+    
+
+    ax.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'],
+        df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['pinholes_bg_avg_sx_um'],
+            color='black')
+    ax.set_xlim(0,2000)
+    # plt.ylim(0,1)
+    ax.set_title(dataset)
+
+    if j==0:
+        j=j+1
+    else:
+        j=0
+        i=i+1
+
+
+## how was this determined?
 
 # %%
