@@ -1847,6 +1847,15 @@ imageids_to_remove = [61]
 
 df0.loc[(df0['imageid'].isin(imageids_to_remove)), 'gamma_fit'] = np.nan
 
+
+# %% save df_fits
+
+df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
+save_df_fits = True
+if save_df_fits == True:
+    df_fits.to_csv(Path.joinpath(data_dir,str('df_fits_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv')))
+    # df_fits.to_csv(Path.joinpath(data_dir,str('df_fits_'+'test'+'.csv')))
+
 # %% remove duplicated index and columns
 df0 = df0.loc[:,~df0.columns.duplicated()]
 df0 = df0[~df0.index.duplicated()]
