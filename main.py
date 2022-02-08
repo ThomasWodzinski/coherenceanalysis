@@ -19,6 +19,8 @@ scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
 from coherencefinder.deconvolution_module import calc_sigma_F_gamma_um, deconvmethod, normalize
 from coherencefinder.fitting_module import Airy, find_sigma, fit_profile, gaussian
 
+# <codecell>
+
 
 import time
 from datetime import datetime
@@ -106,6 +108,7 @@ dph_settings_py_file = str(Path.joinpath(data_dir, "dph_settings.py"))
 # requires however that it is located in a folder with an empty __init__.py
 exec(open(dph_settings_py_file).read())
 
+# %%
 # import sys
 # sys.path.append('g:\\My Drive\\PhD\\coherence\data\\dph_settings_package\\')
 # from dph_settings_package import dph_settings_module
@@ -330,6 +333,7 @@ df0 = pd.merge(df0, df_fits, on="timestamp_pulse_id", how="outer")
 #     # why is this not giving the same profile?? in the GUI a width of 200 is defined. what was actually calculated?
 
 
+# %%
 # creating frontend
 
 
