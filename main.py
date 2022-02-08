@@ -1411,6 +1411,58 @@ end = datetime.now()
 time_taken = end - start
 print(time_taken)
 
+
+
+
+
+# %%
+
+# <codecell>
+# create plots showing those measurements where the deconvolution algorithm did not cross zero
+fig = plt.figure(figsize=[6, 8], constrained_layout=True)
+
+gs = gridspec.GridSpec(nrows=4, ncols=2, figure=fig)
+gs.update(hspace=0, wspace=0.0)
+
+
+
+i=0
+j=0
+for dataset in list(datasets):
+   
+
+    # get all the files in a dataset:
+    files = []
+    # for set in [list(datasets)[0]]:
+    
+    for measurement in datasets[dataset]:
+        # print(measurement)
+        files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+    # get all the timestamps in these files:        
+    # datasets[list(datasets)[0]][0]
+    timestamp_pulse_ids = []
+    for f in files:
+        with h5py.File(f, "r") as hdf5_file:
+            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+    # create plot for the determined timestamps:
+    
+    ax = plt.subplot(gs[i,j])
+
+    ax.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0['xi_x_um'].isin([np.nan]))]['separation_um'], df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0['xi_x_um'].isin([np.nan]))]['gamma_fit'],color='blue')
+    plt.xlim(0,2000)
+    plt.ylim(0,1)
+    plt.show()
+    plt.title(dataset)
+
+    i=+1
+    if j==1:
+        j=j+1
+    else:
+        j=0
+
+
 # <codecell>
 # create plots fitting vs deconvolution
 for dataset in list(datasets):
