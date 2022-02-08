@@ -86,7 +86,79 @@ import os.path
 # %matplotlib inline
 
 
+# %% settings for figures and latex
 
+# from
+# # https://www.dmcdougall.co.uk/publication-ready-the-first-time-beautiful-reproducible-plots-with-matplotlib
+
+# WIDTH = 350.0  # the number latex spits out
+WIDTH = 379.41753  # optics express
+# FACTOR = 0.45  # the fraction of the width you'd like the figure to occupy
+FACTOR = 0.9  # the fraction of the width you'd like the figure to occupy
+# FACTOR = 1  # the fraction of the width you'd like the figure to occupy
+fig_width_pt  = WIDTH * FACTOR
+
+inches_per_pt = 1.0 / 72.27
+golden_ratio  = (np.sqrt(5) - 1.0) / 2.0  # because it looks good
+
+fig_width_in  = fig_width_pt * inches_per_pt  # figure width in inches
+fig_height_in = fig_width_in * golden_ratio   # figure height in inches
+fig_dims    = [fig_width_in, fig_height_in] # fig dims as a list
+
+# adapted from https://tex.stackexchange.com/questions/391074/how-to-use-the-siunitx-package-within-python-matplotlib?noredirect=1 to make siunitx work with pdf
+
+rcparams_with_latex_stix = {                      # setup matplotlib to use latex for output 
+    "mathtext.fontset": 'stix', 
+    "font.family": "serif",
+    "font.serif": ['STIX Two Text'],                   # not working in texmode, just uses cm
+    "font.sans-serif": ['Helvetica'],              # to inherit fonts from the document
+    "font.monospace": [],
+    "axes.labelsize": 9,               # LaTeX default is 10pt font.
+    "font.size": 9,
+    "legend.fontsize": 8,               # Make the legend/label fonts 
+    "xtick.labelsize": 8,               # a little smaller
+    "ytick.labelsize": 8,
+    "figure.figsize": fig_dims,     # default fig size of 0.9 textwidth
+    "figure.dpi": 300, 
+    "text.latex.preamble": [
+#         r"\usepackage[utf8x]{inputenc}",    # use utf8 fonts 
+        r"\usepackage[T1]{fontenc}",        # plots will be generated
+        r'\usepackage{lmodern}', # otherwise savefig to pdf will produce an error!!
+        r"\usepackage[detect-all,locale=US]{siunitx}",
+#         r"\usepackage{amsmath}",
+#         r"\usepackage{stix}"
+#         r"\usepackage{stix2-type1}"
+        ],                                   # using this preamble
+    "text.usetex": True,                # use LaTeX to write all text
+    }
+
+
+#mpl.rcParams.update(pgf_with_latex)
+# mpl.rcParams.update(rcparams_with_latex_stix)
+
+# adapted from https://tex.stackexchange.com/questions/391074/how-to-use-the-siunitx-package-within-python-matplotlib?noredirect=1 to make siunitx work with pdf
+
+rcparams_without_latex = {                      # setup matplotlib to use latex for output    
+    "mathtext.fontset": 'stix', 
+    "font.family": "serif",
+    "font.serif": ['STIX Two Text'],                   # blank entries should cause plots 
+    "font.sans-serif": ['stixsans'],              # to inherit fonts from the document    
+    "font.monospace": [],
+    "axes.labelsize": 9,               # LaTeX default is 10pt font.
+    "font.size": 9,
+    "legend.fontsize": 8,               # Make the legend/label fonts 
+    "xtick.labelsize": 8,               # a little smaller
+    "ytick.labelsize": 8,
+    "figure.figsize": fig_dims,     # default fig size of 0.9 textwidth
+    "figure.dpi": 150, 
+    "text.usetex": False,                # use LaTeX to write all text
+    }
+
+
+#mpl.rcParams.update(pgf_with_latex)
+mpl.rcParams.update(rcparams_without_latex)
+
+# %%
 
 """# Load dph settings and combinations"""
 
