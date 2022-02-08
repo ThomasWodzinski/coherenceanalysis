@@ -151,7 +151,7 @@ def find_sigma(x,y, dely, sigma_init, use_dely):
     else:
         result = mymodel.fit(y, params, x=x)
 
-    xi_um_fit = result.params['sigma'].value
+    xi_um_fit = abs(result.params['sigma'].value)
     xi_um_fit_stderr = result.params['sigma'].stderr
 
     delmodel = result.eval_uncertainty()
