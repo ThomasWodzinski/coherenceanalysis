@@ -1436,7 +1436,11 @@ for dataset in list(datasets):
 # %%
 
 # <codecell>
-# create plots showing those measurements where the deconvolution algorithm did not cross zero
+# %% remove duplicated index and columns
+df0 = df0.loc[:,~df0.columns.duplicated()]
+df0 = df0[~df0.index.duplicated()]
+
+
 for dataset in list(datasets):
     print(dataset)
 
