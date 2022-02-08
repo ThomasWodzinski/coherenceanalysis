@@ -140,7 +140,7 @@ def gaussian(x, amp, cen, sigma):
 def find_sigma(x,y, dely, sigma_init, use_dely):
 
     mymodel = Model(gaussian)
-    sigma_init = 700
+    # sigma_init = 700
     params = mymodel.make_params(amp=1, cen=0, sigma=sigma_init)
     params['amp'].vary = False
     params['cen'].vary = False
@@ -151,7 +151,7 @@ def find_sigma(x,y, dely, sigma_init, use_dely):
     else:
         result = mymodel.fit(y, params, x=x)
 
-    xi_um_fit = result.params['sigma'].value
+    xi_um_fit = abs(result.params['sigma'].value)
     xi_um_fit_stderr = result.params['sigma'].stderr
 
     delmodel = result.eval_uncertainty()
