@@ -260,9 +260,11 @@ initiate_df_fits = True
 # df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
 
 # load saved df_fits from csv
+# df_fits_csv_filename = 'df_fits_v2.csv'
+df_fits_csv_filename = 'df_fits_2022-02-07--19h54.csv'
 load_df_fits_csv = True
 if load_df_fits_csv == True:
-    df_fits = pd.read_csv(Path.joinpath(scratch_dir, "df_fits_v2.csv"), index_col=0)
+    df_fits = pd.read_csv(Path.joinpath(data_dir, df_fits_csv_filename), index_col=0)
     df_fits_clean = df_fits[df_fits["pixis_rotation"].notna()].drop_duplicates()
     df_fits = df_fits_clean
 
