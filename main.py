@@ -1856,6 +1856,41 @@ if save_df_fits == True:
     df_fits.to_csv(Path.joinpath(data_dir,str('df_fits_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv')))
     # df_fits.to_csv(Path.joinpath(data_dir,str('df_fits_'+'test'+'.csv')))
 
+# %% check the beam size
+
+fig = plt.figure(figsize=[6, 8], constrained_layout=True)
+
+gs = gridspec.GridSpec(nrows=4, ncols=2, figure=fig)
+gs.update(hspace=0, wspace=0.0)
+
+i=0
+j=0
+
+for dataset in list(datasets):
+    timestamp_pulse_ids_dataset=[]
+
+    # ax = plt.subplot(gs[i,j])
+    # print(dataset)
+ 
+    # get all the files in a dataset:
+    files = []
+    # for set in [list(datasets)[0]]:
+    
+    for measurement in datasets[dataset]:
+        # print(measurement)
+        files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+    # get all the timestamps in these files:        
+    # datasets[list(datasets)[0]][0]
+    
+    
+    for f in files:
+        timestamp_pulse_ids = []
+        with h5py.File(f, "r") as hdf5_file:
+            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+        print(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['pinholes_bg_avg_sx_um'].mean())
+
 # %% remove duplicated index and columns
 df0 = df0.loc[:,~df0.columns.duplicated()]
 df0 = df0[~df0.index.duplicated()]
