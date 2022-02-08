@@ -1464,6 +1464,57 @@ for dataset in list(datasets):
 
 
 # <codecell>
+# Coherence length from Deconvolution (x-axis) against from Fitting (y-axis)
+
+fig = plt.figure(figsize=[6, 8], constrained_layout=True)
+
+gs = gridspec.GridSpec(nrows=4, ncols=2, figure=fig)
+gs.update(hspace=0, wspace=0.0)
+
+
+
+i=0
+j=0
+for dataset in list(datasets):
+ 
+    # get all the files in a dataset:
+    files = []
+    # for set in [list(datasets)[0]]:
+    
+    for measurement in datasets[dataset]:
+        # print(measurement)
+        files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+    # get all the timestamps in these files:        
+    # datasets[list(datasets)[0]][0]
+    timestamp_pulse_ids = []
+    for f in files:
+        with h5py.File(f, "r") as hdf5_file:
+            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+    # create plot for the determined timestamps:
+    
+    ax = plt.subplot(gs[i,j])
+
+    ax.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_x_um'] , \
+        df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
+            c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'], \
+                marker='x', s=2)
+    ax.set_xlim(0,2000)
+    ax.set_ylim(0,2000)
+
+    ax.set_title(dataset)
+    
+    
+    if j==0:
+        j+=1
+    else:
+        j=0
+        i=i+1
+
+
+
+# <codecell>
 # create plots fitting vs deconvolution
 for dataset in list(datasets):
     print(dataset)
