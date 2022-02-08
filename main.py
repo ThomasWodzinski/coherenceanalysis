@@ -351,7 +351,7 @@ plotprofile_active_widget = widgets.Checkbox(value=False, description="active", 
 do_deconvmethod_widget = widgets.Checkbox(value=False, description="do_deconvmethod", disabled=False)
 xi_um_guess_widget = widgets.FloatText(value=900, description='xi_um_guess')
 scan_x_widget = widgets.Checkbox(value=False, description="scan_x", disabled=False)
-sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.2, description='sigma_x_F_gamma_um_multiplier_widget')
+sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget')
 crop_px_widget = widgets.IntText(value=200, description='crop_px')
 
 imageid_profile_fit_widget = widgets.Dropdown(
