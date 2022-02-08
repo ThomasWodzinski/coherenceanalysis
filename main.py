@@ -17,7 +17,7 @@ scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
 # imports
 
 from coherencefinder.deconvolution_module import calc_sigma_F_gamma_um, deconvmethod, normalize
-from coherencefinder.fitting_module import Airy, find_sigma, fit_profile
+from coherencefinder.fitting_module import Airy, find_sigma, fit_profile, gaussian
 
 
 import time
