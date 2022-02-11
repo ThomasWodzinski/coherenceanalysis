@@ -47,6 +47,7 @@ from ipywidgets import (
     HBox,
     interactive,
     interactive_output,
+    GridspecLayout
 )
 import ipywidgets as widgets
 # import bqplot as bq
