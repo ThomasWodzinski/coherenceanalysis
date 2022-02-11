@@ -21,6 +21,9 @@ from coherencefinder.fitting_module import Airy, find_sigma, fit_profile, gaussi
 
 # <codecell>
 
+#!pip install bqplot
+
+# <codecell>
 
 import time
 from datetime import datetime
@@ -46,7 +49,7 @@ from ipywidgets import (
     interactive_output,
 )
 import ipywidgets as widgets
-
+# import bqplot as bq
 
 import h5py
 
