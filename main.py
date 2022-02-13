@@ -1286,7 +1286,7 @@ def plot_fitting(
         #     plt.plot(list(range(pixis_profile_avg.size)),ydata, color='r', linewidth=2)
         #     plt.plot(list(range(pixis_profile_avg.size)),result.best_fit, color='b', linewidth=0.5)
         ax00.plot(xdata * 1e3, ydata, color="r", linewidth=2, label="data")
-        ax00.plot(xdata * 1e3, result.best_fit, color="b", linewidth=0.5, label="fit")
+        ax00.plot(xdata * 1e3, result.best_fit, color="b", linewidth=1, label="fit")
 
         Airy1 = [
             I_Airy1_fit
@@ -1547,8 +1547,14 @@ def plot_deconvmethod(
         wavelength = setting_wavelength_nm * 1e-9
         # xi_um_guess = 475
         # guess sigma_y_F_gamma_um based on the xi_um_guess assuming to be the beams intensity rms width
+
+        n = pixis_profile_avg.size  # number of sampling point  # number of pixels
+        dX_1 = 13e-6
+        xdata = np.linspace((-n / 2) * dX_1, (+n / 2 - 1) * dX_1, n)
+        ydata = pixis_profile_avg  # defined in the cells above, still to implement: select
+        
         sigma_y_F_gamma_um_guess = calc_sigma_F_gamma_um(xi_um_guess, n, dX_1, setting_wavelength_nm, False)
-        create_figure = True
+        create_figure = False
 
         # Ignoring OptimizeWarning. Supressing warning as described in https://stackoverflow.com/a/14463362:
         with warnings.catch_warnings():
@@ -1591,13 +1597,71 @@ def plot_deconvmethod(
 
 
 
+        fig = plt.figure(constrained_layout=False, figsize=(8.27, 11.69), dpi=150)
 
+        gs = gridspec.GridSpec(2, 1, figure=fig, height_ratios=[1, 2])
+        gs.update(hspace=0.1)
 
+        #     ax2 = plt.subplot(2,1,2)
+        ax10 = fig.add_subplot(gs[1, 0])
+
+        im_ax10 = ax10.imshow(
+            pixis_image_norm,
+            origin="lower",
+            interpolation="nearest",
+            aspect="auto",
+            cmap="jet",
+            vmin=0,
+            vmax=1,
+            extent=((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, -n / 2 * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3),
+        )
+
+        # fig.colorbar(im_ax2, ax=ax2, pad=0.05, fraction=0.1, shrink=1.00, aspect=20, orientation='horizontal')
+
+        ax10.add_patch(
+            patches.Rectangle(
+                ((-n / 2) * dX_1 * 1e3, (int(round(pixis_centery_px)) - n / 2 - pixis_avg_width / 2) * dX_1 * 1e3),
+                n * dX_1 * 1e3,
+                pixis_avg_width * dX_1 * 1e3,
+                color="w",
+                linestyle="-",
+                alpha=0.8,
+                fill=False,  # remove background
+            )
+        )
+
+        ax10.set_xlabel("x / mm", fontsize=14)
+        ax10.set_ylabel("y / mm", fontsize=14)
+        ax10.grid(color="w", linewidth=1, alpha=0.5, linestyle="--", which="major")
+
+        ax00 = fig.add_subplot(gs[0, 0], sharex=ax10)
+        #     ax = plt.subplot(2,1,1)
+
+        #     plt.plot(list(range(pixis_profile_avg.size)),ydata, color='r', linewidth=2)
+        #     plt.plot(list(range(pixis_profile_avg.size)),result.best_fit, color='b', linewidth=0.5)
+        ax00.plot(xdata * 1e3, ydata, color="r", linewidth=2, label="data")
+        ax00.plot(xdata * 1e3, partiallycoherent_rec_profile, color="g", linewidth=1, label="recovered partially coherent")
+        ax00.plot(xdata * 1e3, fullycoherent_profile_opt, color="k", linewidth=0.5, label="fully coherent")
         
 
-            
-            
-            
+        ax00.set_xlim([(-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3])
+        ax00.set_ylim([0, 1])
+
+        ax00.set_ylabel("Intensity / a.u.", fontsize=14)
+        ax00.legend()
+
+        textstr = " ".join(
+            (
+                "ph-" + pinholes + ".id" + str(int(imageid)),
+                r"$\lambda=%.2f$nm" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['wavelength_nm_fit'],),
+                orientation,
+                "\n",
+                "$d$=" + str(int(separation_um)) + "um",
+                r"$\gamma=%.2f$" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['gamma_fit'],),
+                r"$\xi_x=%.2fum$" % (xi_x_um,),
+            )
+        )
+        ax00.set_title(textstr, fontsize=10)
 
 
         plt.show()
