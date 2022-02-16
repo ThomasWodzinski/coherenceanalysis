@@ -531,6 +531,9 @@ x2_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 normfactor_do_fit_widget = widgets.Checkbox(value=False, description="fit")
 
 
+do_plot_fitting_vs_deconvolution_widget = widgets.Checkbox(value=False, description="do fitting vs deconv plot")
+
+
 # define what should happen when the hdf5 file widget is changed:
 
 
@@ -1672,12 +1675,70 @@ def plot_deconvmethod(
         # print(gamma_fit)
 
 
+def plot_fitting_vs_deconvolution(
+    do_plot_fitting_vs_deconvolution,
+    dataset,
+    measurement,
+    imageid
+):
+
+    if do_plot_fitting_vs_deconvolution == True:
+
+        # Loading and preparing
+
+        # get all the files in a dataset:
+        files = []
+        # for set in [list(datasets)[0]]:
+        
+        for measurement in datasets[dataset]:
+            # print(measurement)
+            files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+        # get all the timestamps in these files:        
+        # datasets[list(datasets)[0]][0]
+        timestamp_pulse_ids = []
+        for f in files:
+            with h5py.File(f, "r") as hdf5_file:
+                timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+        # create plot for the determined timestamps:
+        # plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_um_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
+        plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_x_um'] , \
+            df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
+                c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'],\
+                    marker='x', s=2)
+
+        files = []
+        files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+        # get all the timestamps in these files:        
+        # datasets[list(datasets)[0]][0]
+        timestamp_pulse_ids = []
+        for f in files:
+            with h5py.File(f, "r") as hdf5_file:
+                timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+        plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid)) & (df0["xi_um_fit"]<2000)]['xi_x_um'] , \
+            df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
+                c='black',\
+                    marker='x', s=5)
+
+
+        plt.xlabel(r"$\xi$ (fits)")
+        plt.ylabel(r"$\xi$ (deconv)")
+        plt.gca().set_aspect('equal')
+        plt.colorbar()
+
+
+
+
 # Structuring the input widgets
 
 column0 = widgets.VBox(
     [
         plotprofile_active_widget,
         do_deconvmethod_widget,
+        do_plot_fitting_vs_deconvolution_widget,
         xi_um_guess_widget,
         scan_x_widget,
         sigma_x_F_gamma_um_multiplier_widget,
@@ -1862,6 +1923,16 @@ plot_deconvmethod_interactive_output = interactive_output(
 )
 
 
+plot_plot_fitting_vs_deconvolution_output = interactive_output(
+    plot_fitting_vs_deconvolution,
+    {
+        "do_plot_fitting_vs_deconvolution": do_plot_fitting_vs_deconvolution_widget,
+        "dataset" : datasets_widget,
+        "measurement" : dph_settings_bgsubtracted_widget,
+        "imageid": imageid_profile_fit_widget,
+    },
+)
+
 
 def dph_settings_bgsubtracted_widget_changed(change):
     statustext_widget.value = "updating widgets ..."
@@ -1999,11 +2070,20 @@ display(
     Javascript("""google.colab.output.setIframeHeight(0, true, {maxHeight: 5000})""")
 )  # https://stackoverflow.com/a/57346765
 
-children = [plot_fitting_interactive_output, plot_deconvmethod_interactive_output]
-tabs = widgets.Tab()
-tabs.children = children
-tabs.set_title(0, 'Fitting')
-tabs.set_title(1, 'Deconvolution')
+children_left = [plot_fitting_interactive_output, plot_deconvmethod_interactive_output]
+tabs_left = widgets.Tab()
+tabs_left.children = children_left
+tabs_left.set_title(0, 'Fitting')
+tabs_left.set_title(1, 'Deconvolution')
+
+children_right = [plot_plot_fitting_vs_deconvolution_output]
+tabs_right = widgets.Tab()
+tabs_right.children = children_right
+tabs_right.set_title(0, 'Fitting vs. Deconvolution')
+
+grid = widgets.GridspecLayout(1, 3, height='1000px')
+grid[0, :2] = tabs_left
+grid[0, 2] = tabs_right
 
 
 # Display widgets and outputs
@@ -2014,7 +2094,7 @@ display(
             datasets_widget,
             dph_settings_bgsubtracted_widget,
             plotprofile_interactive_input,
-            tabs
+            grid
         ]
     )
 )
