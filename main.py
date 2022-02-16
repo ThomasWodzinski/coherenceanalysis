@@ -1678,7 +1678,7 @@ def plot_deconvmethod(
 def plot_fitting_vs_deconvolution(
     do_plot_fitting_vs_deconvolution,
     dataset,
-    measurement,
+    measurement_file,
     imageid
 ):
 
@@ -1708,15 +1708,12 @@ def plot_fitting_vs_deconvolution(
                 c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'],\
                     marker='x', s=2)
 
-        files = []
-        files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+        plt.colorbar()
 
-        # get all the timestamps in these files:        
-        # datasets[list(datasets)[0]][0]
+
         timestamp_pulse_ids = []
-        for f in files:
-            with h5py.File(f, "r") as hdf5_file:
-                timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+        with h5py.File(measurement_file, "r") as hdf5_file:
+            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
         plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid)) & (df0["xi_um_fit"]<2000)]['xi_x_um'] , \
             df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
@@ -1727,7 +1724,7 @@ def plot_fitting_vs_deconvolution(
         plt.xlabel(r"$\xi$ (fits)")
         plt.ylabel(r"$\xi$ (deconv)")
         plt.gca().set_aspect('equal')
-        plt.colorbar()
+        
 
 
 
@@ -1928,7 +1925,7 @@ plot_plot_fitting_vs_deconvolution_output = interactive_output(
     {
         "do_plot_fitting_vs_deconvolution": do_plot_fitting_vs_deconvolution_widget,
         "dataset" : datasets_widget,
-        "measurement" : dph_settings_bgsubtracted_widget,
+        "measurement_file" : dph_settings_bgsubtracted_widget,
         "imageid": imageid_profile_fit_widget,
     },
 )
