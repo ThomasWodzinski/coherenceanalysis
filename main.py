@@ -1717,12 +1717,18 @@ def plot_fitting_vs_deconvolution(
 
         plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid)) & (df0["xi_um_fit"]<2000)]['xi_x_um'] , \
             df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
-                c='black',\
+                c='red',\
                     marker='x', s=10)
 
 
-        plt.xlabel(r"$\xi$ (fits)")
-        plt.ylabel(r"$\xi$ (deconv)")
+        x = np.linspace(0,2000)
+        plt.plot(x,x, c='grey')
+        
+
+        plt.xlim(0,2000)
+        plt.ylim(0,2000)
+        plt.xlabel(r"$\xi$ (deconv)")
+        plt.ylabel(r"$\xi$ (fit)")
         plt.gca().set_aspect('equal')
         
 
