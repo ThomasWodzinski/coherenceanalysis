@@ -1718,7 +1718,7 @@ def plot_fitting_vs_deconvolution(
         plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid)) & (df0["xi_um_fit"]<2000)]['xi_x_um'] , \
             df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
                 c='black',\
-                    marker='x', s=5)
+                    marker='x', s=10)
 
 
         plt.xlabel(r"$\xi$ (fits)")
