@@ -533,7 +533,7 @@ normfactor_do_fit_widget = widgets.Checkbox(value=False, description="fit")
 
 do_plot_fitting_vs_deconvolution_widget = widgets.Checkbox(value=False, description="do fitting vs deconv plot")
 do_plot_CDCs_widget = widgets.Checkbox(value=False, description="do plot CDCs")
-
+do_plot_xi_um_fit_vs_I_Airy2_fit_widget = widgets.Checkbox(value=False, description="do plot xi_um_fit vs I_Airy2_fit")
 
 # define what should happen when the hdf5 file widget is changed:
 
@@ -1844,7 +1844,60 @@ def plot_CDCs(
 
 
 
+# create plots fitting vs deconvolution
+def plot_xi_um_fit_vs_I_Airy2_fit(
+    do_plot_xi_um_fit_vs_I_Airy2_fit
+):
 
+    if do_plot_xi_um_fit_vs_I_Airy2_fit == True:
+
+        fig = plt.figure(figsize=[6, 8], constrained_layout=True)
+
+        gs = gridspec.GridSpec(nrows=4, ncols=2, figure=fig)
+        gs.update(hspace=0, wspace=0.0)
+
+        i=0
+        j=0
+        for dataset in list(datasets):
+
+            ax = plt.subplot(gs[i,j])
+
+            # get all the files in a dataset:
+            files = []
+            # for set in [list(datasets)[0]]:
+            
+            for measurement in datasets[dataset]:
+                # print(measurement)
+                files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+            # get all the timestamps in these files:        
+            # datasets[list(datasets)[0]][0]
+            timestamp_pulse_ids = []
+            for f in files:
+                with h5py.File(f, "r") as hdf5_file:
+                    timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+            # create plot for the determined timestamps:
+            # plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_um_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
+            plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['I_Airy2_fit'] , \
+                df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
+                    c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'],\
+                        marker='x', s=2)
+            plt.xlabel(r"$\xi$ (fits)")
+            plt.ylabel(r"$\xi$ (deconv)")
+            plt.axvline(x=1, color='black')
+            plt.colorbar()
+
+            # plt.xlim(0,2000)
+            # plt.ylim(0,2000)
+            
+            plt.title(dataset)
+
+            if j==0:
+                j+=1
+            else:
+                j=0
+                i=i+1
 
 
 # Structuring the input widgets
@@ -1855,6 +1908,7 @@ column0 = widgets.VBox(
         do_deconvmethod_widget,
         do_plot_fitting_vs_deconvolution_widget,
         do_plot_CDCs_widget,
+        do_plot_xi_um_fit_vs_I_Airy2_fit_widget,
         xi_um_guess_widget,
         scan_x_widget,
         sigma_x_F_gamma_um_multiplier_widget,
@@ -2056,6 +2110,13 @@ plot_CDCs_output = interactive_output(
     },
 )
 
+plot_xi_um_fit_vs_I_Airy2_fit_output = interactive_output(
+    plot_xi_um_fit_vs_I_Airy2_fit,
+    {
+        "do_plot_xi_um_fit_vs_I_Airy2_fit": do_plot_xi_um_fit_vs_I_Airy2_fit_widget,
+    },
+)
+
 
 def dph_settings_bgsubtracted_widget_changed(change):
     statustext_widget.value = "updating widgets ..."
@@ -2193,12 +2254,13 @@ display(
     Javascript("""google.colab.output.setIframeHeight(0, true, {maxHeight: 5000})""")
 )  # https://stackoverflow.com/a/57346765
 
-children_left = [plot_fitting_interactive_output, plot_deconvmethod_interactive_output, plot_CDCs_output]
+children_left = [plot_fitting_interactive_output, plot_deconvmethod_interactive_output, plot_CDCs_output, plot_xi_um_fit_vs_I_Airy2_fit_output]
 tabs_left = widgets.Tab()
 tabs_left.children = children_left
 tabs_left.set_title(0, 'Fitting')
 tabs_left.set_title(1, 'Deconvolution')
 tabs_left.set_title(2, 'CDCs')
+tabs_left.set_title(3, 'plot_xi_um_fit_vs_I_Airy2_fit')
 
 children_right = [plot_plot_fitting_vs_deconvolution_output]
 tabs_right = widgets.Tab()
@@ -2925,4 +2987,56 @@ for dataset in list(datasets):
 
 ## how was this determined?
 
+# %%
+
+
+# <codecell>
+# create plots fitting vs deconvolution
+fig = plt.figure(figsize=[6, 8], constrained_layout=True)
+
+gs = gridspec.GridSpec(nrows=4, ncols=2, figure=fig)
+gs.update(hspace=0, wspace=0.0)
+
+i=0
+j=0
+for dataset in list(datasets):
+
+    ax = plt.subplot(gs[i,j])
+
+    # get all the files in a dataset:
+    files = []
+    # for set in [list(datasets)[0]]:
+    
+    for measurement in datasets[dataset]:
+        # print(measurement)
+        files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+    # get all the timestamps in these files:        
+    # datasets[list(datasets)[0]][0]
+    timestamp_pulse_ids = []
+    for f in files:
+        with h5py.File(f, "r") as hdf5_file:
+            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+    # create plot for the determined timestamps:
+    # plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_um_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
+    plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['I_Airy2_fit'] , \
+        df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
+            c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'],\
+                marker='x', s=2)
+    plt.xlabel(r"$\xi$ (fits)")
+    plt.ylabel(r"$\xi$ (deconv)")
+    plt.axvline(x=1, color='black')
+    plt.colorbar()
+
+    # plt.xlim(0,2000)
+    # plt.ylim(0,2000)
+    
+    plt.title(dataset)
+
+    if j==0:
+        j+=1
+    else:
+        j=0
+        i=i+1
 # %%
