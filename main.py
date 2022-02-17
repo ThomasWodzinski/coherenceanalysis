@@ -1883,8 +1883,8 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
                 df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
                     c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'],\
                         marker='x', s=2)
-            plt.xlabel(r"$\xi$ (fits)")
-            plt.ylabel(r"$\xi$ (deconv)")
+            plt.xlabel(r"$I_2$")
+            plt.ylabel(r"$\xi$ (fits)")
             plt.axvline(x=1, color='black')
             plt.colorbar()
 
@@ -3024,8 +3024,8 @@ for dataset in list(datasets):
         df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
             c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'],\
                 marker='x', s=2)
-    plt.xlabel(r"$\xi$ (fits)")
-    plt.ylabel(r"$\xi$ (deconv)")
+    plt.xlabel(r"$I_2$")
+    plt.ylabel(r"$\xi$ (fits)")
     plt.axvline(x=1, color='black')
     plt.colorbar()
 
