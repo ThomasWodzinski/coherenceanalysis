@@ -532,6 +532,7 @@ normfactor_do_fit_widget = widgets.Checkbox(value=False, description="fit")
 
 
 do_plot_fitting_vs_deconvolution_widget = widgets.Checkbox(value=False, description="do fitting vs deconv plot")
+do_plot_CDCs_widget = widgets.Checkbox(value=False, description="do plot CDCs")
 
 
 # define what should happen when the hdf5 file widget is changed:
@@ -1734,6 +1735,117 @@ def plot_fitting_vs_deconvolution(
 
 
 
+# CDC from Deconvolution (green) and Fitting (red)
+def plot_CDCs(
+    do_plot_CDCs,
+):
+
+    if do_plot_CDCs == True:
+
+        fig = plt.figure(figsize=[6, 8], constrained_layout=True)
+
+        gs = gridspec.GridSpec(nrows=4, ncols=2, figure=fig)
+        gs.update(hspace=0, wspace=0.0)
+
+        i=0
+        j=0
+
+        for dataset in list(datasets):
+            timestamp_pulse_ids_dataset=[]
+
+            ax = plt.subplot(gs[i,j])
+        
+            # get all the files in a dataset:
+            files = []
+            # for set in [list(datasets)[0]]:
+            
+            for measurement in datasets[dataset]:
+                # print(measurement)
+                files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+            # get all the timestamps in these files:        
+            # datasets[list(datasets)[0]][0]
+            
+            
+            for f in files:
+                timestamp_pulse_ids = []
+                with h5py.File(f, "r") as hdf5_file:
+                    timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+                    timestamp_pulse_ids_dataset.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+            # create plot for the determined timestamps:
+        
+                # ax.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'] , \
+                #     gaussian(x=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'], amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['xi_x_um']), \
+                #         c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['I_Airy2_fit'])
+
+                # Deconvolution (green)
+                x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
+                y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)]['xi_x_um'].max()) for x in x]
+                ax.scatter(x, y, marker='v', s=20, color='darkgreen', facecolors='none', label='maximum')
+                
+                # Fitting (red)
+                x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
+                y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)]['gamma_fit'].max() for x in x]
+                ax.scatter(x, y, marker='v', s=20, color='darkred', facecolors='none', label='maximum')
+                
+            x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
+            y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)]['xi_x_um'].max()) for x in x]
+        
+            xx = np.arange(0.0, 2000, 10)
+            gamma_xi_x_um_max = y
+            d_gamma = x
+            # gamma_xi_x_um_max = gamma_xi_x_um_max[~np.isnan(gamma_xi_x_um_max)]
+            (xi_x_um_max_sigma, xi_x_um_max_sigma_std) = find_sigma(d_gamma,gamma_xi_x_um_max,0, 400, False)
+            
+            y1 = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma) for x in xx]
+            ax.plot(xx, y1, '-', color='green', label='') # xi_x_um_max plot
+            y_min = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma-xi_x_um_max_sigma_std) for x in xx]
+            y_max = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma+xi_x_um_max_sigma_std) for x in xx]
+            ax.fill_between(xx, y_min, y_max, facecolor='green', alpha=0.3)
+            # ax.hlines(0.606, 0, np.nanmean(xi_x_um_max), linestyles = '-', color='green')
+            ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma), linestyles = '-', color='green')
+            # ax.hlines(0.606, 0, np.nanmean(sigma_B_um), linestyles = '-', color='black')
+
+
+            # TO DO: find mean sigma and error of the max(gamma_fit) of each separation
+
+            x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
+            y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)]['gamma_fit'].max() for x in x]
+        
+            xx = np.arange(0.0, 2000, 10)
+            gamma_fit_max = y
+            d_gamma = x
+                
+            (xi_x_um_max_sigma, xi_x_um_max_sigma_std) = find_sigma(d_gamma,gamma_fit_max,0, 400, False)
+
+            y1 = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma) for x in xx]
+            ax.plot(xx, y1, '-', color='red', label='') # xi_x_um_max plot
+            y_min = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma-xi_x_um_max_sigma_std) for x in xx]
+            y_max = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma+xi_x_um_max_sigma_std) for x in xx]
+            ax.fill_between(xx, y_min, y_max, facecolor='red', alpha=0.3)
+            # ax.hlines(0.606, 0, np.nanmean(xi_x_um_max), linestyles = '-', color='green')
+            ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma), linestyles = '-', color='red')
+            # ax.hlines(0.606, 0, np.nanmean(sigma_B_um), linestyles = '-', color='black')
+
+        
+            ax.set_xlim(0,2000)
+            ax.set_ylim(0,1)
+            
+            ax.set_title(dataset)
+            
+            
+            if j==0:
+                j+=1
+            else:
+                j=0
+                i=i+1
+
+
+
+
+
+
 
 # Structuring the input widgets
 
@@ -1742,6 +1854,7 @@ column0 = widgets.VBox(
         plotprofile_active_widget,
         do_deconvmethod_widget,
         do_plot_fitting_vs_deconvolution_widget,
+        do_plot_CDCs_widget,
         xi_um_guess_widget,
         scan_x_widget,
         sigma_x_F_gamma_um_multiplier_widget,
@@ -1936,6 +2049,13 @@ plot_plot_fitting_vs_deconvolution_output = interactive_output(
     },
 )
 
+plot_CDCs_output = interactive_output(
+    plot_CDCs,
+    {
+        "do_plot_CDCs": do_plot_CDCs_widget,
+    },
+)
+
 
 def dph_settings_bgsubtracted_widget_changed(change):
     statustext_widget.value = "updating widgets ..."
@@ -2073,11 +2193,12 @@ display(
     Javascript("""google.colab.output.setIframeHeight(0, true, {maxHeight: 5000})""")
 )  # https://stackoverflow.com/a/57346765
 
-children_left = [plot_fitting_interactive_output, plot_deconvmethod_interactive_output]
+children_left = [plot_fitting_interactive_output, plot_deconvmethod_interactive_output, plot_CDCs_output]
 tabs_left = widgets.Tab()
 tabs_left.children = children_left
 tabs_left.set_title(0, 'Fitting')
 tabs_left.set_title(1, 'Deconvolution')
+tabs_left.set_title(2, 'CDCs')
 
 children_right = [plot_plot_fitting_vs_deconvolution_output]
 tabs_right = widgets.Tab()
