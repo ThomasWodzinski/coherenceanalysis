@@ -449,6 +449,7 @@ xi_um_guess_widget = widgets.FloatText(value=900, description='xi_um_guess')
 scan_x_widget = widgets.Checkbox(value=False, description="scan_x", disabled=False)
 sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget')
 crop_px_widget = widgets.IntText(value=200, description='crop_px')
+pixis_profile_avg_width_widget = widgets.IntText(value=200, description='profile width / px')
 
 imageid_profile_fit_widget = widgets.Dropdown(
     # options=imageid_widget.options,
@@ -1065,6 +1066,7 @@ def plotprofile(
 
 def plot_fitting(
     plotprofile_active,
+    pixis_profile_avg_width,
     crop_px,
     hdf5_file_path,
     imageid,
@@ -1140,7 +1142,7 @@ def plot_fitting(
         setting_wavelength_nm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["setting_wavelength_nm"].iloc[0]
         pinholes_bg_avg_sx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sx_um"].iloc[0]
         pinholes_bg_avg_sy_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sy_um"].iloc[0]
-        pixis_avg_width = 200  # read from df0 instead!
+        # pixis_profile_avg_width = 200  # read from df0 instead!
 
         # fittingprogress_widget.value = 2
         #     hdf5_file_name_image = hdf5_file_name_image_widget.value
@@ -1161,11 +1163,16 @@ def plot_fitting(
         #     beamposy = df[df['imageid']==imageid]['beam position hall vertical pulse resolved']
         #     energy_hall_uJ = df[df['imageid']==imageid]['energy hall'].iloc[0]
 
+        pixis_profile_avg = np.average(pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:],axis=0)
+        pixis_profile_avg = pixis_profile_avg / np.max(pixis_profile_avg)
+
         n = pixis_profile_avg.size  # number of sampling point  # number of pixels
         dX_1 = 13e-6
         xdata = np.linspace((-n / 2) * dX_1, (+n / 2 - 1) * dX_1, n)
         # ydata = pixis_profile_avg_dataset[imageid]*datafactor
         ydata = pixis_profile_avg  # defined in the cells above, still to implement: select
+       
+        #still to average over y!
 
         fringeseparation_um = z_mm * 1e-3 * wavelength_nm * 1e-9 / (d_um * 1e-6) * 1e6
         fringeseparation_px = fringeseparation_um / 13
@@ -1284,9 +1291,9 @@ def plot_fitting(
 
         ax10.add_patch(
             patches.Rectangle(
-                ((-n / 2) * dX_1 * 1e3, (int(round(pixis_centery_px)) - n / 2 - pixis_avg_width / 2) * dX_1 * 1e3),
+                ((-n / 2) * dX_1 * 1e3, (int(round(pixis_centery_px)) - n / 2 - pixis_profile_avg_width / 2) * dX_1 * 1e3),
                 n * dX_1 * 1e3,
-                pixis_avg_width * dX_1 * 1e3,
+                pixis_profile_avg_width * dX_1 * 1e3,
                 color="w",
                 linestyle="-",
                 alpha=0.8,
@@ -1518,6 +1525,7 @@ def plot_fitting(
 
 def plot_deconvmethod(
     do_deconvmethod,
+    pixis_profile_avg_width,
     xi_um_guess,
     scan_x,
     sigma_x_F_gamma_um_multiplier,
@@ -1537,9 +1545,9 @@ def plot_deconvmethod(
             pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
                 np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
             ]
-            pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
-            ]
+            # pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
+            #     np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+            # ]
             timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
                 np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
             ][2]
@@ -1553,8 +1561,9 @@ def plot_deconvmethod(
         setting_wavelength_nm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["setting_wavelength_nm"].iloc[0]
         pinholes_bg_avg_sx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sx_um"].iloc[0]
         pinholes_bg_avg_sy_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sy_um"].iloc[0]
-        pixis_avg_width = 200  # read from df0 instead!
+        # pixis_avg_width = 200  # read from df0 instead!
 
+        pixis_profile_avg = pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:]
 
         deconvmethod_text_widget.value = 'calculating ...'
         partiallycoherent = pixis_image_norm
@@ -1565,6 +1574,9 @@ def plot_deconvmethod(
         wavelength = setting_wavelength_nm * 1e-9
         # xi_um_guess = 475
         # guess sigma_y_F_gamma_um based on the xi_um_guess assuming to be the beams intensity rms width
+
+        pixis_profile_avg = np.average(pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:],axis=0)
+        pixis_profile_avg = pixis_profile_avg / np.max(pixis_profile_avg)
 
         n = pixis_profile_avg.size  # number of sampling point  # number of pixels
         dX_1 = 13e-6
@@ -1638,9 +1650,9 @@ def plot_deconvmethod(
 
         ax10.add_patch(
             patches.Rectangle(
-                ((-n / 2) * dX_1 * 1e3, (int(round(pixis_centery_px)) - n / 2 - pixis_avg_width / 2) * dX_1 * 1e3),
+                ((-n / 2) * dX_1 * 1e3, (int(round(pixis_centery_px)) - n / 2 - pixis_profile_avg_width / 2) * dX_1 * 1e3),
                 n * dX_1 * 1e3,
-                pixis_avg_width * dX_1 * 1e3,
+                pixis_profile_avg_width * dX_1 * 1e3,
                 color="w",
                 linestyle="-",
                 alpha=0.8,
@@ -1926,6 +1938,7 @@ column0 = widgets.VBox(
         do_plot_fitting_vs_deconvolution_widget,
         do_plot_CDCs_widget,
         do_plot_xi_um_fit_vs_I_Airy2_fit_widget,
+        pixis_profile_avg_width_widget,
         xi_um_guess_widget,
         scan_x_widget,
         sigma_x_F_gamma_um_multiplier_widget,
@@ -2050,6 +2063,7 @@ plot_fitting_interactive_output = interactive_output(
     plot_fitting,
     {
         "plotprofile_active": plotprofile_active_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
         "crop_px" : crop_px_widget,
         "hdf5_file_path": dph_settings_bgsubtracted_widget,
         "imageid": imageid_profile_fit_widget,
@@ -2099,8 +2113,9 @@ plot_deconvmethod_interactive_output = interactive_output(
     plot_deconvmethod,
     {
         "do_deconvmethod": do_deconvmethod_widget,
-        "scan_x" : scan_x_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
         "xi_um_guess" : xi_um_guess_widget,
+        "scan_x" : scan_x_widget,
         "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_widget,
         "crop_px" : crop_px_widget,
         "hdf5_file_path": dph_settings_bgsubtracted_widget,
