@@ -194,6 +194,8 @@ datasets_widget_layout = widgets.Layout(width="100%")
 datasets_widget = widgets.Dropdown(options=list(datasets), layout=datasets_widget_layout, description='Dataset:')
 # settings_widget.observe(update_settings, names='value')
 # display(dph_settings_widget)
+# initialize a dictionary holding a selection of measurements
+datasets_selection = datasets.copy()
 
 
 # dph_settings_widget_layout = widgets.Layout(width="100%")
@@ -215,6 +217,18 @@ dph_settings_bgsubtracted_widget = widgets.Dropdown(
     # value=dph_settings_bgsubtracted[3],  # workaround, because some hdf5 files have no proper timestamp yet
 )
 # settings_widget.observe(update_settings, names='value')
+
+measurements_selection_widget_layout = widgets.Layout(width="100%")
+measurements_selection_widget = widgets.SelectMultiple(
+    options=dph_settings_bgsubtracted,
+    value=dph_settings_bgsubtracted,
+    layout=measurements_selection_widget_layout,
+    description='Measurement:'
+    # value=dph_settings_bgsubtracted[3],  # workaround, because some hdf5 files have no proper timestamp yet
+)
+
+
+
 
 # just hdf5_filename_bg_subtracted so we can use it to search in the dataframe
 # dph_settings_bgsubtracted_widget.value.name
@@ -1691,9 +1705,12 @@ def plot_fitting_vs_deconvolution(
         files = []
         # for set in [list(datasets)[0]]:
         
-        for measurement in datasets[dataset]:
+        for measurement in datasets_selection[dataset]:
             # print(measurement)
             files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+        # testing:
+        files = measurements_selection_widget.value
 
         # get all the timestamps in these files:        
         # datasets[list(datasets)[0]][0]
@@ -1750,7 +1767,7 @@ def plot_CDCs(
         i=0
         j=0
 
-        for dataset in list(datasets):
+        for dataset in list(datasets_selection):
             timestamp_pulse_ids_dataset=[]
 
             ax = plt.subplot(gs[i,j])
@@ -1759,7 +1776,7 @@ def plot_CDCs(
             files = []
             # for set in [list(datasets)[0]]:
             
-            for measurement in datasets[dataset]:
+            for measurement in datasets_selection[dataset]:
                 # print(measurement)
                 files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
 
@@ -1858,7 +1875,7 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
 
         i=0
         j=0
-        for dataset in list(datasets):
+        for dataset in list(datasets_selection):
 
             ax = plt.subplot(gs[i,j])
 
@@ -1866,7 +1883,7 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
             files = []
             # for set in [list(datasets)[0]]:
             
-            for measurement in datasets[dataset]:
+            for measurement in datasets_selection[dataset]:
                 # print(measurement)
                 files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
 
@@ -2189,9 +2206,34 @@ def datasets_widget_changed(change):
     for pattern in ['*'+ s + '.h5' for s in datasets[datasets_widget.value]]: 
         dph_settings_bgsubtracted.extend(bgsubtracted_dir.glob(pattern))
     dph_settings_bgsubtracted_widget.options=dph_settings_bgsubtracted
-    
-
+    measurements_selection_widget.options = dph_settings_bgsubtracted
+    measurements_selection_files = []
+    for pattern in ['*'+ s + '.h5' for s in datasets_selection[datasets_widget.value]]: 
+        measurements_selection_files.extend(bgsubtracted_dir.glob(pattern))
+    measurements_selection_widget.value = measurements_selection_files
 datasets_widget.observe(datasets_widget_changed, names="value")
+
+
+def measurements_selection_widget_changed(change):
+    if len(measurements_selection_widget.value) > 0: # avoid the empty array that is generated during datasets_widget_changed
+        measurements_selection = []
+        for f in measurements_selection_widget.value:
+            measurements_selection.append(f.stem)
+        datasets_selection.update({ datasets_widget.value : measurements_selection })
+    datasets_selection_py_file = str(Path.joinpath(data_dir, "datasets_selection.py"))
+    with open(datasets_selection_py_file, 'w') as f:
+        print(datasets_selection, file=f)
+    # update some outputs:
+    if do_plot_fitting_vs_deconvolution_widget.value == True:
+        do_plot_fitting_vs_deconvolution_widget.value = False
+        do_plot_fitting_vs_deconvolution_widget.value = True
+    if do_plot_CDCs_widget.value == True:
+        do_plot_CDCs_widget.value = False
+        do_plot_CDCs_widget.value = True
+    if do_plot_xi_um_fit_vs_I_Airy2_fit_widget.value == True:
+        do_plot_xi_um_fit_vs_I_Airy2_fit_widget.value = False
+        do_plot_xi_um_fit_vs_I_Airy2_fit_widget.value = True
+measurements_selection_widget.observe(measurements_selection_widget_changed, names="value")
 
 
 
@@ -2279,6 +2321,7 @@ display(
             HBox([fittingprogress_widget, statustext_widget]),
             datasets_widget,
             dph_settings_bgsubtracted_widget,
+            measurements_selection_widget,
             plotprofile_interactive_input,
             grid
         ]
@@ -3039,4 +3082,15 @@ for dataset in list(datasets):
     else:
         j=0
         i=i+1
+# %%
+
+
+datasets_selection = datasets
+# %%
+datasets_selection.update({ datasets_widget.value : measurements_selection_widget.value })
+
+# %%
+datasets_selection_py_file = str(Path.joinpath(data_dir, "datasets_selection.py"))
+with open(datasets_selection_py_file, 'w') as f:
+    print(datasets_selection, file=f)
 # %%
