@@ -127,6 +127,52 @@ def interference_profile_simulation(
     return I_normalized
 
 
+def interference_profile_simulation_v2(
+    x, shiftx_um, wavelength_nm, z_mm, d_um, w1_um, w2_um, I_Airy1, I_Airy2, x1_um, x2_um, gamma, normfactor, m, shiftx_um_2
+):
+    # Young's double pinholes experiment simulation
+
+    # PIXIS 1024B: 13um pixelsize, 1024px, 13.3mmx13.3mm chip size
+
+    wavelength = wavelength_nm * 1e-9  # wavelength
+    w1 = w1_um * 1e-6  # first pinhole width/diameter
+    w2 = w2_um * 1e-6  # second pinhole width/diameter
+    z = z_mm * 1e-3  # distance from double pinholes to detector
+    d = d_um * 1e-6  # double pinhole separation
+
+    shiftx = shiftx_um * 1e-6
+    shiftx_2 = shiftx_um_2 * 1e-6
+    x1 = x1_um * 1e-6
+    x2 = x2_um * 1e-6
+
+    k = 2 * math.pi / wavelength
+    theta = -(k * (d * (x - shiftx) / z))
+
+    if I_Airy1 < 0:
+        print("I_Airy1 negative")
+
+    if I_Airy2 < 0:
+        print("I_Airy2 negative")
+
+    I = (
+        0
+        + I_Airy1 * Airy((x - shiftx), w1, wavelength, z, x1) ** 2
+        + I_Airy2 * Airy((x - shiftx), w2, wavelength, z, x2) ** 2
+        + 2
+        * np.sqrt(I_Airy1)
+        * Airy((x - shiftx), w1, wavelength, z, x1)
+        * np.sqrt(I_Airy2)
+        * Airy((x - shiftx), w2, wavelength, z, x2)
+        * gamma
+        * np.cos(theta)
+        * (-1/shiftx_2 * x + 1)
+    )
+
+    I_normalized = normfactor * I / np.max(I)
+
+    return I_normalized
+
+
 
 
 
@@ -266,3 +312,98 @@ def fit_profile(
 
 
 
+def fit_profile_v2(
+    pixis_image_norm,
+    pixis_profile_avg,
+    shiftx_um,
+    shiftx_um_range,
+    shiftx_um_do_fit,
+    wavelength_nm,
+    wavelength_nm_range,
+    wavelength_nm_do_fit,
+    z_mm,
+    z_mm_range,
+    z_mm_do_fit,
+    d_um,
+    d_um_range,
+    d_um_do_fit,
+    gamma,
+    gamma_range,
+    gamma_do_fit,
+    w1_um,
+    w1_um_range,
+    w1_um_do_fit,
+    w2_um,
+    w2_um_range,
+    w2_um_do_fit,
+    I_Airy1,
+    I_Airy1_range,
+    I_Airy1_do_fit,
+    I_Airy2,
+    I_Airy2_range,
+    I_Airy2_do_fit,
+    x1_um,
+    x1_um_range,
+    x1_um_do_fit,
+    x2_um,
+    x2_um_range,
+    x2_um_do_fit,
+    normfactor,
+    normfactor_range,
+    normfactor_do_fit,
+    m,
+    m_range,
+    m_do_fit,
+    shiftx_um_2,
+    shiftx_um_2_range,
+    shiftx_um_2_do_fit
+):
+
+    n = pixis_profile_avg.size  # number of sampling point  # number of pixels
+    dX_1 = 13e-6
+    xdata = np.linspace((-n / 2) * dX_1, (+n / 2 - 1) * dX_1, n)
+    # ydata = pixis_profile_avg_dataset[imageid]*datafactor
+    ydata = pixis_profile_avg  # defined in the cells above, still to implement: select
+
+    fringeseparation_um = z_mm * 1e-3 * wavelength_nm * 1e-9 / (d_um * 1e-6) * 1e6
+    fringeseparation_px = fringeseparation_um / 13
+
+    # Fitting
+
+    func = interference_profile_simulation_v2
+    mymodel = Model(func)
+    # params = mymodel.make_params(shiftx_um=shiftx_um, wavelength_nm=wavelength_nm, z_mm=z_mm, d_um=d_um, w1_um=w1_um, w2_um=w2_um, I_w1=I_w1, I_w2=I_w2, I_Airy1=I_Airy1, I_Airy2=I_Airy2, x1_um=x1_um, x2_um=x2_um, gamma=gamma, a1=a1, b1=b1, c1=c1, e1=e1, a2=a2, b2=b2, c2=c2, e2=e2, normfactor = normfactor)
+
+    mymodel.set_param_hint(
+        "shiftx_um", value=shiftx_um, min=shiftx_um_range[0], max=shiftx_um_range[1], vary=shiftx_um_do_fit
+    )
+    mymodel.set_param_hint(
+        "wavelength_nm",
+        value=wavelength_nm,
+        min=wavelength_nm_range[0],
+        max=wavelength_nm_range[1],
+        vary=wavelength_nm_do_fit,
+    )
+    mymodel.set_param_hint("z_mm", value=z_mm, min=z_mm_range[0], max=z_mm_range[1], vary=z_mm_do_fit)
+    mymodel.set_param_hint("d_um", value=d_um, min=d_um_range[0], max=d_um_range[1], vary=d_um_do_fit)
+    mymodel.set_param_hint("w1_um", value=w1_um, min=w1_um_range[0], max=w1_um_range[1], vary=w1_um_do_fit)
+    mymodel.set_param_hint("w2_um", value=w2_um, min=w2_um_range[0], max=w2_um_range[1], vary=w2_um_do_fit)
+    mymodel.set_param_hint("I_Airy1", value=I_Airy1, min=I_Airy1_range[0], max=I_Airy1_range[1], vary=I_Airy1_do_fit)
+    mymodel.set_param_hint("I_Airy2", value=I_Airy2, min=I_Airy2_range[0], max=I_Airy2_range[1], vary=I_Airy2_do_fit)
+    mymodel.set_param_hint("x1_um", value=x1_um, min=x1_um_range[0], max=x1_um_range[1], vary=x1_um_do_fit)
+    mymodel.set_param_hint("x2_um", value=x2_um, min=x2_um_range[0], max=x2_um_range[1], vary=x2_um_do_fit)
+    mymodel.set_param_hint("gamma", value=gamma, min=gamma_range[0], max=gamma_range[1], vary=gamma_do_fit)
+    mymodel.set_param_hint(
+        "normfactor", value=normfactor, min=normfactor_range[0], max=normfactor_range[1], vary=normfactor_do_fit
+    )
+    mymodel.set_param_hint(
+        "m", value=m, min=m_range[0], max=m_range[1], vary=m_do_fit
+    )
+    mymodel.set_param_hint(
+        "shiftx_um_2", value=shiftx_um_2, min=shiftx_um_2_range[0], max=shiftx_um_2_range[1], vary=shiftx_um_2_do_fit
+    )
+
+    params = mymodel.make_params()
+    result = mymodel.fit(ydata, params, x=xdata)
+
+    return result
