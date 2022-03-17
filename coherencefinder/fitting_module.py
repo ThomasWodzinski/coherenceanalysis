@@ -128,7 +128,7 @@ def interference_profile_simulation(
 
 
 def interference_profile_simulation_v2(
-    x, shiftx_um, wavelength_nm, z_mm, d_um, w1_um, w2_um, I_Airy1, I_Airy2, x1_um, x2_um, gamma, normfactor, m, shiftx_um_2
+    x, shiftx_um, wavelength_nm, z_mm, d_um, w1_um, w2_um, I_Airy1, I_Airy2, x1_um, x2_um, gamma, normfactor, mod_sigma_um, shiftx_2_um
 ):
     # Young's double pinholes experiment simulation
 
@@ -141,8 +141,8 @@ def interference_profile_simulation_v2(
     d = d_um * 1e-6  # double pinhole separation
 
     shiftx = shiftx_um * 1e-6
-    shiftx_2 = shiftx_um_2 * 1e-6
-    m = m * 1e-6
+    shiftx_2 = shiftx_2_um * 1e-6
+    mod_sigma = mod_sigma_um * 1e-6
     x1 = x1_um * 1e-6
     x2 = x2_um * 1e-6
 
@@ -166,7 +166,7 @@ def interference_profile_simulation_v2(
         * Airy((x - shiftx), w2, wavelength, z, x2)
         * gamma
         * np.cos(theta)
-        * gaussian(x, 1, shiftx_2, m)
+        * gaussian(x, 1, shiftx_2, mod_sigma)
         # * (-1/shiftx_2 * x + 1)
     )
 
