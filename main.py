@@ -506,9 +506,9 @@ normfactor_widget = widgets.FloatSlider(
     min=0.00, max=10, value=1.0, step=0.1, description="normfactor", readout_format=".2f"
 )
 mod_sigma_um_widget = widgets.FloatSlider(
-    min=0.0, max=100000, value=1.0, step=100, description="mod_sigma_um", readout_format=".2f"
+    min=0, max=100000, value=3000, step=100, description="mod_sigma_um", readout_format=".2f"
 )
-mod_shiftx_um_widget = widgets.FloatSlider(min=-30000, max=30000, value=-6000, step=1, description="mod_shiftx_um")
+mod_shiftx_um_widget = widgets.FloatSlider(min=-30000, max=30000, value=3000, step=1, description="mod_shiftx_um")
 
 
 shiftx_um_range_widget = widgets.FloatRangeSlider(
@@ -537,10 +537,10 @@ normfactor_range_widget = widgets.FloatRangeSlider(
     min=0, max=10, value=[0.5, 1.5], step=0.01, description="normfactor", readout_format=".2f"
 )
 mod_sigma_um_range_widget = widgets.FloatRangeSlider(
-    min=0, max=100000, value=[0.0, 100000.0], step=0.01, description="mod_sigma_um", readout_format=".2f"
+    min=0, max=100000, value=[1500.0, 100000.0], step=100, description="mod_sigma_um", readout_format=".2f"
 )
 mod_shiftx_um_range_widget = widgets.FloatRangeSlider(
-    min=-30000, max=30000, value=[-30000, -6000], step=1, description="mod_shiftx_um"
+    min=-30000, max=30000, value=[-10000, 10000], step=100, description="mod_shiftx_um"
 )
 
 shiftx_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
@@ -555,7 +555,7 @@ I_Airy2_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 x1_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 x2_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 normfactor_do_fit_widget = widgets.Checkbox(value=False, description="fit")
-mod_sigma_um_do_fit_widget = widgets.Checkbox(value=False, description="fit")
+mod_sigma_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 mod_shiftx_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 
 
