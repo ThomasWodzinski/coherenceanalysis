@@ -142,6 +142,7 @@ def interference_profile_simulation_v2(
 
     shiftx = shiftx_um * 1e-6
     shiftx_2 = shiftx_um_2 * 1e-6
+    m = m * 1e-6
     x1 = x1_um * 1e-6
     x2 = x2_um * 1e-6
 
@@ -165,7 +166,8 @@ def interference_profile_simulation_v2(
         * Airy((x - shiftx), w2, wavelength, z, x2)
         * gamma
         * np.cos(theta)
-        * (-1/shiftx_2 * x + 1)
+        * gaussian(x, 1, shiftx_2, m)
+        # * (-1/shiftx_2 * x + 1)
     )
 
     I_normalized = normfactor * I / np.max(I)

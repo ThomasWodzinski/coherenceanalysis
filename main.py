@@ -506,7 +506,7 @@ normfactor_widget = widgets.FloatSlider(
     min=0.00, max=10, value=1.0, step=0.1, description="normfactor", readout_format=".2f"
 )
 m_widget = widgets.FloatSlider(
-    min=-10000.0, max=10000, value=1.0, step=0.1, description="m", readout_format=".6f"
+    min=0.0, max=100000, value=1.0, step=100, description="m", readout_format=".6f"
 )
 shiftx_um_2_widget = widgets.FloatSlider(min=-30000, max=30000, value=-6000, step=1, description="shiftx_um_2")
 
@@ -537,7 +537,7 @@ normfactor_range_widget = widgets.FloatRangeSlider(
     min=0, max=10, value=[0.5, 1.5], step=0.01, description="normfactor", readout_format=".2f"
 )
 m_range_widget = widgets.FloatRangeSlider(
-    min=-10000, max=10000, value=[-100.0, 100.0], step=0.01, description="m", readout_format=".2f"
+    min=0, max=100000, value=[0.0, 100000.0], step=0.01, description="m", readout_format=".2f"
 )
 shiftx_um_2_range_widget = widgets.FloatRangeSlider(
     min=-30000, max=30000, value=[-30000, -6000], step=1, description="shiftx_um"
@@ -557,6 +557,22 @@ x2_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 normfactor_do_fit_widget = widgets.Checkbox(value=False, description="fit")
 m_do_fit_widget = widgets.Checkbox(value=False, description="fit")
 shiftx_um_2_do_fit_widget = widgets.Checkbox(value=True, description="fit")
+
+
+shiftx_um_value_widget = widgets.FloatText(value=np.nan, description="")
+wavelength_nm_value_widget = widgets.FloatText(value=np.nan, description="")
+z_mm_value_widget = widgets.FloatText(value=np.nan, description="")
+d_um_value_widget = widgets.FloatText(value=np.nan, description="")
+gamma_value_widget = widgets.FloatText(value=np.nan, description="")
+w1_um_value_widget = widgets.FloatText(value=np.nan, description="")
+w2_um_value_widget = widgets.FloatText(value=np.nan, description="")
+I_Airy1_value_widget = widgets.FloatText(value=np.nan, description="")
+I_Airy2_value_widget = widgets.FloatText(value=np.nan, description="")
+x1_um_value_widget = widgets.FloatText(value=np.nan, description="")
+x2_um_value_widget = widgets.FloatText(value=np.nan, description="")
+normfactor_value_widget = widgets.FloatText(value=np.nan, description="")
+m_value_widget = widgets.FloatText(value=np.nan, description="")
+shiftx_um_2_value_widget = widgets.FloatText(value=np.nan, description="")
 
 
 do_plot_fitting_vs_deconvolution_widget = widgets.Checkbox(value=False, description="do fitting vs deconv plot")
@@ -1717,6 +1733,25 @@ def plot_fitting_v2(
         gamma_fit = result.params["gamma"].value
         normfactor_fit = result.params["normfactor"].value
         m_fit = result.params["m"].value
+        shiftx_um_2_fit = result.params["shiftx_um_2"].value
+
+        shiftx_um_value_widget.value = shiftx_um_fit
+        wavelength_nm_value_widget.value = wavelength_nm_fit
+        z_mm_value_widget.value = z_mm_fit
+        d_um_value_widget.value = d_um_fit
+        gamma_value_widget.value = gamma_fit
+        w1_um_value_widget.value = w1_um_fit
+        w2_um_value_widget.value = w2_um_fit
+        I_Airy1_value_widget.value = I_Airy1_fit
+        I_Airy2_value_widget.value = I_Airy2_fit
+        x1_um_value_widget.value = x1_um_fit
+        x2_um_value_widget.value = x2_um_fit
+        normfactor_value_widget.value = normfactor_fit
+        m_value_widget.value = m_fit
+        shiftx_um_2_value_widget.value = shiftx_um_2_fit
+
+        # calculate gamma_fit at the center between the two airy disks
+        gamma_fit = gaussian(0,1,shiftx_um_2_fit,m_fit)*gamma_fit
 
         d_um_at_detector = x2_um_fit - x1_um_fit
 
@@ -2460,6 +2495,26 @@ column1 = widgets.VBox(
 
 column2 = widgets.VBox(
     [
+        shiftx_um_value_widget,
+        wavelength_nm_value_widget,
+        z_mm_value_widget,
+        d_um_value_widget,
+        gamma_value_widget,
+        w1_um_value_widget,
+        w2_um_value_widget,
+        I_Airy1_value_widget,
+        I_Airy2_value_widget,
+        x1_um_value_widget,
+        x2_um_value_widget,
+        normfactor_value_widget,
+        m_value_widget,
+        shiftx_um_2_value_widget
+    ]
+)
+
+
+column3 = widgets.VBox(
+    [
         shiftx_um_do_fit_widget,
         wavelength_nm_do_fit_widget,
         z_mm_do_fit_widget,
@@ -2477,7 +2532,7 @@ column2 = widgets.VBox(
     ]
 )
 
-column3 = widgets.VBox(
+column4 = widgets.VBox(
     [
         shiftx_um_range_widget,
         wavelength_nm_range_widget,
@@ -2496,9 +2551,9 @@ column3 = widgets.VBox(
     ]
 )
 
-column4 = widgets.VBox([textarea_widget, beamsize_text_widget, fit_profile_text_widget, deconvmethod_text_widget])
+column5 = widgets.VBox([textarea_widget, beamsize_text_widget, fit_profile_text_widget, deconvmethod_text_widget])
 
-plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3, column4])
+plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3, column4, column5])
 
 # plotprofile_interactive_output = interactive_output(
 #     plotprofile,
