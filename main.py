@@ -2488,7 +2488,7 @@ column1 = widgets.VBox(
         x1_um_widget,
         x2_um_widget,
         normfactor_widget,
-        m_widget,
+        mod_sigma_um_widget,
         shiftx_2_um_widget
     ]
 )
@@ -2507,7 +2507,7 @@ column2 = widgets.VBox(
         x1_um_value_widget,
         x2_um_value_widget,
         normfactor_value_widget,
-        m_value_widget,
+        mod_sigma_um_value_widget,
         shiftx_2_um_value_widget
     ]
 )
@@ -2527,7 +2527,7 @@ column3 = widgets.VBox(
         x1_um_do_fit_widget,
         x2_um_do_fit_widget,
         normfactor_do_fit_widget,
-        m_do_fit_widget,
+        mod_sigma_um_do_fit_widget,
         shiftx_2_um_do_fit_widget
     ]
 )
@@ -2546,7 +2546,7 @@ column4 = widgets.VBox(
         x1_um_range_widget,
         x2_um_range_widget,
         normfactor_range_widget,
-        m_range_widget,
+        mod_sigma_um_range_widget,
         shiftx_2_um_range_widget
     ]
 )
@@ -2705,9 +2705,9 @@ plot_fitting_v2_interactive_output = interactive_output(
         "normfactor": normfactor_widget,
         "normfactor_range": normfactor_range_widget,
         "normfactor_do_fit": normfactor_do_fit_widget,
-        "m": m_widget,
-        "m_range": m_range_widget,
-        "m_do_fit": m_do_fit_widget,
+        "mod_sigma_um": mod_sigma_um_widget,
+        "mod_sigma_um_range": mod_sigma_um_range_widget,
+        "mod_sigma_um_do_fit": mod_sigma_um_do_fit_widget,
         "shiftx_2_um": shiftx_2_um_widget,
         "shiftx_2_um_range": shiftx_2_um_range_widget,
         "shiftx_2_um_do_fit": shiftx_2_um_do_fit_widget,

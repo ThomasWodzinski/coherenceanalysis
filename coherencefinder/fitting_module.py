@@ -402,7 +402,7 @@ def fit_profile_v2(
         "mod_sigma_um", value=mod_sigma_um, min=mod_sigma_um_range[0], max=mod_sigma_um_range[1], vary=mod_sigma_um_do_fit
     )
     mymodel.set_param_hint(
-        "shiftx_um_2", value=shiftx_2_um, min=shiftx_2_um_range[0], max=shiftx_2_um_range[1], vary=shiftx_2_um_do_fit
+        "shiftx_2_um", value=shiftx_2_um, min=shiftx_2_um_range[0], max=shiftx_2_um_range[1], vary=shiftx_2_um_do_fit
     )
 
     params = mymodel.make_params()
