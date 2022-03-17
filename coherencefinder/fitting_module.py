@@ -128,7 +128,7 @@ def interference_profile_simulation(
 
 
 def interference_profile_simulation_v2(
-    x, shiftx_um, wavelength_nm, z_mm, d_um, w1_um, w2_um, I_Airy1, I_Airy2, x1_um, x2_um, gamma, normfactor, m, shiftx_um_2
+    x, shiftx_um, wavelength_nm, z_mm, d_um, w1_um, w2_um, I_Airy1, I_Airy2, x1_um, x2_um, gamma, normfactor, mod_sigma_um, mod_shiftx_um
 ):
     # Young's double pinholes experiment simulation
 
@@ -141,8 +141,8 @@ def interference_profile_simulation_v2(
     d = d_um * 1e-6  # double pinhole separation
 
     shiftx = shiftx_um * 1e-6
-    shiftx_2 = shiftx_um_2 * 1e-6
-    m = m * 1e-6
+    mod_shiftx = mod_shiftx_um * 1e-6
+    mod_sigma = mod_sigma_um * 1e-6
     x1 = x1_um * 1e-6
     x2 = x2_um * 1e-6
 
@@ -166,8 +166,8 @@ def interference_profile_simulation_v2(
         * Airy((x - shiftx), w2, wavelength, z, x2)
         * gamma
         * np.cos(theta)
-        * gaussian(x, 1, shiftx_2, m)
-        # * (-1/shiftx_2 * x + 1)
+        * gaussian(x, 1, mod_shiftx, mod_sigma)
+        # * (-1/mod_shiftx * x + 1)
     )
 
     I_normalized = normfactor * I / np.max(I)
@@ -353,12 +353,12 @@ def fit_profile_v2(
     normfactor,
     normfactor_range,
     normfactor_do_fit,
-    m,
-    m_range,
-    m_do_fit,
-    shiftx_um_2,
-    shiftx_um_2_range,
-    shiftx_um_2_do_fit
+    mod_sigma_um,
+    mod_sigma_um_range,
+    mod_sigma_um_do_fit,
+    mod_shiftx_um,
+    mod_shiftx_um_range,
+    mod_shiftx_um_do_fit
 ):
 
     n = pixis_profile_avg.size  # number of sampling point  # number of pixels
@@ -399,10 +399,10 @@ def fit_profile_v2(
         "normfactor", value=normfactor, min=normfactor_range[0], max=normfactor_range[1], vary=normfactor_do_fit
     )
     mymodel.set_param_hint(
-        "m", value=m, min=m_range[0], max=m_range[1], vary=m_do_fit
+        "mod_sigma_um", value=mod_sigma_um, min=mod_sigma_um_range[0], max=mod_sigma_um_range[1], vary=mod_sigma_um_do_fit
     )
     mymodel.set_param_hint(
-        "shiftx_um_2", value=shiftx_um_2, min=shiftx_um_2_range[0], max=shiftx_um_2_range[1], vary=shiftx_um_2_do_fit
+        "mod_shiftx_um", value=mod_shiftx_um, min=mod_shiftx_um_range[0], max=mod_shiftx_um_range[1], vary=mod_shiftx_um_do_fit
     )
 
     params = mymodel.make_params()

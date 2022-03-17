@@ -505,10 +505,10 @@ x2_um_widget = widgets.FloatSlider(
 normfactor_widget = widgets.FloatSlider(
     min=0.00, max=10, value=1.0, step=0.1, description="normfactor", readout_format=".2f"
 )
-m_widget = widgets.FloatSlider(
-    min=0.0, max=100000, value=1.0, step=100, description="m", readout_format=".6f"
+mod_sigma_um_widget = widgets.FloatSlider(
+    min=0, max=100000, value=3000, step=100, description="mod_sigma_um", readout_format=".2f"
 )
-shiftx_um_2_widget = widgets.FloatSlider(min=-30000, max=30000, value=-6000, step=1, description="shiftx_um_2")
+mod_shiftx_um_widget = widgets.FloatSlider(min=-30000, max=30000, value=3000, step=1, description="mod_shiftx_um")
 
 
 shiftx_um_range_widget = widgets.FloatRangeSlider(
@@ -536,11 +536,11 @@ x2_um_range_widget = widgets.FloatRangeSlider(
 normfactor_range_widget = widgets.FloatRangeSlider(
     min=0, max=10, value=[0.5, 1.5], step=0.01, description="normfactor", readout_format=".2f"
 )
-m_range_widget = widgets.FloatRangeSlider(
-    min=0, max=100000, value=[0.0, 100000.0], step=0.01, description="m", readout_format=".2f"
+mod_sigma_um_range_widget = widgets.FloatRangeSlider(
+    min=0, max=100000, value=[1500.0, 100000.0], step=100, description="mod_sigma_um", readout_format=".2f"
 )
-shiftx_um_2_range_widget = widgets.FloatRangeSlider(
-    min=-30000, max=30000, value=[-30000, -6000], step=1, description="shiftx_um"
+mod_shiftx_um_range_widget = widgets.FloatRangeSlider(
+    min=-30000, max=30000, value=[-10000, 10000], step=100, description="mod_shiftx_um"
 )
 
 shiftx_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
@@ -555,8 +555,8 @@ I_Airy2_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 x1_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 x2_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 normfactor_do_fit_widget = widgets.Checkbox(value=False, description="fit")
-m_do_fit_widget = widgets.Checkbox(value=False, description="fit")
-shiftx_um_2_do_fit_widget = widgets.Checkbox(value=True, description="fit")
+mod_sigma_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
+mod_shiftx_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 
 
 shiftx_um_value_widget = widgets.FloatText(value=np.nan, description="")
@@ -571,8 +571,8 @@ I_Airy2_value_widget = widgets.FloatText(value=np.nan, description="")
 x1_um_value_widget = widgets.FloatText(value=np.nan, description="")
 x2_um_value_widget = widgets.FloatText(value=np.nan, description="")
 normfactor_value_widget = widgets.FloatText(value=np.nan, description="")
-m_value_widget = widgets.FloatText(value=np.nan, description="")
-shiftx_um_2_value_widget = widgets.FloatText(value=np.nan, description="")
+mod_sigma_um_value_widget = widgets.FloatText(value=np.nan, description="")
+mod_shiftx_um_value_widget = widgets.FloatText(value=np.nan, description="")
 
 
 do_plot_fitting_vs_deconvolution_widget = widgets.Checkbox(value=False, description="do fitting vs deconv plot")
@@ -1597,12 +1597,12 @@ def plot_fitting_v2(
     normfactor,
     normfactor_range,
     normfactor_do_fit,
-    m,
-    m_range,
-    m_do_fit,
-    shiftx_um_2,
-    shiftx_um_2_range,
-    shiftx_um_2_do_fit,
+    mod_sigma_um,
+    mod_sigma_um_range,
+    mod_sigma_um_do_fit,
+    mod_shiftx_um,
+    mod_shiftx_um_range,
+    mod_shiftx_um_do_fit,
 ):
 
     if plotprofile_active == True:  # workaround, so that the function is not executed while several inputs are changed
@@ -1712,12 +1712,12 @@ def plot_fitting_v2(
             normfactor,
             normfactor_range,
             normfactor_do_fit,
-            m,
-            m_range,
-            m_do_fit,
-            shiftx_um_2,
-            shiftx_um_2_range,
-            shiftx_um_2_do_fit,
+            mod_sigma_um,
+            mod_sigma_um_range,
+            mod_sigma_um_do_fit,
+            mod_shiftx_um,
+            mod_shiftx_um_range,
+            mod_shiftx_um_do_fit,
         )
 
         shiftx_um_fit = result.params["shiftx_um"].value
@@ -1732,8 +1732,8 @@ def plot_fitting_v2(
         x2_um_fit = result.params["x2_um"].value
         gamma_fit = result.params["gamma"].value
         normfactor_fit = result.params["normfactor"].value
-        m_fit = result.params["m"].value
-        shiftx_um_2_fit = result.params["shiftx_um_2"].value
+        mod_sigma_um_fit = result.params["mod_sigma_um"].value
+        mod_shiftx_um_fit = result.params["mod_shiftx_um"].value
 
         shiftx_um_value_widget.value = shiftx_um_fit
         wavelength_nm_value_widget.value = wavelength_nm_fit
@@ -1747,11 +1747,11 @@ def plot_fitting_v2(
         x1_um_value_widget.value = x1_um_fit
         x2_um_value_widget.value = x2_um_fit
         normfactor_value_widget.value = normfactor_fit
-        m_value_widget.value = m_fit
-        shiftx_um_2_value_widget.value = shiftx_um_2_fit
+        mod_sigma_um_value_widget.value = mod_sigma_um_fit
+        mod_shiftx_um_value_widget.value = mod_shiftx_um_fit
 
         # calculate gamma_fit at the center between the two airy disks
-        gamma_fit = gaussian(0,1,shiftx_um_2_fit,m_fit)*gamma_fit
+        gamma_fit = gaussian(0,1,mod_shiftx_um_fit,mod_sigma_um_fit)*gamma_fit
 
         d_um_at_detector = x2_um_fit - x1_um_fit
 
@@ -2488,8 +2488,8 @@ column1 = widgets.VBox(
         x1_um_widget,
         x2_um_widget,
         normfactor_widget,
-        m_widget,
-        shiftx_um_2_widget
+        mod_sigma_um_widget,
+        mod_shiftx_um_widget
     ]
 )
 
@@ -2507,8 +2507,8 @@ column2 = widgets.VBox(
         x1_um_value_widget,
         x2_um_value_widget,
         normfactor_value_widget,
-        m_value_widget,
-        shiftx_um_2_value_widget
+        mod_sigma_um_value_widget,
+        mod_shiftx_um_value_widget
     ]
 )
 
@@ -2527,8 +2527,8 @@ column3 = widgets.VBox(
         x1_um_do_fit_widget,
         x2_um_do_fit_widget,
         normfactor_do_fit_widget,
-        m_do_fit_widget,
-        shiftx_um_2_do_fit_widget
+        mod_sigma_um_do_fit_widget,
+        mod_shiftx_um_do_fit_widget
     ]
 )
 
@@ -2546,8 +2546,8 @@ column4 = widgets.VBox(
         x1_um_range_widget,
         x2_um_range_widget,
         normfactor_range_widget,
-        m_range_widget,
-        shiftx_um_2_range_widget
+        mod_sigma_um_range_widget,
+        mod_shiftx_um_range_widget
     ]
 )
 
@@ -2705,12 +2705,12 @@ plot_fitting_v2_interactive_output = interactive_output(
         "normfactor": normfactor_widget,
         "normfactor_range": normfactor_range_widget,
         "normfactor_do_fit": normfactor_do_fit_widget,
-        "m": m_widget,
-        "m_range": m_range_widget,
-        "m_do_fit": m_do_fit_widget,
-        "shiftx_um_2": shiftx_um_2_widget,
-        "shiftx_um_2_range": shiftx_um_2_range_widget,
-        "shiftx_um_2_do_fit": shiftx_um_2_do_fit_widget,
+        "mod_sigma_um": mod_sigma_um_widget,
+        "mod_sigma_um_range": mod_sigma_um_range_widget,
+        "mod_sigma_um_do_fit": mod_sigma_um_do_fit_widget,
+        "mod_shiftx_um": mod_shiftx_um_widget,
+        "mod_shiftx_um_range": mod_shiftx_um_range_widget,
+        "mod_shiftx_um_do_fit": mod_shiftx_um_do_fit_widget,
     },
 )
 
