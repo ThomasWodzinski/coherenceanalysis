@@ -505,8 +505,8 @@ x2_um_widget = widgets.FloatSlider(
 normfactor_widget = widgets.FloatSlider(
     min=0.00, max=10, value=1.0, step=0.1, description="normfactor", readout_format=".2f"
 )
-m_widget = widgets.FloatSlider(
-    min=0.0, max=100000, value=1.0, step=100, description="m", readout_format=".6f"
+mod_sigma_um_widget = widgets.FloatSlider(
+    min=0.0, max=100000, value=1.0, step=100, description="mod_sigma_um", readout_format=".2f"
 )
 shiftx_2_um_widget = widgets.FloatSlider(min=-30000, max=30000, value=-6000, step=1, description="shiftx_2_um")
 
@@ -536,8 +536,8 @@ x2_um_range_widget = widgets.FloatRangeSlider(
 normfactor_range_widget = widgets.FloatRangeSlider(
     min=0, max=10, value=[0.5, 1.5], step=0.01, description="normfactor", readout_format=".2f"
 )
-m_range_widget = widgets.FloatRangeSlider(
-    min=0, max=100000, value=[0.0, 100000.0], step=0.01, description="m", readout_format=".2f"
+mod_sigma_um_range_widget = widgets.FloatRangeSlider(
+    min=0, max=100000, value=[0.0, 100000.0], step=0.01, description="mod_sigma_um", readout_format=".2f"
 )
 shiftx_2_um_range_widget = widgets.FloatRangeSlider(
     min=-30000, max=30000, value=[-30000, -6000], step=1, description="shiftx_2_um"
@@ -555,7 +555,7 @@ I_Airy2_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 x1_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 x2_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 normfactor_do_fit_widget = widgets.Checkbox(value=False, description="fit")
-m_do_fit_widget = widgets.Checkbox(value=False, description="fit")
+mod_sigma_um_do_fit_widget = widgets.Checkbox(value=False, description="fit")
 shiftx_2_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 
 
@@ -571,7 +571,7 @@ I_Airy2_value_widget = widgets.FloatText(value=np.nan, description="")
 x1_um_value_widget = widgets.FloatText(value=np.nan, description="")
 x2_um_value_widget = widgets.FloatText(value=np.nan, description="")
 normfactor_value_widget = widgets.FloatText(value=np.nan, description="")
-m_value_widget = widgets.FloatText(value=np.nan, description="")
+mod_sigma_um_value_widget = widgets.FloatText(value=np.nan, description="")
 shiftx_2_um_value_widget = widgets.FloatText(value=np.nan, description="")
 
 
@@ -1597,9 +1597,9 @@ def plot_fitting_v2(
     normfactor,
     normfactor_range,
     normfactor_do_fit,
-    m,
-    m_range,
-    m_do_fit,
+    mod_sigma_um,
+    mod_sigma_um_range,
+    mod_sigma_um_do_fit,
     shiftx_2_um,
     shiftx_2_um_range,
     shiftx_2_um_do_fit,
@@ -1712,9 +1712,9 @@ def plot_fitting_v2(
             normfactor,
             normfactor_range,
             normfactor_do_fit,
-            m,
-            m_range,
-            m_do_fit,
+            mod_sigma_um,
+            mod_sigma_um_range,
+            mod_sigma_um_do_fit,
             shiftx_2_um,
             shiftx_2_um_range,
             shiftx_2_um_do_fit,
@@ -1732,7 +1732,7 @@ def plot_fitting_v2(
         x2_um_fit = result.params["x2_um"].value
         gamma_fit = result.params["gamma"].value
         normfactor_fit = result.params["normfactor"].value
-        m_fit = result.params["m"].value
+        mod_sigma_um_fit = result.params["mod_sigma_um"].value
         shiftx_2_um_fit = result.params["shiftx_2_um"].value
 
         shiftx_um_value_widget.value = shiftx_um_fit
@@ -1747,11 +1747,11 @@ def plot_fitting_v2(
         x1_um_value_widget.value = x1_um_fit
         x2_um_value_widget.value = x2_um_fit
         normfactor_value_widget.value = normfactor_fit
-        m_value_widget.value = m_fit
+        mod_sigma_um_value_widget.value = mod_sigma_um_fit
         shiftx_2_um_value_widget.value = shiftx_2_um_fit
 
         # calculate gamma_fit at the center between the two airy disks
-        gamma_fit = gaussian(0,1,shiftx_2_um_fit,m_fit)*gamma_fit
+        gamma_fit = gaussian(0,1,shiftx_2_um_fit,mod_sigma_um_fit)*gamma_fit
 
         d_um_at_detector = x2_um_fit - x1_um_fit
 
