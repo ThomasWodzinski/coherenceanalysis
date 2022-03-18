@@ -1756,7 +1756,7 @@ def plot_fitting_v2(
         mod_shiftx_um_value_widget.value = r"%.2f" % (mod_shiftx_um_fit)
 
         # calculate gamma_fit at the center between the two airy disks
-        gamma_fit = gaussian(0,1,mod_shiftx_um_fit,mod_sigma_um_fit)*gamma_fit
+        gamma_fit_at_center = gaussian(0,1,mod_shiftx_um_fit,mod_sigma_um_fit)*gamma_fit
 
         d_um_at_detector = x2_um_fit - x1_um_fit
 
