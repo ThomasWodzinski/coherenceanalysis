@@ -1,6 +1,6 @@
 # coherence-analysis
 
-This repository aims at facilitating analysis of coherence measurements at synchrotron and free-electron laser facilities.
+This repository aims at facilitating an analysis of coherence measurements at synchrotron and free-electron laser facilities.
 
 The content of the respository supports the following publication:
 
