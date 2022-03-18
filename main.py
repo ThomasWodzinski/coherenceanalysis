@@ -562,20 +562,20 @@ mod_sigma_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 mod_shiftx_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
 
 value_widget_layout = widgets.Layout(width="100px")
-shiftx_um_value_widget = widgets.FloatText(value=np.nan, description="",layout=value_widget_layout)
-wavelength_nm_value_widget = widgets.FloatText(value=np.nan, description="",layout=value_widget_layout)
-z_mm_value_widget = widgets.FloatText(value=np.nan, description="",layout=value_widget_layout)
-d_um_value_widget = widgets.FloatText(value=np.nan, description="",layout=value_widget_layout)
-gamma_value_widget = widgets.FloatText(value=np.nan, description="",layout=value_widget_layout)
-w1_um_value_widget = widgets.FloatText(value=np.nan, description="",layout=value_widget_layout)
-w2_um_value_widget = widgets.FloatText(value=np.nan, description="",layout=value_widget_layout)
-I_Airy1_value_widget = widgets.FloatText(value=np.nan, description="",layout=value_widget_layout)
-I_Airy2_value_widget = widgets.FloatText(value=np.nan, description="",layout=value_widget_layout)
-x1_um_value_widget = widgets.FloatText(value=np.nan, description="",layout=value_widget_layout)
-x2_um_value_widget = widgets.FloatText(value=np.nan, description="",layout=value_widget_layout)
-normfactor_value_widget = widgets.FloatText(value=np.nan, description="",layout=value_widget_layout)
-mod_sigma_um_value_widget = widgets.FloatText(value=np.nan, description="",layout=value_widget_layout)
-mod_shiftx_um_value_widget = widgets.FloatText(value=np.nan, description="",layout=value_widget_layout)
+shiftx_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+wavelength_nm_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+z_mm_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+d_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+gamma_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+w1_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+w2_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+I_Airy1_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+I_Airy2_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+x1_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+x2_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+normfactor_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+mod_sigma_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+mod_shiftx_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
 
 
 do_plot_fitting_vs_deconvolution_widget = widgets.Checkbox(value=False, description="do fitting vs deconv plot")
@@ -1738,20 +1738,20 @@ def plot_fitting_v2(
         mod_sigma_um_fit = result.params["mod_sigma_um"].value
         mod_shiftx_um_fit = result.params["mod_shiftx_um"].value
 
-        shiftx_um_value_widget.value = shiftx_um_fit
-        wavelength_nm_value_widget.value = wavelength_nm_fit
-        z_mm_value_widget.value = z_mm_fit
-        d_um_value_widget.value = d_um_fit
-        gamma_value_widget.value = gamma_fit
-        w1_um_value_widget.value = w1_um_fit
-        w2_um_value_widget.value = w2_um_fit
-        I_Airy1_value_widget.value = I_Airy1_fit
-        I_Airy2_value_widget.value = I_Airy2_fit
-        x1_um_value_widget.value = x1_um_fit
-        x2_um_value_widget.value = x2_um_fit
-        normfactor_value_widget.value = normfactor_fit
-        mod_sigma_um_value_widget.value = mod_sigma_um_fit
-        mod_shiftx_um_value_widget.value = mod_shiftx_um_fit
+        shiftx_um_value_widget.value = r"%.2f" % (shiftx_um_fit)
+        wavelength_nm_value_widget.value = r"%.2f" % (wavelength_nm_fit)
+        z_mm_value_widget.value = r"%.2f" % (z_mm_fit)
+        d_um_value_widget.value = r"%.2f" % (d_um_fit)
+        gamma_value_widget.value = r"%.2f" % (gamma_fit)
+        w1_um_value_widget.value = r"%.2f" % (w1_um_fit)
+        w2_um_value_widget.value = r"%.2f" % (w2_um_fit)
+        I_Airy1_value_widget.value = r"%.2f" % (I_Airy1_fit)
+        I_Airy2_value_widget.value = r"%.2f" % (I_Airy2_fit)
+        x1_um_value_widget.value = r"%.2f" % (x1_um_fit)
+        x2_um_value_widget.value = r"%.2f" % (x2_um_fit)
+        normfactor_value_widget.value = r"%.2f" % (normfactor_fit)
+        mod_sigma_um_value_widget.value = r"%.2f" % (mod_sigma_um_fit)
+        mod_shiftx_um_value_widget.value = r"%.2f" % (mod_shiftx_um_fit)
 
         # calculate gamma_fit at the center between the two airy disks
         gamma_fit = gaussian(0,1,mod_shiftx_um_fit,mod_sigma_um_fit)*gamma_fit
