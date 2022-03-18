@@ -1775,7 +1775,9 @@ def plot_fitting_v2(
 
         if save_to_df == True:
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_at_center'] = gamma_fit_at_center
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit'] = xi_um_fit  # add this first to the df_fits dataframe
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit_at_center'] = xi_um_fit_at_center  # add this first to the df_fits dataframe
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit'] = wavelength_nm_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector'] = d_um_at_detector
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit'] = I_Airy1_fit
@@ -1784,7 +1786,8 @@ def plot_fitting_v2(
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_fit'] = w2_um_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_fit'] = shiftx_um_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] = x1_um_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_fit'] = x2_um_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_fit'] = mod_sigma_um_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_fit'] = mod_shiftx_um_fit
 
         # print('fringeseparation_px=' + str(round(fringeseparation_px,2)))
 
