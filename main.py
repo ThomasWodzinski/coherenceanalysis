@@ -1919,6 +1919,7 @@ def plot_fitting_v2(
                 r"x1_um=%.2f" % (x1_um_fit,),
                 r"x2_um=%.2f" % (x2_um_fit,),
                 r"$\gamma=%.2f$" % (gamma_fit,),
+                r"$\gamma=%.2f$" % (gamma_fit_at_center,),
                 r"normfactor=%.2f" % (normfactor_fit,),
                 r"d_um_at_detector=%.2f" % (d_um_at_detector,),
             )
@@ -1950,7 +1951,8 @@ def plot_fitting_v2(
                 r"$w_2$=%.2fum" % (result.params["w2_um"].value,),
                 r"$I_1$=%.2f" % (result.params["I_Airy1"].value,),
                 r"$I_2=$%.2f" % (result.params["I_Airy2"].value,),
-                r"$\gamma=%.2f$" % (result.params["gamma"].value,),
+                r"$\gamma=%.2f$" % (gamma_fit,),
+                r"$\gamma_c=%.2f$" % (gamma_fit_at_center,),
                 r"$\xi=%.2fum$" % (xi_um_fit,),
             )
         )
