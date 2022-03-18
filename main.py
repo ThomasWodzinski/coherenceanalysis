@@ -343,7 +343,9 @@ fits_header_list3 = [
 ]
 fits_header_list4 = ["xi_y_um_fit", "zeta_y", "zeta_y_fit", "xi_um_fit"]
 
-fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4
+fits_header_list5 = ['gamma_fit_at_center', 'xi_um_fit_at_center', 'mod_sigma_um_fit', 'mod_shiftx_um_fit']
+
+fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4 + fits_header_list5
 
 
 # fits_header_list1 already exists in saved csv, only adding fits_header_list2, only initiate when
@@ -480,6 +482,9 @@ beamsize_text_widget = widgets.Text(
 )
 fit_profile_text_widget = widgets.Text(
     value="", placeholder="xi_fit_um", description=r"\({\xi}_{fit}\)", disabled=False
+)
+xi_um_fit_at_center_text_widget = widgets.Text(
+    value="", placeholder="xi_fit_um_at_center", description=r"\({\xi}_{fit}_{center}\)", disabled=False
 )
 deconvmethod_simple_text_widget = widgets.Text(
     value="", placeholder="xi_um", description=r"{\xi}", disabled=False
@@ -1615,6 +1620,7 @@ def plot_fitting_v2(
         # textarea_widget.value = ''
 
         fit_profile_text_widget.value = ''
+        xi_um_fit_at_center_text_widget.value = ''
         deconvmethod_text_widget.value = ''
 
         # Loading and preparing
@@ -1645,6 +1651,7 @@ def plot_fitting_v2(
         #     hdf5_file_name_image = hdf5_file_name_image_widget.value
         #     dataset_image_args = dataset_image_args_widget.value
         fit_profile_text_widget.value = 'calculating ...'
+        xi_um_fit_at_center_text_widget.value = 'calculating ...'
         
 
 
@@ -1754,7 +1761,7 @@ def plot_fitting_v2(
         mod_shiftx_um_value_widget.value = r"%.2f" % (mod_shiftx_um_fit)
 
         # calculate gamma_fit at the center between the two airy disks
-        gamma_fit = gaussian(0,1,mod_shiftx_um_fit,mod_sigma_um_fit)*gamma_fit
+        gamma_fit_at_center = gaussian(0,1,mod_shiftx_um_fit,mod_sigma_um_fit)*gamma_fit
 
         d_um_at_detector = x2_um_fit - x1_um_fit
 
@@ -1765,12 +1772,18 @@ def plot_fitting_v2(
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             (xi_um_fit, xi_um_fit_stderr) = find_sigma([0.0, d_um], [1.0, gamma_fit], [0, 0], 470, False)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            (xi_um_fit_at_center, xi_um_fit_at_center_stderr) = find_sigma([0.0, d_um], [1.0, gamma_fit_at_center], [0, 0], 470, False)
                 
         fit_profile_text_widget.value = r"%.2fum" % (xi_um_fit)
+        xi_um_fit_at_center_text_widget.value = r"%.2fum" % (xi_um_fit_at_center)
 
         if save_to_df == True:
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_at_center'] = gamma_fit_at_center
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit'] = xi_um_fit  # add this first to the df_fits dataframe
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit_at_center'] = xi_um_fit_at_center  # add this first to the df_fits dataframe
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit'] = wavelength_nm_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector'] = d_um_at_detector
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit'] = I_Airy1_fit
@@ -1779,7 +1792,8 @@ def plot_fitting_v2(
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_fit'] = w2_um_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_fit'] = shiftx_um_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] = x1_um_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_fit'] = x2_um_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_fit'] = mod_sigma_um_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_fit'] = mod_shiftx_um_fit
 
         # print('fringeseparation_px=' + str(round(fringeseparation_px,2)))
 
@@ -1911,6 +1925,7 @@ def plot_fitting_v2(
                 r"x1_um=%.2f" % (x1_um_fit,),
                 r"x2_um=%.2f" % (x2_um_fit,),
                 r"$\gamma=%.2f$" % (gamma_fit,),
+                r"$\gamma=%.2f$" % (gamma_fit_at_center,),
                 r"normfactor=%.2f" % (normfactor_fit,),
                 r"d_um_at_detector=%.2f" % (d_um_at_detector,),
             )
@@ -1942,7 +1957,8 @@ def plot_fitting_v2(
                 r"$w_2$=%.2fum" % (result.params["w2_um"].value,),
                 r"$I_1$=%.2f" % (result.params["I_Airy1"].value,),
                 r"$I_2=$%.2f" % (result.params["I_Airy2"].value,),
-                r"$\gamma=%.2f$" % (result.params["gamma"].value,),
+                r"$\gamma=%.2f$" % (gamma_fit,),
+                r"$\gamma_c=%.2f$" % (gamma_fit_at_center,),
                 r"$\xi=%.2fum$" % (xi_um_fit,),
             )
         )
@@ -2566,7 +2582,7 @@ column4 = widgets.VBox(
     ]
 )
 
-column5 = widgets.VBox([textarea_widget, beamsize_text_widget, fit_profile_text_widget, deconvmethod_simple_text_widget, deconvmethod_text_widget])
+column5 = widgets.VBox([textarea_widget, beamsize_text_widget, fit_profile_text_widget, xi_um_fit_at_center_text_widget, deconvmethod_simple_text_widget, deconvmethod_text_widget])
 
 plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3, column4, column5])
 
@@ -3054,21 +3070,21 @@ if remove_fits_from_df == True:
             with h5py.File(f, "r") as hdf5_file:
                 timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'gamma_fit'] = np.nan
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'wavelength_nm_fit'] = np.nan
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'd_um_at_detector'] = np.nan
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'I_Airy1_fit'] = np.nan
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'I_Airy2_fit'] = np.nan
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'w1_um_fit'] = np.nan
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'w2_um_fit'] = np.nan
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'shiftx_um_fit'] = np.nan
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'x1_um_fit'] = np.nan
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'x2_um_fit'] = np.nan
+        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_at_center'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit_at_center'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_fit'] =  np.nan
 
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'xi_x_um'] = np.nan
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'xi_y_um'] = np.nan
-
-        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'xi_um_fit'] = np.nan
         
 
 # <codecell>
