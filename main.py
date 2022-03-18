@@ -483,6 +483,9 @@ beamsize_text_widget = widgets.Text(
 fit_profile_text_widget = widgets.Text(
     value="", placeholder="xi_fit_um", description=r"\({\xi}_{fit}\)", disabled=False
 )
+xi_um_fit_at_center_text_widget = widgets.Text(
+    value="", placeholder="xi_fit_um_at_center", description=r"\({\xi}_{fit}_{center}\)", disabled=False
+)
 deconvmethod_simple_text_widget = widgets.Text(
     value="", placeholder="xi_um", description=r"{\xi}", disabled=False
 ) 
@@ -1617,6 +1620,7 @@ def plot_fitting_v2(
         # textarea_widget.value = ''
 
         fit_profile_text_widget.value = ''
+        xi_um_fit_at_center_text_widget.value = ''
         deconvmethod_text_widget.value = ''
 
         # Loading and preparing
@@ -1647,6 +1651,7 @@ def plot_fitting_v2(
         #     hdf5_file_name_image = hdf5_file_name_image_widget.value
         #     dataset_image_args = dataset_image_args_widget.value
         fit_profile_text_widget.value = 'calculating ...'
+        xi_um_fit_at_center_text_widget.value = 'calculating ...'
         
 
 
@@ -1772,6 +1777,7 @@ def plot_fitting_v2(
             (xi_um_fit_at_center, xi_um_fit_at_center_stderr) = find_sigma([0.0, d_um], [1.0, gamma_fit_at_center], [0, 0], 470, False)
                 
         fit_profile_text_widget.value = r"%.2fum" % (xi_um_fit)
+        xi_um_fit_at_center_text_widget.value = r"%.2fum" % (xi_um_fit_at_center)
 
         if save_to_df == True:
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
@@ -2576,7 +2582,7 @@ column4 = widgets.VBox(
     ]
 )
 
-column5 = widgets.VBox([textarea_widget, beamsize_text_widget, fit_profile_text_widget, deconvmethod_simple_text_widget, deconvmethod_text_widget])
+column5 = widgets.VBox([textarea_widget, beamsize_text_widget, fit_profile_text_widget, xi_um_fit_at_center_text_widget, deconvmethod_simple_text_widget, deconvmethod_text_widget])
 
 plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3, column4, column5])
 
