@@ -481,6 +481,9 @@ beamsize_text_widget = widgets.Text(
 fit_profile_text_widget = widgets.Text(
     value="", placeholder="xi_fit_um", description=r"\({\xi}_{fit}\)", disabled=False
 )
+deconvmethod_simple_text_widget = widgets.Text(
+    value="", placeholder="xi_um", description=r"{\xi}", disabled=False
+) 
 deconvmethod_text_widget = widgets.Text(
     value="", placeholder="(xi_x_um, xi_y_um)", description=r"\({\xi}_x,{\xi}_y\)", disabled=False
 )  # latex only working in browser?
@@ -2060,7 +2063,10 @@ def plot_deconvmethod(
 
     if do_deconvmethod == True:
 
-        deconvmethod_text_widget.value = ''
+        if scan_x == True:
+            deconvmethod_text_widget.value = ''
+        else:
+            deconvmethod_simple_text_widget.value = ''
 
         # Loading and preparing
 
@@ -2088,7 +2094,10 @@ def plot_deconvmethod(
 
         pixis_profile_avg = pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:]
 
-        deconvmethod_text_widget.value = 'calculating ...'
+        if scan_x == True:
+            deconvmethod_text_widget.value = 'calculating ...'
+        else:
+            deconvmethod_simple_text_widget.value = 'calculating ...'
         partiallycoherent = pixis_image_norm
         z = 5781 * 1e-3
         dX_1 = 13 * 1e-6
@@ -2141,12 +2150,18 @@ def plot_deconvmethod(
                 scan_x,
                 create_figure,
             )
-        deconvmethod_text_widget.value = r"%.2fum" % (xi_x_um) + r", %.2fum" % (xi_y_um)
+        if scan_x == True:
+            deconvmethod_text_widget.value = r"%.2fum" % (xi_x_um) + r", %.2fum" % (xi_y_um)
+        else:
+            deconvmethod_simple_text_widget.value = r"%.2fum" % (xi_x_um)
         # str(round(xi_x_um, 2)) + ', ' + str(round(xi_y_um, 2))
 
         if save_to_df == True:
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_x_um'] = xi_x_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_y_um'] = xi_y_um
+            if scan_x == True:
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_x_um'] = xi_x_um
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_y_um'] = xi_y_um
+            else:
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um'] = xi_x_um
 
 
 
@@ -2551,7 +2566,7 @@ column4 = widgets.VBox(
     ]
 )
 
-column5 = widgets.VBox([textarea_widget, beamsize_text_widget, fit_profile_text_widget, deconvmethod_text_widget])
+column5 = widgets.VBox([textarea_widget, beamsize_text_widget, fit_profile_text_widget, deconvmethod_simple_text_widget, deconvmethod_text_widget])
 
 plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3, column4, column5])
 
