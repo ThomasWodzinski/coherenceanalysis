@@ -1767,6 +1767,9 @@ def plot_fitting_v2(
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             (xi_um_fit, xi_um_fit_stderr) = find_sigma([0.0, d_um], [1.0, gamma_fit], [0, 0], 470, False)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            (xi_um_fit_at_center, xi_um_fit_at_center_stderr) = find_sigma([0.0, d_um], [1.0, gamma_fit_at_center], [0, 0], 470, False)
                 
         fit_profile_text_widget.value = r"%.2fum" % (xi_um_fit)
 
