@@ -584,6 +584,20 @@ mod_shiftx_um_value_widget = widgets.Text(value="", description="",layout=value_
 
 
 do_plot_fitting_vs_deconvolution_widget = widgets.Checkbox(value=False, description="do fitting vs deconv plot")
+
+xx_widget = widgets.Dropdown(
+    options=[('xi_x_um',('xi_x_um',r"$\xi_x$ / um (deconv)")),('xi_um',('xi_um',r"$\xi$ / um (deconv)"))],
+    description="x:",
+    disabled=False,
+)
+
+yy_widget = widgets.Dropdown(
+    options=[('xi_um_fit',('xi_um_fit',r"$\xi$ / um (fit)")),('xi_um_fit_at_center',('xi_um_fit_at_center',r"$\xi_c$ / um (fit)"))],
+    description="y:",
+    disabled=False,
+)
+
+
 do_plot_CDCs_widget = widgets.Checkbox(value=False, description="do plot CDCs")
 do_plot_xi_um_fit_vs_I_Airy2_fit_widget = widgets.Checkbox(value=False, description="do plot xi_um_fit vs I_Airy2_fit")
 
