@@ -2788,6 +2788,8 @@ plot_plot_fitting_vs_deconvolution_output = interactive_output(
         "dataset" : datasets_widget,
         "measurement_file" : dph_settings_bgsubtracted_widget,
         "imageid": imageid_profile_fit_widget,
+        "xx" : xx_widget,
+        "yy" : yy_widget
     },
 )
 
