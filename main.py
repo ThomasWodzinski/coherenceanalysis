@@ -2269,15 +2269,21 @@ def plot_deconvmethod(
 
         # print(gamma_fit)
 
-
 def plot_fitting_vs_deconvolution(
     do_plot_fitting_vs_deconvolution,
     dataset,
     measurement_file,
-    imageid
+    imageid,
+    xx,
+    yy
 ):
 
     if do_plot_fitting_vs_deconvolution == True:
+
+        x_values = xx[0]
+        x_axis_label = xx[1]
+        y_values = yy[0]
+        y_axis_label = yy[1]
 
         # Loading and preparing
 
@@ -2301,8 +2307,8 @@ def plot_fitting_vs_deconvolution(
 
         # create plot for the determined timestamps:
         # plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_um_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
-        plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_x_um'] , \
-            df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
+        plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)][x_values] , \
+            df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)][y_values], \
                 c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'],\
                     marker='x', s=2)
 
@@ -2325,8 +2331,8 @@ def plot_fitting_vs_deconvolution(
 
         plt.xlim(0,2000)
         plt.ylim(0,2000)
-        plt.xlabel(r"$\xi$ (deconv)")
-        plt.ylabel(r"$\xi$ (fit)")
+        plt.xlabel(x_axis_label)
+        plt.ylabel(y_axis_label)
         plt.gca().set_aspect('equal')
         
 
