@@ -2980,7 +2980,7 @@ tabs_left.set_title(1, 'Deconvolution')
 tabs_left.set_title(2, 'CDCs')
 tabs_left.set_title(3, 'plot_xi_um_fit_vs_I_Airy2_fit')
 
-children_right = [plot_plot_fitting_vs_deconvolution_output]
+children_right = [VBox([xx_widget, yy_widget, plot_plot_fitting_vs_deconvolution_output])]
 tabs_right = widgets.Tab()
 tabs_right.children = children_right
 tabs_right.set_title(0, 'Fitting vs. Deconvolution')
