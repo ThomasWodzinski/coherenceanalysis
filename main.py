@@ -2457,10 +2457,14 @@ def plot_CDCs(
 
 # create plots fitting vs deconvolution
 def plot_xi_um_fit_vs_I_Airy2_fit(
-    do_plot_xi_um_fit_vs_I_Airy2_fit
+    do_plot_xi_um_fit_vs_I_Airy2_fit,
+    xi_um_fit_column_and_label
 ):
 
     if do_plot_xi_um_fit_vs_I_Airy2_fit == True:
+
+        xi_um_fit_column = xi_um_fit_column_and_label[0]
+        xi_um_fit_label = xi_um_fit_column_and_label[1]
 
         fig = plt.figure(figsize=[6, 8], constrained_layout=True)
 
@@ -2491,11 +2495,11 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
             # create plot for the determined timestamps:
             # plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_um_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
             plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['I_Airy2_fit'] , \
-                df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
+                df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)][xi_um_fit_column], \
                     c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'],\
                         marker='x', s=2)
             plt.xlabel(r"$I_2$")
-            plt.ylabel(r"$\xi$ (fits)")
+            plt.ylabel(xi_um_fit_label)
             plt.axvline(x=1, color='black')
             plt.colorbar()
 
@@ -2814,6 +2818,7 @@ plot_xi_um_fit_vs_I_Airy2_fit_output = interactive_output(
     plot_xi_um_fit_vs_I_Airy2_fit,
     {
         "do_plot_xi_um_fit_vs_I_Airy2_fit": do_plot_xi_um_fit_vs_I_Airy2_fit_widget,
+        "xi_um_fit_column_and_label" : yy_widget
     },
 )
 
