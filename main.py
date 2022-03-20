@@ -2386,22 +2386,22 @@ def plot_CDCs(
 
             # create plot for the determined timestamps:
         
-                # ax.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'] , \
-                #     gaussian(x=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'], amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['xi_x_um']), \
-                #         c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['I_Airy2_fit'])
+                # ax.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'] , \
+                #     gaussian(x=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'], amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_x_um']), \
+                #         c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['I_Airy2_fit'])
 
                 # Deconvolution (green)
-                x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
-                y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)][xi_um_deconv_column].max()) for x in x]
+                x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'].unique()
+                y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["separation_um"]==x)][xi_um_deconv_column].max()) for x in x]
                 ax.scatter(x, y, marker='v', s=20, color='darkgreen', facecolors='none', label='maximum')
                 
                 # Fitting (red)
-                x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
-                y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)][gamma_fit_column].max() for x in x]
+                x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'].unique()
+                y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["separation_um"]==x)][gamma_fit_column].max() for x in x]
                 ax.scatter(x, y, marker='v', s=20, color='darkred', facecolors='none', label='maximum')
                 
-            x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
-            y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)][xi_um_deconv_column].max()) for x in x]
+            x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))]['separation_um'].unique()
+            y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["separation_um"]==x)][xi_um_deconv_column].max()) for x in x]
         
             xx = np.arange(0.0, 2000, 10)
             gamma_xi_x_um_max = y
@@ -2421,8 +2421,8 @@ def plot_CDCs(
 
             # TO DO: find mean sigma and error of the max(gamma_fit) of each separation
 
-            x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
-            y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)][gamma_fit_column].max() for x in x]
+            x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))]['separation_um'].unique()
+            y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["separation_um"]==x)][gamma_fit_column].max() for x in x]
         
             xx = np.arange(0.0, 2000, 10)
             gamma_fit_max = y
@@ -3425,10 +3425,10 @@ for dataset in list(datasets):
     
     ax = plt.subplot(gs[i,j])
 
-    ax.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'] , \
-        gaussian(x=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'], \
-             amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['xi_x_um']), \
-            c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['I_Airy2_fit'])
+    ax.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'] , \
+        gaussian(x=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'], \
+             amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_x_um']), \
+            c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['I_Airy2_fit'])
     # after next run make another one for xi_um
     ax.set_xlim(0,2000)
     ax.set_ylim(0,1)
@@ -3482,22 +3482,22 @@ for dataset in list(datasets):
 
     # create plot for the determined timestamps:
   
-        # ax.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'] , \
-        #     gaussian(x=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'], amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['xi_x_um']), \
-        #         c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['I_Airy2_fit'])
+        # ax.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'] , \
+        #     gaussian(x=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'], amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_x_um']), \
+        #         c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['I_Airy2_fit'])
 
         # Deconvolution (green)
-        x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
-        y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)]['xi_x_um'].max()) for x in x]
+        x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'].unique()
+        y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["separation_um"]==x)]['xi_x_um'].max()) for x in x]
         ax.scatter(x, y, marker='v', s=20, color='darkgreen', facecolors='none', label='maximum')
         
         # Fitting (red)
-        x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
-        y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)]['gamma_fit'].max() for x in x]
+        x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'].unique()
+        y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["separation_um"]==x)]['gamma_fit'].max() for x in x]
         ax.scatter(x, y, marker='v', s=20, color='darkred', facecolors='none', label='maximum')
         
-    x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
-    y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)]['xi_x_um'].max()) for x in x]
+    x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))]['separation_um'].unique()
+    y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["separation_um"]==x)]['xi_x_um'].max()) for x in x]
    
     xx = np.arange(0.0, 2000, 10)
     gamma_xi_x_um_max = y
@@ -3517,8 +3517,8 @@ for dataset in list(datasets):
 
     # TO DO: find mean sigma and error of the max(gamma_fit) of each separation
 
-    x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
-    y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)]['gamma_fit'].max() for x in x]
+    x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))]['separation_um'].unique()
+    y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["separation_um"]==x)]['gamma_fit'].max() for x in x]
    
     xx = np.arange(0.0, 2000, 10)
     gamma_fit_max = y
@@ -3562,8 +3562,8 @@ for f in files:
             timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
             timestamp_pulse_ids_dataset.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
-x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
-y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)]['gamma_fit'].max() for x in x]
+x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'].unique()
+y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["separation_um"]==x)]['gamma_fit'].max() for x in x]
 
 print(x)
 print(y)
@@ -3585,18 +3585,18 @@ for f in files:
             timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
             
 
-x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um']
-y = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['gamma_fit']
+x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um']
+y = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['gamma_fit']
 plt.scatter(x,y)
 
-gamma_fit_max = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['gamma_fit'].max()
-gamma_fit_min = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['gamma_fit'].min()
+gamma_fit_max = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['gamma_fit'].max()
+gamma_fit_min = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['gamma_fit'].min()
 print(gamma_fit_max)
 
-imageid_max = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0['gamma_fit']==gamma_fit_max)][['imageid', 'separation_um', 'gamma_fit', 'xi_x_um']]
-imageid_min = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0['gamma_fit']==gamma_fit_min)][['imageid', 'separation_um', 'gamma_fit', 'xi_x_um']]
+imageid_max = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0['gamma_fit']==gamma_fit_max)][['imageid', 'separation_um', 'gamma_fit', 'xi_x_um']]
+imageid_min = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0['gamma_fit']==gamma_fit_min)][['imageid', 'separation_um', 'gamma_fit', 'xi_x_um']]
 # df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'gamma_fit'] = np.nan
-# imageid_max = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0["gamma_fit"]==1.0)][['imageid', 'separation_um', 'gamma_fit']]
+# imageid_max = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["gamma_fit"]==1.0)][['imageid', 'separation_um', 'gamma_fit']]
 
 print(imageid_max)
 print(imageid_min)
