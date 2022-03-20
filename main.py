@@ -495,6 +495,30 @@ run_over_all_images_progress_widget = widgets.IntProgress(
 run_over_all_images_statustext_widget = widgets.Text(value="", placeholder="status", description="time taken|left:", disabled=False)
 
 
+run_over_all_measurements_widget = widgets.ToggleButton(
+    value=False,
+    description='run (all measurements in dataset)',
+    disabled=False,
+    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+    tooltip='run (all measurements in dataset)',
+    icon='check'
+)
+
+run_over_all_images_progress_widget = widgets.IntProgress(
+    value=0,
+    min=0,
+    max=100,
+    step=1,
+    description="Progress:",
+    bar_style='',  # 'success', 'info', 'warning', 'danger' or ''
+    orientation="horizontal",
+)
+
+run_over_all_images_statustext_widget = widgets.Text(value="", placeholder="status", description="time taken|left:", disabled=False)
+
+
+
+
 do_textbox_widget = widgets.Checkbox(value=False, description="do_textbox", disabled=False)
 
 textarea_widget = widgets.Textarea(value="info", placeholder="Type something", description="Fitting:", disabled=False)
@@ -2554,7 +2578,6 @@ column0 = widgets.VBox(
         savefigure_profile_fit_widget,
         save_to_df_widget,
         df_fits_csv_save_widget,
-        HBox([run_over_all_images_widget, run_over_all_images_progress_widget, run_over_all_images_statustext_widget]),
         do_textbox_widget,
     ]
 )
@@ -3070,6 +3093,7 @@ display(
             dph_settings_bgsubtracted_widget,
             measurements_selection_widget,
             plotprofile_interactive_input,
+            HBox([run_over_all_images_widget, run_over_all_images_progress_widget, run_over_all_images_statustext_widget]),
             grid
         ]
     )
