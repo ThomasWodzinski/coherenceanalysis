@@ -3032,13 +3032,14 @@ def run_over_all_measurements():
     
     run_over_all_measurements_progress_widget.value = 0
     i = 0
-    for imageid in imageid_profile_fit_widget.options:
-        imageid_profile_fit_widget.value = imageid
+    for measurement in dph_settings_bgsubtracted_widget.options:
+        dph_settings_bgsubtracted_widget.value = measurement
+        run_over_all_images()
         i = i+1
-        run_over_all_measurements_progress_widget.value = int(i/len(imageid_profile_fit_widget.options)*100)
+        run_over_all_measurements_progress_widget.value = int(i/len(dph_settings_bgsubtracted_widget.options)*100)
         end = datetime.now()
         time_taken = end - start
-        time_left = time_taken/i * (len(imageid_profile_fit_widget.options) - i)
+        time_left = time_taken/i * (len(dph_settings_bgsubtracted_widget.options) - i)
         run_over_all_measurements_statustext_widget.value = str(time_taken) + "|" + str(time_left)
     run_over_all_measurements_progress_widget.bar_style = 'success'
 
