@@ -476,6 +476,7 @@ df_fits_csv_save_widget = widgets.ToggleButton(
 
 # run widgets
 
+## run_over_all_images_widget
 
 run_over_all_images_widget = widgets.ToggleButton(
     value=False,
@@ -498,6 +499,7 @@ run_over_all_images_progress_widget = widgets.IntProgress(
 
 run_over_all_images_statustext_widget = widgets.Text(value="", placeholder="status", description="time taken|left:", disabled=False)
 
+## run_over_all_measurements_widget
 
 run_over_all_measurements_widget = widgets.ToggleButton(
     value=False,
@@ -519,6 +521,30 @@ run_over_all_measurements_progress_widget = widgets.IntProgress(
 )
 
 run_over_all_measurements_statustext_widget = widgets.Text(value="", placeholder="status", description="time taken|left:", disabled=False)
+
+
+## run_over_all_datasets_widget
+
+run_over_all_datasets_widget = widgets.ToggleButton(
+    value=False,
+    description='run (all datasets in dataset)',
+    disabled=False,
+    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+    tooltip='run (all datasets in dataset)',
+    icon='check'
+)
+
+run_over_all_datasets_progress_widget = widgets.IntProgress(
+    value=0,
+    min=0,
+    max=100,
+    step=1,
+    description="Progress:",
+    bar_style='',  # 'success', 'info', 'warning', 'danger' or ''
+    orientation="horizontal",
+)
+
+run_over_all_datasets_statustext_widget = widgets.Text(value="", placeholder="status", description="time taken|left:", disabled=False)
 
 
 
@@ -3059,6 +3085,40 @@ def update_run_over_all_measurements_widget(change):
 run_over_all_measurements_widget.observe(update_run_over_all_measurements_widget, names='value')
 
 
+## run_over_all_datasets
+
+def run_over_all_datasets():
+    start = datetime.now()
+    run_over_all_datasets_progress_widget.bar_style = 'info'
+    
+    run_over_all_datasets_progress_widget.value = 0
+    i = 0
+    for dataset in list(datasets):
+        datasets_widget.value = dataset
+        run_over_all_measurements()
+        i = i+1
+        run_over_all_datasets_progress_widget.value = int(i/len(list(datasets))*100)
+        end = datetime.now()
+        time_taken = end - start
+        time_left = time_taken/i * (len(list(datasets)) - i)
+        run_over_all_datasets_statustext_widget.value = str(time_taken) + "|" + str(time_left)
+    run_over_all_datasets_progress_widget.bar_style = 'success'
+
+
+def update_run_over_all_datasets_widget(change):
+    if run_over_all_datasets_widget.value == True:
+
+        run_over_all_datasets_widget.button_style = 'info'
+        run_over_all_datasets()
+        run_over_all_datasets_widget.button_style = 'success'
+        run_over_all_datasets_widget.value = False
+        run_over_all_datasets_widget.button_style = ''
+        
+
+run_over_all_datasets_widget.observe(update_run_over_all_datasets_widget, names='value')
+
+
+
 
 # getting all parameters from the file
 
@@ -3134,7 +3194,8 @@ display(
             dph_settings_bgsubtracted_widget,
             measurements_selection_widget,
             plotprofile_interactive_input,
-            HBox([run_over_all_measurements_widget, run_over_all_measurements_progress_widget, run_over_all_measurements_statustext_widget,
+            HBox([run_over_all_datasets_widget, run_over_all_datasets_progress_widget, run_over_all_datasets_statustext_widget,
+                run_over_all_measurements_widget, run_over_all_measurements_progress_widget, run_over_all_measurements_statustext_widget,
                  run_over_all_images_widget, run_over_all_images_progress_widget, run_over_all_images_statustext_widget]),
             grid
         ]
