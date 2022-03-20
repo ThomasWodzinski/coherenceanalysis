@@ -585,15 +585,15 @@ mod_shiftx_um_value_widget = widgets.Text(value="", description="",layout=value_
 
 do_plot_fitting_vs_deconvolution_widget = widgets.Checkbox(value=False, description="do fitting vs deconv plot")
 
-xx_widget = widgets.Dropdown(
+xi_um_deconv_column_and_label_widget = widgets.Dropdown(
     options=[('xi_x_um',('xi_x_um',r"$\xi_x$ / um (deconv)")),('xi_um',('xi_um',r"$\xi$ / um (deconv)"))],
-    description="x:",
+    description="deconv variant:",
     disabled=False,
 )
 
-yy_widget = widgets.Dropdown(
+xi_um_fit_column_and_label_widget = widgets.Dropdown(
     options=[('xi_um_fit',('xi_um_fit',r"$\xi$ / um (fit)")),('xi_um_fit_at_center',('xi_um_fit_at_center',r"$\xi_c$ / um (fit)"))],
-    description="y:",
+    description="fitting variant:",
     disabled=False,
 )
 
@@ -2274,16 +2274,16 @@ def plot_fitting_vs_deconvolution(
     dataset,
     measurement_file,
     imageid,
-    xx,
-    yy
+    xi_um_deconv_column_and_label,
+    xi_um_fit_column_and_label
 ):
 
     if do_plot_fitting_vs_deconvolution == True:
 
-        x_values = xx[0]
-        x_axis_label = xx[1]
-        y_values = yy[0]
-        y_axis_label = yy[1]
+        xi_um_deconv_column = xi_um_deconv_column_and_label[0]
+        xi_um_deconv_label = xi_um_deconv_column_and_label[1]
+        xi_um_fit_column = xi_um_fit_column_and_label[0]
+        xi_um_fit_label = xi_um_fit_column_and_label[1]
 
         # Loading and preparing
 
@@ -2307,8 +2307,8 @@ def plot_fitting_vs_deconvolution(
 
         # create plot for the determined timestamps:
         # plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_um_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
-        plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)][x_values] , \
-            df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)][y_values], \
+        plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)][xi_um_deconv_column] , \
+            df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)][xi_um_fit_column], \
                 c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'],\
                     marker='x', s=2)
 
@@ -2319,8 +2319,8 @@ def plot_fitting_vs_deconvolution(
         with h5py.File(measurement_file, "r") as hdf5_file:
             timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
-        plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid)) & (df0["xi_um_fit"]<2000)]['xi_x_um'] , \
-            df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
+        plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid)) & (df0["xi_um_fit"]<2000)][xi_um_deconv_column] , \
+            df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid)) & (df0["xi_um_fit"]<2000)][xi_um_fit_column], \
                 c='red',\
                     marker='x', s=10)
 
@@ -2331,8 +2331,8 @@ def plot_fitting_vs_deconvolution(
 
         plt.xlim(0,2000)
         plt.ylim(0,2000)
-        plt.xlabel(x_axis_label)
-        plt.ylabel(y_axis_label)
+        plt.xlabel(xi_um_deconv_label)
+        plt.ylabel(xi_um_fit_label)
         plt.gca().set_aspect('equal')
         
 
@@ -2800,8 +2800,8 @@ plot_fitting_vs_deconvolution_output = interactive_output(
         "dataset" : datasets_widget,
         "measurement_file" : dph_settings_bgsubtracted_widget,
         "imageid": imageid_profile_fit_widget,
-        "xx" : xx_widget,
-        "yy" : yy_widget
+        "xi_um_deconv_column_and_label" : xi_um_deconv_column_and_label_widget,
+        "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget
     },
 )
 
@@ -2809,8 +2809,8 @@ plot_CDCs_output = interactive_output(
     plot_CDCs,
     {
         "do_plot_CDCs": do_plot_CDCs_widget,
-        "xi_um_deconv_column_and_label" : xx_widget,
-        "xi_um_fit_column_and_label" : yy_widget
+        "xi_um_deconv_column_and_label" : xi_um_deconv_column_and_label_widget,
+        "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget
     },
 )
 
@@ -2818,7 +2818,7 @@ plot_xi_um_fit_vs_I_Airy2_fit_output = interactive_output(
     plot_xi_um_fit_vs_I_Airy2_fit,
     {
         "do_plot_xi_um_fit_vs_I_Airy2_fit": do_plot_xi_um_fit_vs_I_Airy2_fit_widget,
-        "xi_um_fit_column_and_label" : yy_widget
+        "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget
     },
 )
 
@@ -2995,7 +2995,7 @@ tabs_left.set_title(1, 'Deconvolution')
 tabs_left.set_title(2, 'CDCs')
 tabs_left.set_title(3, 'plot_xi_um_fit_vs_I_Airy2_fit')
 
-children_right = [VBox([xx_widget, yy_widget, plot_fitting_vs_deconvolution_output])]
+children_right = [VBox([xi_um_deconv_column_and_label_widget, xi_um_fit_column_and_label_widget, plot_fitting_vs_deconvolution_output])]
 tabs_right = widgets.Tab()
 tabs_right.children = children_right
 tabs_right.set_title(0, 'Fitting vs. Deconvolution')
