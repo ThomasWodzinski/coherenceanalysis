@@ -445,7 +445,7 @@ fittingprogress_widget = widgets.IntProgress(
 
 statustext_widget = widgets.Text(value="", placeholder="status", description="", disabled=False)
 
-plotprofile_active_widget = widgets.Checkbox(value=False, description="active", disabled=False)
+plotprofile_active_widget = widgets.Checkbox(value=False, description="do_fitting", disabled=False)
 do_deconvmethod_widget = widgets.Checkbox(value=False, description="do_deconvmethod", disabled=False)
 xi_um_guess_widget = widgets.FloatText(value=900, description='xi_um_guess')
 scan_x_widget = widgets.Checkbox(value=False, description="scan_x", disabled=False)
