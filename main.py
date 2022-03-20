@@ -2341,9 +2341,17 @@ def plot_fitting_vs_deconvolution(
 # CDC from Deconvolution (green) and Fitting (red)
 def plot_CDCs(
     do_plot_CDCs,
+    xi_um_deconv_column_and_label,
+    xi_um_fit_column_and_label
 ):
 
     if do_plot_CDCs == True:
+
+        xi_um_deconv_column = xi_um_deconv_column_and_label[0]
+        xi_um_deconv_label = xi_um_deconv_column_and_label[1]
+        xi_um_fit_column = xi_um_fit_column_and_label[0]
+        xi_um_fit_label = xi_um_fit_column_and_label[1]
+        gamma_fit_column = 'gamma_fit' + xi_um_fit_column[9:]
 
         fig = plt.figure(figsize=[6, 8], constrained_layout=True)
 
@@ -2384,16 +2392,16 @@ def plot_CDCs(
 
                 # Deconvolution (green)
                 x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
-                y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)]['xi_x_um'].max()) for x in x]
+                y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)][xi_um_deconv_column].max()) for x in x]
                 ax.scatter(x, y, marker='v', s=20, color='darkgreen', facecolors='none', label='maximum')
                 
                 # Fitting (red)
                 x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
-                y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)]['gamma_fit'].max() for x in x]
+                y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)][gamma_fit_column].max() for x in x]
                 ax.scatter(x, y, marker='v', s=20, color='darkred', facecolors='none', label='maximum')
                 
             x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
-            y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)]['xi_x_um'].max()) for x in x]
+            y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)][xi_um_deconv_column].max()) for x in x]
         
             xx = np.arange(0.0, 2000, 10)
             gamma_xi_x_um_max = y
@@ -2414,7 +2422,7 @@ def plot_CDCs(
             # TO DO: find mean sigma and error of the max(gamma_fit) of each separation
 
             x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000)]['separation_um'].unique()
-            y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)]['gamma_fit'].max() for x in x]
+            y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["xi_x_um"]<2000) & (df0["separation_um"]==x)][gamma_fit_column].max() for x in x]
         
             xx = np.arange(0.0, 2000, 10)
             gamma_fit_max = y
@@ -2797,6 +2805,8 @@ plot_CDCs_output = interactive_output(
     plot_CDCs,
     {
         "do_plot_CDCs": do_plot_CDCs_widget,
+        "xi_um_deconv_column_and_label" : xx_widget,
+        "xi_um_fit_column_and_label" : yy_widget
     },
 )
 
