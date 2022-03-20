@@ -445,7 +445,7 @@ fittingprogress_widget = widgets.IntProgress(
 
 statustext_widget = widgets.Text(value="", placeholder="status", description="", disabled=False)
 
-plotprofile_active_widget = widgets.Checkbox(value=False, description="do_fitting", disabled=False)
+do_fitting_widget = widgets.Checkbox(value=False, description="do_fitting", disabled=False)
 do_deconvmethod_widget = widgets.Checkbox(value=False, description="do_deconvmethod", disabled=False)
 xi_um_guess_widget = widgets.FloatText(value=900, description='xi_um_guess')
 scan_x_widget = widgets.Checkbox(value=False, description="scan_x", disabled=False)
@@ -473,6 +473,10 @@ df_fits_csv_save_widget = widgets.ToggleButton(
     icon='check'
 )
 
+
+# run widgets
+
+
 run_over_all_images_widget = widgets.ToggleButton(
     value=False,
     description='run (all images in measurement)',
@@ -482,7 +486,7 @@ run_over_all_images_widget = widgets.ToggleButton(
     icon='check'
 )
 
-run_progress_widget = widgets.IntProgress(
+run_over_all_images_progress_widget = widgets.IntProgress(
     value=0,
     min=0,
     max=100,
@@ -492,7 +496,31 @@ run_progress_widget = widgets.IntProgress(
     orientation="horizontal",
 )
 
-run_statustext_widget = widgets.Text(value="", placeholder="status", description="time taken|left:", disabled=False)
+run_over_all_images_statustext_widget = widgets.Text(value="", placeholder="status", description="time taken|left:", disabled=False)
+
+
+run_over_all_measurements_widget = widgets.ToggleButton(
+    value=False,
+    description='run (all measurements in dataset)',
+    disabled=False,
+    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+    tooltip='run (all measurements in dataset)',
+    icon='check'
+)
+
+run_over_all_measurements_progress_widget = widgets.IntProgress(
+    value=0,
+    min=0,
+    max=100,
+    step=1,
+    description="Progress:",
+    bar_style='',  # 'success', 'info', 'warning', 'danger' or ''
+    orientation="horizontal",
+)
+
+run_over_all_measurements_statustext_widget = widgets.Text(value="", placeholder="status", description="time taken|left:", disabled=False)
+
+
 
 
 do_textbox_widget = widgets.Checkbox(value=False, description="do_textbox", disabled=False)
@@ -2540,7 +2568,7 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
 
 column0 = widgets.VBox(
     [
-        plotprofile_active_widget,
+        do_fitting_widget,
         do_deconvmethod_widget,
         do_plot_fitting_vs_deconvolution_widget,
         do_plot_CDCs_widget,
@@ -2554,7 +2582,6 @@ column0 = widgets.VBox(
         savefigure_profile_fit_widget,
         save_to_df_widget,
         df_fits_csv_save_widget,
-        HBox([run_over_all_images_widget, run_progress_widget, run_statustext_widget]),
         do_textbox_widget,
     ]
 )
@@ -2643,7 +2670,7 @@ plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3
 # plotprofile_interactive_output = interactive_output(
 #     plotprofile,
 #     {
-#         "plotprofile_active": plotprofile_active_widget,
+#         "plotprofile_active": do_fitting_widget,
 #         "do_deconvmethod": do_deconvmethod_widget,
 #         "scan_x" : scan_x_widget,
 #         "xi_um_guess" : xi_um_guess_widget,
@@ -2696,7 +2723,7 @@ plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3
 # plot_fitting_interactive_output = interactive_output(
 #     plot_fitting,
 #     {
-#         "plotprofile_active": plotprofile_active_widget,
+#         "plotprofile_active": do_fitting_widget,
 #         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
 #         "crop_px" : crop_px_widget,
 #         "hdf5_file_path": dph_settings_bgsubtracted_widget,
@@ -2746,7 +2773,7 @@ plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3
 plot_fitting_v2_interactive_output = interactive_output(
     plot_fitting_v2,
     {
-        "plotprofile_active": plotprofile_active_widget,
+        "plotprofile_active": do_fitting_widget,
         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
         "crop_px" : crop_px_widget,
         "hdf5_file_path": dph_settings_bgsubtracted_widget,
@@ -2849,8 +2876,8 @@ def dph_settings_bgsubtracted_widget_changed(change):
     statustext_widget.value = "updating widgets ..."
     # plotprofile_interactive_output.clear_output()
     fittingprogress_widget.value = 0
-    plotprofile_active_widget.value = False
-    statustext_widget.value = "plotprofile_active_widget.value = False"
+    do_fitting_widget.value = False
+    statustext_widget.value = "do_fitting_widget.value = False"
     imageid_profile_fit_widget.disabled = True
     imageid_profile_fit_widget.options = None
     with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
@@ -2963,23 +2990,27 @@ df_fits_csv_save_widget.observe(update_df_fits_csv_save_widget, names='value')
 
 
 
+# run widgets behaviour
 
+## run_over_all_images
 
 def run_over_all_images():
     start = datetime.now()
-    run_progress_widget.bar_style = 'info'
+    run_over_all_images_progress_widget.bar_style = 'info'
     
-    run_progress_widget.value = 0
+    do_fitting_widget.value = True
+
+    run_over_all_images_progress_widget.value = 0
     i = 0
     for imageid in imageid_profile_fit_widget.options:
         imageid_profile_fit_widget.value = imageid
         i = i+1
-        run_progress_widget.value = int(i/len(imageid_profile_fit_widget.options)*100)
+        run_over_all_images_progress_widget.value = int(i/len(imageid_profile_fit_widget.options)*100)
         end = datetime.now()
         time_taken = end - start
         time_left = time_taken/i * (len(imageid_profile_fit_widget.options) - i)
-        run_statustext_widget.value = str(time_taken) + "|" + str(time_left)
-    run_progress_widget.bar_style = 'success'
+        run_over_all_images_statustext_widget.value = str(time_taken) + "|" + str(time_left)
+    run_over_all_images_progress_widget.bar_style = 'success'
 
 
 def update_run_over_all_images_widget(change):
@@ -2993,6 +3024,39 @@ def update_run_over_all_images_widget(change):
         
 
 run_over_all_images_widget.observe(update_run_over_all_images_widget, names='value')
+
+
+## run_over_all_measurements
+
+def run_over_all_measurements():
+    start = datetime.now()
+    run_over_all_measurements_progress_widget.bar_style = 'info'
+    
+    run_over_all_measurements_progress_widget.value = 0
+    i = 0
+    for measurement in dph_settings_bgsubtracted_widget.options:
+        dph_settings_bgsubtracted_widget.value = measurement
+        run_over_all_images()
+        i = i+1
+        run_over_all_measurements_progress_widget.value = int(i/len(dph_settings_bgsubtracted_widget.options)*100)
+        end = datetime.now()
+        time_taken = end - start
+        time_left = time_taken/i * (len(dph_settings_bgsubtracted_widget.options) - i)
+        run_over_all_measurements_statustext_widget.value = str(time_taken) + "|" + str(time_left)
+    run_over_all_measurements_progress_widget.bar_style = 'success'
+
+
+def update_run_over_all_measurements_widget(change):
+    if run_over_all_measurements_widget.value == True:
+
+        run_over_all_measurements_widget.button_style = 'info'
+        run_over_all_measurements()
+        run_over_all_measurements_widget.button_style = 'success'
+        run_over_all_measurements_widget.value = False
+        run_over_all_measurements_widget.button_style = ''
+        
+
+run_over_all_measurements_widget.observe(update_run_over_all_measurements_widget, names='value')
 
 
 
@@ -3070,6 +3134,8 @@ display(
             dph_settings_bgsubtracted_widget,
             measurements_selection_widget,
             plotprofile_interactive_input,
+            HBox([run_over_all_measurements_widget, run_over_all_measurements_progress_widget, run_over_all_measurements_statustext_widget,
+                 run_over_all_images_widget, run_over_all_images_progress_widget, run_over_all_images_statustext_widget]),
             grid
         ]
     )
@@ -3193,7 +3259,7 @@ for imageid in imageid_profile_fit_widget.options:
 # <codecell>
 # iterate over all images in a given measurement
 start = datetime.now()
-plotprofile_active_widget.value = True
+do_fitting_widget.value = True
 for imageid in imageid_profile_fit_widget.options:
     imageid_profile_fit_widget.value = imageid
 end = datetime.now()
@@ -3205,7 +3271,7 @@ print(time_taken)
 # # iterate over all measurements and images in a given dataset
 for measurement in dph_settings_bgsubtracted_widget.options:
     dph_settings_bgsubtracted_widget.value = measurement
-    plotprofile_active_widget.value = True
+    do_fitting_widget.value = True
     for imageid in imageid_profile_fit_widget.options:
         imageid_profile_fit_widget.value = imageid
 
@@ -3214,7 +3280,7 @@ for measurement in dph_settings_bgsubtracted_widget.options:
 # iterate over all datasets
 for dataset in list(datasets):
     datasets_widget.value = dataset
-    plotprofile_active_widget.value = True
+    do_fitting_widget.value = True
 print('done')
 
 
@@ -3224,11 +3290,11 @@ start = datetime.now()
 for dataset in list(datasets):
     print(dataset)
     datasets_widget.value = dataset
-    plotprofile_active_widget.value = True
+    do_fitting_widget.value = True
     for measurement in dph_settings_bgsubtracted_widget.options:
         print(measurement)
         dph_settings_bgsubtracted_widget.value = measurement
-        plotprofile_active_widget.value = True
+        do_fitting_widget.value = True
         start_measurement = datetime.now()
         for imageid in imageid_profile_fit_widget.options:
             imageid_profile_fit_widget.value = imageid
