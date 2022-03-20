@@ -445,7 +445,7 @@ fittingprogress_widget = widgets.IntProgress(
 
 statustext_widget = widgets.Text(value="", placeholder="status", description="", disabled=False)
 
-plotprofile_active_widget = widgets.Checkbox(value=False, description="do_fitting", disabled=False)
+do_fitting_widget = widgets.Checkbox(value=False, description="do_fitting", disabled=False)
 do_deconvmethod_widget = widgets.Checkbox(value=False, description="do_deconvmethod", disabled=False)
 xi_um_guess_widget = widgets.FloatText(value=900, description='xi_um_guess')
 scan_x_widget = widgets.Checkbox(value=False, description="scan_x", disabled=False)
@@ -2568,7 +2568,7 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
 
 column0 = widgets.VBox(
     [
-        plotprofile_active_widget,
+        do_fitting_widget,
         do_deconvmethod_widget,
         do_plot_fitting_vs_deconvolution_widget,
         do_plot_CDCs_widget,
@@ -2670,7 +2670,7 @@ plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3
 # plotprofile_interactive_output = interactive_output(
 #     plotprofile,
 #     {
-#         "plotprofile_active": plotprofile_active_widget,
+#         "plotprofile_active": do_fitting_widget,
 #         "do_deconvmethod": do_deconvmethod_widget,
 #         "scan_x" : scan_x_widget,
 #         "xi_um_guess" : xi_um_guess_widget,
@@ -2723,7 +2723,7 @@ plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3
 # plot_fitting_interactive_output = interactive_output(
 #     plot_fitting,
 #     {
-#         "plotprofile_active": plotprofile_active_widget,
+#         "plotprofile_active": do_fitting_widget,
 #         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
 #         "crop_px" : crop_px_widget,
 #         "hdf5_file_path": dph_settings_bgsubtracted_widget,
@@ -2773,7 +2773,7 @@ plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3
 plot_fitting_v2_interactive_output = interactive_output(
     plot_fitting_v2,
     {
-        "plotprofile_active": plotprofile_active_widget,
+        "plotprofile_active": do_fitting_widget,
         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
         "crop_px" : crop_px_widget,
         "hdf5_file_path": dph_settings_bgsubtracted_widget,
@@ -2876,8 +2876,8 @@ def dph_settings_bgsubtracted_widget_changed(change):
     statustext_widget.value = "updating widgets ..."
     # plotprofile_interactive_output.clear_output()
     fittingprogress_widget.value = 0
-    plotprofile_active_widget.value = False
-    statustext_widget.value = "plotprofile_active_widget.value = False"
+    do_fitting_widget.value = False
+    statustext_widget.value = "do_fitting_widget.value = False"
     imageid_profile_fit_widget.disabled = True
     imageid_profile_fit_widget.options = None
     with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
@@ -2998,6 +2998,8 @@ def run_over_all_images():
     start = datetime.now()
     run_over_all_images_progress_widget.bar_style = 'info'
     
+    do_fitting_widget.value = True
+
     run_over_all_images_progress_widget.value = 0
     i = 0
     for imageid in imageid_profile_fit_widget.options:
@@ -3257,7 +3259,7 @@ for imageid in imageid_profile_fit_widget.options:
 # <codecell>
 # iterate over all images in a given measurement
 start = datetime.now()
-plotprofile_active_widget.value = True
+do_fitting_widget.value = True
 for imageid in imageid_profile_fit_widget.options:
     imageid_profile_fit_widget.value = imageid
 end = datetime.now()
@@ -3269,7 +3271,7 @@ print(time_taken)
 # # iterate over all measurements and images in a given dataset
 for measurement in dph_settings_bgsubtracted_widget.options:
     dph_settings_bgsubtracted_widget.value = measurement
-    plotprofile_active_widget.value = True
+    do_fitting_widget.value = True
     for imageid in imageid_profile_fit_widget.options:
         imageid_profile_fit_widget.value = imageid
 
@@ -3278,7 +3280,7 @@ for measurement in dph_settings_bgsubtracted_widget.options:
 # iterate over all datasets
 for dataset in list(datasets):
     datasets_widget.value = dataset
-    plotprofile_active_widget.value = True
+    do_fitting_widget.value = True
 print('done')
 
 
@@ -3288,11 +3290,11 @@ start = datetime.now()
 for dataset in list(datasets):
     print(dataset)
     datasets_widget.value = dataset
-    plotprofile_active_widget.value = True
+    do_fitting_widget.value = True
     for measurement in dph_settings_bgsubtracted_widget.options:
         print(measurement)
         dph_settings_bgsubtracted_widget.value = measurement
-        plotprofile_active_widget.value = True
+        do_fitting_widget.value = True
         start_measurement = datetime.now()
         for imageid in imageid_profile_fit_widget.options:
             imageid_profile_fit_widget.value = imageid
