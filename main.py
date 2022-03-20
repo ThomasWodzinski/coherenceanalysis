@@ -473,6 +473,27 @@ df_fits_csv_save_widget = widgets.ToggleButton(
     icon='check'
 )
 
+run_over_all_images_widget = widgets.ToggleButton(
+    value=False,
+    description='run (all images in measurement)',
+    disabled=False,
+    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+    tooltip='run (all images in measurement)',
+    icon='check'
+)
+
+run_progress_widget = widgets.IntProgress(
+    value=0,
+    min=0,
+    max=100,
+    step=1,
+    description="Progress:",
+    bar_style='',  # 'success', 'info', 'warning', 'danger' or ''
+    orientation="horizontal",
+)
+
+run_statustext_widget = widgets.Text(value="", placeholder="status", description="time taken|left:", disabled=False)
+
 
 do_textbox_widget = widgets.Checkbox(value=False, description="do_textbox", disabled=False)
 
@@ -2533,6 +2554,7 @@ column0 = widgets.VBox(
         savefigure_profile_fit_widget,
         save_to_df_widget,
         df_fits_csv_save_widget,
+        HBox([run_over_all_images_widget, run_progress_widget, run_statustext_widget]),
         do_textbox_widget,
     ]
 )
@@ -2937,6 +2959,40 @@ def update_df_fits_csv_save_widget(change):
 
 df_fits_csv_save_widget.observe(update_df_fits_csv_save_widget, names='value')
 # not working, why? impement also which file to load/import, which ones to export/save, ...
+
+
+
+
+
+
+def run_over_all_images():
+    start = datetime.now()
+    run_progress_widget.bar_style = 'info'
+    
+    run_progress_widget.value = 0
+    i = 0
+    for imageid in imageid_profile_fit_widget.options:
+        imageid_profile_fit_widget.value = imageid
+        i = i+1
+        run_progress_widget.value = int(i/len(imageid_profile_fit_widget.options)*100)
+        end = datetime.now()
+        time_taken = end - start
+        time_left = time_taken/i * (len(imageid_profile_fit_widget.options) - i)
+        run_statustext_widget.value = str(time_taken) + "|" + str(time_left)
+    run_progress_widget.bar_style = 'success'
+
+
+def update_run_over_all_images_widget(change):
+    if run_over_all_images_widget.value == True:
+
+        run_over_all_images_widget.button_style = 'info'
+        run_over_all_images()
+        run_over_all_images_widget.button_style = 'success'
+        run_over_all_images_widget.value = False
+        run_over_all_images_widget.button_style = ''
+        
+
+run_over_all_images_widget.observe(update_run_over_all_images_widget, names='value')
 
 
 
