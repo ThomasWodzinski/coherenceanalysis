@@ -2382,9 +2382,9 @@ def plot_fitting_vs_deconvolution(
 
         # create plot for the determined timestamps:
         # plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_um_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
-        plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)][xi_um_deconv_column] , \
-            df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)][xi_um_fit_column], \
-                c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'],\
+        plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))][xi_um_deconv_column] , \
+            df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))][xi_um_fit_column], \
+                c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'],\
                     marker='x', s=2)
 
         plt.colorbar()
@@ -2394,8 +2394,8 @@ def plot_fitting_vs_deconvolution(
         with h5py.File(measurement_file, "r") as hdf5_file:
             timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
-        plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid)) & (df0["xi_um_fit"]<2000)][xi_um_deconv_column] , \
-            df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid)) & (df0["xi_um_fit"]<2000)][xi_um_fit_column], \
+        plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid))][xi_um_deconv_column] , \
+            df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid))][xi_um_fit_column], \
                 c='red',\
                     marker='x', s=10)
 
@@ -2569,9 +2569,9 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
 
             # create plot for the determined timestamps:
             # plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_um_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
-            plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['I_Airy2_fit'] , \
-                df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)][xi_um_fit_column], \
-                    c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'],\
+            plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['I_Airy2_fit'] , \
+                df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))][xi_um_fit_column], \
+                    c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'],\
                         marker='x', s=2)
             plt.xlabel(r"$I_2$")
             plt.ylabel(xi_um_fit_label)
@@ -3454,9 +3454,9 @@ for dataset in list(datasets):
     
     ax = plt.subplot(gs[i,j])
 
-    ax.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_x_um'] , \
-        df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
-            c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'], \
+    ax.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_x_um'] , \
+        df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_um_fit'], \
+            c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'], \
                 marker='x', s=2)
     ax.set_xlim(0,2000)
     ax.set_ylim(0,2000)
@@ -3502,9 +3502,9 @@ for dataset in list(datasets):
 
     # create plot for the determined timestamps:
     # plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_um_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
-    plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_x_um'] , \
-        df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
-            c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'],\
+    plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_x_um'] , \
+        df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_um_fit'], \
+            c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'],\
                 marker='x', s=2)
     plt.xlabel(r"$\xi$ (fits)")
     plt.ylabel(r"$\xi$ (deconv)")
@@ -3557,9 +3557,9 @@ for dataset in list(datasets):
     
     ax = plt.subplot(gs[i,j])
 
-    ax.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'] , \
-        df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['gamma_fit'], \
-            c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['I_Airy2_fit'])
+    ax.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'] , \
+        df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['gamma_fit'], \
+            c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['I_Airy2_fit'])
     ax.set_xlim(0,2000)
     ax.set_ylim(0,1)
     
@@ -3625,7 +3625,7 @@ for dataset in list(datasets):
         j=0
         i=i+1
 
-# gaussian(x=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'], amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'])
+# gaussian(x=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'], amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_um_fit'])
 # %%
 
 # <codecell>
@@ -3937,9 +3937,9 @@ for dataset in list(datasets):
 
     # create plot for the determined timestamps:
     # plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_um_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
-    plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['I_Airy2_fit'] , \
-        df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['xi_um_fit'], \
-            c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["xi_um_fit"]<2000)]['separation_um'],\
+    plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['I_Airy2_fit'] , \
+        df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_um_fit'], \
+            c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'],\
                 marker='x', s=2)
     plt.xlabel(r"$I_2$")
     plt.ylabel(r"$\xi$ (fits)")
