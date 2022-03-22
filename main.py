@@ -2221,7 +2221,7 @@ def plot_deconvmethod(
         ydata = pixis_profile_avg  # defined in the cells above, still to implement: select
         
         sigma_y_F_gamma_um_guess = calc_sigma_F_gamma_um(xi_um_guess, n, dX_1, setting_wavelength_nm, False)
-        create_figure = False
+        create_figure = True
 
         # Ignoring OptimizeWarning. Supressing warning as described in https://stackoverflow.com/a/14463362:
         with warnings.catch_warnings():
