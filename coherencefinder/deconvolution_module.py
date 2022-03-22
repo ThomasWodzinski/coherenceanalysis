@@ -364,14 +364,14 @@ def deconvmethod_2d_x(
                     + 'step_'
                     + str(i)
                     + ".png",
-                    dpi=150,
+                    dpi=300,
                     facecolor="w",
                     edgecolor="w",
                     orientation="portrait",
                     papertype=None,
                     format=None,
                     transparent=False,
-                    bbox_inches=None,
+                    bbox_inches=0,
                     pad_inches=0.1,
                     frameon=None,
                 )
@@ -519,14 +519,14 @@ def deconvmethod_2d_x(
                     + 'step_'
                     + '3'
                     + ".png",
-                    dpi=150,
+                    dpi=300,
                     facecolor="w",
                     edgecolor="w",
                     orientation="portrait",
                     papertype=None,
                     format=None,
                     transparent=False,
-                    bbox_inches=None,
+                    bbox_inches=0,
                     pad_inches=0.1,
                     frameon=None,
                 )
