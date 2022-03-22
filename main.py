@@ -32,6 +32,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as patches
+import matplotlib.image as mpimg
 
 from pathlib import Path  # see https://docs.python.org/3/library/pathlib.html#basic-use
 
@@ -2344,6 +2345,28 @@ def plot_deconvmethod(
 
         # print(gamma_fit)
 
+
+deconvmethod_step_widget = widgets.BoundedIntText(
+    value=0,
+    min=0,
+    max=3,
+    description='Step:',
+    disabled=False
+)
+
+def plot_deconvmethod_steps(step):
+
+    savefigure_dir = str(scratch_dir) + '/' + 'deconvmethod_steps'
+    image_path_name = savefigure_dir + '/' + 'step_' + str(step) + '.png'
+    image = mpimg.imread(image_path_name)
+    plt.figure(figsize=(10, 6), dpi=300)
+    plt.imshow(image) 
+    plt.axis('off')
+    plt.show()  # display it
+
+
+
+
 def plot_fitting_vs_deconvolution(
     do_plot_fitting_vs_deconvolution,
     dataset,
@@ -2867,6 +2890,13 @@ plot_deconvmethod_interactive_output = interactive_output(
     },
 )
 
+plot_deconvmethod_steps_interactive_output = interactive_output(
+    plot_deconvmethod_steps,
+    {
+        "step" : deconvmethod_step_widget,
+    },
+)
+
 
 plot_fitting_vs_deconvolution_output = interactive_output(
     plot_fitting_vs_deconvolution,
@@ -3164,16 +3194,18 @@ display(
     Javascript("""google.colab.output.setIframeHeight(0, true, {maxHeight: 5000})""")
 )  # https://stackoverflow.com/a/57346765
 
-children_left = [plot_fitting_v2_interactive_output, 
-plot_deconvmethod_interactive_output, 
-plot_CDCs_output, 
-plot_xi_um_fit_vs_I_Airy2_fit_output]
+children_left = [plot_fitting_v2_interactive_output,
+                 plot_deconvmethod_interactive_output,
+                 VBox([deconvmethod_step_widget, plot_deconvmethod_steps_interactive_output]),
+                 plot_CDCs_output,
+                 plot_xi_um_fit_vs_I_Airy2_fit_output]
 tabs_left = widgets.Tab()
 tabs_left.children = children_left
 tabs_left.set_title(0, 'Fitting')
 tabs_left.set_title(1, 'Deconvolution')
-tabs_left.set_title(2, 'CDCs')
-tabs_left.set_title(3, 'plot_xi_um_fit_vs_I_Airy2_fit')
+tabs_left.set_title(2, 'Deconvolution Steps')
+tabs_left.set_title(3, 'CDCs')
+tabs_left.set_title(4, 'plot_xi_um_fit_vs_I_Airy2_fit')
 
 children_right = [VBox([xi_um_deconv_column_and_label_widget, xi_um_fit_column_and_label_widget, plot_fitting_vs_deconvolution_output])]
 tabs_right = widgets.Tab()
