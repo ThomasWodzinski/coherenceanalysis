@@ -349,6 +349,33 @@ def deconvmethod_2d_x(
 
             # see https://stackoverflow.com/a/29675706
             display(plt.gcf())
+
+
+            scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
+            savefigure = True
+            if savefigure == True:
+                savefigure_dir = str(scratch_dir) + "/" + 'deconvmethod_steps'
+                if os.path.isdir(savefigure_dir) == False:
+                    os.mkdir(savefigure_dir)
+                
+                plt.savefig(
+                    savefigure_dir
+                    + "/"
+                    + 'step_'
+                    + str(i)
+                    + ".png",
+                    dpi=150,
+                    facecolor="w",
+                    edgecolor="w",
+                    orientation="portrait",
+                    papertype=None,
+                    format=None,
+                    transparent=False,
+                    bbox_inches=None,
+                    pad_inches=0.1,
+                    frameon=None,
+                )
+
             clear_output(wait=True)
             # plt.show()
 
@@ -478,6 +505,31 @@ def deconvmethod_2d_x(
             ax.set_ylim(-0.2,1.2)
             # ax.set_xlim([xdata[0], xdata[-1]])
             plt.title('chi2distance='+str(chi2distance))
+
+            scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
+            savefigure = True
+            if savefigure == True:
+                savefigure_dir = str(scratch_dir) + "/" + 'deconvmethod_steps'
+                if os.path.isdir(savefigure_dir) == False:
+                    os.mkdir(savefigure_dir)
+                
+                plt.savefig(
+                    savefigure_dir
+                    + "/"
+                    + 'step_'
+                    + 'final'
+                    + ".png",
+                    dpi=150,
+                    facecolor="w",
+                    edgecolor="w",
+                    orientation="portrait",
+                    papertype=None,
+                    format=None,
+                    transparent=False,
+                    bbox_inches=None,
+                    pad_inches=0.1,
+                    frameon=None,
+                )
 
     else:
         fullycoherent_opt = np.nan
