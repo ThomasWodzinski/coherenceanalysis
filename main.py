@@ -2270,7 +2270,6 @@ def plot_deconvmethod(
                 df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um'] = xi_x_um
 
 
-
         fig = plt.figure(constrained_layout=False, figsize=(8.27, 11.69), dpi=150)
 
         gs = gridspec.GridSpec(2, 1, figure=fig, height_ratios=[1, 2])
@@ -2346,23 +2345,31 @@ def plot_deconvmethod(
         # print(gamma_fit)
 
 
+do_plot_deconvmethod_steps_widget = widgets.Checkbox(value=False, description="Do")
+clear_plot_deconvmethod_steps_widget = widgets.Checkbox(value=False, description="Clear")
+
 deconvmethod_step_widget = widgets.BoundedIntText(
-    value=0,
+    value=3,
     min=0,
     max=3,
     description='Step:',
     disabled=False
 )
 
-def plot_deconvmethod_steps(step):
 
-    savefigure_dir = str(scratch_dir) + '/' + 'deconvmethod_steps'
-    image_path_name = savefigure_dir + '/' + 'step_' + str(step) + '.png'
-    image = mpimg.imread(image_path_name)
-    plt.figure(figsize=(10, 6), dpi=300)
-    plt.imshow(image) 
-    plt.axis('off')
-    plt.show()  # display it
+def plot_deconvmethod_steps(do_plot_deconvmethod_steps, clear_plot_deconvmethod_steps, step):
+
+    if do_plot_deconvmethod_steps == True:
+        savefigure_dir = str(scratch_dir) + '/' + 'deconvmethod_steps'
+        image_path_name = savefigure_dir + '/' + 'step_' + str(step) + '.png'
+        image = mpimg.imread(image_path_name)
+        plt.figure(figsize=(10, 6), dpi=300)
+        plt.imshow(image) 
+        plt.axis('off')
+        plt.show()  # display it
+
+    if clear_plot_deconvmethod_steps == True:
+        clear_output()
 
 
 
@@ -2893,6 +2900,8 @@ plot_deconvmethod_interactive_output = interactive_output(
 plot_deconvmethod_steps_interactive_output = interactive_output(
     plot_deconvmethod_steps,
     {
+        "do_plot_deconvmethod_steps" : do_plot_deconvmethod_steps_widget,
+        "clear_plot_deconvmethod_steps" : clear_plot_deconvmethod_steps_widget,
         "step" : deconvmethod_step_widget,
     },
 )
@@ -3027,6 +3036,12 @@ def measurements_selection_widget_changed(change):
         do_plot_xi_um_fit_vs_I_Airy2_fit_widget.value = False
         do_plot_xi_um_fit_vs_I_Airy2_fit_widget.value = True
 measurements_selection_widget.observe(measurements_selection_widget_changed, names="value")
+
+
+def imageid_profile_fit_widget_changed(change):
+    clear_plot_deconvmethod_steps_widget.value = True
+    clear_plot_deconvmethod_steps_widget.value = False
+imageid_profile_fit_widget.observe(imageid_profile_fit_widget_changed, names="value")
 
 
 
@@ -3196,7 +3211,7 @@ display(
 
 children_left = [plot_fitting_v2_interactive_output,
                  plot_deconvmethod_interactive_output,
-                 VBox([deconvmethod_step_widget, plot_deconvmethod_steps_interactive_output]),
+                 VBox([HBox([do_plot_deconvmethod_steps_widget, clear_plot_deconvmethod_steps_widget,deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
                  plot_CDCs_output,
                  plot_xi_um_fit_vs_I_Airy2_fit_output]
 tabs_left = widgets.Tab()
