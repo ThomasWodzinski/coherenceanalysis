@@ -286,6 +286,27 @@ def deconvmethod_2d_x(
     else:
         sigma_x_F_gamma_um = sigma_y_F_gamma_um
 
+
+    scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
+    savefigure = True
+    if savefigure == True:
+        savefigure_dir = Path(str(scratch_dir) + "/" + 'deconvmethod_steps')
+        if os.path.isdir(savefigure_dir) == False:
+            os.mkdir(savefigure_dir)
+        
+        files = []
+        files.extend(savefigure_dir.glob('*'+ 'ystep' + '*'))
+        ystep_index_list = []
+        if len(files) > 0:
+            for f in files:
+                filename = os.path.basename(f)
+                ystep_index_list.extend(filename.split('_')[1])
+            ystep_index_max = int(max(ystep_index_list))
+            ystep = ystep_index_max + 1
+        else:
+            ystep = 0
+
+
     # for sigma_x_F_gamma_um in sigma_x_F_gamma_um_list:
     i = 0
     for factor in np.arange(1, 4):
@@ -349,21 +370,16 @@ def deconvmethod_2d_x(
 
             # see https://stackoverflow.com/a/29675706
             display(plt.gcf())
-
-
-            scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
-            savefigure = True
+          
             if savefigure == True:
-                savefigure_dir = str(scratch_dir) + "/" + 'deconvmethod_steps'
-                if os.path.isdir(savefigure_dir) == False:
-                    os.mkdir(savefigure_dir)
-                
                 plt.savefig(
-                    savefigure_dir
-                    + "/"
-                    + 'step_'
+                    os.path.join(
+                    savefigure_dir,
+                    'ystep_'
+                    + str(ystep)
+                    + '_step_'
                     + str(i)
-                    + ".png",
+                    + ".png"),
                     dpi=300,
                     facecolor="w",
                     edgecolor="w",
@@ -510,16 +526,15 @@ def deconvmethod_2d_x(
             scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
             savefigure = True
             if savefigure == True:
-                savefigure_dir = str(scratch_dir) + "/" + 'deconvmethod_steps'
-                if os.path.isdir(savefigure_dir) == False:
-                    os.mkdir(savefigure_dir)
                 
                 plt.savefig(
-                    savefigure_dir
-                    + "/"
-                    + 'step_'
-                    + '3'
-                    + ".png",
+                    os.path.join(
+                    savefigure_dir,
+                    'ystep_'
+                    + str(ystep)
+                    + '_step_'
+                    + str(i)
+                    + ".png"),
                     dpi=300,
                     facecolor="w",
                     edgecolor="w",
@@ -531,6 +546,7 @@ def deconvmethod_2d_x(
                     pad_inches=0.1,
                     frameon=None,
                 )
+
             plt.close(fig)
             clear_output(wait=True)
 
