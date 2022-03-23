@@ -377,7 +377,6 @@ def deconvmethod_2d_x(
                 )
 
             clear_output(wait=True)
-            # plt.show()
 
         if fullycoherent_profile_min < 0 and i==0:
             sigma_x_F_gamma_um = sigma_x_F_gamma_um / sigma_x_F_gamma_um_multiplier
@@ -506,6 +505,8 @@ def deconvmethod_2d_x(
             # ax.set_xlim([xdata[0], xdata[-1]])
             plt.title('chi2distance='+str(chi2distance))
 
+            display(plt.gcf())
+
             scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
             savefigure = True
             if savefigure == True:
@@ -530,6 +531,8 @@ def deconvmethod_2d_x(
                     pad_inches=0.1,
                     frameon=None,
                 )
+            plt.close(fig)
+            clear_output(wait=True)
 
     else:
         fullycoherent_opt = np.nan
