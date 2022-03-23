@@ -17,6 +17,8 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as patches
 
+from csv import writer
+
 from pathlib import Path  # see https://docs.python.org/3/library/pathlib.html#basic-use
 
 import collections
@@ -502,6 +504,19 @@ def deconvmethod_2d_x(
         A_bp = fftpack.fftshift(fftpack.ifftn(fftpack.ifftshift(np.sqrt(partiallycoherent))))  # amplitude
         I_bp = np.abs(A_bp) ** 2  # intensity
 
+        list_data = [ystep, sigma_y_F_gamma_um_guess, chi2distance]
+        csvfile = os.path.join(
+                    savefigure_dir,
+                    'sigma_y_F_gamma_um_guess_scan.csv')
+        with open(csvfile, 'a', newline='') as f_object:  
+            # Pass the CSV  file object to the writer() function
+            writer_object = writer(f_object)
+            # Result - a writer object
+            # Pass the data in the list as an argument into the writerow() function
+            writer_object.writerow(list_data)  
+            # Close the file object
+            f_object.close()
+
 
         if create_figure == True:
             xdata = np.linspace((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, n)
@@ -522,8 +537,7 @@ def deconvmethod_2d_x(
             plt.title('chi2distance='+str(chi2distance))
 
             display(plt.gcf())
-
-            scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
+           
             savefigure = True
             if savefigure == True:
                 
