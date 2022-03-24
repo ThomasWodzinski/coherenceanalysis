@@ -2370,7 +2370,7 @@ def plot_deconvmethod_steps(do_plot_deconvmethod_steps, clear_plot_deconvmethod_
 
         df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
                               header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
-        df_deconv_scany.plot('ystep', 'chi2distance')
+        df_deconv_scany.plot.scatter('ystep', 'chi2distance')
 
     if clear_plot_deconvmethod_steps == True:
         clear_output()
