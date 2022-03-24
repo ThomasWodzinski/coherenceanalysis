@@ -339,6 +339,17 @@ def deconvmethod_2d_x(
         fullycoherent_profile_min_list.append(fullycoherent_profile_min)
 
         if create_figure == True:
+
+            csvfile = os.path.join(
+                    savefigure_dir,
+                    'sigma_y_F_gamma_um_guess_scan.csv')
+            if os.path.exists(csvfile):
+                df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
+                                header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
+                ax60.cla()
+                ax60.scatter(df_deconv_scany['ystep'], df_deconv_scany['chi2distance'])
+
+
             # ax70.cla()
             # print(sigma_x_F_gamma_um_list)
             # print(fullycoherent_profile_min_list)
@@ -512,6 +523,12 @@ def deconvmethod_2d_x(
             writer_object = writer(f_object)
             writer_object.writerow(list_data)  
             f_object.close()
+
+        if os.path.exists(csvfile):
+                df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
+                                header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
+                ax60.cla()
+                ax60.scatter(df_deconv_scany['ystep'], df_deconv_scany['chi2distance'])
 
 
         if create_figure == True:
