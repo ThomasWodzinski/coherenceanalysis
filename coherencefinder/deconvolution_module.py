@@ -302,8 +302,8 @@ def deconvmethod_2d_x(
         if len(files) > 0:
             for f in files:
                 filename = os.path.basename(f)
-                ystep_index_list.extend(filename.split('_')[1])
-            ystep_index_max = int(max(ystep_index_list))
+                ystep_index_list.append(int(filename.split('_')[1]))
+            ystep_index_max = max(ystep_index_list)
             ystep = ystep_index_max + 1
         else:
             ystep = 0
