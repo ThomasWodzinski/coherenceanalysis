@@ -2361,12 +2361,16 @@ def plot_deconvmethod_steps(do_plot_deconvmethod_steps, clear_plot_deconvmethod_
 
     if do_plot_deconvmethod_steps == True:
         savefigure_dir = str(scratch_dir) + '/' + 'deconvmethod_steps'
-        image_path_name = savefigure_dir + '/' + 'step_' + str(step) + '.png'
+        image_path_name = savefigure_dir + '/' + 'ystep_0_step_' + str(step) + '.png'
         image = mpimg.imread(image_path_name)
         plt.figure(figsize=(10, 6), dpi=300)
         plt.imshow(image) 
         plt.axis('off')
         plt.show()  # display it
+
+        df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
+                              header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
+        df_deconv_scany.plot('ystep', 'chi2distance')
 
     if clear_plot_deconvmethod_steps == True:
         clear_output()
@@ -4014,4 +4018,10 @@ datasets_selection.update({ datasets_widget.value : measurements_selection_widge
 datasets_selection_py_file = str(Path.joinpath(data_dir, "datasets_selection.py"))
 with open(datasets_selection_py_file, 'w') as f:
     print(datasets_selection, file=f)
+# %%
+
+df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
+                              header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
+df_deconv_scany.plot('ystep', 'chi2distance')
+
 # %%
