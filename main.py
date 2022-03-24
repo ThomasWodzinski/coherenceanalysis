@@ -2356,12 +2356,19 @@ deconvmethod_step_widget = widgets.BoundedIntText(
     disabled=False
 )
 
+deconvmethod_ystep_widget = widgets.BoundedIntText(
+    value=0,
+    min=0,
+    description='yStep:',
+    disabled=False
+)
 
-def plot_deconvmethod_steps(do_plot_deconvmethod_steps, clear_plot_deconvmethod_steps, step):
+
+def plot_deconvmethod_steps(do_plot_deconvmethod_steps, clear_plot_deconvmethod_steps, step, ystep):
 
     if do_plot_deconvmethod_steps == True:
         savefigure_dir = str(scratch_dir) + '/' + 'deconvmethod_steps'
-        image_path_name = savefigure_dir + '/' + 'ystep_0_step_' + str(step) + '.png'
+        image_path_name = savefigure_dir + '/' + 'ystep_' + str(ystep) + '_step_' + str(step) + '.png'
         image = mpimg.imread(image_path_name)
         plt.figure(figsize=(10, 6), dpi=300)
         plt.imshow(image) 
@@ -2907,6 +2914,7 @@ plot_deconvmethod_steps_interactive_output = interactive_output(
         "do_plot_deconvmethod_steps" : do_plot_deconvmethod_steps_widget,
         "clear_plot_deconvmethod_steps" : clear_plot_deconvmethod_steps_widget,
         "step" : deconvmethod_step_widget,
+        "ystep" : deconvmethod_ystep_widget
     },
 )
 
@@ -3215,7 +3223,8 @@ display(
 
 children_left = [plot_fitting_v2_interactive_output,
                  plot_deconvmethod_interactive_output,
-                 VBox([HBox([do_plot_deconvmethod_steps_widget, clear_plot_deconvmethod_steps_widget,deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
+                 VBox([HBox([do_plot_deconvmethod_steps_widget, clear_plot_deconvmethod_steps_widget,
+                      deconvmethod_ystep_widget, deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
                  plot_CDCs_output,
                  plot_xi_um_fit_vs_I_Airy2_fit_output]
 tabs_left = widgets.Tab()
