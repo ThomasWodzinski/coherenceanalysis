@@ -509,12 +509,8 @@ def deconvmethod_2d_x(
                     savefigure_dir,
                     'sigma_y_F_gamma_um_guess_scan.csv')
         with open(csvfile, 'a', newline='') as f_object:  
-            # Pass the CSV  file object to the writer() function
             writer_object = writer(f_object)
-            # Result - a writer object
-            # Pass the data in the list as an argument into the writerow() function
             writer_object.writerow(list_data)  
-            # Close the file object
             f_object.close()
 
 
