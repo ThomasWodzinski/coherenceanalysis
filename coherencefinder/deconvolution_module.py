@@ -17,6 +17,8 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as patches
 
+from csv import writer
+
 from pathlib import Path  # see https://docs.python.org/3/library/pathlib.html#basic-use
 
 import collections
@@ -286,6 +288,27 @@ def deconvmethod_2d_x(
     else:
         sigma_x_F_gamma_um = sigma_y_F_gamma_um
 
+
+    scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
+    savefigure = True
+    if savefigure == True:
+        savefigure_dir = Path(str(scratch_dir) + "/" + 'deconvmethod_steps')
+        if os.path.isdir(savefigure_dir) == False:
+            os.mkdir(savefigure_dir)
+
+        files = []
+        files.extend(savefigure_dir.glob('*'+ 'ystep' + '*'))
+        ystep_index_list = []
+        if len(files) > 0:
+            for f in files:
+                filename = os.path.basename(f)
+                ystep_index_list.append(int(filename.split('_')[1]))
+            ystep_index_max = max(ystep_index_list)
+            ystep = ystep_index_max + 1
+        else:
+            ystep = 0
+
+
     # for sigma_x_F_gamma_um in sigma_x_F_gamma_um_list:
     i = 0
     for factor in np.arange(1, 4):
@@ -316,6 +339,17 @@ def deconvmethod_2d_x(
         fullycoherent_profile_min_list.append(fullycoherent_profile_min)
 
         if create_figure == True:
+
+            csvfile = os.path.join(
+                    savefigure_dir,
+                    'sigma_y_F_gamma_um_guess_scan.csv')
+            if os.path.exists(csvfile):
+                df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
+                                header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
+                ax60.cla()
+                ax60.scatter(df_deconv_scany['ystep'], df_deconv_scany['chi2distance'])
+
+
             # ax70.cla()
             # print(sigma_x_F_gamma_um_list)
             # print(fullycoherent_profile_min_list)
@@ -349,8 +383,29 @@ def deconvmethod_2d_x(
 
             # see https://stackoverflow.com/a/29675706
             display(plt.gcf())
+          
+            if savefigure == True:
+                plt.savefig(
+                    os.path.join(
+                    savefigure_dir,
+                    'ystep_'
+                    + str(ystep)
+                    + '_step_'
+                    + str(i)
+                    + ".png"),
+                    dpi=300,
+                    facecolor="w",
+                    edgecolor="w",
+                    orientation="portrait",
+                    papertype=None,
+                    format=None,
+                    transparent=False,
+                    bbox_inches=0,
+                    pad_inches=0.1,
+                    frameon=None,
+                )
+
             clear_output(wait=True)
-            # plt.show()
 
         if fullycoherent_profile_min < 0 and i==0:
             sigma_x_F_gamma_um = sigma_x_F_gamma_um / sigma_x_F_gamma_um_multiplier
@@ -460,6 +515,21 @@ def deconvmethod_2d_x(
         A_bp = fftpack.fftshift(fftpack.ifftn(fftpack.ifftshift(np.sqrt(partiallycoherent))))  # amplitude
         I_bp = np.abs(A_bp) ** 2  # intensity
 
+        list_data = [ystep, sigma_y_F_gamma_um_guess, chi2distance]
+        csvfile = os.path.join(
+                    savefigure_dir,
+                    'sigma_y_F_gamma_um_guess_scan.csv')
+        with open(csvfile, 'a', newline='') as f_object:  
+            writer_object = writer(f_object)
+            writer_object.writerow(list_data)  
+            f_object.close()
+
+        if os.path.exists(csvfile):
+                df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
+                                header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
+                ax60.cla()
+                ax60.scatter(df_deconv_scany['ystep'], df_deconv_scany['chi2distance'])
+
 
         if create_figure == True:
             xdata = np.linspace((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, n)
@@ -478,6 +548,34 @@ def deconvmethod_2d_x(
             ax.set_ylim(-0.2,1.2)
             # ax.set_xlim([xdata[0], xdata[-1]])
             plt.title('chi2distance='+str(chi2distance))
+
+            display(plt.gcf())
+           
+            savefigure = True
+            if savefigure == True:
+                
+                plt.savefig(
+                    os.path.join(
+                    savefigure_dir,
+                    'ystep_'
+                    + str(ystep)
+                    + '_step_'
+                    + str(i)
+                    + ".png"),
+                    dpi=300,
+                    facecolor="w",
+                    edgecolor="w",
+                    orientation="portrait",
+                    papertype=None,
+                    format=None,
+                    transparent=False,
+                    bbox_inches=0,
+                    pad_inches=0.1,
+                    frameon=None,
+                )
+
+            plt.close(fig)
+            clear_output(wait=True)
 
     else:
         fullycoherent_opt = np.nan
@@ -547,6 +645,23 @@ def deconvmethod(
 
     # chi2distance_minimize_result = minimize_and_store(sigma_y_F_gamma_um_guess, calc_chi2distance)
     
+    scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
+    savefigure = True
+    if savefigure == True:
+        savefigure_dir = Path(str(scratch_dir) + "/" + 'deconvmethod_steps')
+        if os.path.isdir(savefigure_dir) == False:
+            os.mkdir(savefigure_dir)
+
+        files = []
+        files.extend(savefigure_dir.glob('*'))
+        for f in files:
+            try:
+                f.unlink()
+            except OSError as e:
+                print("Error: %s : %s" % (f, e.strerror))
+
+
+
     if scan_x == True:
         # find the minimal chi2 distance depending on sigma_y_F_gamma_um_guess
         chi2distance_minimize_result_bounded = optimize.minimize_scalar(

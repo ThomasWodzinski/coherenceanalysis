@@ -32,6 +32,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as patches
+import matplotlib.image as mpimg
 
 from pathlib import Path  # see https://docs.python.org/3/library/pathlib.html#basic-use
 
@@ -2221,7 +2222,7 @@ def plot_deconvmethod(
         ydata = pixis_profile_avg  # defined in the cells above, still to implement: select
         
         sigma_y_F_gamma_um_guess = calc_sigma_F_gamma_um(xi_um_guess, n, dX_1, setting_wavelength_nm, False)
-        create_figure = False
+        create_figure = True
 
         # Ignoring OptimizeWarning. Supressing warning as described in https://stackoverflow.com/a/14463362:
         with warnings.catch_warnings():
@@ -2267,7 +2268,6 @@ def plot_deconvmethod(
                 df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_y_um'] = xi_y_um
             else:
                 df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um'] = xi_x_um
-
 
 
         fig = plt.figure(constrained_layout=False, figsize=(8.27, 11.69), dpi=150)
@@ -2343,6 +2343,47 @@ def plot_deconvmethod(
         # statustext_widget.value = 'done'
 
         # print(gamma_fit)
+
+
+do_plot_deconvmethod_steps_widget = widgets.Checkbox(value=False, description="Do")
+clear_plot_deconvmethod_steps_widget = widgets.Checkbox(value=False, description="Clear")
+
+deconvmethod_step_widget = widgets.BoundedIntText(
+    value=3,
+    min=0,
+    max=3,
+    description='Step:',
+    disabled=False
+)
+
+deconvmethod_ystep_widget = widgets.BoundedIntText(
+    value=0,
+    min=0,
+    description='yStep:',
+    disabled=False
+)
+
+
+def plot_deconvmethod_steps(do_plot_deconvmethod_steps, clear_plot_deconvmethod_steps, step, ystep):
+
+    if do_plot_deconvmethod_steps == True:
+        savefigure_dir = str(scratch_dir) + '/' + 'deconvmethod_steps'
+        image_path_name = savefigure_dir + '/' + 'ystep_' + str(ystep) + '_step_' + str(step) + '.png'
+        image = mpimg.imread(image_path_name)
+        plt.figure(figsize=(10, 6), dpi=300)
+        plt.imshow(image) 
+        plt.axis('off')
+        plt.show()  # display it
+
+        df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
+                              header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
+        df_deconv_scany.plot.scatter('ystep', 'chi2distance')
+
+    if clear_plot_deconvmethod_steps == True:
+        clear_output()
+
+
+
 
 def plot_fitting_vs_deconvolution(
     do_plot_fitting_vs_deconvolution,
@@ -2867,6 +2908,16 @@ plot_deconvmethod_interactive_output = interactive_output(
     },
 )
 
+plot_deconvmethod_steps_interactive_output = interactive_output(
+    plot_deconvmethod_steps,
+    {
+        "do_plot_deconvmethod_steps" : do_plot_deconvmethod_steps_widget,
+        "clear_plot_deconvmethod_steps" : clear_plot_deconvmethod_steps_widget,
+        "step" : deconvmethod_step_widget,
+        "ystep" : deconvmethod_ystep_widget
+    },
+)
+
 
 plot_fitting_vs_deconvolution_output = interactive_output(
     plot_fitting_vs_deconvolution,
@@ -2997,6 +3048,12 @@ def measurements_selection_widget_changed(change):
         do_plot_xi_um_fit_vs_I_Airy2_fit_widget.value = False
         do_plot_xi_um_fit_vs_I_Airy2_fit_widget.value = True
 measurements_selection_widget.observe(measurements_selection_widget_changed, names="value")
+
+
+def imageid_profile_fit_widget_changed(change):
+    clear_plot_deconvmethod_steps_widget.value = True
+    clear_plot_deconvmethod_steps_widget.value = False
+imageid_profile_fit_widget.observe(imageid_profile_fit_widget_changed, names="value")
 
 
 
@@ -3164,16 +3221,19 @@ display(
     Javascript("""google.colab.output.setIframeHeight(0, true, {maxHeight: 5000})""")
 )  # https://stackoverflow.com/a/57346765
 
-children_left = [plot_fitting_v2_interactive_output, 
-plot_deconvmethod_interactive_output, 
-plot_CDCs_output, 
-plot_xi_um_fit_vs_I_Airy2_fit_output]
+children_left = [plot_fitting_v2_interactive_output,
+                 plot_deconvmethod_interactive_output,
+                 VBox([HBox([do_plot_deconvmethod_steps_widget, clear_plot_deconvmethod_steps_widget,
+                      deconvmethod_ystep_widget, deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
+                 plot_CDCs_output,
+                 plot_xi_um_fit_vs_I_Airy2_fit_output]
 tabs_left = widgets.Tab()
 tabs_left.children = children_left
 tabs_left.set_title(0, 'Fitting')
 tabs_left.set_title(1, 'Deconvolution')
-tabs_left.set_title(2, 'CDCs')
-tabs_left.set_title(3, 'plot_xi_um_fit_vs_I_Airy2_fit')
+tabs_left.set_title(2, 'Deconvolution Steps')
+tabs_left.set_title(3, 'CDCs')
+tabs_left.set_title(4, 'plot_xi_um_fit_vs_I_Airy2_fit')
 
 children_right = [VBox([xi_um_deconv_column_and_label_widget, xi_um_fit_column_and_label_widget, plot_fitting_vs_deconvolution_output])]
 tabs_right = widgets.Tab()
@@ -3967,4 +4027,10 @@ datasets_selection.update({ datasets_widget.value : measurements_selection_widge
 datasets_selection_py_file = str(Path.joinpath(data_dir, "datasets_selection.py"))
 with open(datasets_selection_py_file, 'w') as f:
     print(datasets_selection, file=f)
+# %%
+
+df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
+                              header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
+df_deconv_scany.plot('ystep', 'chi2distance')
+
 # %%
