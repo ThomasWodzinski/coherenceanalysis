@@ -295,7 +295,7 @@ def deconvmethod_2d_x(
         savefigure_dir = Path(str(scratch_dir) + "/" + 'deconvmethod_steps')
         if os.path.isdir(savefigure_dir) == False:
             os.mkdir(savefigure_dir)
-        
+
         files = []
         files.extend(savefigure_dir.glob('*'+ 'ystep' + '*'))
         ystep_index_list = []
@@ -628,6 +628,23 @@ def deconvmethod(
 
     # chi2distance_minimize_result = minimize_and_store(sigma_y_F_gamma_um_guess, calc_chi2distance)
     
+    scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
+    savefigure = True
+    if savefigure == True:
+        savefigure_dir = Path(str(scratch_dir) + "/" + 'deconvmethod_steps')
+        if os.path.isdir(savefigure_dir) == False:
+            os.mkdir(savefigure_dir)
+
+        files = []
+        files.extend(savefigure_dir.glob('*'))
+        for f in files:
+            try:
+                f.unlink()
+            except OSError as e:
+                print("Error: %s : %s" % (f, e.strerror))
+
+
+
     if scan_x == True:
         # find the minimal chi2 distance depending on sigma_y_F_gamma_um_guess
         chi2distance_minimize_result_bounded = optimize.minimize_scalar(
