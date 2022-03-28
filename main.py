@@ -357,7 +357,7 @@ initiate_df_fits = True
 
 # load saved df_fits from csv
 # df_fits_csv_filename = 'df_fits_v2.csv'
-df_fits_csv_filename = 'df_fits_2022-02-07--19h54.csv'
+df_fits_csv_filename = 'df_fits_2022-03-28--18h12.csv'
 load_df_fits_csv = True
 if load_df_fits_csv == True:
     df_fits = pd.read_csv(Path.joinpath(data_dir, df_fits_csv_filename), index_col=0)
