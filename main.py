@@ -2553,6 +2553,13 @@ def plot_CDCs(
             d_gamma = x
                 
             (xi_x_um_max_sigma, xi_x_um_max_sigma_std) = find_sigma(d_gamma,gamma_fit_max,0, 400, False)
+            
+            
+
+            if xi_x_um_max_sigma_std is None:
+                xi_x_um_max_sigma_std = 0
+                print(xi_x_um_max_sigma)
+                print(xi_x_um_max_sigma_std)
 
             y1 = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma) for x in xx]
             ax.plot(xx, y1, '-', color='red', label='') # xi_x_um_max plot
