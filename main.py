@@ -357,7 +357,7 @@ initiate_df_fits = True
 
 # load saved df_fits from csv
 # df_fits_csv_filename = 'df_fits_v2.csv'
-df_fits_csv_filename = 'df_fits_2022-03-28--18h12.csv'
+df_fits_csv_filename = 'df_fits_2022-03-29--22h25.csv'
 load_df_fits_csv = True
 if load_df_fits_csv == True:
     df_fits = pd.read_csv(Path.joinpath(data_dir, df_fits_csv_filename), index_col=0)
@@ -2478,6 +2478,7 @@ def plot_CDCs(
         j=0
 
         for dataset in list(datasets_selection):
+            statustext_widget.value = 'plotting: ' + dataset
             timestamp_pulse_ids_dataset=[]
 
             ax = plt.subplot(gs[i,j])
@@ -2488,6 +2489,7 @@ def plot_CDCs(
             
             for measurement in datasets_selection[dataset]:
                 # print(measurement)
+                statustext_widget.value = 'plotting: ' + measurement
                 files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
 
             # get all the timestamps in these files:        
@@ -2508,6 +2510,12 @@ def plot_CDCs(
 
                 # Deconvolution (green)
                 x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'].unique()
+                for separation_um in x:
+                    y_nans = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["separation_um"]==separation_um) & (df0[xi_um_deconv_column].isna())]['imageid']
+                    if len(y_nans) > 0:
+                        print('file: ' + str(f))
+                        print('separation='+str(x))
+                        print(y_nans)
                 y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["separation_um"]==x)][xi_um_deconv_column].max()) for x in x]
                 ax.scatter(x, y, marker='v', s=20, color='darkgreen', facecolors='none', label='maximum')
                 
@@ -2545,6 +2553,13 @@ def plot_CDCs(
             d_gamma = x
                 
             (xi_x_um_max_sigma, xi_x_um_max_sigma_std) = find_sigma(d_gamma,gamma_fit_max,0, 400, False)
+            
+            
+
+            if xi_x_um_max_sigma_std is None:
+                xi_x_um_max_sigma_std = 0
+                print(xi_x_um_max_sigma)
+                print(xi_x_um_max_sigma_std)
 
             y1 = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma) for x in xx]
             ax.plot(xx, y1, '-', color='red', label='') # xi_x_um_max plot
@@ -4033,4 +4048,5 @@ df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "
                               header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
 df_deconv_scany.plot('ystep', 'chi2distance')
 
-# %%
+# %% remove duplicates in df0
+df0 = df0.drop_duplicates(subset=['timestamp_pulse_id'])
