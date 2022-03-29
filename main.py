@@ -4048,4 +4048,5 @@ df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "
                               header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
 df_deconv_scany.plot('ystep', 'chi2distance')
 
-# %%
+# %% remove duplicates in df0
+df0 = df0.drop_duplicates(subset=['timestamp_pulse_id'])
