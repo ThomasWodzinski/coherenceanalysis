@@ -289,9 +289,9 @@ df_settings = pd.DataFrame(
 # df_settings
 
 # merge dataframe of hdf5files with dataframe of settings
-df0 = []
-df0 = pd.merge(df_all, df_settings)
-df0["timestamp_pulse_id"] = df0["timestamp_pulse_id"].astype("int64")
+df_temp = []
+df_temp = pd.merge(df_all, df_settings)
+df_temp["timestamp_pulse_id"] = df_temp["timestamp_pulse_id"].astype("int64")
 # store this instead of df_all?
 
 # definition of fits header columns
@@ -356,16 +356,15 @@ initiate_df_fits = True
     # df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
 
 # load saved df_fits from csv
-# df_fits_csv_filename = 'df_fits_v2.csv'
-df_fits_csv_filename = 'df_fits_2022-03-29--22h25.csv'
-load_df_fits_csv = True
-if load_df_fits_csv == True:
-    df_fits = pd.read_csv(Path.joinpath(data_dir, df_fits_csv_filename), index_col=0)
-    df_fits_clean = df_fits[df_fits["pixis_rotation"].notna()].drop_duplicates()
-    df_fits = df_fits_clean
+df_fits_csv_files = sorted(list(data_dir.glob("df_fits*.csv")), reverse=True) # newest on top
+df_fits_csv_file = df_fits_csv_files[0] # use the newest
+df_fits = pd.read_csv(df_fits_csv_file, index_col=0)
+df_fits_clean = df_fits[df_fits["pixis_rotation"].notna()].drop_duplicates()
+df_fits = df_fits_clean
+df0 = pd.merge(df_temp, df_fits, on="timestamp_pulse_id", how="outer")
 
 
-df0 = pd.merge(df0, df_fits, on="timestamp_pulse_id", how="outer")
+df0 = pd.merge(df_temp, df_fits, on="timestamp_pulse_id", how="outer")
 
 
 # """# List all groups inside the hd5file"""
@@ -463,16 +462,99 @@ imageid_profile_fit_widget = widgets.Dropdown(
 
 savefigure_profile_fit_widget = widgets.Checkbox(value=False, description="savefigure", disabled=False)
 
+
+# dataframe and csv widgets
+
 save_to_df_widget = widgets.Checkbox(value=False, description="save_to_df", disabled=False)
+
+
+
+df_fits_csv_files = sorted(list(data_dir.glob("df_fits*.csv")), reverse=True)
+df_fits_csv_files_widget_layout = widgets.Layout(width="50%")
+df_fits_csv_files_widget = widgets.Dropdown(
+    options=df_fits_csv_files,
+    value=df_fits_csv_files[0], # use newest available file per default
+    layout=df_fits_csv_files_widget_layout,
+    description='csv file:'    
+)
+
+scan_for_df_fits_csv_files_widget = widgets.ToggleButton(
+    value=False,
+    description='scan for df_fits*.csv',
+    disabled=False,
+    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+    tooltip='scan for df_fits*.csv',
+    icon='check'
+)
+
+def update_df_fits_csv_files_widget(change):
+    df_fits_csv_files = list(data_dir.glob("df_fits*.csv"))
+    df_fits_csv_files_widget.options=df_fits_csv_files
+    scan_for_df_fits_csv_files_widget.value = False
+scan_for_df_fits_csv_files_widget.observe(update_df_fits_csv_files_widget)
+
+
+load_csv_to_df_widget = widgets.ToggleButton(
+    value=False,
+    description='csv-->df',
+    disabled=False,
+    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+    tooltip='load from csv to dataframe',
+    icon='check'
+)
+
+
+def update_load_csv_to_df_widget(change):
+    global df0
+    df_fits_csv_file = df_fits_csv_files_widget.value
+    df_fits = pd.read_csv(df_fits_csv_file, index_col=0)
+    df_fits_clean = df_fits[df_fits["pixis_rotation"].notna()].drop_duplicates()
+    df_fits = df_fits_clean
+    df0 = pd.merge(df_temp, df_fits, on="timestamp_pulse_id", how="outer")
+
+    load_csv_to_df_widget.value = False
+
+load_csv_to_df_widget.observe(update_load_csv_to_df_widget)
 
 df_fits_csv_save_widget = widgets.ToggleButton(
     value=False,
-    description='save df_fits to csv',
+    description='df-->csv',
     disabled=False,
     button_style='', # 'success', 'info', 'warning', 'danger' or ''
     tooltip='save df_fits to csv',
     icon='check'
 )
+
+
+def update_df_fits_csv_save_widget(change):
+    if df_fits_csv_save_widget.value == True:
+        df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
+        df_fits_csv_file = df_fits_csv_files_widget.value
+        df_fits.to_csv(df_fits_csv_file)
+        df_fits_csv_save_widget.value = False
+
+df_fits_csv_save_widget.observe(update_df_fits_csv_save_widget, names='value')
+
+
+create_new_csv_file_widget = widgets.ToggleButton(
+    value=False,
+    description='df-->new csv',
+    disabled=False,
+    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+    tooltip='save df_fits to new csv file',
+    icon='check'
+)
+
+def create_new_csv_file(change):
+    df_fits_csv_file = Path.joinpath(data_dir,str('df_fits_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_fits.to_csv(df_fits_csv_file)
+    df_fits_csv_files = sorted(list(data_dir.glob("df_fits*.csv")), reverse=True)
+    df_fits_csv_files_widget.options=df_fits_csv_files
+    df_fits_csv_files_widget.value = df_fits_csv_file
+    create_new_csv_file_widget.value = False
+
+create_new_csv_file_widget.observe(create_new_csv_file, names='value')
+
 
 
 # run widgets
@@ -2662,8 +2744,7 @@ column0 = widgets.VBox(
         crop_px_widget,
         imageid_profile_fit_widget,
         savefigure_profile_fit_widget,
-        save_to_df_widget,
-        df_fits_csv_save_widget,
+        
         do_textbox_widget,
     ]
 )
@@ -3072,19 +3153,6 @@ imageid_profile_fit_widget.observe(imageid_profile_fit_widget_changed, names="va
 
 
 
-def update_df_fits_csv_save_widget(change):
-    if df_fits_csv_save_widget.value == True:
-        # save fits to csv
-        df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
-        save_df_fits = True
-        if save_df_fits == True:
-            # df_fits.to_csv(Path.joinpath(data_dir,str('df_fits_'+datetime.now()+'.csv')))
-            df_fits.to_csv(Path.joinpath(data_dir,str('df_fits_test.csv')))
-        df_fits_csv_save_widget.value = False
-
-df_fits_csv_save_widget.observe(update_df_fits_csv_save_widget, names='value')
-# not working, why? impement also which file to load/import, which ones to export/save, ...
-
 
 
 
@@ -3108,6 +3176,11 @@ def run_over_all_images():
         time_taken = end - start
         time_left = time_taken/i * (len(imageid_profile_fit_widget.options) - i)
         run_over_all_images_statustext_widget.value = str(time_taken) + "|" + str(time_left)
+    
+    df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
+    df_fits_csv_file = df_fits_csv_files_widget.value
+    df_fits.to_csv(df_fits_csv_file)
+
     run_over_all_images_progress_widget.bar_style = 'success'
 
 
@@ -3269,6 +3342,8 @@ display(
             dph_settings_bgsubtracted_widget,
             measurements_selection_widget,
             plotprofile_interactive_input,
+            HBox([save_to_df_widget, scan_for_df_fits_csv_files_widget, df_fits_csv_files_widget, load_csv_to_df_widget, df_fits_csv_save_widget, create_new_csv_file_widget
+                 ]),
             HBox([run_over_all_datasets_widget, run_over_all_datasets_progress_widget, run_over_all_datasets_statustext_widget,
                 run_over_all_measurements_widget, run_over_all_measurements_progress_widget, run_over_all_measurements_statustext_widget,
                  run_over_all_images_widget, run_over_all_images_progress_widget, run_over_all_images_statustext_widget]),
