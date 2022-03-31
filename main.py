@@ -3205,14 +3205,14 @@ def run_over_all_measurements():
     
     run_over_all_measurements_progress_widget.value = 0
     i = 0
-    for measurement in dph_settings_bgsubtracted_widget.options:
+    for measurement in measurements_selection_widget.value:
         dph_settings_bgsubtracted_widget.value = measurement
         run_over_all_images()
         i = i+1
         run_over_all_measurements_progress_widget.value = int(i/len(dph_settings_bgsubtracted_widget.options)*100)
         end = datetime.now()
         time_taken = end - start
-        time_left = time_taken/i * (len(dph_settings_bgsubtracted_widget.options) - i)
+        time_left = time_taken/i * (len(measurements_selection_widget.value) - i)
         run_over_all_measurements_statustext_widget.value = str(time_taken) + "|" + str(time_left)
     run_over_all_measurements_progress_widget.bar_style = 'success'
 
@@ -3238,14 +3238,14 @@ def run_over_all_datasets():
     
     run_over_all_datasets_progress_widget.value = 0
     i = 0
-    for dataset in list(datasets):
+    for dataset in list(datasets_selection):
         datasets_widget.value = dataset
         run_over_all_measurements()
         i = i+1
-        run_over_all_datasets_progress_widget.value = int(i/len(list(datasets))*100)
+        run_over_all_datasets_progress_widget.value = int(i/len(list(datasets_selection))*100)
         end = datetime.now()
         time_taken = end - start
-        time_left = time_taken/i * (len(list(datasets)) - i)
+        time_left = time_taken/i * (len(list(datasets_selection)) - i)
         run_over_all_datasets_statustext_widget.value = str(time_taken) + "|" + str(time_left)
     run_over_all_datasets_progress_widget.bar_style = 'success'
 
