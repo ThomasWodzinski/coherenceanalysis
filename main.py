@@ -449,6 +449,7 @@ do_fitting_widget = widgets.Checkbox(value=False, description="do_fitting", disa
 do_deconvmethod_widget = widgets.Checkbox(value=False, description="do_deconvmethod", disabled=False)
 xi_um_guess_widget = widgets.FloatText(value=900, description='xi_um_guess')
 scan_x_widget = widgets.Checkbox(value=False, description="scan_x", disabled=False)
+xatol_widget = widgets.FloatText(value=0.1, description='xatol')
 sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget')
 crop_px_widget = widgets.IntText(value=200, description='crop_px')
 pixis_profile_avg_width_widget = widgets.IntText(value=200, description='profile width / px')
@@ -2742,6 +2743,7 @@ column0 = widgets.VBox(
         pixis_profile_avg_width_widget,
         xi_um_guess_widget,
         scan_x_widget,
+        xatol_widget,
         sigma_x_F_gamma_um_multiplier_widget,
         crop_px_widget,
         imageid_profile_fit_widget,
@@ -2998,6 +3000,7 @@ plot_deconvmethod_interactive_output = interactive_output(
         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
         "xi_um_guess" : xi_um_guess_widget,
         "scan_x" : scan_x_widget,
+        "xatol" : xatol_widget,
         "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_widget,
         "crop_px" : crop_px_widget,
         "hdf5_file_path": dph_settings_bgsubtracted_widget,
