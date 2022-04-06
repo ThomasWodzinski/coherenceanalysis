@@ -640,6 +640,7 @@ def deconvmethod(
     crop_px,
     sigma_x_F_gamma_um_multiplier,
     scan_x,
+    xatol,
     create_figure,
 ):
 
@@ -681,7 +682,7 @@ def deconvmethod(
             )[-1],
             bounds=[sigma_y_F_gamma_um_guess / 4, sigma_y_F_gamma_um_guess * 2],
             method="bounded",
-            options={"disp": 0, "maxiter": 50, "xatol": 1e-1},  # "disp": 3 to show info for all iterations
+            options={"disp": 0, "maxiter": 50, "xatol": xatol},  # "disp": 3 to show info for all iterations
         )
         
         # start = datetime.now()

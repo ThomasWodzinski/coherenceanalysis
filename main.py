@@ -2242,6 +2242,7 @@ def plot_deconvmethod(
     pixis_profile_avg_width,
     xi_um_guess,
     scan_x,
+    xatol,
     sigma_x_F_gamma_um_multiplier,
     crop_px,
     hdf5_file_path,
@@ -2336,6 +2337,7 @@ def plot_deconvmethod(
                 crop_px,
                 sigma_x_F_gamma_um_multiplier,
                 scan_x,
+                xatol,
                 create_figure,
             )
         if scan_x == True:
