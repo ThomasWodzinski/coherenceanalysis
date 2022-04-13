@@ -2436,7 +2436,7 @@ clear_plot_deconvmethod_steps_widget = widgets.Checkbox(value=False, description
 deconvmethod_step_widget = widgets.BoundedIntText(
     value=3,
     min=0,
-    max=3,
+    max=10,
     description='Step:',
     disabled=False
 )
