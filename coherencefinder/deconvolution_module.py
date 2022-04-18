@@ -417,6 +417,8 @@ def deconvmethod_2d_x(
                 if i > 1 and (fullycoherent_profile_min * fullycoherent_profile_min_list[i-1] < 0) or (fullycoherent_profile_min * fullycoherent_profile_min_list[i-2] < 0):
                     break
                 else:
+                    if i > 2:
+                        print('Optimize guess! Too many unnecessary steps!')
                     sigma_x_F_gamma_um = sigma_x_F_gamma_um_list[i-1] - 1.05 * fullycoherent_profile_min_list[i-1] * (
                         (sigma_x_F_gamma_um_list[i] - sigma_x_F_gamma_um_list[i-1])/(fullycoherent_profile_min_list[i]-fullycoherent_profile_min_list[i-1]))
 
