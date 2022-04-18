@@ -312,7 +312,7 @@ def deconvmethod_2d_x(
     # for sigma_x_F_gamma_um in sigma_x_F_gamma_um_list:
 
     step_max = 10
-    for i in np.arange(step_max): # [0,1,2]
+    for i in np.arange(step_max):
 
         if scan_x == False:
             sigma_y_F_gamma_um = sigma_x_F_gamma_um
