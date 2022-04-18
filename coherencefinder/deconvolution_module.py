@@ -413,7 +413,7 @@ def deconvmethod_2d_x(
             if i==0:
                 sigma_x_F_gamma_um = sigma_x_F_gamma_um * sigma_x_F_gamma_um_multiplier
             else:
-                if i > 2 and fullycoherent_profile_min * fullycoherent_profile_min_list[i-1] < 0:
+                if i > 1 and (fullycoherent_profile_min * fullycoherent_profile_min_list[i-1] < 0) or (fullycoherent_profile_min * fullycoherent_profile_min_list[i-2] < 0):
                     break
                 else:
                     sigma_x_F_gamma_um = sigma_x_F_gamma_um_list[i-1] - 1.05 * fullycoherent_profile_min_list[i-1] * (
