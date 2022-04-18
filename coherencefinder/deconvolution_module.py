@@ -310,8 +310,9 @@ def deconvmethod_2d_x(
 
 
     # for sigma_x_F_gamma_um in sigma_x_F_gamma_um_list:
-    i = 0
-    for factor in np.arange(1, 4):
+
+    step_max = 10
+    for i in np.arange(step_max):
 
         if scan_x == False:
             sigma_y_F_gamma_um = sigma_x_F_gamma_um
@@ -413,10 +414,14 @@ def deconvmethod_2d_x(
             if i==0:
                 sigma_x_F_gamma_um = sigma_x_F_gamma_um * sigma_x_F_gamma_um_multiplier
             else:
-                sigma_x_F_gamma_um = sigma_x_F_gamma_um_list[0] - 1.2* fullycoherent_profile_min_list[i-1] * ( (sigma_x_F_gamma_um_list[i] - sigma_x_F_gamma_um_list[i-1])/(fullycoherent_profile_min_list[i]-fullycoherent_profile_min_list[i-1]) ) 
+                if i > 1 and (fullycoherent_profile_min * fullycoherent_profile_min_list[i-1] < 0) or (fullycoherent_profile_min * fullycoherent_profile_min_list[i-2] < 0):
+                    break
+                else:
+                    if i > 2:
+                        print('Optimize guess! Too many unnecessary steps!')
+                    sigma_x_F_gamma_um = sigma_x_F_gamma_um_list[i-1] - 1.05 * fullycoherent_profile_min_list[i-1] * (
+                        (sigma_x_F_gamma_um_list[i] - sigma_x_F_gamma_um_list[i-1])/(fullycoherent_profile_min_list[i]-fullycoherent_profile_min_list[i-1]))
 
-
-        i = i + 1
 
     xdata = np.array(sigma_x_F_gamma_um_list)
     ydata = np.array(fullycoherent_profile_min_list)
