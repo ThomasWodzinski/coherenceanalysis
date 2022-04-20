@@ -196,8 +196,13 @@ datasets_widget = widgets.Dropdown(options=list(datasets), layout=datasets_widge
 # settings_widget.observe(update_settings, names='value')
 # display(dph_settings_widget)
 # initialize a dictionary holding a selection of measurements
-datasets_selection = datasets.copy()
 
+
+datasets_selection_py_file = str(Path.joinpath(data_dir, "datasets_selection.py"))
+if os.path.isfile(datasets_selection_py_file):
+    exec(open(datasets_selection_py_file).read())
+# else: 
+#     datasets_selection = datasets.copy()
 
 # dph_settings_widget_layout = widgets.Layout(width="100%")
 # dph_settings_widget = widgets.Dropdown(options=dph_settings, layout=dph_settings_widget_layout)
@@ -219,10 +224,14 @@ dph_settings_bgsubtracted_widget = widgets.Dropdown(
 )
 # settings_widget.observe(update_settings, names='value')
 
+measurements_selection_files = []
+for pattern in ['*'+ s + '.h5' for s in datasets_selection[datasets_widget.value]]: 
+    measurements_selection_files.extend(bgsubtracted_dir.glob(pattern))
+
 measurements_selection_widget_layout = widgets.Layout(width="100%")
 measurements_selection_widget = widgets.SelectMultiple(
     options=dph_settings_bgsubtracted,
-    value=dph_settings_bgsubtracted,
+    value=measurements_selection_files,
     layout=measurements_selection_widget_layout,
     description='Measurement:'
     # value=dph_settings_bgsubtracted[3],  # workaround, because some hdf5 files have no proper timestamp yet
@@ -3138,6 +3147,12 @@ def measurements_selection_widget_changed(change):
     datasets_selection_py_file = str(Path.joinpath(data_dir, "datasets_selection.py"))
     with open(datasets_selection_py_file, 'w') as f:
         print(datasets_selection, file=f)
+    text1 = 'datasets_selection = collections.'
+    with open(datasets_selection_py_file) as fpin:
+        text2 = fpin.read()
+    text = text1 + text2
+    with open(datasets_selection_py_file, "w") as fpout:
+        fpout.write(text)
     # update some outputs:
     if do_plot_fitting_vs_deconvolution_widget.value == True:
         do_plot_fitting_vs_deconvolution_widget.value = False
