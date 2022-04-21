@@ -218,6 +218,7 @@ def deconvmethod_2d_x(
     sigma_x_F_gamma_um_multiplier,
     scan_x,
     create_figure,
+    figure_dir
 ):
 
     # number of pixels
@@ -289,10 +290,9 @@ def deconvmethod_2d_x(
         sigma_x_F_gamma_um = sigma_y_F_gamma_um
 
 
-    scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
     savefigure = True
     if savefigure == True:
-        savefigure_dir = Path(str(scratch_dir) + "/" + 'deconvmethod_steps')
+        savefigure_dir = Path(str(figure_dir) + "/" + 'deconvmethod_steps')
         if os.path.isdir(savefigure_dir) == False:
             os.mkdir(savefigure_dir)
 
@@ -345,7 +345,7 @@ def deconvmethod_2d_x(
                     savefigure_dir,
                     'sigma_y_F_gamma_um_guess_scan.csv')
             if os.path.exists(csvfile):
-                df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
+                df_deconv_scany = pd.read_csv(Path.joinpath(figure_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
                                 header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
                 ax60.cla()
                 ax60.scatter(df_deconv_scany['ystep'], df_deconv_scany['chi2distance'])
@@ -530,7 +530,7 @@ def deconvmethod_2d_x(
             f_object.close()
 
         if os.path.exists(csvfile):
-                df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
+                df_deconv_scany = pd.read_csv(Path.joinpath(savefigure_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
                                 header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
                 ax60.cla()
                 ax60.scatter(df_deconv_scany['ystep'], df_deconv_scany['chi2distance'])
@@ -612,7 +612,7 @@ def deconvmethod_2d_x(
         xi_y_um,
         I_bp,
         dX_2,
-        chi2distance,
+        chi2distance        
     )
 
 
@@ -647,14 +647,14 @@ def deconvmethod(
     scan_x,
     xatol,
     create_figure,
+    figure_dir
 ):
 
     # chi2distance_minimize_result = minimize_and_store(sigma_y_F_gamma_um_guess, calc_chi2distance)
     
-    scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
     savefigure = True
     if savefigure == True:
-        savefigure_dir = Path(str(scratch_dir) + "/" + 'deconvmethod_steps')
+        savefigure_dir = Path(str(figure_dir) + "/" + 'deconvmethod_steps')
         if os.path.isdir(savefigure_dir) == False:
             os.mkdir(savefigure_dir)
 
