@@ -983,6 +983,7 @@ def plotprofile(
             # guess sigma_y_F_gamma_um based on the xi_um_guess assuming to be the beams intensity rms width
             sigma_y_F_gamma_um_guess = calc_sigma_F_gamma_um(xi_um_guess, n, dX_1, setting_wavelength_nm, False)
             create_figure = True
+            savefigure_dir = scratch_dir
 
             # Ignoring OptimizeWarning. Supressing warning as described in https://stackoverflow.com/a/14463362:
             with warnings.catch_warnings():
@@ -1015,6 +1016,7 @@ def plotprofile(
                     sigma_x_F_gamma_um_multiplier,
                     scan_x,
                     create_figure,
+                    savefigure_dir
                 )
             deconvmethod_text_widget.value = r"%.2fum" % (xi_x_um) + r", %.2fum" % (xi_y_um)
             # str(round(xi_x_um, 2)) + ', ' + str(round(xi_y_um, 2))
@@ -2320,6 +2322,7 @@ def plot_deconvmethod(
         
         sigma_y_F_gamma_um_guess = calc_sigma_F_gamma_um(xi_um_guess, n, dX_1, setting_wavelength_nm, False)
         create_figure = True
+        savefigure_dir = scratch_dir
 
         # Ignoring OptimizeWarning. Supressing warning as described in https://stackoverflow.com/a/14463362:
         with warnings.catch_warnings():
@@ -2353,6 +2356,7 @@ def plot_deconvmethod(
                 scan_x,
                 xatol,
                 create_figure,
+                savefigure_dir
             )
         if scan_x == True:
             deconvmethod_text_widget.value = r"%.2fum" % (xi_x_um) + r", %.2fum" % (xi_y_um)

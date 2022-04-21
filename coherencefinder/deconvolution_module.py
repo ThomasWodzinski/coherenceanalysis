@@ -218,6 +218,7 @@ def deconvmethod_2d_x(
     sigma_x_F_gamma_um_multiplier,
     scan_x,
     create_figure,
+    deconvmethod_steps_dir
 ):
 
     # number of pixels
@@ -289,15 +290,13 @@ def deconvmethod_2d_x(
         sigma_x_F_gamma_um = sigma_y_F_gamma_um
 
 
-    scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
     savefigure = True
     if savefigure == True:
-        savefigure_dir = Path(str(scratch_dir) + "/" + 'deconvmethod_steps')
-        if os.path.isdir(savefigure_dir) == False:
-            os.mkdir(savefigure_dir)
+        if os.path.isdir(deconvmethod_steps_dir) == False:
+            os.mkdir(deconvmethod_steps_dir)
 
         files = []
-        files.extend(savefigure_dir.glob('*'+ 'ystep' + '*'))
+        files.extend(deconvmethod_steps_dir.glob('*'+ 'ystep' + '*'))
         ystep_index_list = []
         if len(files) > 0:
             for f in files:
@@ -342,10 +341,10 @@ def deconvmethod_2d_x(
         if create_figure == True:
 
             csvfile = os.path.join(
-                    savefigure_dir,
+                    deconvmethod_steps_dir,
                     'sigma_y_F_gamma_um_guess_scan.csv')
             if os.path.exists(csvfile):
-                df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
+                df_deconv_scany = pd.read_csv(Path.joinpath(deconvmethod_steps_dir, "sigma_y_F_gamma_um_guess_scan.csv"),
                                 header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
                 ax60.cla()
                 ax60.scatter(df_deconv_scany['ystep'], df_deconv_scany['chi2distance'])
@@ -388,7 +387,7 @@ def deconvmethod_2d_x(
             if savefigure == True:
                 plt.savefig(
                     os.path.join(
-                    savefigure_dir,
+                    deconvmethod_steps_dir,
                     'ystep_'
                     + str(ystep)
                     + '_step_'
@@ -522,7 +521,7 @@ def deconvmethod_2d_x(
 
         list_data = [ystep, sigma_y_F_gamma_um_guess, chi2distance]
         csvfile = os.path.join(
-                    savefigure_dir,
+                    deconvmethod_steps_dir,
                     'sigma_y_F_gamma_um_guess_scan.csv')
         with open(csvfile, 'a', newline='') as f_object:  
             writer_object = writer(f_object)
@@ -530,7 +529,7 @@ def deconvmethod_2d_x(
             f_object.close()
 
         if os.path.exists(csvfile):
-                df_deconv_scany = pd.read_csv(Path.joinpath(scratch_dir, 'deconvmethod_steps', "sigma_y_F_gamma_um_guess_scan.csv"),
+                df_deconv_scany = pd.read_csv(Path.joinpath(deconvmethod_steps_dir, "sigma_y_F_gamma_um_guess_scan.csv"),
                                 header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
                 ax60.cla()
                 ax60.scatter(df_deconv_scany['ystep'], df_deconv_scany['chi2distance'])
@@ -561,7 +560,7 @@ def deconvmethod_2d_x(
                 
                 plt.savefig(
                     os.path.join(
-                    savefigure_dir,
+                    deconvmethod_steps_dir,
                     'ystep_'
                     + str(ystep)
                     + '_step_'
@@ -612,7 +611,7 @@ def deconvmethod_2d_x(
         xi_y_um,
         I_bp,
         dX_2,
-        chi2distance,
+        chi2distance        
     )
 
 
@@ -647,19 +646,19 @@ def deconvmethod(
     scan_x,
     xatol,
     create_figure,
+    savefigure_dir
 ):
 
     # chi2distance_minimize_result = minimize_and_store(sigma_y_F_gamma_um_guess, calc_chi2distance)
     
-    scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
     savefigure = True
     if savefigure == True:
-        savefigure_dir = Path(str(scratch_dir) + "/" + 'deconvmethod_steps')
-        if os.path.isdir(savefigure_dir) == False:
-            os.mkdir(savefigure_dir)
+        deconvmethod_steps_dir = Path(str(savefigure_dir) + "/" + 'deconvmethod_steps')
+        if os.path.isdir(deconvmethod_steps_dir) == False:
+            os.mkdir(deconvmethod_steps_dir)
 
         files = []
-        files.extend(savefigure_dir.glob('*'))
+        files.extend(deconvmethod_steps_dir.glob('*'))
         for f in files:
             try:
                 f.unlink()
@@ -684,6 +683,7 @@ def deconvmethod(
                 sigma_x_F_gamma_um_multiplier,
                 scan_x,
                 create_figure,
+                deconvmethod_steps_dir
             )[-1],
             bounds=[sigma_y_F_gamma_um_guess / 4, sigma_y_F_gamma_um_guess * 2],
             method="bounded",
@@ -732,6 +732,7 @@ def deconvmethod(
         sigma_x_F_gamma_um_multiplier,
         scan_x,
         create_figure,
+        deconvmethod_steps_dir
     )
 
     return (
