@@ -765,6 +765,9 @@ xi_um_fit_column_and_label_widget = widgets.Dropdown(
     disabled=False,
 )
 
+deconvmethod_outlier_limit_widget = widgets.FloatText(value = 2000, description='List Outlier Threshold')
+fitting_outlier_limit_widget = widgets.FloatText(value = 2000, description='List Outlier Threshold')
+
 
 do_plot_CDCs_widget = widgets.Checkbox(value=False, description="do plot CDCs")
 do_plot_xi_um_fit_vs_I_Airy2_fit_widget = widgets.Checkbox(value=False, description="do plot xi_um_fit vs I_Airy2_fit")
@@ -2485,7 +2488,9 @@ def plot_fitting_vs_deconvolution(
     measurement_file,
     imageid,
     xi_um_deconv_column_and_label,
-    xi_um_fit_column_and_label
+    xi_um_fit_column_and_label,
+    deconvmethod_outlier_limit,
+    fitting_outlier_limit
 ):
 
     if do_plot_fitting_vs_deconvolution == True:
@@ -2525,6 +2530,14 @@ def plot_fitting_vs_deconvolution(
         plt.colorbar()
 
 
+        deconvmethod_outliers = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0[xi_um_deconv_column] > deconvmethod_outlier_limit)][['imageid', 'separation_um', xi_um_deconv_column]].sort_values(by=xi_um_deconv_column, ascending=False)
+        print('Deconvmethod outliers > ' + str(deconvmethod_outlier_limit))
+        print(deconvmethod_outliers)
+        
+        fitting_outliers = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0[xi_um_fit_column] > fitting_outlier_limit)][['imageid','separation_um', xi_um_fit_column]].sort_values(by=xi_um_fit_column, ascending=False)
+        print('Fitting method outliers > ' + str(fitting_outlier_limit))
+        print(fitting_outliers)
+
         timestamp_pulse_ids = []
         with h5py.File(measurement_file, "r") as hdf5_file:
             timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
@@ -2534,7 +2547,7 @@ def plot_fitting_vs_deconvolution(
                 c='red',\
                     marker='x', s=10)
 
-
+  
         x = np.linspace(0,2000)
         plt.plot(x,x, c='grey')
         
@@ -3038,7 +3051,9 @@ plot_fitting_vs_deconvolution_output = interactive_output(
         "measurement_file" : dph_settings_bgsubtracted_widget,
         "imageid": imageid_profile_fit_widget,
         "xi_um_deconv_column_and_label" : xi_um_deconv_column_and_label_widget,
-        "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget
+        "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget,
+        "deconvmethod_outlier_limit" : deconvmethod_outlier_limit_widget,
+        "fitting_outlier_limit" : fitting_outlier_limit_widget
     },
 )
 
@@ -3344,7 +3359,8 @@ tabs_left.set_title(2, 'Deconvolution Steps')
 tabs_left.set_title(3, 'CDCs')
 tabs_left.set_title(4, 'plot_xi_um_fit_vs_I_Airy2_fit')
 
-children_right = [VBox([xi_um_deconv_column_and_label_widget, xi_um_fit_column_and_label_widget, plot_fitting_vs_deconvolution_output])]
+children_right = [VBox([HBox([VBox([xi_um_deconv_column_and_label_widget, xi_um_fit_column_and_label_widget]),
+VBox([deconvmethod_outlier_limit_widget,fitting_outlier_limit_widget])]), plot_fitting_vs_deconvolution_output])]
 tabs_right = widgets.Tab()
 tabs_right.children = children_right
 tabs_right.set_title(0, 'Fitting vs. Deconvolution')
