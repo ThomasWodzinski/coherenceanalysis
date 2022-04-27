@@ -356,7 +356,53 @@ fits_header_list4 = ["xi_y_um_fit", "zeta_y", "zeta_y_fit", "xi_um_fit"]
 
 fits_header_list5 = ['gamma_fit_at_center', 'xi_um_fit_at_center', 'mod_sigma_um_fit', 'mod_shiftx_um_fit']
 
-fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4 + fits_header_list5
+fits_header_list6 = [
+    'shiftx_um',
+    'shiftx_um_range',
+    'shiftx_um_range',
+    'shiftx_um_do_fit',
+    'wavelength_nm',
+    'wavelength_nm_range',
+    'wavelength_nm_do_fit',
+    'z_mm',
+    'z_mm_range',
+    'z_mm_do_fit',
+    'd_um',
+    'd_um_range',
+    'd_um_do_fit',
+    'gamma',
+    'gamma_range',
+    'gamma_do_fit',
+    'w1_um',
+    'w1_um_range',
+    'w1_um_do_fit',
+    'w2_um',
+    'w2_um_range',
+    'w2_um_do_fit',
+    'I_Airy1',
+    'I_Airy1_range',
+    'I_Airy1_do_fit',
+    'I_Airy2',
+    'I_Airy2_range',
+    'I_Airy2_do_fit',
+    'x1_um',
+    'x1_um_range',
+    'x1_um_do_fit',
+    'x2_um',
+    'x2_um_range',
+    'x2_um_do_fit',
+    'normfactor',
+    'normfactor_range',
+    'normfactor_do_fit',
+    'mod_sigma_um',
+    'mod_sigma_um_range',
+    'mod_sigma_um_do_fit',
+    'mod_shiftx_um',
+    'mod_shiftx_um_range',
+    'mod_shiftx_um_do_fit'
+]
+
+fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4 + fits_header_list5 + fits_header_list6
 
 
 # fits_header_list1 already exists in saved csv, only adding fits_header_list2, only initiate when
@@ -1968,6 +2014,7 @@ def plot_fitting_v2(
         xi_um_fit_at_center_text_widget.value = r"%.2fum" % (xi_um_fit_at_center)
 
         if save_to_df == True:
+            # fitting results
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_at_center'] = gamma_fit_at_center
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit'] = xi_um_fit  # add this first to the df_fits dataframe
@@ -1982,6 +2029,66 @@ def plot_fitting_v2(
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] = x1_um_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_fit'] = mod_sigma_um_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_fit'] = mod_shiftx_um_fit
+
+            # guess parameters
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um' ] = shiftx_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_range_0' ] = shiftx_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_range_1' ] = shiftx_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_do_fit' ] = shiftx_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm' ] = wavelength_nm
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_range_0' ] = wavelength_nm_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_range_1' ] = wavelength_nm_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_do_fit' ] = wavelength_nm_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm' ] = z_mm
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_range_0' ] = z_mm_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_range_1' ] = z_mm_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_do_fit' ] = z_mm_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um' ] = d_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_range_0' ] = d_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_range_1' ] = d_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_do_fit' ] = d_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma' ] = gamma
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_range_0' ] = gamma_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_range_1' ] = gamma_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_do_fit' ] = gamma_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um' ] = w1_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_range_0' ] = w1_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_range_1' ] = w1_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_do_fit' ] = w1_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um' ] = w2_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_range_0' ] = w2_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_range_1' ] = w2_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_do_fit' ] = w2_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1' ] = I_Airy1
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_range_0' ] = I_Airy1_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_range_1' ] = I_Airy1_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_do_fit' ] = I_Airy1_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2' ] = I_Airy2
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_range_0' ] = I_Airy2_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_range_1' ] = I_Airy2_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_do_fit' ] = I_Airy2_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um' ] = x1_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_range_0' ] = x1_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_range_1' ] = x1_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_do_fit' ] = x1_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um' ] = x2_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_range_0' ] = x2_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_range_1' ] = x2_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_do_fit' ] = x2_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor'	] = normfactor
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_range_0' ] = normfactor_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_range_1' ] = normfactor_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_do_fit' ] = normfactor_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um' ] = mod_sigma_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_range_0'	] = mod_sigma_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_range_1'	] = mod_sigma_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_do_fit' ] = mod_sigma_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um' ] = mod_shiftx_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_range_0' ] = mod_shiftx_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_range_1' ] = mod_shiftx_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_do_fit' ] = mod_shiftx_um_do_fit
+
+
 
         # print('fringeseparation_px=' + str(round(fringeseparation_px,2)))
 
