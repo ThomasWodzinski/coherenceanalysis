@@ -536,6 +536,7 @@ savefigure_profile_fit_widget = widgets.Checkbox(value=False, description="savef
 # dataframe and csv widgets
 
 save_to_df_widget = widgets.Checkbox(value=False, description="save_to_df", disabled=False)
+load_from_df_widget = widgets.Checkbox(value=False, description="load_from_df", disabled=False)
 
 
 
@@ -3504,7 +3505,7 @@ display(
             dph_settings_bgsubtracted_widget,
             measurements_selection_widget,
             plotprofile_interactive_input,
-            HBox([save_to_df_widget, scan_for_df_fits_csv_files_widget, df_fits_csv_files_widget, load_csv_to_df_widget, df_fits_csv_save_widget, create_new_csv_file_widget
+            HBox([save_to_df_widget, load_from_df_widget, scan_for_df_fits_csv_files_widget, df_fits_csv_files_widget, load_csv_to_df_widget, df_fits_csv_save_widget, create_new_csv_file_widget
                  ]),
             HBox([run_over_all_datasets_widget, run_over_all_datasets_progress_widget, run_over_all_datasets_statustext_widget,
                 run_over_all_measurements_widget, run_over_all_measurements_progress_widget, run_over_all_measurements_statustext_widget,
