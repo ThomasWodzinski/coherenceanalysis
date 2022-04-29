@@ -402,7 +402,7 @@ fits_header_list6 = [
     'x2_um_range_1',
     'x2_um_do_fit',
     'normfactor',
-    'normfactor_range_1',
+    'normfactor_range_0',
     'normfactor_range_1',
     'normfactor_do_fit',
     'mod_sigma_um',
