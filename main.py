@@ -430,6 +430,7 @@ df_fits_csv_file = df_fits_csv_files[0] # use the newest
 df_fits = pd.read_csv(df_fits_csv_file, index_col=0)
 df_fits_clean = df_fits[df_fits["pixis_rotation"].notna()].drop_duplicates()
 df_fits = df_fits_clean
+df_fits = df_fits.reindex(columns = df_fits.columns.tolist() + list(set(fits_header_list) - set(df_fits.columns.tolist())) )
 df0 = pd.merge(df_temp, df_fits, on="timestamp_pulse_id", how="outer")
 
 
