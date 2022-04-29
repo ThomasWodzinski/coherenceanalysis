@@ -356,7 +356,66 @@ fits_header_list4 = ["xi_y_um_fit", "zeta_y", "zeta_y_fit", "xi_um_fit"]
 
 fits_header_list5 = ['gamma_fit_at_center', 'xi_um_fit_at_center', 'mod_sigma_um_fit', 'mod_shiftx_um_fit']
 
-fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4 + fits_header_list5
+fits_header_list6 = [
+    'shiftx_um',
+    'shiftx_um_range_0',
+    'shiftx_um_range_1',
+    'shiftx_um_do_fit',
+    'wavelength_nm',
+    'wavelength_nm_range_0',
+    'wavelength_nm_range_1',
+    'wavelength_nm_do_fit',
+    'z_mm',
+    'z_mm_range_0',
+    'z_mm_range_1',
+    'z_mm_do_fit',
+    'd_um',
+    'd_um_range_0',
+    'd_um_range_1',
+    'd_um_do_fit',
+    'gamma',
+    'gamma_range_0',
+    'gamma_range_1',
+    'gamma_do_fit',
+    'w1_um',
+    'w1_um_range_0',
+    'w1_um_range_1',
+    'w1_um_do_fit',
+    'w2_um',
+    'w2_um_range_0',
+    'w2_um_range_1',
+    'w2_um_do_fit',
+    'I_Airy1',
+    'I_Airy1_range_0',
+    'I_Airy1_range_1',
+    'I_Airy1_do_fit',
+    'I_Airy2',
+    'I_Airy2_range_0',
+    'I_Airy2_range_1',
+    'I_Airy2_do_fit',
+    'x1_um',
+    'x1_um_range_0',
+    'x1_um_range_1',
+    'x1_um_do_fit',
+    'x2_um',
+    'x2_um_range_0',
+    'x2_um_range_1',
+    'x2_um_do_fit',
+    'normfactor',
+    'normfactor_range_1',
+    'normfactor_range_1',
+    'normfactor_do_fit',
+    'mod_sigma_um',
+    'mod_sigma_um_range_0',
+    'mod_sigma_um_range_1',
+    'mod_sigma_um_do_fit',
+    'mod_shiftx_um',
+    'mod_shiftx_um_range_0',
+    'mod_shiftx_um_range_1',
+    'mod_shiftx_um_do_fit'
+]
+
+fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4 + fits_header_list5 + fits_header_list6
 
 
 # fits_header_list1 already exists in saved csv, only adding fits_header_list2, only initiate when
@@ -477,6 +536,7 @@ savefigure_profile_fit_widget = widgets.Checkbox(value=False, description="savef
 # dataframe and csv widgets
 
 save_to_df_widget = widgets.Checkbox(value=False, description="save_to_df", disabled=False)
+load_from_df_widget = widgets.Checkbox(value=False, description="load_from_df", disabled=False)
 
 
 
@@ -1753,7 +1813,7 @@ def plot_fitting_v2(
     pixis_profile_avg_width,
     crop_px,
     hdf5_file_path,
-    imageid,
+    # imageid,
     savefigure,
     save_to_df,
     do_textbox,
@@ -1812,6 +1872,8 @@ def plot_fitting_v2(
         deconvmethod_text_widget.value = ''
 
         # Loading and preparing
+
+        imageid = imageid_profile_fit_widget.value
 
         with h5py.File(hdf5_file_path, "r") as hdf5_file:
             pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
@@ -1968,6 +2030,7 @@ def plot_fitting_v2(
         xi_um_fit_at_center_text_widget.value = r"%.2fum" % (xi_um_fit_at_center)
 
         if save_to_df == True:
+            # fitting results
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_at_center'] = gamma_fit_at_center
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit'] = xi_um_fit  # add this first to the df_fits dataframe
@@ -1982,6 +2045,66 @@ def plot_fitting_v2(
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] = x1_um_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_fit'] = mod_sigma_um_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_fit'] = mod_shiftx_um_fit
+
+            # guess parameters
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um' ] = shiftx_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_range_0' ] = shiftx_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_range_1' ] = shiftx_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_do_fit' ] = shiftx_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm' ] = wavelength_nm
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_range_0' ] = wavelength_nm_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_range_1' ] = wavelength_nm_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_do_fit' ] = wavelength_nm_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm' ] = z_mm
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_range_0' ] = z_mm_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_range_1' ] = z_mm_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_do_fit' ] = z_mm_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um' ] = d_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_range_0' ] = d_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_range_1' ] = d_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_do_fit' ] = d_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma' ] = gamma
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_range_0' ] = gamma_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_range_1' ] = gamma_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_do_fit' ] = gamma_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um' ] = w1_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_range_0' ] = w1_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_range_1' ] = w1_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_do_fit' ] = w1_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um' ] = w2_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_range_0' ] = w2_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_range_1' ] = w2_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_do_fit' ] = w2_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1' ] = I_Airy1
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_range_0' ] = I_Airy1_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_range_1' ] = I_Airy1_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_do_fit' ] = I_Airy1_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2' ] = I_Airy2
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_range_0' ] = I_Airy2_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_range_1' ] = I_Airy2_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_do_fit' ] = I_Airy2_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um' ] = x1_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_range_0' ] = x1_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_range_1' ] = x1_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_do_fit' ] = x1_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um' ] = x2_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_range_0' ] = x2_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_range_1' ] = x2_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_do_fit' ] = x2_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor'	] = normfactor
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_range_0' ] = normfactor_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_range_1' ] = normfactor_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_do_fit' ] = normfactor_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um' ] = mod_sigma_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_range_0'	] = mod_sigma_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_range_1'	] = mod_sigma_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_do_fit' ] = mod_sigma_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um' ] = mod_shiftx_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_range_0' ] = mod_shiftx_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_range_1' ] = mod_shiftx_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_do_fit' ] = mod_shiftx_um_do_fit
+
+
 
         # print('fringeseparation_px=' + str(round(fringeseparation_px,2)))
 
@@ -2972,7 +3095,7 @@ plot_fitting_v2_interactive_output = interactive_output(
         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
         "crop_px" : crop_px_widget,
         "hdf5_file_path": dph_settings_bgsubtracted_widget,
-        "imageid": imageid_profile_fit_widget,
+        # "imageid": imageid_profile_fit_widget,
         "savefigure": savefigure_profile_fit_widget,
         "save_to_df": save_to_df_widget,
         "do_textbox": do_textbox_widget,
@@ -3188,8 +3311,225 @@ measurements_selection_widget.observe(measurements_selection_widget_changed, nam
 
 
 def imageid_profile_fit_widget_changed(change):
+    
     clear_plot_deconvmethod_steps_widget.value = True
     clear_plot_deconvmethod_steps_widget.value = False
+
+    do_fitting_widget_was_active = False
+    if do_fitting_widget.value == True:
+        do_fitting_widget_was_active = True
+        do_fitting_widget.value = False
+
+    hdf5_file_path = dph_settings_bgsubtracted_widget.value
+    imageid = imageid_profile_fit_widget.value
+    shiftx_um = np.nan
+    
+    with h5py.File(hdf5_file_path, "r") as hdf5_file:
+        
+        timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
+            np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+        ][2]
+
+        pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
+            np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+        ][
+            0
+        ]  # needed for what?
+        setting_wavelength_nm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["setting_wavelength_nm"].iloc[0]
+        pinholes_bg_avg_sx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sx_um"].iloc[0]
+        pinholes_bg_avg_sy_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sy_um"].iloc[0]
+        ph = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
+        separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
+        orientation = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["orientation"].iloc[0]
+
+        pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+        ]
+
+    if load_from_df_widget.value == True:
+
+        shiftx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um"].iloc[0]
+        statustext_widget.value = 'loaded shiftx from df ' + str(datetime.now().strftime("%Y-%m-%d--%Hh%M%S")) + ' ' + str(shiftx_um)
+        shiftx_um_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um_range_0"].iloc[0]
+        shiftx_um_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um_range_1"].iloc[0]
+        shiftx_um_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um_do_fit"].iloc[0]
+        wavelength_nm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["wavelength_nm"].iloc[0]
+        wavelength_nm_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["wavelength_nm_range_0"].iloc[0]
+        wavelength_nm_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["wavelength_nm_range_1"].iloc[0]
+        wavelength_nm_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["wavelength_nm_do_fit"].iloc[0]
+        z_mm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["z_mm"].iloc[0]
+        z_mm_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["z_mm_range_0"].iloc[0]
+        z_mm_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["z_mm_range_1"].iloc[0]
+        z_mm_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["z_mm_do_fit"].iloc[0]
+        d_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["d_um"].iloc[0]
+        d_um_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["d_um_range_0"].iloc[0]
+        d_um_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["d_um_range_1"].iloc[0]
+        d_um_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["d_um_do_fit"].iloc[0]
+        gamma = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["gamma"].iloc[0]
+        gamma_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["gamma_range_0"].iloc[0]
+        gamma_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["gamma_range_1"].iloc[0]
+        gamma_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["gamma_do_fit"].iloc[0]
+        w1_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["w1_um"].iloc[0]
+        w1_um_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["w1_um_range_0"].iloc[0]
+        w1_um_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["w1_um_range_1"].iloc[0]
+        w1_um_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["w1_um_do_fit"].iloc[0]
+        w2_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["w2_um"].iloc[0]
+        w2_um_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["w2_um_range_0"].iloc[0]
+        w2_um_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["w2_um_range_1"].iloc[0]
+        w2_um_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["w2_um_do_fit"].iloc[0]
+        I_Airy1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy1"].iloc[0]
+        I_Airy1_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy1_range_0"].iloc[0]
+        I_Airy1_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy1_range_1"].iloc[0]
+        I_Airy1_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy1_do_fit"].iloc[0]
+        I_Airy2 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy2"].iloc[0]
+        I_Airy2_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy2_range_0"].iloc[0]
+        I_Airy2_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy2_range_1"].iloc[0]
+        I_Airy2_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy2_do_fit"].iloc[0]
+        x1_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["x1_um"].iloc[0]
+        x1_um_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["x1_um_range_0"].iloc[0]
+        x1_um_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["x1_um_range_1"].iloc[0]
+        x1_um_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["x1_um_do_fit"].iloc[0]
+        x2_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["x2_um"].iloc[0]
+        x2_um_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["x2_um_range_0"].iloc[0]
+        x2_um_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["x2_um_range_1"].iloc[0]
+        x2_um_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["x2_um_do_fit"].iloc[0]
+        normfactor = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["normfactor"].iloc[0]
+        normfactor_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["normfactor_range_0"].iloc[0]
+        normfactor_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["normfactor_range_1"].iloc[0]
+        normfactor_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["normfactor_do_fit"].iloc[0]
+        mod_sigma_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["mod_sigma_um"].iloc[0]
+        mod_sigma_um_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["mod_sigma_um_range_0"].iloc[0]
+        mod_sigma_um_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["mod_sigma_um_range_1"].iloc[0]
+        mod_sigma_um_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["mod_sigma_um_do_fit"].iloc[0]
+        mod_shiftx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["mod_shiftx_um"].iloc[0]
+        mod_shiftx_um_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["mod_shiftx_um_range_0"].iloc[0]
+        mod_shiftx_um_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["mod_shiftx_um_range_1"].iloc[0]
+        mod_shiftx_um_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["mod_shiftx_um_do_fit"].iloc[0]
+
+        if np.isnan(shiftx_um) == False:
+
+            shiftx_um_widget.value = shiftx_um
+            shiftx_um_range_widget.value = [shiftx_um_range_0, shiftx_um_range_1]
+            shiftx_um_do_fit_widget.value = shiftx_um_do_fit
+            wavelength_nm_widget.value = wavelength_nm
+            wavelength_nm_range_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
+            wavelength_nm_do_fit_widget.value = wavelength_nm_do_fit
+            z_mm_widget.value = z_mm
+            z_mm_range_widget.value = [z_mm_range_0, z_mm_range_1]
+            z_mm_do_fit_widget.value = z_mm_do_fit
+            d_um_widget.value = d_um
+            d_um_range_widget.value = [d_um_range_0, d_um_range_1]
+            d_um_do_fit_widget.value = d_um_do_fit
+            gamma_widget.value = gamma
+            gamma_range_widget.value = [gamma_range_0, gamma_range_1]
+            gamma_do_fit_widget.value = gamma_do_fit
+            w1_um_widget.value = w1_um
+            w1_um_range_widget.value = [w1_um_range_0, w1_um_range_1]
+            w1_um_do_fit_widget.value = w1_um_do_fit
+            w2_um_widget.value = w2_um
+            w2_um_range_widget.value = [w2_um_range_0, w2_um_range_1]
+            w2_um_do_fit_widget.value = w2_um_do_fit
+            I_Airy1_widget.value = I_Airy1
+            I_Airy1_range_widget.value = [I_Airy1_range_0, I_Airy1_range_1]
+            I_Airy1_do_fit_widget.value = I_Airy1_do_fit
+            I_Airy2_widget.value = I_Airy2
+            I_Airy2_range_widget.value = [I_Airy2_range_0, I_Airy2_range_1]
+            I_Airy2_do_fit_widget.value = I_Airy2_do_fit
+            x1_um_widget.value = x1_um
+            x1_um_range_widget.value = [x1_um_range_0, x1_um_range_1]
+            x1_um_do_fit_widget.value = x1_um_do_fit
+            x2_um_widget.value = x2_um
+            x2_um_range_widget.value = [x2_um_range_0, x2_um_range_1]
+            x2_um_do_fit_widget.value = x2_um_do_fit
+            normfactor_widget.value = normfactor
+            normfactor_range_widget.value = [normfactor_range_0, normfactor_range_1]
+            normfactor_do_fit_widget.value = normfactor_do_fit
+            mod_sigma_um_widget.value = mod_sigma_um
+            mod_sigma_um_range_widget.value = [mod_sigma_um_range_0, mod_sigma_um_range_1]
+            mod_sigma_um_do_fit_widget.value = mod_sigma_um_do_fit
+            mod_shiftx_um_widget.value = mod_shiftx_um
+            mod_shiftx_um_range_widget.value = [mod_shiftx_um_range_0, mod_shiftx_um_range_1]
+            mod_shiftx_um_do_fit_widget.value = mod_shiftx_um_do_fit
+
+
+    statustext_widget.value = str(load_from_df_widget.value == False or np.isnan(shiftx_um) == True)
+    
+    if load_from_df_widget.value == False or np.isnan(shiftx_um) == True: # second condition not working yet
+        # load default values instead and inform that there are no saved values!
+        # determine how far the maximum of the image is shifted from the center
+        pixis_image_norm_max_x_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[1][0]
+        pixis_image_norm_max_y_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[0][0]
+        pixis_image_norm_min_x_px = np.where(pixis_image_norm==np.min(pixis_image_norm))[1][0]
+        pixis_image_norm_min_y_px = np.where(pixis_image_norm==np.min(pixis_image_norm))[0][0]
+        delta_max_x_px = pixis_image_norm_max_x_px - int(np.shape(pixis_image_norm)[1]/2)
+        delta_max_x_um = delta_max_x_px*13
+        delta_min_x_px = pixis_image_norm_min_x_px - int(np.shape(pixis_image_norm)[1]/2)
+        textarea_widget.value = 'max_x_px='+str(pixis_image_norm_max_x_px)+'\n'+'min_x_px='+str(pixis_image_norm_min_x_px) +'\n' + \
+            'delta_max_x_um='+str(delta_max_x_px*13)+'\n'+'delta_min_x_um='+str(delta_min_x_px*13)
+        # if the peaks of the two airy disks are two far away from the center set the shift to 0. Choose the range of shiftx_um empirically
+        if abs(delta_max_x_um) > abs(max(shiftx_um_range_widget.value)):
+            shiftx_um_widget.value = 0
+        else:
+            shiftx_um_widget.value = delta_max_x_um
+        
+
+        wavelength_nm_widget.value = setting_wavelength_nm
+        wavelength_nm_range_widget.value = value = [wavelength_nm_widget.value - 0.1, wavelength_nm_widget.value + 0.1]
+        d_um_widget.value = separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
+        x1_um_widget.value = -d_um_widget.value * 10 / 2
+        x2_um_widget.value = d_um_widget.value * 10 / 2
+        x1_um_range_widget.value = [-d_um_widget.value * 10 / 2 - 1000, 0]
+        x2_um_range_widget.value = [0, d_um_widget.value * 10 / 2 + 1000]
+
+        # add more default values
+
+        # shiftx_um_widget.value = shiftx_um
+        shiftx_um_range_widget.value = [-1500, 1500]
+        shiftx_um_do_fit_widget.value = True
+
+        # wavelength_nm_widget.value = wavelength_nm
+        # wavelength_nm_range_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
+        wavelength_nm_do_fit_widget.value = True
+        z_mm_widget.value = 5781
+        z_mm_range_widget.value = [5770.0, 5790.0]
+        z_mm_do_fit_widget.value = False
+        # d_um_widget.value = d_um
+        d_um_range_widget.value = [50.0, 1337.0]
+        d_um_do_fit_widget.value = False
+        gamma_widget.value = 0.8
+        gamma_range_widget.value = [0.01, 1]
+        gamma_do_fit_widget.value = True
+        w1_um_widget.value = 11.0
+        w1_um_range_widget.value = [8.0, 15.0]
+        w1_um_do_fit_widget.value = True
+        w2_um_widget.value = 11.0
+        w2_um_range_widget.value = [8.0, 15.0]
+        w2_um_do_fit_widget.value = True
+        I_Airy1_widget.value = 1.0
+        I_Airy1_range_widget.value = [0.2, 1.5]
+        I_Airy1_do_fit_widget.value = False
+        I_Airy2_widget.value = 0.8
+        I_Airy2_range_widget.value = [0.2, 5.5]
+        I_Airy2_do_fit_widget.value = True
+        # x1_um_widget.value = x1_um
+        # x1_um_range_widget.value = [x1_um_range_0, x1_um_range_1]
+        x1_um_do_fit_widget.value = True
+        # x2_um_widget.value = x2_um
+        # x2_um_range_widget.value = [x2_um_range_0, x2_um_range_1]
+        x2_um_do_fit_widget.value = True
+        normfactor_widget.value = 1.0
+        normfactor_range_widget.value = [0.1, 1.5]
+        normfactor_do_fit_widget.value = False
+        mod_sigma_um_widget.value = 3000.0 # not for all datasets the same, adapt!
+        mod_sigma_um_range_widget.value = [1500, 100000]
+        mod_sigma_um_do_fit_widget.value = True
+        mod_shiftx_um_widget.value = 3000.0
+        mod_shiftx_um_range_widget.value = [-10000, 10000]
+        mod_shiftx_um_do_fit_widget.value = True
+
+    if do_fitting_widget_was_active == True:
+        do_fitting_widget.value = True
+
 imageid_profile_fit_widget.observe(imageid_profile_fit_widget_changed, names="value")
 
 
@@ -3384,7 +3724,7 @@ display(
             dph_settings_bgsubtracted_widget,
             measurements_selection_widget,
             plotprofile_interactive_input,
-            HBox([save_to_df_widget, scan_for_df_fits_csv_files_widget, df_fits_csv_files_widget, load_csv_to_df_widget, df_fits_csv_save_widget, create_new_csv_file_widget
+            HBox([save_to_df_widget, load_from_df_widget, scan_for_df_fits_csv_files_widget, df_fits_csv_files_widget, load_csv_to_df_widget, df_fits_csv_save_widget, create_new_csv_file_widget
                  ]),
             HBox([run_over_all_datasets_widget, run_over_all_datasets_progress_widget, run_over_all_datasets_statustext_widget,
                 run_over_all_measurements_widget, run_over_all_measurements_progress_widget, run_over_all_measurements_statustext_widget,
@@ -3395,3 +3735,5 @@ display(
 )
 dph_settings_bgsubtracted_widget_changed(None)
  
+
+# %%
