@@ -3349,8 +3349,7 @@ def imageid_profile_fit_widget_changed(change):
 
     if load_from_df_widget.value == True:
 
-        shiftx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um"].iloc[0]
-        statustext_widget.value = 'loaded shiftx from df ' + str(datetime.now().strftime("%Y-%m-%d--%Hh%M%S")) + ' ' + str(shiftx_um)
+        shiftx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um"].iloc[0]        
         shiftx_um_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um_range_0"].iloc[0]
         shiftx_um_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um_range_1"].iloc[0]
         shiftx_um_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um_do_fit"].iloc[0]
@@ -3452,9 +3451,7 @@ def imageid_profile_fit_widget_changed(change):
             mod_shiftx_um_range_widget.value = [mod_shiftx_um_range_0, mod_shiftx_um_range_1]
             mod_shiftx_um_do_fit_widget.value = mod_shiftx_um_do_fit
 
-
-    statustext_widget.value = str(load_from_df_widget.value == False or np.isnan(shiftx_um) == True)
-    
+  
     if load_from_df_widget.value == False or np.isnan(shiftx_um) == True: # second condition not working yet
         # load default values instead and inform that there are no saved values!
         # determine how far the maximum of the image is shifted from the center
