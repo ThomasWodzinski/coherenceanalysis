@@ -433,7 +433,7 @@ df_fits = df_fits_clean
 df0 = pd.merge(df_temp, df_fits, on="timestamp_pulse_id", how="outer")
 
 
-df0 = pd.merge(df_temp, df_fits, on="timestamp_pulse_id", how="outer")
+
 
 
 # """# List all groups inside the hd5file"""
