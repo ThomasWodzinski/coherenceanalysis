@@ -619,6 +619,7 @@ create_new_csv_file_widget = widgets.ToggleButton(
 
 def create_new_csv_file(change):
     df_fits_csv_file = Path.joinpath(data_dir,str('df_fits_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
     df_fits.to_csv(df_fits_csv_file)
     df_fits_csv_files = sorted(list(data_dir.glob("df_fits*.csv")), reverse=True)
     df_fits_csv_files_widget.options=df_fits_csv_files
