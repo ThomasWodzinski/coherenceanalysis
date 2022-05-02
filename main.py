@@ -415,7 +415,14 @@ fits_header_list6 = [
     'mod_shiftx_um_do_fit'
 ]
 
-fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4 + fits_header_list5 + fits_header_list6
+fits_header_list7 = [ 'pixis_profile_avg_width,'
+            'xi_um_guess',
+            'xatol',
+            'sigma_x_F_gamma_um_multiplier',
+            'crop_px'
+]
+
+fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4 + fits_header_list5 + fits_header_list6 + fits_header_list7
 
 
 # fits_header_list1 already exists in saved csv, only adding fits_header_list2, only initiate when
@@ -2048,7 +2055,8 @@ def plot_fitting_v2(
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_fit'] = mod_sigma_um_fit
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_fit'] = mod_shiftx_um_fit
 
-            # guess parameters
+            # guess parameters - fitting
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'pixis_profile_avg_width' ] = pixis_profile_avg_width
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um' ] = shiftx_um
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_range_0' ] = shiftx_um_range[0]
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_range_1' ] = shiftx_um_range[1]
@@ -2105,6 +2113,9 @@ def plot_fitting_v2(
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_range_0' ] = mod_shiftx_um_range[0]
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_range_1' ] = mod_shiftx_um_range[1]
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_do_fit' ] = mod_shiftx_um_do_fit
+
+            
+
 
 
 
@@ -2387,7 +2398,7 @@ def plot_deconvmethod(
     sigma_x_F_gamma_um_multiplier,
     crop_px,
     hdf5_file_path,
-    imageid,
+    # imageid,
     save_to_df    
 ):
 
@@ -2399,6 +2410,8 @@ def plot_deconvmethod(
             deconvmethod_simple_text_widget.value = ''
 
         # Loading and preparing
+
+        imageid = imageid_profile_fit_widget.value
 
         with h5py.File(hdf5_file_path, "r") as hdf5_file:
             pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
@@ -2496,6 +2509,12 @@ def plot_deconvmethod(
             else:
                 df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um'] = xi_x_um
 
+           # guess parameters - deconvmethod
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'pixis_profile_avg_width' ] = pixis_profile_avg_width
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_guess' ] = xi_um_guess
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xatol' ] = xatol
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'sigma_x_F_gamma_um_multiplier' ] = sigma_x_F_gamma_um_multiplier
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'crop_px' ] = crop_px
 
         fig = plt.figure(constrained_layout=False, figsize=(8.27, 11.69), dpi=150)
 
@@ -3157,7 +3176,7 @@ plot_deconvmethod_interactive_output = interactive_output(
         "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_widget,
         "crop_px" : crop_px_widget,
         "hdf5_file_path": dph_settings_bgsubtracted_widget,
-        "imageid": imageid_profile_fit_widget,
+        # "imageid": imageid_profile_fit_widget,
         "save_to_df": save_to_df_widget,
     },
 )
@@ -3322,9 +3341,15 @@ def imageid_profile_fit_widget_changed(change):
         do_fitting_widget_was_active = True
         do_fitting_widget.value = False
 
+    do_deconvmethod_widget_was_active = False
+    if do_deconvmethod_widget.value == True:
+        do_deconvmethod_widget_was_active = True
+        do_deconvmethod_widget.value = False
+
     hdf5_file_path = dph_settings_bgsubtracted_widget.value
     imageid = imageid_profile_fit_widget.value
     shiftx_um = np.nan
+    xi_um_guess = np.nan
     
     with h5py.File(hdf5_file_path, "r") as hdf5_file:
         
@@ -3350,6 +3375,7 @@ def imageid_profile_fit_widget_changed(change):
 
     if load_from_df_widget.value == True:
 
+        # guess parameter - fitting
         shiftx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um"].iloc[0]        
         shiftx_um_range_0 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um_range_0"].iloc[0]
         shiftx_um_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um_range_1"].iloc[0]
@@ -3407,8 +3433,16 @@ def imageid_profile_fit_widget_changed(change):
         mod_shiftx_um_range_1 = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["mod_shiftx_um_range_1"].iloc[0]
         mod_shiftx_um_do_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["mod_shiftx_um_do_fit"].iloc[0]
 
+        # guess parameter - deconvmethod
+        pixis_profile_avg_width = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pixis_profile_avg_width"].iloc[0]
+        xi_um_guess = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["xi_um_guess"].iloc[0]
+        xatol = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["xatol"].iloc[0]
+        sigma_x_F_gamma_um_multiplier = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["sigma_x_F_gamma_um_multiplier"].iloc[0]
+        crop_px = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["crop_px"].iloc[0]
+
         if np.isnan(shiftx_um) == False:
 
+            # fitting widgets
             shiftx_um_widget.value = shiftx_um
             shiftx_um_range_widget.value = [shiftx_um_range_0, shiftx_um_range_1]
             shiftx_um_do_fit_widget.value = shiftx_um_do_fit
@@ -3452,8 +3486,18 @@ def imageid_profile_fit_widget_changed(change):
             mod_shiftx_um_range_widget.value = [mod_shiftx_um_range_0, mod_shiftx_um_range_1]
             mod_shiftx_um_do_fit_widget.value = mod_shiftx_um_do_fit
 
-  
-    if load_from_df_widget.value == False or np.isnan(shiftx_um) == True: # second condition not working yet
+        if np.isnan(xi_um_guess) == False:
+
+            # deonvmethod widgets
+            pixis_profile_avg_width_widget.value = pixis_profile_avg_width
+            xi_um_guess_widget.value = xi_um_guess
+            xatol_widget.value = xatol
+            sigma_x_F_gamma_um_multiplier_widget.value = sigma_x_F_gamma_um_multiplier
+            crop_px_widget.value = crop_px
+
+            
+    # Set default values for fitting
+    if load_from_df_widget.value == False or np.isnan(shiftx_um) == True:
         # load default values instead and inform that there are no saved values!
         # determine how far the maximum of the image is shifted from the center
         pixis_image_norm_max_x_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[1][0]
@@ -3526,8 +3570,19 @@ def imageid_profile_fit_widget_changed(change):
         mod_shiftx_um_range_widget.value = [-10000, 10000]
         mod_shiftx_um_do_fit_widget.value = True
 
+    # Set default values for Deconvmethod
+    if load_from_df_widget.value == False or np.isnan(xi_um_guess) == True:
+        pixis_profile_avg_width_widget.value = 200
+        xi_um_guess_widget.value = 900
+        xatol_widget.value = 5
+        sigma_x_F_gamma_um_multiplier_widget.value = 1.2
+        crop_px_widget.value = 50
+
     if do_fitting_widget_was_active == True:
         do_fitting_widget.value = True
+
+    if do_deconvmethod_widget_was_active == True:
+        do_deconvmethod_widget.value = True
 
 imageid_profile_fit_widget.observe(imageid_profile_fit_widget_changed, names="value")
 
