@@ -192,16 +192,52 @@ exec(open(dph_settings_py_file).read())
 # from dph_settings_package import dph_settings_module
 
 
-datasets_widget_layout = widgets.Layout(width="100%")
+datasets_widget_layout = widgets.Layout(width="30%")
 datasets_widget = widgets.Dropdown(options=list(datasets), layout=datasets_widget_layout, description='Dataset:')
 # settings_widget.observe(update_settings, names='value')
 # display(dph_settings_widget)
 # initialize a dictionary holding a selection of measurements
 
+datasets_selection_py_files = sorted(list(data_dir.glob("datasets_selection*.py")), reverse=True)
+datasets_selection_py_files_widget_layout = widgets.Layout(width="30%")
+datasets_selection_py_files_widget = widgets.Dropdown(
+    options=datasets_selection_py_files,
+    value=datasets_selection_py_files[0], # use newest available file per default
+    layout=datasets_selection_py_files_widget_layout,
+    description='Datasets selection file::'    
+)
 
-datasets_selection_py_file = str(Path.joinpath(data_dir, "datasets_selection.py"))
+datasets_selection_py_file = datasets_selection_py_files_widget.value
 if os.path.isfile(datasets_selection_py_file):
     exec(open(datasets_selection_py_file).read())
+
+create_new_datasets_selection_py_file_widget = widgets.ToggleButton(
+    value=False,
+    description='create new file',
+    disabled=False,
+    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+    tooltip='save df_fits to new csv file',
+    icon='check'
+)
+
+def create_new_datasets_selection_py_file(change):
+    datasets_selection_py_file = datasets_selection_py_files_widget.value
+    new_datasets_selection_py_file = Path.joinpath(data_dir,str('datasets_selection_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.py'))
+    with open(datasets_selection_py_file) as f:
+        text = f.read()
+    with open(new_datasets_selection_py_file,'w') as f:
+        f.write(text)
+    datasets_selection_py_files = sorted(list(data_dir.glob("datasets_selection*.py")), reverse=True)
+    datasets_selection_py_files_widget.options = datasets_selection_py_files
+    datasets_selection_py_files_widget.value = datasets_selection_py_files[0]
+
+    create_new_datasets_selection_py_file_widget.value = False
+
+create_new_datasets_selection_py_file_widget.observe(create_new_datasets_selection_py_file, names='value')
+
+# tbd: load dataset_selection when file changes
+
+
 # else: 
 #     datasets_selection = datasets.copy()
 
@@ -3309,7 +3345,7 @@ def measurements_selection_widget_changed(change):
         for f in measurements_selection_widget.value:
             measurements_selection.append(f.stem)
         datasets_selection.update({ datasets_widget.value : measurements_selection })
-    datasets_selection_py_file = str(Path.joinpath(data_dir, "datasets_selection.py"))
+    datasets_selection_py_file = datasets_selection_py_files_widget.value
     with open(datasets_selection_py_file, 'w') as f:
         print(datasets_selection, file=f)
     text1 = 'datasets_selection = collections.'
@@ -3774,7 +3810,7 @@ display(
     VBox(
         [
             HBox([fittingprogress_widget, statustext_widget]),
-            datasets_widget,
+            HBox([datasets_widget,datasets_selection_py_files_widget,create_new_datasets_selection_py_file_widget]),
             dph_settings_bgsubtracted_widget,
             measurements_selection_widget,
             plotprofile_interactive_input,
