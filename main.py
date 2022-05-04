@@ -235,7 +235,6 @@ def create_new_datasets_selection_py_file(change):
 
 create_new_datasets_selection_py_file_widget.observe(create_new_datasets_selection_py_file, names='value')
 
-# tbd: load dataset_selection when file changes
 
 
 # else: 
@@ -3327,19 +3326,28 @@ dph_settings_bgsubtracted_widget.observe(dph_settings_bgsubtracted_widget_change
 
 
 def datasets_widget_changed(change):
+    datasets_selection_py_file = datasets_selection_py_files_widget.value
+    statustext_widget.value = str(datasets_selection_py_files_widget.value)
+    if os.path.isfile(datasets_selection_py_file):
+        exec(open(datasets_selection_py_file).read())  
     dph_settings_bgsubtracted = []
     for pattern in ['*'+ s + '.h5' for s in datasets[datasets_widget.value]]: 
         dph_settings_bgsubtracted.extend(bgsubtracted_dir.glob(pattern))
     dph_settings_bgsubtracted_widget.options=dph_settings_bgsubtracted
     measurements_selection_widget.options = dph_settings_bgsubtracted
     measurements_selection_files = []
-    for pattern in ['*'+ s + '.h5' for s in datasets_selection[datasets_widget.value]]: 
+    for pattern in ['*'+ s + '.h5' for s in datasets_selection[datasets_widget.value]]:  # is this not using the above read file? how to verify?
         measurements_selection_files.extend(bgsubtracted_dir.glob(pattern))
     measurements_selection_widget.value = measurements_selection_files
 datasets_widget.observe(datasets_widget_changed, names="value")
+datasets_selection_py_files_widget.observe(datasets_widget_changed, names="value") # does not work
 
 
 def measurements_selection_widget_changed(change):
+    statustext_widget.value = 'measurements_selection_widget_changed triggered' 
+    datasets_selection_py_file = datasets_selection_py_files_widget.value
+    if os.path.isfile(datasets_selection_py_file):
+        exec(open(datasets_selection_py_file).read())
     if len(measurements_selection_widget.value) > 0: # avoid the empty array that is generated during datasets_widget_changed
         measurements_selection = []
         for f in measurements_selection_widget.value:
@@ -3348,7 +3356,7 @@ def measurements_selection_widget_changed(change):
     datasets_selection_py_file = datasets_selection_py_files_widget.value
     with open(datasets_selection_py_file, 'w') as f:
         print(datasets_selection, file=f)
-    text1 = 'datasets_selection = collections.'
+    text1 = 'global datasets_selection; datasets_selection = collections.' # see https://stackoverflow.com/questions/23168282/setting-variables-with-exec-inside-a-function
     with open(datasets_selection_py_file) as fpin:
         text2 = fpin.read()
     text = text1 + text2
