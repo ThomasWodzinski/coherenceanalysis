@@ -22,10 +22,6 @@ from coherencefinder.fitting_module import Airy, find_sigma, fit_profile, fit_pr
 
 # <codecell>
 
-#!pip install bqplot
-
-# <codecell>
-
 import time
 from datetime import datetime
 import numpy as np
