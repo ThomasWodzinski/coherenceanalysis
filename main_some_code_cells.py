@@ -769,3 +769,64 @@ df_deconv_scany.plot('ystep', 'chi2distance')
 
 # %% remove duplicates in df0
 df0 = df0.drop_duplicates(subset=['timestamp_pulse_id'])
+
+
+
+# %% some useful hdf5 commands
+
+# """# List all groups inside the hd5file"""
+
+# with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
+
+#     def printname(name):
+#         print(name)
+
+#     hdf5_file.visit(printname)
+
+
+# """# display bgsubtracted images"""
+
+
+# with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
+#     imageids = hdf5_file["/bgsubtracted/imageid"][:]
+#     imageid = imageids[0]
+#     pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
+#         np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+#     ]
+#     plt.imshow(pixis_image_norm)
+#     print(
+#         "imageid="
+#         + str(hdf5_file["/bgsubtracted/imageid"][np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]])
+#     )
+
+# with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
+#     imageids = hdf5_file["/bgsubtracted/imageid"][:]
+#     imageid = imageids[0]
+#     pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
+#         np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+#     ]
+#     plt.plot(pixis_profile_avg)
+#     print(
+#         "imageid="
+#         + str(hdf5_file["/bgsubtracted/imageid"][np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]])
+#     )
+
+# # reproducing
+# with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
+#     imageids = hdf5_file["/bgsubtracted/imageid"][:]
+#     imageid = imageids[0]
+#     # use here 1 sigma of the gaussian or something similar, so it is comparable to different profile sizes
+#     pixis_avg_width = 200
+#     pixis_centery_px = int(
+#         hdf5_file["/bgsubtracted/pixis_centery_px"][np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]][0]
+#     )
+#     print(pixis_centery_px)
+#     pixis_profile_avg = np.average(
+#         hdf5_file["/bgsubtracted/pixis_image_norm"][np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]][
+#             int(pixis_centery_px - pixis_avg_width / 2) : int(pixis_centery_px + pixis_avg_width / 2), :
+#         ],
+#         axis=0,
+#     )
+#     pixis_profile_avg = normalize(pixis_profile_avg)
+#     plt.plot(pixis_profile_avg)
+#     # why is this not giving the same profile?? in the GUI a width of 200 is defined. what was actually calculated?
