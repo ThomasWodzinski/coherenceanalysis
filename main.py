@@ -821,7 +821,7 @@ do_plot_xi_um_fit_vs_I_Airy2_fit_widget = widgets.Checkbox(value=False, descript
 
 
 
-def plot_fitting_v2(
+def plot_fitting(
     plotprofile_active,
     pixis_profile_avg_width,
     crop_px,
@@ -2011,8 +2011,8 @@ column5 = widgets.VBox([textarea_widget, beamsize_text_widget, fit_profile_text_
 plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3, column4, column5])
 
 
-plot_fitting_v2_interactive_output = interactive_output(
-    plot_fitting_v2,
+plot_fitting_interactive_output = interactive_output(
+    plot_fitting,
     {
         "plotprofile_active": do_fitting_widget,
         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
@@ -2655,7 +2655,7 @@ display(
     Javascript("""google.colab.output.setIframeHeight(0, true, {maxHeight: 5000})""")
 )  # https://stackoverflow.com/a/57346765
 
-children_left = [plot_fitting_v2_interactive_output,
+children_left = [plot_fitting_interactive_output,
                  plot_deconvmethod_interactive_output,
                  VBox([HBox([do_plot_deconvmethod_steps_widget, clear_plot_deconvmethod_steps_widget,
                       deconvmethod_ystep_widget, deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
