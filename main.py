@@ -501,11 +501,20 @@ sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.5, description=
 crop_px_widget = widgets.IntText(value=200, description='crop_px')
 pixis_profile_avg_width_widget = widgets.IntText(value=200, description='profile width / px')
 
+imageid_widget_layout = widgets.Layout(width="50%")
 imageid_widget = widgets.Dropdown(
-    # options=imageid_widget.options,
     options=[],
     description="imageid:",
     disabled=False,
+    layout=imageid_widget_layout
+)
+
+imageid_index_widget_layout = widgets.Layout(width="50%")
+imageid_index_widget = widgets.BoundedIntText(
+    options=[],
+    description="idx",
+    disabled=False,
+    layout=imageid_index_widget_layout
 )
 
 savefigure_profile_fit_widget = widgets.Checkbox(value=False, description="savefigure", disabled=False)
@@ -1922,7 +1931,7 @@ column0 = widgets.VBox(
         xatol_widget,
         sigma_x_F_gamma_um_multiplier_widget,
         crop_px_widget,
-        imageid_widget,
+        HBox([imageid_widget,imageid_index_widget]),
         savefigure_profile_fit_widget,
         
         do_textbox_widget,
@@ -2134,10 +2143,14 @@ def dph_settings_bgsubtracted_widget_changed(change):
     statustext_widget.value = "do_fitting_widget.value = False"
     imageid_widget.disabled = True
     imageid_widget.options = None
+    imageid_index_widget.disabled = True
     with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
         imageids = hdf5_file["/bgsubtracted/imageid"][:]
         imageid_widget.options = imageids
+        imageid_index_widget.min = 0
+        imageid_index_widget.max = len(imageid_widget.options) - 1
         imageid_widget.disabled = False
+        imageid_index_widget.disabled = False
         imageid = imageid_widget.value
         timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
             np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
@@ -2191,6 +2204,12 @@ def dph_settings_bgsubtracted_widget_changed(change):
 
 dph_settings_bgsubtracted_widget.observe(dph_settings_bgsubtracted_widget_changed, names="label")
 
+def imageid_index_widget_changed(change):
+    imageid_widget.value = imageid_widget.options[imageid_index_widget.value]
+    
+imageid_index_widget.observe(imageid_index_widget_changed, names="value")
+
+
 
 def datasets_widget_changed(change):
     datasets_selection_py_file = datasets_selection_py_files_widget.value
@@ -2243,6 +2262,8 @@ measurements_selection_widget.observe(measurements_selection_widget_changed, nam
 
 
 def imageid_widget_changed(change):
+
+    imageid_index_widget.value = np.where(imageid_widget.options == imageid_widget.value)[0][0]
     
     clear_plot_deconvmethod_steps_widget.value = True
     clear_plot_deconvmethod_steps_widget.value = False
