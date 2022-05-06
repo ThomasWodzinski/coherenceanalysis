@@ -501,7 +501,7 @@ sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.5, description=
 crop_px_widget = widgets.IntText(value=200, description='crop_px')
 pixis_profile_avg_width_widget = widgets.IntText(value=200, description='profile width / px')
 
-imageid_profile_fit_widget = widgets.Dropdown(
+imageid_widget = widgets.Dropdown(
     # options=imageid_widget.options,
     options=[],
     description="imageid:",
@@ -886,7 +886,7 @@ def plot_fitting(
 
         # Loading and preparing
 
-        imageid = imageid_profile_fit_widget.value
+        imageid = imageid_widget.value
 
         with h5py.File(hdf5_file_path, "r") as hdf5_file:
             pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
@@ -1415,7 +1415,7 @@ def plot_deconvmethod(
 
         # Loading and preparing
 
-        imageid = imageid_profile_fit_widget.value
+        imageid = imageid_widget.value
 
         with h5py.File(hdf5_file_path, "r") as hdf5_file:
             pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
@@ -1922,7 +1922,7 @@ column0 = widgets.VBox(
         xatol_widget,
         sigma_x_F_gamma_um_multiplier_widget,
         crop_px_widget,
-        imageid_profile_fit_widget,
+        imageid_widget,
         savefigure_profile_fit_widget,
         
         do_textbox_widget,
@@ -2018,7 +2018,7 @@ plot_fitting_interactive_output = interactive_output(
         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
         "crop_px" : crop_px_widget,
         "hdf5_file_path": dph_settings_bgsubtracted_widget,
-        # "imageid": imageid_profile_fit_widget,
+        # "imageid": imageid_widget,
         "savefigure": savefigure_profile_fit_widget,
         "save_to_df": save_to_df_widget,
         "do_textbox": do_textbox_widget,
@@ -2078,7 +2078,7 @@ plot_deconvmethod_interactive_output = interactive_output(
         "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_widget,
         "crop_px" : crop_px_widget,
         "hdf5_file_path": dph_settings_bgsubtracted_widget,
-        # "imageid": imageid_profile_fit_widget,
+        # "imageid": imageid_widget,
         "save_to_df": save_to_df_widget,
     },
 )
@@ -2100,7 +2100,7 @@ plot_fitting_vs_deconvolution_output = interactive_output(
         "do_plot_fitting_vs_deconvolution": do_plot_fitting_vs_deconvolution_widget,
         "dataset" : datasets_widget,
         "measurement_file" : dph_settings_bgsubtracted_widget,
-        "imageid": imageid_profile_fit_widget,
+        "imageid": imageid_widget,
         "xi_um_deconv_column_and_label" : xi_um_deconv_column_and_label_widget,
         "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget,
         "deconvmethod_outlier_limit" : deconvmethod_outlier_limit_widget,
@@ -2132,13 +2132,13 @@ def dph_settings_bgsubtracted_widget_changed(change):
     fittingprogress_widget.value = 0
     do_fitting_widget.value = False
     statustext_widget.value = "do_fitting_widget.value = False"
-    imageid_profile_fit_widget.disabled = True
-    imageid_profile_fit_widget.options = None
+    imageid_widget.disabled = True
+    imageid_widget.options = None
     with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
         imageids = hdf5_file["/bgsubtracted/imageid"][:]
-        imageid_profile_fit_widget.options = imageids
-        imageid_profile_fit_widget.disabled = False
-        imageid = imageid_profile_fit_widget.value
+        imageid_widget.options = imageids
+        imageid_widget.disabled = False
+        imageid = imageid_widget.value
         timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
             np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
         ][2]
@@ -2242,7 +2242,7 @@ def measurements_selection_widget_changed(change):
 measurements_selection_widget.observe(measurements_selection_widget_changed, names="value")
 
 
-def imageid_profile_fit_widget_changed(change):
+def imageid_widget_changed(change):
     
     clear_plot_deconvmethod_steps_widget.value = True
     clear_plot_deconvmethod_steps_widget.value = False
@@ -2258,7 +2258,7 @@ def imageid_profile_fit_widget_changed(change):
         do_deconvmethod_widget.value = False
 
     hdf5_file_path = dph_settings_bgsubtracted_widget.value
-    imageid = imageid_profile_fit_widget.value
+    imageid = imageid_widget.value
     shiftx_um = np.nan
     xi_um_guess = np.nan
     
@@ -2495,7 +2495,7 @@ def imageid_profile_fit_widget_changed(change):
     if do_deconvmethod_widget_was_active == True:
         do_deconvmethod_widget.value = True
 
-imageid_profile_fit_widget.observe(imageid_profile_fit_widget_changed, names="value")
+imageid_widget.observe(imageid_widget_changed, names="value")
 
 
 
@@ -2514,13 +2514,13 @@ def run_over_all_images():
 
     run_over_all_images_progress_widget.value = 0
     i = 0
-    for imageid in imageid_profile_fit_widget.options:
-        imageid_profile_fit_widget.value = imageid
+    for imageid in imageid_widget.options:
+        imageid_widget.value = imageid
         i = i+1
-        run_over_all_images_progress_widget.value = int(i/len(imageid_profile_fit_widget.options)*100)
+        run_over_all_images_progress_widget.value = int(i/len(imageid_widget.options)*100)
         end = datetime.now()
         time_taken = end - start
-        time_left = time_taken/i * (len(imageid_profile_fit_widget.options) - i)
+        time_left = time_taken/i * (len(imageid_widget.options) - i)
         run_over_all_images_statustext_widget.value = str(time_taken) + "|" + str(time_left)
     
     df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
