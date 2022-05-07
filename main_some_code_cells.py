@@ -84,20 +84,20 @@ if remove_fits_from_df == True:
             with h5py.File(f, "r") as hdf5_file:
                 timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
-        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] =  np.nan
-        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_at_center'] =  np.nan
-        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit'] =  np.nan
-        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit_at_center'] =  np.nan
-        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit'] =  np.nan
-        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector'] =  np.nan
-        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit'] =  np.nan
-        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_fit'] =  np.nan
-        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_fit'] =  np.nan
-        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_fit'] =  np.nan
-        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_fit'] =  np.nan
-        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] =  np.nan
-        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_fit'] =  np.nan
-        df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'gamma_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'gamma_fit_at_center'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'xi_um_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'xi_um_fit_at_center'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'wavelength_nm_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'd_um_at_detector'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'I_Airy1_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'I_Airy2_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'w1_um_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'w2_um_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'shiftx_um_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'x1_um_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'mod_sigma_um_fit'] =  np.nan
+        df0.loc[(df0['timestamp_pulse_id'].isin(timestamp_pulse_ids)), 'mod_shiftx_um_fit'] =  np.nan
 
         
 
