@@ -2214,7 +2214,6 @@ def dph_settings_bgsubtracted_widget_changed(change):
     # plotprofile_interactive_output.clear_output()
     fittingprogress_widget.value = 0
     do_fitting_widget.value = False
-    statustext_widget.value = "do_fitting_widget.value = False"
     imageid_widget.disabled = True
     imageid_widget.options = None
     imageid_index_widget.disabled = True
