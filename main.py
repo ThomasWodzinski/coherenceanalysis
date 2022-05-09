@@ -2608,8 +2608,6 @@ def run_over_all_images():
     start = datetime.now()
     run_over_all_images_progress_widget.bar_style = 'info'
     
-    do_fitting_widget.value = True
-
     run_over_all_images_progress_widget.value = 0
     i = 0
     for imageid in imageid_widget.options:
