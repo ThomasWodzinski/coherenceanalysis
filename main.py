@@ -446,7 +446,7 @@ fits_header_list6 = [
     'mod_shiftx_um_do_fit'
 ]
 
-fits_header_list7 = [ 'pixis_profile_avg_width,'
+fits_header_list7 = [ 'pixis_profile_avg_width',
             'xi_um_guess',
             'xatol',
             'sigma_x_F_gamma_um_multiplier',
