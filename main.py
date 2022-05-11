@@ -2325,7 +2325,7 @@ def imageid_widget_changed(change):
             timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
                 np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
             ][2]
-
+            statustext_widget.value = str(timestamp_pulse_id)
             pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
                 np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
             ][
