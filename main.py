@@ -2629,7 +2629,7 @@ def run_over_all_measurements():
         dph_settings_bgsubtracted_widget.value = measurement
         run_over_all_images()
         i = i+1
-        run_over_all_measurements_progress_widget.value = int(i/len(dph_settings_bgsubtracted_widget.options)*100)
+        run_over_all_measurements_progress_widget.value = int(i/len(measurements_selection_widget.value)*100)
         end = datetime.now()
         time_taken = end - start
         time_left = time_taken/i * (len(measurements_selection_widget.value) - i)
