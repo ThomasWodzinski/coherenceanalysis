@@ -2581,27 +2581,33 @@ imageid_widget.observe(imageid_widget_changed, names="value")
 # run widgets behaviour
 
 ## run_over_all_images
-
+run_over_all_images_continue_file = 'delete_this_file_to_abort_run_over_all_images.py'
 def run_over_all_images():
     start = datetime.now()
+    with open(run_over_all_images_continue_file,'w') as f:
+        f.write('from os import remove;from sys import argv;remove(argv[0])')
     run_over_all_images_progress_widget.bar_style = 'info'
     
     run_over_all_images_progress_widget.value = 0
     i = 0
     for imageid in imageid_widget.options:
-        imageid_widget.value = imageid
-        i = i+1
-        run_over_all_images_progress_widget.value = int(i/len(imageid_widget.options)*100)
-        end = datetime.now()
-        time_taken = end - start
-        time_left = time_taken/i * (len(imageid_widget.options) - i)
-        run_over_all_images_statustext_widget.value = str(time_taken) + "|" + str(time_left)
+        if os.path.isfile(run_over_all_images_continue_file):
+            imageid_widget.value = imageid
+            i = i+1
+            run_over_all_images_progress_widget.value = int(i/len(imageid_widget.options)*100)
+            end = datetime.now()
+            time_taken = end - start
+            time_left = time_taken/i * (len(imageid_widget.options) - i)
+            run_over_all_images_statustext_widget.value = str(time_taken) + "|" + str(time_left)
     
     df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
     df_fits_csv_file = df_fits_csv_files_widget.value
     df_fits.to_csv(df_fits_csv_file)
 
-    run_over_all_images_progress_widget.bar_style = 'success'
+    if os.path.isfile(run_over_all_images_continue_file):
+        run_over_all_images_progress_widget.bar_style = 'success'
+    else:
+        run_over_all_images_progress_widget.bar_style = 'danger'
 
 
 def update_run_over_all_images_widget(change):
@@ -2618,23 +2624,29 @@ run_over_all_images_widget.observe(update_run_over_all_images_widget, names='val
 
 
 ## run_over_all_measurements
-
+run_over_all_measurements_continue_file = 'delete_this_file_to_abort_run_over_all_measurements.py'
 def run_over_all_measurements():
     start = datetime.now()
+    with open(run_over_all_measurements_continue_file,'w') as f:
+        f.write('from os import remove;from sys import argv;remove(argv[0])')
     run_over_all_measurements_progress_widget.bar_style = 'info'
     
     run_over_all_measurements_progress_widget.value = 0
     i = 0
     for measurement in measurements_selection_widget.value:
-        dph_settings_bgsubtracted_widget.value = measurement
-        run_over_all_images()
-        i = i+1
-        run_over_all_measurements_progress_widget.value = int(i/len(measurements_selection_widget.value)*100)
-        end = datetime.now()
-        time_taken = end - start
-        time_left = time_taken/i * (len(measurements_selection_widget.value) - i)
-        run_over_all_measurements_statustext_widget.value = str(time_taken) + "|" + str(time_left)
-    run_over_all_measurements_progress_widget.bar_style = 'success'
+        if os.path.isfile(run_over_all_measurements_continue_file):
+            dph_settings_bgsubtracted_widget.value = measurement
+            run_over_all_images()
+            i = i+1
+            run_over_all_measurements_progress_widget.value = int(i/len(measurements_selection_widget.value)*100)
+            end = datetime.now()
+            time_taken = end - start
+            time_left = time_taken/i * (len(measurements_selection_widget.value) - i)
+            run_over_all_measurements_statustext_widget.value = str(time_taken) + "|" + str(time_left)
+    if os.path.isfile(run_over_all_measurements_continue_file):
+        run_over_all_measurements_progress_widget.bar_style = 'success'
+    else:
+        run_over_all_measurements_progress_widget.bar_style = 'danger'
 
 
 def update_run_over_all_measurements_widget(change):
@@ -2651,23 +2663,29 @@ run_over_all_measurements_widget.observe(update_run_over_all_measurements_widget
 
 
 ## run_over_all_datasets
-
+run_over_all_datasets_continue_file = 'delete_this_file_to_abort_run_over_all_datasets.py'
 def run_over_all_datasets():
     start = datetime.now()
+    with open(run_over_all_datasets_continue_file,'w') as f:
+        f.write('from os import remove;from sys import argv;remove(argv[0])')
     run_over_all_datasets_progress_widget.bar_style = 'info'
     
     run_over_all_datasets_progress_widget.value = 0
     i = 0
     for dataset in list(datasets_selection):
-        datasets_widget.value = dataset
-        run_over_all_measurements()
-        i = i+1
-        run_over_all_datasets_progress_widget.value = int(i/len(list(datasets_selection))*100)
-        end = datetime.now()
-        time_taken = end - start
-        time_left = time_taken/i * (len(list(datasets_selection)) - i)
-        run_over_all_datasets_statustext_widget.value = str(time_taken) + "|" + str(time_left)
-    run_over_all_datasets_progress_widget.bar_style = 'success'
+        if os.path.isfile(run_over_all_measurements_continue_file):
+            datasets_widget.value = dataset
+            run_over_all_measurements()
+            i = i+1
+            run_over_all_datasets_progress_widget.value = int(i/len(list(datasets_selection))*100)
+            end = datetime.now()
+            time_taken = end - start
+            time_left = time_taken/i * (len(list(datasets_selection)) - i)
+            run_over_all_datasets_statustext_widget.value = str(time_taken) + "|" + str(time_left)
+    if os.path.isfile(run_over_all_datasets_continue_file):
+        run_over_all_datasets_progress_widget.bar_style = 'success'
+    else:
+        run_over_all_datasets_progress_widget.bar_style = 'danger'
 
 
 def update_run_over_all_datasets_widget(change):
