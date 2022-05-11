@@ -2214,9 +2214,6 @@ plot_xi_um_fit_vs_I_Airy2_fit_output = interactive_output(
 def dph_settings_bgsubtracted_widget_changed(change):
     # plotprofile_interactive_output.clear_output()
 
-    # why is imageid_widget_changed triggered, although do_fitting_widget.value = False ???
-
-
     fittingprogress_widget.value = 0
     do_fitting_widget.value = False
 
@@ -2237,57 +2234,7 @@ def dph_settings_bgsubtracted_widget_changed(change):
             imageid_index_widget.value = 0
             imageid_widget.disabled = False
             imageid_index_widget.disabled = False
-    #     imageid = imageid_widget.value
-    #     timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
-    #         np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
-    #     ][2]
-    #     pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
-    #         np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
-    #     ][
-    #         0
-    #     ]  # needed for what?
-    #     setting_wavelength_nm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["setting_wavelength_nm"].iloc[0]
-    #     pinholes_bg_avg_sx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sx_um"].iloc[0]
-    #     pinholes_bg_avg_sy_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sy_um"].iloc[0]
-    #     ph = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
-    #     separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
-    #     orientation = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["orientation"].iloc[0]
 
-    #     pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
-    #             np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
-    #     ]
-
-    #     # determine how far the maximum of the image is shifted from the center
-    #     pixis_image_norm_max_x_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[1][0]
-    #     pixis_image_norm_max_y_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[0][0]
-    #     pixis_image_norm_min_x_px = np.where(pixis_image_norm==np.min(pixis_image_norm))[1][0]
-    #     pixis_image_norm_min_y_px = np.where(pixis_image_norm==np.min(pixis_image_norm))[0][0]
-    #     delta_max_x_px = pixis_image_norm_max_x_px - int(np.shape(pixis_image_norm)[1]/2)
-    #     delta_max_x_um = delta_max_x_px*13
-    #     delta_min_x_px = pixis_image_norm_min_x_px - int(np.shape(pixis_image_norm)[1]/2)
-    #     textarea_widget.value = 'max_x_px='+str(pixis_image_norm_max_x_px)+'\n'+'min_x_px='+str(pixis_image_norm_min_x_px) +'\n' + \
-    #         'delta_max_x_um='+str(delta_max_x_px*13)+'\n'+'delta_min_x_um='+str(delta_min_x_px*13)
-    #     # if the peaks of the two airy disks are two far away from the center set the shift to 0. Choose the range of shiftx_um empirically
-    #     if abs(delta_max_x_um) > abs(max(shiftx_um_range_widget.value)):
-    #         shiftx_um_widget.value = 0
-    #     else:
-    #         shiftx_um_widget.value = delta_max_x_um
-        
-
-    # wavelength_nm_widget.value = setting_wavelength_nm
-    # wavelength_nm_range_widget.value = value = [wavelength_nm_widget.value - 0.1, wavelength_nm_widget.value + 0.1]
-    # d_um_widget.value = separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
-    # x1_um_widget.value = -d_um_widget.value * 10 / 2
-    # x2_um_widget.value = d_um_widget.value * 10 / 2
-    # x1_um_range_widget.value = [-d_um_widget.value * 10 / 2 - 1000, 0]
-    # x2_um_range_widget.value = [0, d_um_widget.value * 10 / 2 + 1000]
-    # if orientation == "horizontal":
-    #     beamsize_text_widget.value = r"%.2fum" % (pinholes_bg_avg_sx_um,)
-    # if orientation == "vertical":
-    #     beamsize_text_widget.value = r"%.2fum" % (pinholes_bg_avg_sy_um,)
-
-
-# to do: move above part to imageid_widget_changed!
 
 
 dph_settings_bgsubtracted_widget.observe(dph_settings_bgsubtracted_widget_changed, names="value") # this was the root cause!
@@ -2392,9 +2339,30 @@ def imageid_widget_changed(change):
             separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
             orientation = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["orientation"].iloc[0]
 
+            if orientation == "horizontal":
+                beamsize_text_widget.value = r"%.2fum" % (pinholes_bg_avg_sx_um,)
+            if orientation == "vertical":
+                beamsize_text_widget.value = r"%.2fum" % (pinholes_bg_avg_sy_um,)
+
             pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
                     np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
             ]
+
+            # determine how far the maximum of the image is shifted from the center
+            pixis_image_norm_max_x_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[1][0]
+            pixis_image_norm_max_y_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[0][0]
+            pixis_image_norm_min_x_px = np.where(pixis_image_norm==np.min(pixis_image_norm))[1][0]
+            pixis_image_norm_min_y_px = np.where(pixis_image_norm==np.min(pixis_image_norm))[0][0]
+            delta_max_x_px = pixis_image_norm_max_x_px - int(np.shape(pixis_image_norm)[1]/2)
+            delta_max_x_um = delta_max_x_px*13
+            delta_min_x_px = pixis_image_norm_min_x_px - int(np.shape(pixis_image_norm)[1]/2)
+            textarea_widget.value = 'max_x_px='+str(pixis_image_norm_max_x_px)+'\n'+'min_x_px='+str(pixis_image_norm_min_x_px) +'\n' + \
+                'delta_max_x_um='+str(delta_max_x_px*13)+'\n'+'delta_min_x_um='+str(delta_min_x_px*13)
+            # if the peaks of the two airy disks are two far away from the center set the shift to 0. Choose the range of shiftx_um empirically
+            if abs(delta_max_x_um) > abs(max(shiftx_um_range_widget.value)):
+                shiftx_um_widget.value = 0
+            else:
+                shiftx_um_widget.value = delta_max_x_um
 
         if load_from_df_widget.value == True:
 
