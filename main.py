@@ -446,7 +446,7 @@ fits_header_list6 = [
     'mod_shiftx_um_do_fit'
 ]
 
-fits_header_list7 = [ 'pixis_profile_avg_width,'
+fits_header_list7 = [ 'pixis_profile_avg_width',
             'xi_um_guess',
             'xatol',
             'sigma_x_F_gamma_um_multiplier',
@@ -2223,7 +2223,6 @@ def dph_settings_bgsubtracted_widget_changed(change):
         # imageid_widget.options = None
         # imageid_index_widget.disabled = True   
         with h5py.File(dph_settings_bgsubtracted_widget.value, "r") as hdf5_file:
-            statustext_widget.value = str(hdf5_file)
             imageids=[]
             imageids = hdf5_file["/bgsubtracted/imageid"][:]
             imageid_widget.value = None
@@ -2326,7 +2325,7 @@ def imageid_widget_changed(change):
             timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
                 np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
             ][2]
-
+            statustext_widget.value = str(timestamp_pulse_id)
             pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
                 np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
             ][
