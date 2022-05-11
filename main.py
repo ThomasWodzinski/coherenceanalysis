@@ -2215,24 +2215,21 @@ def dph_settings_bgsubtracted_widget_changed(change):
     # plotprofile_interactive_output.clear_output()
 
     fittingprogress_widget.value = 0
-    do_fitting_widget.value = False
 
-    if do_fitting_widget.value == False:
-
-        imageid_widget.disabled = True
-        # imageid_widget.options = None
-        # imageid_index_widget.disabled = True   
-        with h5py.File(dph_settings_bgsubtracted_widget.value, "r") as hdf5_file:
-            imageids=[]
-            imageids = hdf5_file["/bgsubtracted/imageid"][:]
-            imageid_widget.value = None
-            imageid_widget.options = None
-            imageid_widget.options = imageids
-            imageid_index_widget.min = 0
-            imageid_index_widget.max = len(imageid_widget.options) - 1
-            imageid_index_widget.value = 0
-            imageid_widget.disabled = False
-            imageid_index_widget.disabled = False
+    imageid_widget.disabled = True
+    # imageid_widget.options = None
+    # imageid_index_widget.disabled = True   
+    with h5py.File(dph_settings_bgsubtracted_widget.value, "r") as hdf5_file:
+        imageids=[]
+        imageids = hdf5_file["/bgsubtracted/imageid"][:]
+        imageid_widget.value = None
+        imageid_widget.options = None
+        imageid_widget.options = imageids
+        imageid_index_widget.min = 0
+        imageid_index_widget.max = len(imageid_widget.options) - 1
+        imageid_index_widget.value = 0
+        imageid_widget.disabled = False
+        imageid_index_widget.disabled = False
 
 
 
