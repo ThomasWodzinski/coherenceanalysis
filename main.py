@@ -2223,7 +2223,6 @@ def dph_settings_bgsubtracted_widget_changed(change):
         # imageid_widget.options = None
         # imageid_index_widget.disabled = True   
         with h5py.File(dph_settings_bgsubtracted_widget.value, "r") as hdf5_file:
-            statustext_widget.value = str(hdf5_file)
             imageids=[]
             imageids = hdf5_file["/bgsubtracted/imageid"][:]
             imageid_widget.value = None
