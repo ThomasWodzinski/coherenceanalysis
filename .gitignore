@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+fonts/static_otf.zip
+fonts/static_otf/STIXTwoMath-Regular.otf
+fonts/static_otf/STIXTwoText-Bold.otf
+fonts/static_otf/STIXTwoText-BoldItalic.otf
+fonts/static_otf/STIXTwoText-Italic.otf
+fonts/static_otf/STIXTwoText-Medium.otf
+fonts/static_otf/STIXTwoText-MediumItalic.otf
+fonts/static_otf/STIXTwoText-Regular.otf
+fonts/static_otf/STIXTwoText-SemiBold.otf
+fonts/static_otf/STIXTwoText-SemiBoldItalic.otf
