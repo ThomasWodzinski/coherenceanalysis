@@ -20,7 +20,20 @@ scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
 from coherencefinder.deconvolution_module import calc_sigma_F_gamma_um, deconvmethod, normalize
 from coherencefinder.fitting_module import Airy, find_sigma, fit_profile, fit_profile_v2, gaussian
 
-# <codecell>
+
+# install missing packages --> see https://stackoverflow.com/a/63096701
+import sys
+import subprocess
+import pkg_resources
+
+required  = {'numpy', 'pandas', 'lmfit', 'wget', 'scipy', 'h5py', 'ipywidgets'} 
+installed = {pkg.key for pkg in pkg_resources.working_set}
+missing   = required - installed
+
+if missing:
+    # implement pip as a subprocess:
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', *missing])
+
 
 import time
 from datetime import datetime
@@ -57,7 +70,7 @@ import scipy
 
 import pandas as pd
 
-# pip install lmfit
+
 
 from lmfit import Model
 import warnings
@@ -91,7 +104,7 @@ import os.path
 # %% settings for figures and latex
 
 # download stixfonts with wget module if missing --> see https://stackoverflow.com/a/28313383
-# pip install wget
+
 import wget
 fonts_dir = './fonts'
 if os.path.isfile(os.path.join(fonts_dir,'static_otf.zip')) == False:
