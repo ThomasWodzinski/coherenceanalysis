@@ -17,10 +17,6 @@ scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
 
 # imports
 
-from coherencefinder.deconvolution_module import calc_sigma_F_gamma_um, deconvmethod, normalize
-from coherencefinder.fitting_module import Airy, find_sigma, fit_profile, fit_profile_v2, gaussian
-
-
 # install missing packages --> see https://stackoverflow.com/a/63096701
 import sys
 import subprocess
@@ -94,6 +90,10 @@ import scipy.optimize as optimize
 from IPython.display import display, clear_output
 
 import os.path
+
+
+from coherencefinder.deconvolution_module import calc_sigma_F_gamma_um, deconvmethod, normalize
+from coherencefinder.fitting_module import Airy, find_sigma, fit_profile, fit_profile_v2, gaussian
 
 # import pickle as pl
 
