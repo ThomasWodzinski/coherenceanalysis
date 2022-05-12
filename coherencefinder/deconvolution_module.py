@@ -221,6 +221,8 @@ def deconvmethod_2d_x(
     deconvmethod_steps_dir
 ):
 
+    crop_px = int(crop_px)
+
     # number of pixels
     n = partiallycoherent.shape[0]
     nx = n
