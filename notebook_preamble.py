@@ -6,7 +6,6 @@ from pathlib import Path  # see https://docs.python.org/3/library/pathlib.html#b
 # ! git clone --branch develop https://github.com/ThomasWodzinski/coherence-analysis.git
 ! git clone https://github.com/ThomasWodzinski/coherence-analysis.git
 %cd coherence-analysis/
-! pip install lmfit
 
 ## Define paths
 # use data stored in own google drive location
