@@ -90,6 +90,30 @@ import os.path
 
 # %% settings for figures and latex
 
+# download stixfonts with wget module if missing --> see https://stackoverflow.com/a/28313383
+# pip install wget
+import wget
+fonts_dir = './fonts'
+if os.path.isfile(os.path.join(fonts_dir,'static_otf.zip')) == False:
+    url='https://github.com/stipub/stixfonts/raw/master/zipfiles/static_otf.zip'
+    if os.path.isdir(fonts_dir) == False:
+        os.mkdir(fonts_dir)
+    wget.download(url,out='./fonts')
+
+# unzip --> see https://stackoverflow.com/a/3451150
+
+import zipfile
+if os.path.isdir(os.path.join(fonts_dir,'static_otf')) == False:
+    with zipfile.ZipFile(os.path.join(fonts_dir,'static_otf.zip'), 'r') as zip_ref:
+        zip_ref.extractall('./fonts/')
+
+# add stixfonts -> see https://stackoverflow.com/a/65841091
+from matplotlib import font_manager as fm
+font_files = fm.findSystemFonts(fonts_dir)
+for font_file in font_files:
+    fm.fontManager.addfont(font_file)
+
+
 # from
 # # https://www.dmcdougall.co.uk/publication-ready-the-first-time-beautiful-reproducible-plots-with-matplotlib
 
