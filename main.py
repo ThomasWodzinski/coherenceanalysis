@@ -735,16 +735,16 @@ beamsize_text_widget = widgets.Text(
     value="", placeholder="beamsize in rms", description=r"beam rms", disabled=False
 )
 fit_profile_text_widget = widgets.Text(
-    value="", placeholder="xi_fit_um", description=r"\({\xi}_{fit}\)", disabled=False
+    value="", placeholder="xi_fit_um", description='ξ (fit) / μm', disabled=False # \({\xi}_{fit}\
 )
 xi_um_fit_at_center_text_widget = widgets.Text(
-    value="", placeholder="xi_fit_um_at_center", description=r"\({\xi}_{fit}_{center}\)", disabled=False
+    value="", placeholder="xi_fit_um_at_center", description='ξ (fit at center)  / μm', disabled=False # r"\({\xi}_{fit}_{center}\)"
 )
 deconvmethod_simple_text_widget = widgets.Text(
-    value="", placeholder="xi_um", description=r"{\xi}", disabled=False
+    value="", placeholder="xi_um", description='ξ / μm', disabled=False
 ) 
 deconvmethod_text_widget = widgets.Text(
-    value="", placeholder="(xi_x_um, xi_y_um)", description=r"\({\xi}_x,{\xi}_y\)", disabled=False
+    value="", placeholder="(xi_x_um, xi_y_um)", description='(ξˣ, ξʸ) / μm', disabled=False # r"\({\xi}_x,{\xi}_y\)"
 )  # latex only working in browser?
 
 shiftx_um_widget = widgets.FloatSlider(min=-n / 2 * 13, max=n / 2 * 13, value=477, step=1, description="shiftx_um")
