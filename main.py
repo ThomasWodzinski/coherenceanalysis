@@ -472,7 +472,9 @@ fits_header_list6 = [
     'normfactor',
     'normfactor_range_0',
     'normfactor_range_1',
-    'normfactor_do_fit',
+    'normfactor_do_fit']
+
+fits_header_list7 = [
     'mod_sigma_um',
     'mod_sigma_um_range_0',
     'mod_sigma_um_range_1',
@@ -483,14 +485,14 @@ fits_header_list6 = [
     'mod_shiftx_um_do_fit'
 ]
 
-fits_header_list7 = [ 'pixis_profile_avg_width',
+fits_header_list8 = [ 'pixis_profile_avg_width',
             'xi_um_guess',
             'xatol',
             'sigma_x_F_gamma_um_multiplier',
             'crop_px'
 ]
 
-fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4 + fits_header_list5 + fits_header_list6 + fits_header_list7
+fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4 + fits_header_list5 + fits_header_list6 + fits_header_list7 + fits_header_list8
 
 
 # fits_header_list1 already exists in saved csv, only adding fits_header_list2, only initiate when
@@ -507,6 +509,34 @@ df_fits_clean = df_fits[df_fits["pixis_rotation"].notna()].drop_duplicates()
 df_fits = df_fits_clean
 df_fits = df_fits.reindex(columns = df_fits.columns.tolist() + list(set(fits_header_list) - set(df_fits.columns.tolist())) )
 df0 = pd.merge(df_temp, df_fits, on="timestamp_pulse_id", how="outer")
+
+
+# %% default values per measurement
+
+measurement_arr = []
+dataset_arr = []
+
+for dataset in list(datasets):
+    for measurement in datasets[dataset]:
+        measurement_arr.append(measurement)
+        dataset_arr.append(dataset)
+
+df_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
+                                    'measurement' : measurement_arr})
+
+measurement_default_headers = []
+for header in fits_header_list7 + fits_header_list8:
+    measurement_default_headers.append(header + '_measurement_default')
+
+df_measurement_default = df_measurement_default.reindex(columns = df_measurement_default.columns.tolist() + list(set(measurement_default_headers) - set(df_measurement_default.columns.tolist())) )
+
+# store also 'measurement' into df_fits to be able to cross-correlate!
+
+df_measurement_default_file = Path.joinpath(data_dir, 'df_measurement_default.csv')
+if os.path.isfile(df_measurement_default_file):
+    df_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+
+
 
 
 # %%
@@ -535,7 +565,7 @@ xi_um_guess_widget = widgets.FloatText(value=900, description='xi_um_guess')
 scan_x_widget = widgets.Checkbox(value=False, description="scan_x", disabled=False)
 xatol_widget = widgets.FloatText(value=5, description='xatol')
 sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget')
-crop_px_widget = widgets.IntText(value=200, description='crop_px')
+crop_px_widget = widgets.FloatText(value=200, description='crop_px')
 pixis_profile_avg_width_widget = widgets.IntText(value=200, description='profile width / px')
 
 imageid_widget_layout = widgets.Layout(width="50%")
@@ -2519,7 +2549,7 @@ def imageid_widget_changed(change):
                 sigma_x_F_gamma_um_multiplier_widget.value = sigma_x_F_gamma_um_multiplier
                 crop_px_widget.value = crop_px
 
-                
+        measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]        
         # Set default values for fitting
         if load_from_df_widget.value == False or np.isnan(shiftx_um) == True:
             # load default values instead and inform that there are no saved values!
@@ -2587,6 +2617,12 @@ def imageid_widget_changed(change):
             normfactor_widget.value = 1.0
             normfactor_range_widget.value = [0.1, 1.5]
             normfactor_do_fit_widget.value = False
+            # mod_sigma_um_widget.value = 3000.0 # not for all datasets the same, adapt!
+            # mod_sigma_um_range_widget.value = [1500, 100000]
+            # mod_sigma_um_do_fit_widget.value = True
+            # mod_shiftx_um_widget.value = 3000.0
+            # mod_shiftx_um_range_widget.value = [-10000, 10000]
+            # mod_shiftx_um_do_fit_widget.value = True
             mod_sigma_um_widget.value = 3000.0 # not for all datasets the same, adapt!
             mod_sigma_um_range_widget.value = [1500, 100000]
             mod_sigma_um_do_fit_widget.value = True
@@ -2597,10 +2633,10 @@ def imageid_widget_changed(change):
         # Set default values for Deconvmethod
         if load_from_df_widget.value == False or np.isnan(xi_um_guess) == True:
             pixis_profile_avg_width_widget.value = 200
-            xi_um_guess_widget.value = 900
-            xatol_widget.value = 5
-            sigma_x_F_gamma_um_multiplier_widget.value = 1.2
-            crop_px_widget.value = 50
+            xi_um_guess_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+            xatol_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+            sigma_x_F_gamma_um_multiplier_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+            crop_px_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
 
         if do_fitting_widget_was_active == True:
             do_fitting_widget.value = True
@@ -2611,8 +2647,75 @@ def imageid_widget_changed(change):
 imageid_widget.observe(imageid_widget_changed, names="value")
 
 
+# set measurement default widget
 
+set_measurement_default_widget = widgets.ToggleButton(
+    value=False,
+    description='set measurement default',
+    disabled=False,
+    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+    tooltip='set measurement default',
+    icon=''
+)
 
+def set_measurement_default(change):
+    if set_measurement_default_widget.value == True:
+        measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]
+        # Set default values for Fitting
+        df_measurement_default.loc[df_measurement_default['measurement']==measurement, 'mod_sigma_um_measurement_default'] = mod_sigma_um_widget.value
+        df_measurement_default.loc[df_measurement_default['measurement']==measurement, 'mod_sigma_um_range_0_measurement_default'] = mod_sigma_um_range_widget.value[0]
+        df_measurement_default.loc[df_measurement_default['measurement']==measurement, 'mod_sigma_um_range_1_measurement_default'] = mod_sigma_um_range_widget.value[1]
+        df_measurement_default.loc[df_measurement_default['measurement']==measurement, 'mod_sigma_um_do_fit_measurement_default'] = mod_sigma_um_do_fit_widget.value
+        df_measurement_default.loc[df_measurement_default['measurement']==measurement, 'mod_shiftx_um_measurement_default'] = mod_shiftx_um_widget.value
+        df_measurement_default.loc[df_measurement_default['measurement']==measurement, 'mod_shiftx_um_range_0_measurement_default'] = mod_shiftx_um_range_widget.value[0]
+        df_measurement_default.loc[df_measurement_default['measurement']==measurement, 'mod_shiftx_um_range_1_measurement_default'] = mod_shiftx_um_range_widget.value[1]
+        df_measurement_default.loc[df_measurement_default['measurement']==measurement, 'mod_shiftx_um_do_fit_measurement_default'] = mod_shiftx_um_do_fit_widget.value
+        # Set default values for Deconvmethod
+        df_measurement_default.loc[df_measurement_default['measurement']==measurement, 'xi_um_guess_measurement_default'] = xi_um_guess_widget.value
+        df_measurement_default.loc[df_measurement_default['measurement']==measurement, 'xatol_measurement_default'] = xatol_widget.value
+        df_measurement_default.loc[df_measurement_default['measurement']==measurement, 'sigma_x_F_gamma_um_multiplier_measurement_default'] = sigma_x_F_gamma_um_multiplier_widget.value
+        df_measurement_default.loc[df_measurement_default['measurement']==measurement, 'crop_px_measurement_default'] = crop_px_widget.value
+        set_measurement_default_widget.value = False
+
+set_measurement_default_widget.observe(set_measurement_default, names="value")
+
+# save measurement default to csv widget
+
+save_measurement_default_to_csv_widget = widgets.ToggleButton(
+    value=False,
+    description='measurement default --> csv',
+    disabled=False,
+    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+    tooltip='save measurement default to csv',
+    icon=''
+)
+
+def save_measurement_default_to_csv(change):
+    if save_measurement_default_to_csv_widget.value == True:
+        df_measurement_default.to_csv(df_measurement_default_file)
+        save_measurement_default_to_csv_widget.value = False
+
+save_measurement_default_to_csv_widget.observe(save_measurement_default_to_csv, names="value")
+
+# load measurement default from csv widget
+
+load_measurement_default_from_csv_widget = widgets.ToggleButton(
+    value=False,
+    description='csv --> measurement default',
+    disabled=False,
+    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+    tooltip='load measurement default from csv',
+    icon=''
+)
+
+def load_measurement_default_from_csv(change):
+    global df_measurement_default
+    if load_measurement_default_from_csv_widget.value == True:
+        if os.path.isfile(df_measurement_default_file):
+            df_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+        load_measurement_default_from_csv_widget.value = False
+
+load_measurement_default_from_csv_widget.observe(load_measurement_default_from_csv, names="value")
 
 
 # run widgets behaviour
@@ -2820,7 +2923,7 @@ display(
             dph_settings_bgsubtracted_widget,
             measurements_selection_widget,
             plotprofile_interactive_input,
-            HBox([save_to_df_widget, load_from_df_widget, scan_for_df_fits_csv_files_widget, df_fits_csv_files_widget, load_csv_to_df_widget, df_fits_csv_save_widget, create_new_csv_file_widget
+            HBox([load_measurement_default_from_csv_widget, set_measurement_default_widget, save_measurement_default_to_csv_widget, save_to_df_widget, load_from_df_widget, scan_for_df_fits_csv_files_widget, df_fits_csv_files_widget, load_csv_to_df_widget, df_fits_csv_save_widget, create_new_csv_file_widget
                  ]),
             HBox([run_over_all_datasets_widget, run_over_all_datasets_progress_widget, run_over_all_datasets_statustext_widget,
                 run_over_all_measurements_widget, run_over_all_measurements_progress_widget, run_over_all_measurements_statustext_widget,
@@ -2832,4 +2935,5 @@ display(
 dph_settings_bgsubtracted_widget_changed(None)
  
 
-# %%
+
+
