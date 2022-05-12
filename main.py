@@ -2710,7 +2710,7 @@ def run_over_all_datasets():
     run_over_all_datasets_progress_widget.value = 0
     i = 0
     for dataset in list(datasets_selection):
-        if os.path.isfile(run_over_all_measurements_continue_file):
+        if os.path.isfile(run_over_all_datasets_continue_file):
             datasets_widget.value = dataset
             run_over_all_measurements()
             i = i+1
