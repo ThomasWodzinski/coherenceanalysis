@@ -876,16 +876,21 @@ xi_um_deconv_column_and_label_widget = widgets.Dropdown(
     options=xi_um_deconv_options + xi_um_fit_options,
     description="deconv variant:",
     disabled=False,
+    layout=widgets.Layout(width='auto')
 )
 
 xi_um_fit_column_and_label_widget = widgets.Dropdown(
     options= xi_um_fit_options + xi_um_deconv_options,
     description="fitting variant:",
     disabled=False,
+    layout=widgets.Layout(width='auto')
 )
 
-deconvmethod_outlier_limit_widget = widgets.FloatText(value = 2000, description='List Outlier Threshold')
-fitting_outlier_limit_widget = widgets.FloatText(value = 2000, description='List Outlier Threshold')
+deconvmethod_outlier_limit_widget = widgets.FloatText(value = 2000, description='List Outlier Threshold',layout=widgets.Layout(width='auto'))
+fitting_outlier_limit_widget = widgets.FloatText(value = 2000, description='List Outlier Threshold',layout=widgets.Layout(width='auto'))
+
+xaxisrange_widget = widgets.IntRangeSlider(min=0, max=4000, value=[0,2000], description='x-axis', layout=widgets.Layout(width='auto'))
+yaxisrange_widget = widgets.IntRangeSlider(min=0, max=4000, value=[0,2000], description='y-axis', layout=widgets.Layout(width='auto'))
 
 
 do_plot_CDCs_widget = widgets.Checkbox(value=False, description="do plot CDCs")
@@ -1724,7 +1729,9 @@ def plot_fitting_vs_deconvolution(
     xi_um_deconv_column_and_label,
     xi_um_fit_column_and_label,
     deconvmethod_outlier_limit,
-    fitting_outlier_limit
+    fitting_outlier_limit,
+    xaxisrange,
+    yaxisrange
 ):
 
     if do_plot_fitting_vs_deconvolution == True:
@@ -1786,8 +1793,8 @@ def plot_fitting_vs_deconvolution(
         plt.plot(x,x, c='grey')
         
 
-        plt.xlim(0,2000)
-        plt.ylim(0,2000)
+        plt.xlim(xaxisrange[0],xaxisrange[1])
+        plt.ylim(yaxisrange[0],yaxisrange[1])
         plt.xlabel(xi_um_deconv_label)
         plt.ylabel(xi_um_fit_label)
         plt.gca().set_aspect('equal')
@@ -2259,7 +2266,9 @@ plot_fitting_vs_deconvolution_output = interactive_output(
         "xi_um_deconv_column_and_label" : xi_um_deconv_column_and_label_widget,
         "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget,
         "deconvmethod_outlier_limit" : deconvmethod_outlier_limit_widget,
-        "fitting_outlier_limit" : fitting_outlier_limit_widget
+        "fitting_outlier_limit" : fitting_outlier_limit_widget,
+        'xaxisrange' : xaxisrange_widget,
+        'yaxisrange' : yaxisrange_widget
     },
 )
 
@@ -2268,8 +2277,7 @@ plot_CDCs_output = interactive_output(
     {
         "do_plot_CDCs": do_plot_CDCs_widget,
         "xi_um_deconv_column_and_label" : xi_um_deconv_column_and_label_widget,
-        "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget
-    },
+        "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget},
 )
 
 plot_xi_um_fit_vs_I_Airy2_fit_output = interactive_output(
@@ -2896,7 +2904,7 @@ children_left = [plot_fitting_interactive_output,
                       deconvmethod_ystep_widget, deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
                  plot_CDCs_output,
                  plot_xi_um_fit_vs_I_Airy2_fit_output]
-tabs_left = widgets.Tab()
+tabs_left = widgets.Tab(layout=widgets.Layout(width='67%'))
 tabs_left.children = children_left
 tabs_left.set_title(0, 'Fitting')
 tabs_left.set_title(1, 'Deconvolution')
@@ -2905,15 +2913,16 @@ tabs_left.set_title(3, 'CDCs')
 tabs_left.set_title(4, 'plot_xi_um_fit_vs_I_Airy2_fit')
 
 children_right = [VBox([HBox([VBox([xi_um_deconv_column_and_label_widget, xi_um_fit_column_and_label_widget]),
-VBox([deconvmethod_outlier_limit_widget,fitting_outlier_limit_widget])]), 
+VBox([deconvmethod_outlier_limit_widget,fitting_outlier_limit_widget]),
+VBox([xaxisrange_widget, yaxisrange_widget])]), 
 HBox([do_set_fitting_results_to_nan_widget, do_set_deconvmethod_results_to_nan_widget]),
 plot_fitting_vs_deconvolution_output])]
-tabs_right = widgets.Tab()
+tabs_right = widgets.Tab(layout=widgets.Layout(width='33%'))
 tabs_right.children = children_right
 tabs_right.set_title(0, 'Fitting vs. Deconvolution')
 
-grid = widgets.GridspecLayout(1, 3, height='1000px')
-grid[0, :2] = tabs_left
+grid = widgets.GridspecLayout(1, 3, height='1000px', width='100%')
+grid[0, 0:1] = tabs_left
 grid[0, 2] = tabs_right
 
 
@@ -2931,7 +2940,7 @@ display(
             HBox([run_over_all_datasets_widget, run_over_all_datasets_progress_widget, run_over_all_datasets_statustext_widget,
                 run_over_all_measurements_widget, run_over_all_measurements_progress_widget, run_over_all_measurements_statustext_widget,
                  run_over_all_images_widget, run_over_all_images_progress_widget, run_over_all_images_statustext_widget]),
-            grid
+            HBox([tabs_left,tabs_right])
         ]
     )
 )
