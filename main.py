@@ -1790,7 +1790,7 @@ def plot_fitting_vs_deconvolution(
 
   
         x = np.linspace(0,2000)
-        plt.plot(x,x, c='grey')
+        plt.plot(x,x, c='grey', linewidth=1, alpha=0.5, linestyle="--")
         
 
         plt.xlim(xaxisrange[0],xaxisrange[1])
