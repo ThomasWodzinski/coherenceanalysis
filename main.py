@@ -2904,7 +2904,7 @@ children_left = [plot_fitting_interactive_output,
                       deconvmethod_ystep_widget, deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
                  plot_CDCs_output,
                  plot_xi_um_fit_vs_I_Airy2_fit_output]
-tabs_left = widgets.Tab(layout=widgets.Layout(width='67%'))
+tabs_left = widgets.Tab(layout=widgets.Layout(height='1000px', width='67%'))
 tabs_left.children = children_left
 tabs_left.set_title(0, 'Fitting')
 tabs_left.set_title(1, 'Deconvolution')
@@ -2917,7 +2917,7 @@ VBox([deconvmethod_outlier_limit_widget,fitting_outlier_limit_widget]),
 VBox([xaxisrange_widget, yaxisrange_widget])]), 
 HBox([do_set_fitting_results_to_nan_widget, do_set_deconvmethod_results_to_nan_widget]),
 plot_fitting_vs_deconvolution_output])]
-tabs_right = widgets.Tab(layout=widgets.Layout(width='33%'))
+tabs_right = widgets.Tab(layout=widgets.Layout(height='1000px', width='33%'))
 tabs_right.children = children_right
 tabs_right.set_title(0, 'Fitting vs. Deconvolution')
 
