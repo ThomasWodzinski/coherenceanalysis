@@ -874,23 +874,25 @@ xi_um_fit_options = [('xi_um_fit',('xi_um_fit',r"$\xi$ / um (fit)")),('xi_um_fit
 
 xi_um_deconv_column_and_label_widget = widgets.Dropdown(
     options=xi_um_deconv_options + xi_um_fit_options,
-    description="deconv variant:",
+    description="x-data",
+    description_tooltip='deconvolution variant',
     disabled=False,
     layout=widgets.Layout(width='auto')
 )
 
 xi_um_fit_column_and_label_widget = widgets.Dropdown(
     options= xi_um_fit_options + xi_um_deconv_options,
-    description="fitting variant:",
+    description="y-data",
+    description_tooltip='fitting variant',
     disabled=False,
     layout=widgets.Layout(width='auto')
 )
 
-deconvmethod_outlier_limit_widget = widgets.FloatText(value = 2000, description='List Outlier Threshold',layout=widgets.Layout(width='auto'))
-fitting_outlier_limit_widget = widgets.FloatText(value = 2000, description='List Outlier Threshold',layout=widgets.Layout(width='auto'))
+deconvmethod_outlier_limit_widget = widgets.FloatText(value = 2000, description='ξ>', description_tooltip='list values above this threshold',layout=widgets.Layout(width='auto'))
+fitting_outlier_limit_widget = widgets.FloatText(value = 2000, description='ξ>', description_tooltip='list values above this threshold',layout=widgets.Layout(width='auto'))
 
-xaxisrange_widget = widgets.IntRangeSlider(min=0, max=4000, value=[0,2000], description='x-axis', layout=widgets.Layout(width='auto'))
-yaxisrange_widget = widgets.IntRangeSlider(min=0, max=4000, value=[0,2000], description='y-axis', layout=widgets.Layout(width='auto'))
+xaxisrange_widget = widgets.IntRangeSlider(min=0, max=4000, value=[0,2000], description='x-range', description_tooltip='x-axis range', layout=widgets.Layout(width='auto'))
+yaxisrange_widget = widgets.IntRangeSlider(min=0, max=4000, value=[0,2000], description='y-range', description_tooltip='y-axis range', layout=widgets.Layout(width='auto'))
 
 
 do_plot_CDCs_widget = widgets.Checkbox(value=False, description="do plot CDCs")
