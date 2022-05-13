@@ -869,14 +869,17 @@ mod_shiftx_um_value_widget = widgets.Text(value="", description="",layout=value_
 
 do_plot_fitting_vs_deconvolution_widget = widgets.Checkbox(value=False, description="do fitting vs deconv plot")
 
+xi_um_deconv_options = [('xi_x_um',('xi_x_um',r"$\xi_x$ / um (deconv)")),('xi_um',('xi_um',r"$\xi$ / um (deconv)"))]
+xi_um_fit_options = [('xi_um_fit',('xi_um_fit',r"$\xi$ / um (fit)")),('xi_um_fit_at_center',('xi_um_fit_at_center',r"$\xi_c$ / um (fit)"))]
+
 xi_um_deconv_column_and_label_widget = widgets.Dropdown(
-    options=[('xi_x_um',('xi_x_um',r"$\xi_x$ / um (deconv)")),('xi_um',('xi_um',r"$\xi$ / um (deconv)"))],
+    options=xi_um_deconv_options + xi_um_fit_options,
     description="deconv variant:",
     disabled=False,
 )
 
 xi_um_fit_column_and_label_widget = widgets.Dropdown(
-    options=[('xi_um_fit',('xi_um_fit',r"$\xi$ / um (fit)")),('xi_um_fit_at_center',('xi_um_fit_at_center',r"$\xi_c$ / um (fit)"))],
+    options= xi_um_fit_options + xi_um_deconv_options,
     description="fitting variant:",
     disabled=False,
 )
