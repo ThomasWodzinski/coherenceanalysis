@@ -512,6 +512,7 @@ fits_header_list7 = [
 # deconvolution_1d results
 fits_header_list8 = [   
     "xi_um",
+    "chi2distance"
 ]
 
 # deconvolution_2d results
@@ -519,6 +520,7 @@ fits_header_list9 = [
     "sigma_F_gamma_um_opt",
     "xi_x_um",
     "xi_y_um",
+    "chi2distance"
 ]
 
 
@@ -1806,7 +1808,8 @@ def plot_deconvmethod(
                         'xatol' : xatol,
                         # deconvolution results
                         'xi_x_um' : xi_x_um,
-                        'xi_y_um' : xi_y_um                        
+                        'xi_y_um' : xi_y_um
+                        'chi2distance' : chi2distance                        
                     }, ignore_index = True
                 )
                 df_deconvmethod_2d_results = df_deconvmethod_2d_results.drop_duplicates()
@@ -1823,7 +1826,8 @@ def plot_deconvmethod(
                         'crop_px' : crop_px,
                         # deconvolution results
                         # 'sigma_F_gamma_um_opt' : sigma_F_gamma_um_opt, not calculated?
-                        'xi_um' : xi_x_um
+                        'xi_um' : xi_x_um,
+                        'chi2distance' : chi2distance    
                     }, ignore_index = True
                 )
                 df_deconvmethod_1d_results = df_deconvmethod_1d_results.drop_duplicates()
