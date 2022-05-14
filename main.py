@@ -690,6 +690,14 @@ def update_df_fits_csv_save_widget(change):
         df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
         df_fits_csv_file = df_fits_csv_files_widget.value
         df_fits.to_csv(df_fits_csv_file)
+
+        df_fitting_results_file = Path.joinpath(data_dir,str('df_fitting_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+        df_fitting_results.to_csv(df_fitting_results_file)
+        df_deconvmethod_1d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_results_file_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+        df_deconvmethod_1d_results.to_csv(df_deconvmethod_1d_results_file)
+        df_deconvmethod_2d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_results_file_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+        df_deconvmethod_2d_results.to_csv(df_deconvmethod_2d_results_file)
+
         df_fits_csv_save_widget.value = False
 
 df_fits_csv_save_widget.observe(update_df_fits_csv_save_widget, names='value')
