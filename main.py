@@ -1808,7 +1808,7 @@ def plot_deconvmethod(
                         'xatol' : xatol,
                         # deconvolution results
                         'xi_x_um' : xi_x_um,
-                        'xi_y_um' : xi_y_um
+                        'xi_y_um' : xi_y_um,
                         'chi2distance' : chi2distance                        
                     }, ignore_index = True
                 )
