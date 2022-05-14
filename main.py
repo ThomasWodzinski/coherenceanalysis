@@ -374,6 +374,8 @@ df_temp["timestamp_pulse_id"] = df_temp["timestamp_pulse_id"].astype("int64")
 
 # definition of fits header columns
 # needed in case we want to add new columns?
+
+# preparation parameter and results
 fits_header_list1 = [
     "bgfactor",
     "pixis_rotation",
@@ -385,24 +387,9 @@ fits_header_list1 = [
     "pixis_profile_centery_px_fit",
     "pinholes_cm_x_px",
     "pinholes_cm_y_px",
-    "wavelength_nm_fit",
-    "gamma_fit",
-    "sigma_F_gamma_um_opt",
-    "xi_um",
 ]
+
 fits_header_list2 = [
-    "shiftx_um_fit",
-    "w1_um_fit",
-    "w2_um_fit",
-    "I_Airy1_fit",
-    "I_Airy2_fit",
-    "x1_um_fit",
-    "x2_um_fit",
-    "d_um_at_detector",
-    "xi_x_um",
-    "xi_y_um",
-]
-fits_header_list3 = [
     "pixis_image_minus_bg_rot_cropped_counts",
     "phcam_scalex_um_per_px",
     "phcam_scaley_um_per_px",
@@ -416,15 +403,21 @@ fits_header_list3 = [
     "pinholes_bg_avg_yc_um",
     "pinholes_bg_avg_sx_um",
     "pinholes_bg_avg_sy_um",
-    "xi_x_um_fit",
+   ]
+
+# CDC results
+fits_header_list3 = [
+    "xi_um_fit",
+    "xi_x_um_fit", 
+    "xi_y_um_fit", 
     "zeta_x",
     "zeta_x_fit",
+    "zeta_y",
+    "zeta_y_fit", 
 ]
-fits_header_list4 = ["xi_y_um_fit", "zeta_y", "zeta_y_fit", "xi_um_fit"]
 
-fits_header_list5 = ['gamma_fit_at_center', 'xi_um_fit_at_center', 'mod_sigma_um_fit', 'mod_shiftx_um_fit']
-
-fits_header_list6 = [
+# fitting parameter
+fits_header_list4 = [
     'shiftx_um',
     'shiftx_um_range_0',
     'shiftx_um_range_1',
@@ -474,7 +467,8 @@ fits_header_list6 = [
     'normfactor_range_1',
     'normfactor_do_fit']
 
-fits_header_list7 = [
+# fitting parameter of version 2
+fits_header_list5 = [
     'mod_sigma_um',
     'mod_sigma_um_range_0',
     'mod_sigma_um_range_1',
@@ -485,14 +479,51 @@ fits_header_list7 = [
     'mod_shiftx_um_do_fit'
 ]
 
-fits_header_list8 = [ 'pixis_profile_avg_width',
-            'xi_um_guess',
-            'xatol',
-            'sigma_x_F_gamma_um_multiplier',
-            'crop_px'
+# fitting results
+fits_header_list6 = [
+    "shiftx_um_fit",
+    "wavelength_nm_fit",
+    "z_mm_fit",
+    "d_um_fit",
+    "d_um_at_detector", # extra?
+    "gamma_fit",
+    "w1_um_fit",
+    "w2_um_fit",
+    "I_Airy1_fit",
+    "I_Airy2_fit",
+    "x1_um_fit",
+    "x2_um_fit",
+    # fitting results of version 2
+    'mod_sigma_um_fit',
+    'mod_shiftx_um_fit',
+    'gamma_fit_at_center',
+    'xi_um_fit_at_center',
 ]
 
-fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4 + fits_header_list5 + fits_header_list6 + fits_header_list7 + fits_header_list8
+# deconvolution parameter
+fits_header_list7 = [ 
+    'pixis_profile_avg_width',
+    'xi_um_guess',
+    'sigma_x_F_gamma_um_multiplier',
+    'crop_px',
+    'xatol',
+]
+
+# deconvolution_1d results
+fits_header_list8 = [   
+    "xi_um",
+]
+
+# deconvolution_2d results
+fits_header_list9 = [   
+    "sigma_F_gamma_um_opt",
+    "xi_x_um",
+    "xi_y_um",
+]
+
+
+
+fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4 + fits_header_list5 + fits_header_list6 + fits_header_list7 + fits_header_list8 + fits_header_list9
 
 
 # fits_header_list1 already exists in saved csv, only adding fits_header_list2, only initiate when
