@@ -647,7 +647,7 @@ scan_for_df_fits_csv_files_widget = widgets.ToggleButton(
 )
 
 def update_df_fits_csv_files_widget(change):
-    df_fits_csv_files = list(data_dir.glob("df_fits*.csv"))
+    df_fits_csv_files = sorted(list(data_dir.glob("df_fits*.csv")), reverse=True)
     df_fits_csv_files_widget.options=df_fits_csv_files
     scan_for_df_fits_csv_files_widget.value = False
 scan_for_df_fits_csv_files_widget.observe(update_df_fits_csv_files_widget)
@@ -665,11 +665,23 @@ load_csv_to_df_widget = widgets.ToggleButton(
 
 def update_load_csv_to_df_widget(change):
     global df0
+    global df_fitting_results
+    global df_deconvmethod_1d_results
+    global df_deconvmethod_2d_results
+
     df_fits_csv_file = df_fits_csv_files_widget.value
     df_fits = pd.read_csv(df_fits_csv_file, index_col=0)
     df_fits_clean = df_fits[df_fits["pixis_rotation"].notna()].drop_duplicates()
     df_fits = df_fits_clean
     df0 = pd.merge(df_temp, df_fits, on="timestamp_pulse_id", how="outer")
+
+    datestring = os.path.splitext(os.path.basename(df_fits_csv_files_widget.value))[0].split('df_fits_')[1]
+    df_fitting_results_file = Path.joinpath(data_dir,str('df_fitting_results_'+datestring+'.csv'))
+    df_fitting_results = pd.read_csv(df_fitting_results_file)
+    df_deconvmethod_1d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_results_'+datestring+'.csv'))
+    df_deconvmethod_1d_results = pd.read_csv(df_deconvmethod_1d_results_file)
+    df_deconvmethod_2d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_results_'+datestring+'.csv'))
+    df_deconvmethod_2d_results = pd.read_csv(df_deconvmethod_2d_results_file)
 
     load_csv_to_df_widget.value = False
 
@@ -691,11 +703,12 @@ def update_df_fits_csv_save_widget(change):
         df_fits_csv_file = df_fits_csv_files_widget.value
         df_fits.to_csv(df_fits_csv_file)
 
-        df_fitting_results_file = Path.joinpath(data_dir,str('df_fitting_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+        datestring = os.path.splitext(os.path.basename(df_fits_csv_files_widget.value))[0].split('df_fits_')[1]
+        df_fitting_results_file = Path.joinpath(data_dir,str('df_fitting_results_'+datestring+'.csv'))
         df_fitting_results.to_csv(df_fitting_results_file)
-        df_deconvmethod_1d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_results_file_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+        df_deconvmethod_1d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_results_'+datestring+'.csv'))
         df_deconvmethod_1d_results.to_csv(df_deconvmethod_1d_results_file)
-        df_deconvmethod_2d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_results_file_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+        df_deconvmethod_2d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_results_'+datestring+'.csv'))
         df_deconvmethod_2d_results.to_csv(df_deconvmethod_2d_results_file)
 
         df_fits_csv_save_widget.value = False
@@ -719,6 +732,14 @@ def create_new_csv_file(change):
     df_fits_csv_files = sorted(list(data_dir.glob("df_fits*.csv")), reverse=True)
     df_fits_csv_files_widget.options=df_fits_csv_files
     df_fits_csv_files_widget.value = df_fits_csv_file
+
+    df_fitting_results_file = Path.joinpath(data_dir,str('df_fitting_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_fitting_results.to_csv(df_fitting_results_file)
+    df_deconvmethod_1d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_deconvmethod_1d_results.to_csv(df_deconvmethod_1d_results_file)
+    df_deconvmethod_2d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_deconvmethod_2d_results.to_csv(df_deconvmethod_2d_results_file)
+
     create_new_csv_file_widget.value = False
 
 create_new_csv_file_widget.observe(create_new_csv_file, names='value')
