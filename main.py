@@ -498,6 +498,7 @@ fits_header_list6 = [
     'mod_shiftx_um_fit',
     'gamma_fit_at_center',
     'xi_um_fit_at_center',
+    "chi2distance"
 ]
 
 # deconvolution parameter
@@ -1165,6 +1166,24 @@ def plot_fitting(
         mod_sigma_um_fit = result.params["mod_sigma_um"].value
         mod_shiftx_um_fit = result.params["mod_shiftx_um"].value
 
+        textarea_widget.value = result.fit_report()
+        chi2distance = result.chisqr
+
+        # # print number of function efvals
+        # print result.nfev
+        # # print number of data points
+        # print result.ndata
+        # # print number of variables
+        # print result.nvarys
+        # # chi-sqr
+        # print result.chisqr
+        # # reduce chi-sqr
+        # print result.redchi
+        # #Akaike info crit
+        # print result.aic
+        # #Bayesian info crit
+        # print result.bic
+
         shiftx_um_value_widget.value = r"%.2f" % (shiftx_um_fit)
         wavelength_nm_value_widget.value = r"%.2f" % (wavelength_nm_fit)
         z_mm_value_widget.value = r"%.2f" % (z_mm_fit)
@@ -1374,7 +1393,8 @@ def plot_fitting(
                         'x1_um_fit' :  x1_um_fit,
                         'x2_um_fit' :  x2_um_fit,
                         'mod_sigma_um_fit' :  mod_sigma_um_fit,
-                        'mod_shiftx_um_fit' :  mod_shiftx_um_fit                      
+                        'mod_shiftx_um_fit' :  mod_shiftx_um_fit,
+                        'chi2distance' : chi2distance                       
                     }, ignore_index = True
                 )
             df_fitting_results = df_fitting_results.drop_duplicates()
