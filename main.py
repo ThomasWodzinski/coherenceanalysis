@@ -567,7 +567,10 @@ df_measurement_default_file = Path.joinpath(data_dir, 'df_measurement_default.cs
 if os.path.isfile(df_measurement_default_file):
     df_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
+df_fitting_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id'] + fits_header_list4 + fits_header_list5 + fits_header_list6 )
 
+df_deconvmethod_1d_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id'] + list(set(fits_header_list7) - set(['xatol'])) + fits_header_list8)
+df_deconvmethod_2d_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id'] + fits_header_list7 + fits_header_list9)
 
 
 # %%
