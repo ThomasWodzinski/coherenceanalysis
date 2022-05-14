@@ -830,3 +830,10 @@ df0 = df0.drop_duplicates(subset=['timestamp_pulse_id'])
 #     pixis_profile_avg = normalize(pixis_profile_avg)
 #     plt.plot(pixis_profile_avg)
 #     # why is this not giving the same profile?? in the GUI a width of 200 is defined. what was actually calculated?
+
+
+# %%
+df_deconvmethod_1d_results
+df_deconvmethod_2d_results
+
+
