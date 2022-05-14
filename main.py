@@ -1005,6 +1005,9 @@ def plot_fitting(
 ):
 
     if plotprofile_active == True:  # workaround, so that the function is not executed while several inputs are changed
+
+        global df_fitting_results
+
         # fittingprogress_widget.bar_style = 'info'
         # fittingprogress_widget.value = 0
         # statustext_widget.value = 'fitting ...'
@@ -1268,6 +1271,90 @@ def plot_fitting(
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_range_0' ] = mod_shiftx_um_range[0]
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_range_1' ] = mod_shiftx_um_range[1]
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_do_fit' ] = mod_shiftx_um_do_fit
+
+            measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]
+            df_fitting_results = df_fitting_results.append(
+                    {
+                        # image identifiers
+                        'measurement' : measurement,
+                        'timestamp_pulse_id' : timestamp_pulse_id,
+                        # fitting parameters
+                        'pixis_profile_avg_width' : pixis_profile_avg_width,
+                        'shiftx_um' : shiftx_um,
+                        'shiftx_um_range_0' : shiftx_um_range[0],
+                        'shiftx_um_range_1' : shiftx_um_range[1],
+                        'shiftx_um_do_fit' : shiftx_um_do_fit,
+                        'wavelength_nm' : wavelength_nm,
+                        'wavelength_nm_range_0' : wavelength_nm_range[0],
+                        'wavelength_nm_range_1' : wavelength_nm_range[1],
+                        'wavelength_nm_do_fit' : wavelength_nm_do_fit,
+                        'z_mm' : z_mm,
+                        'z_mm_range_0' : z_mm_range[0],
+                        'z_mm_range_1' : z_mm_range[1],
+                        'z_mm_do_fit' : z_mm_do_fit,
+                        'd_um' : d_um,
+                        'd_um_range_0' : d_um_range[0],
+                        'd_um_range_1' : d_um_range[1],
+                        'd_um_do_fit' : d_um_do_fit,
+                        'gamma' : gamma,
+                        'gamma_range_0' : gamma_range[0],
+                        'gamma_range_1' : gamma_range[1],
+                        'gamma_do_fit' : gamma_do_fit,
+                        'w1_um' : w1_um,
+                        'w1_um_range_0' : w1_um_range[0],
+                        'w1_um_range_1' : w1_um_range[1],
+                        'w1_um_do_fit' : w1_um_do_fit,
+                        'w2_um' : w2_um,
+                        'w2_um_range_0' : w2_um_range[0],
+                        'w2_um_range_1' : w2_um_range[1],
+                        'w2_um_do_fit' : w2_um_do_fit,
+                        'I_Airy1' : I_Airy1,
+                        'I_Airy1_range_0' : I_Airy1_range[0],
+                        'I_Airy1_range_1' : I_Airy1_range[1],
+                        'I_Airy1_do_fit' : I_Airy1_do_fit,
+                        'I_Airy2' : I_Airy2,
+                        'I_Airy2_range_0' : I_Airy2_range[0],
+                        'I_Airy2_range_1' : I_Airy2_range[1],
+                        'I_Airy2_do_fit' : I_Airy2_do_fit,
+                        'x1_um' : x1_um,
+                        'x1_um_range_0' : x1_um_range[0],
+                        'x1_um_range_1' : x1_um_range[1],
+                        'x1_um_do_fit' : x1_um_do_fit,
+                        'x2_um' : x2_um,
+                        'x2_um_range_0' : x2_um_range[0],
+                        'x2_um_range_1' : x2_um_range[1],
+                        'x2_um_do_fit' : x2_um_do_fit,
+                        'normfactor' :  normfactor,
+                        'normfactor_range_0' : normfactor_range[0],
+                        'normfactor_range_1' : normfactor_range[1],
+                        'normfactor_do_fit' : normfactor_do_fit,
+                        'mod_sigma_um' : mod_sigma_um,
+                        'mod_sigma_um_range_0' : mod_sigma_um_range[0],
+                        'mod_sigma_um_range_1' : mod_sigma_um_range[1],
+                        'mod_sigma_um_do_fit' : mod_sigma_um_do_fit,
+                        'mod_shiftx_um' : mod_shiftx_um,
+                        'mod_shiftx_um_range_0' : mod_shiftx_um_range[0],
+                        'mod_shiftx_um_range_1' : mod_shiftx_um_range[1],
+                        'mod_shiftx_um_do_fit' : mod_shiftx_um_do_fit,
+                        # fitting results
+                        'gamma_fit' :  gamma_fit,
+                        'gamma_fit_at_center' :  gamma_fit_at_center,
+                        'xi_um_fit' :  xi_um_fit,  # add this first to the df_fits dataframe
+                        'xi_um_fit_at_center' :  xi_um_fit_at_center,  # add this first to the df_fits dataframe
+                        'wavelength_nm_fit' :  wavelength_nm_fit,
+                        'd_um_at_detector' :  d_um_at_detector,
+                        'I_Airy1_fit' :  I_Airy1_fit,
+                        'I_Airy2_fit' :  I_Airy2_fit,
+                        'w1_um_fit' :  w1_um_fit,
+                        'w2_um_fit' :  w2_um_fit,
+                        'shiftx_um_fit' :  shiftx_um_fit,
+                        'x1_um_fit' :  x1_um_fit,
+                        'x2_um_fit' :  x2_um_fit,
+                        'mod_sigma_um_fit' :  mod_sigma_um_fit,
+                        'mod_shiftx_um_fit' :  mod_shiftx_um_fit                      
+                    }, ignore_index = True
+                )
+            df_fitting_results = df_fitting_results.drop_duplicates()
 
             
 
@@ -1556,6 +1643,8 @@ def plot_deconvmethod(
     # imageid,
     save_to_df    
 ):
+    global df_deconvmethod_1d_results
+    global df_deconvmethod_2d_results
 
     if do_deconvmethod == True:
 
@@ -1679,6 +1768,46 @@ def plot_deconvmethod(
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xatol' ] = xatol
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'sigma_x_F_gamma_um_multiplier' ] = sigma_x_F_gamma_um_multiplier
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'crop_px' ] = crop_px
+
+            measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]
+
+            if scan_x == True:
+                df_deconvmethod_2d_results = df_deconvmethod_2d_results.append(
+                    {
+                        # image identifiers
+                        'measurement' : measurement,
+                        'timestamp_pulse_id' : timestamp_pulse_id,
+                        # deconvolution parameters
+                        'pixis_profile_avg_width' : pixis_profile_avg_width,
+                        'xi_um_guess' : xi_um_guess,
+                        'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
+                        'crop_px' : crop_px,
+                        'xatol' : xatol,
+                        # deconvolution results
+                        'xi_x_um' : xi_x_um,
+                        'xi_y_um' : xi_y_um                        
+                    }, ignore_index = True
+                )
+                df_deconvmethod_2d_results = df_deconvmethod_2d_results.drop_duplicates()
+            else:
+                df_deconvmethod_1d_results = df_deconvmethod_1d_results.append(
+                    {
+                        # image identifiers
+                        'measurement' : measurement,
+                        'timestamp_pulse_id' : timestamp_pulse_id,
+                        # deconvolution parameters
+                        'pixis_profile_avg_width' : pixis_profile_avg_width,
+                        'xi_um_guess' : xi_um_guess,
+                        'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
+                        'crop_px' : crop_px,
+                        # deconvolution results
+                        # 'sigma_F_gamma_um_opt' : sigma_F_gamma_um_opt, not calculated?
+                        'xi_um' : xi_x_um
+                    }, ignore_index = True
+                )
+                df_deconvmethod_1d_results = df_deconvmethod_1d_results.drop_duplicates()
+
+
 
         fig = plt.figure(constrained_layout=False, figsize=(8.27, 11.69), dpi=150)
 
