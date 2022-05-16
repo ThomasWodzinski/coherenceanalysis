@@ -2876,18 +2876,16 @@ def imageid_widget_changed(change):
             normfactor_widget.value = 1.0
             normfactor_range_widget.value = [0.1, 1.5]
             normfactor_do_fit_widget.value = False
-            # mod_sigma_um_widget.value = 3000.0 # not for all datasets the same, adapt!
-            # mod_sigma_um_range_widget.value = [1500, 100000]
-            # mod_sigma_um_do_fit_widget.value = True
-            # mod_shiftx_um_widget.value = 3000.0
-            # mod_shiftx_um_range_widget.value = [-10000, 10000]
-            # mod_shiftx_um_do_fit_widget.value = True
-            mod_sigma_um_widget.value = 3000.0 # not for all datasets the same, adapt!
-            mod_sigma_um_range_widget.value = [1500, 100000]
-            mod_sigma_um_do_fit_widget.value = True
-            mod_shiftx_um_widget.value = 3000.0
-            mod_shiftx_um_range_widget.value = [-10000, 10000]
-            mod_shiftx_um_do_fit_widget.value = True
+            mod_sigma_um_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_sigma_um_measurement_default'].iloc[0]
+            mod_sigma_um_range_0 = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_sigma_um_range_0_measurement_default'].iloc[0]
+            mod_sigma_um_range_1 = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_sigma_um_range_1_measurement_default'].iloc[0]
+            mod_sigma_um_range_widget.value = [mod_sigma_um_range_0, mod_sigma_um_range_1]
+            mod_sigma_um_do_fit_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_sigma_um_do_fit_measurement_default'].iloc[0]
+            mod_shiftx_um_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
+            mod_shiftx_um_range_0 = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_shiftx_um_range_0_measurement_default'].iloc[0]
+            mod_shiftx_um_range_1 = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_shiftx_um_range_1_measurement_default'].iloc[0]
+            mod_shiftx_um_range_widget.value = [mod_shiftx_um_range_0, mod_shiftx_um_range_1]
+            mod_shiftx_um_do_fit_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_shiftx_um_do_fit_measurement_default'].iloc[0]
 
         # Set default values for Deconvmethod
         if load_from_df_widget.value == False or np.isnan(xi_um_guess) == True:
