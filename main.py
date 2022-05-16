@@ -2011,8 +2011,8 @@ def plot_fitting_vs_deconvolution(
 
         # create plot for the determined timestamps:
         # plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_um_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
-        plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))][xi_um_deconv_column] , \
-            df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))][xi_um_fit_column], \
+        plt.scatter(df_deconvmethod_1d_results[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))][xi_um_deconv_column] , \
+            df0[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))][xi_um_fit_column], \
                 c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'],\
                     marker='x', s=2)
 
