@@ -570,10 +570,10 @@ df_measurement_default_file = Path.joinpath(data_dir, 'df_measurement_default.cs
 if os.path.isfile(df_measurement_default_file):
     df_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-df_fitting_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id'] + fits_header_list4 + fits_header_list5 + fits_header_list6 )
+df_fitting_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + fits_header_list4 + fits_header_list5 + fits_header_list6 )
 
-df_deconvmethod_1d_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id'] + list(set(fits_header_list7) - set(['xatol'])) + fits_header_list8)
-df_deconvmethod_2d_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id'] + fits_header_list7 + fits_header_list9)
+df_deconvmethod_1d_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + list(set(fits_header_list7) - set(['xatol'])) + fits_header_list8)
+df_deconvmethod_2d_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + fits_header_list7 + fits_header_list9)
 
 
 # %%
@@ -1320,6 +1320,8 @@ def plot_fitting(
                         # image identifiers
                         'measurement' : measurement,
                         'timestamp_pulse_id' : timestamp_pulse_id,
+                        'imageid' : imageid,
+                        'separation_um' : separation_um,
                         # fitting parameters
                         'pixis_profile_avg_width' : pixis_profile_avg_width,
                         'shiftx_um' : shiftx_um,
@@ -1820,6 +1822,8 @@ def plot_deconvmethod(
                         # image identifiers
                         'measurement' : measurement,
                         'timestamp_pulse_id' : timestamp_pulse_id,
+                        'imageid' : imageid,
+                        'separation_um' : separation_um,
                         # deconvolution parameters
                         'pixis_profile_avg_width' : pixis_profile_avg_width,
                         'xi_um_guess' : xi_um_guess,
@@ -1839,6 +1843,8 @@ def plot_deconvmethod(
                         # image identifiers
                         'measurement' : measurement,
                         'timestamp_pulse_id' : timestamp_pulse_id,
+                        'imageid' : imageid,
+                        'separation_um' : separation_um,
                         # deconvolution parameters
                         'pixis_profile_avg_width' : pixis_profile_avg_width,
                         'xi_um_guess' : xi_um_guess,
@@ -2011,19 +2017,19 @@ def plot_fitting_vs_deconvolution(
 
         # create plot for the determined timestamps:
         # plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_um_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
-        plt.scatter(df_deconvmethod_1d_results[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))][xi_um_deconv_column] , \
-            df0[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))][xi_um_fit_column], \
-                c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'],\
+        plt.scatter(df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))][xi_um_deconv_column] , \
+            df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))][xi_um_fit_column], \
+                c=df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['d_um'],\
                     marker='x', s=2)
 
         plt.colorbar()
 
 
-        deconvmethod_outliers = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0[xi_um_deconv_column] > deconvmethod_outlier_limit)][['imageid', 'separation_um', xi_um_deconv_column]].sort_values(by=xi_um_deconv_column, ascending=False)
+        deconvmethod_outliers = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df_deconvmethod_1d_results[xi_um_deconv_column] > deconvmethod_outlier_limit)][['imageid', 'separation_um', xi_um_deconv_column]].sort_values(by=xi_um_deconv_column, ascending=False)
         print('Deconvmethod outliers > ' + str(deconvmethod_outlier_limit))
         print(deconvmethod_outliers)
         
-        fitting_outliers = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0[xi_um_fit_column] > fitting_outlier_limit)][['imageid','separation_um', xi_um_fit_column]].sort_values(by=xi_um_fit_column, ascending=False)
+        fitting_outliers = df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df_fitting_results[xi_um_fit_column] > fitting_outlier_limit)][['imageid','separation_um', xi_um_fit_column]].sort_values(by=xi_um_fit_column, ascending=False)
         print('Fitting method outliers > ' + str(fitting_outlier_limit))
         print(fitting_outliers)
 
@@ -2031,8 +2037,8 @@ def plot_fitting_vs_deconvolution(
         with h5py.File(measurement_file, "r") as hdf5_file:
             timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
-        plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid))][xi_um_deconv_column] , \
-            df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["imageid"] == int(imageid))][xi_um_fit_column], \
+        plt.scatter(df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df_deconvmethod_1d_results["imageid"] == int(imageid))][xi_um_deconv_column] , \
+            df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df_fitting_results["imageid"] == int(imageid))][xi_um_fit_column], \
                 c='red',\
                     marker='x', s=10)
 
