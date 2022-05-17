@@ -1043,7 +1043,7 @@ def plot_fitting(
 
         # Loading and preparing
 
-        imageid = imageid_widget.value
+        imageid = imageid_widget.value[0]
         hdf5_file_path = dph_settings_bgsubtracted_widget.value
 
         with h5py.File(hdf5_file_path, "r") as hdf5_file:
@@ -1700,7 +1700,7 @@ def plot_deconvmethod(
 
         # Loading and preparing
 
-        imageid = imageid_widget.value
+        imageid = imageid_widget.value[0]
         hdf5_file_path = dph_settings_bgsubtracted_widget.value
 
         with h5py.File(hdf5_file_path, "r") as hdf5_file:
