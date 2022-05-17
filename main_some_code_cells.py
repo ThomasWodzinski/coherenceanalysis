@@ -907,3 +907,11 @@ plt.scatter(df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pu
 
 outlier_timestamp_pulse_ids = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df_deconvmethod_1d_results['chi2distance'] > 800)]['timestamp_pulse_id']
 df0[df0['timestamp_pulse_id'].isin(outlier_timestamp_pulse_ids)]['imageid']
+
+
+
+
+plt.scatter(df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['chi2distance'] , \
+    df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_um_fit_at_center'], \
+        c=df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['mod_sigma_um'] ,\
+            marker='x', s=2)
