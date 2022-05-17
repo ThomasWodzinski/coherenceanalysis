@@ -2880,12 +2880,12 @@ def imageid_widget_changed(change):
             mod_sigma_um_range_0 = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_sigma_um_range_0_measurement_default'].iloc[0]
             mod_sigma_um_range_1 = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_sigma_um_range_1_measurement_default'].iloc[0]
             mod_sigma_um_range_widget.value = [mod_sigma_um_range_0, mod_sigma_um_range_1]
-            mod_sigma_um_do_fit_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_sigma_um_do_fit_measurement_default'].iloc[0]
+            # mod_sigma_um_do_fit_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_sigma_um_do_fit_measurement_default'].iloc[0]
             mod_shiftx_um_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
             mod_shiftx_um_range_0 = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_shiftx_um_range_0_measurement_default'].iloc[0]
             mod_shiftx_um_range_1 = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_shiftx_um_range_1_measurement_default'].iloc[0]
             mod_shiftx_um_range_widget.value = [mod_shiftx_um_range_0, mod_shiftx_um_range_1]
-            mod_shiftx_um_do_fit_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_shiftx_um_do_fit_measurement_default'].iloc[0]
+            # mod_shiftx_um_do_fit_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_shiftx_um_do_fit_measurement_default'].iloc[0]
 
         # Set default values for Deconvmethod
         if load_from_df_widget.value == False or np.isnan(xi_um_guess) == True:
@@ -2969,7 +2969,8 @@ def load_measurement_default_from_csv(change):
     global df_measurement_default
     if load_measurement_default_from_csv_widget.value == True:
         if os.path.isfile(df_measurement_default_file):
-            df_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+            df_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0, dtype={'mod_sigma_um_do_fit_measurement_default' : np.bool,
+            'mod_shiftx_um_do_fit_measurement_default' : np.bool})
         load_measurement_default_from_csv_widget.value = False
 
 load_measurement_default_from_csv_widget.observe(load_measurement_default_from_csv, names="value")
