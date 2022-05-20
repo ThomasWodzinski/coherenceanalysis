@@ -680,11 +680,11 @@ def update_load_csv_to_df_widget(change):
 
     datestring = os.path.splitext(os.path.basename(df_fits_csv_files_widget.value))[0].split('df_fits_')[1]
     df_fitting_results_file = Path.joinpath(data_dir,str('df_fitting_results_'+datestring+'.csv'))
-    df_fitting_results = pd.read_csv(df_fitting_results_file)
+    df_fitting_results = pd.read_csv(df_fitting_results_file, index_col=0)
     df_deconvmethod_1d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_results_'+datestring+'.csv'))
-    df_deconvmethod_1d_results = pd.read_csv(df_deconvmethod_1d_results_file)
+    df_deconvmethod_1d_results = pd.read_csv(df_deconvmethod_1d_results_file, index_col=0)
     df_deconvmethod_2d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_results_'+datestring+'.csv'))
-    df_deconvmethod_2d_results = pd.read_csv(df_deconvmethod_2d_results_file)
+    df_deconvmethod_2d_results = pd.read_csv(df_deconvmethod_2d_results_file, index_col=0)
 
     load_csv_to_df_widget.value = False
 
