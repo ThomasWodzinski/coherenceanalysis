@@ -2187,11 +2187,9 @@ def list_results(
 
         # https://datascienceparichay.com/article/pandas-groupby-minimum/
         if chi2distance_column == 'chi2distance_deconvmethod_1d':
-            statustext_widget.value = 'chi2distance_deconvmethod_1d'
             chi2distance_min_deconvmethod_1d = pd.merge(df_deconvmethod_1d_results,df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['imageid'])[['chi2distance']].min())[['imageid','xi_um_guess','xi_um','chi2distance']].sort_values('chi2distance',ascending=False)
             display(chi2distance_min_deconvmethod_1d)
         if chi2distance_column == 'chi2distance_deconvmethod_2d':
-            statustext_widget.value = 'chi2distance_deconvmethod_2d'
             chi2distance_min_deconvmethod_2d = pd.merge(df_deconvmethod_2d_results,df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['imageid'])[['chi2distance']].min())[['imageid','xi_um_guess','xi_x_um','chi2distance']].sort_values('chi2distance',ascending=False)
             display(chi2distance_min_deconvmethod_2d)
         if chi2distance_column == 'chi2distance_fitting':
