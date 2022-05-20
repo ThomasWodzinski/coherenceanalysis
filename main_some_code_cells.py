@@ -915,3 +915,44 @@ plt.scatter(df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(ti
     df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_um_fit_at_center'], \
         c=df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['mod_sigma_um'] ,\
             marker='x', s=2)
+
+plt.scatter(df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['mod_sigma_um'] , \
+    df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['chi2distance'], \
+        c=df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_um_fit_at_center'] ,\
+            marker='x', s=2)
+
+
+
+for timestamp_pulse_id in timestamp_pulse_ids:
+
+    chi2distance_min = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
+    x = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id) & df_deconvmethod_1d_results["chi2distance"] == chi2distance_min]['xi_um']
+    chi2distance_min = df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
+    y = df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id) & df_fitting_results["chi2distance"] == chi2distance_min]['xi_um_fit_at_center']
+
+    plt.scatter(x,y)
+
+
+
+
+plt.scatter(df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['chi2distance'] , \
+    df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_um_fit_at_center'], \
+        c=df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['mod_sigma_um'] ,\
+            marker='x', s=2)
+
+
+
+xx = []
+yy = []
+chi2distance_min_deconvmethod_arr = []
+chi2distance_min_fitting_arr = []
+for timestamp_pulse_id in timestamp_pulse_ids:
+    chi2distance_min_deconvmethod = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
+    chi2distance_min_deconvmethod_arr.append(chi2distance_min_deconvmethod)
+    xx.append(df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_deconvmethod_1d_results['chi2distance'] == chi2distance_min_deconvmethod)]['xi_um'])
+    chi2distance_min_fitting = df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
+    chi2distance_min_fitting_arr.append(chi2distance_min_fitting)
+    yy.append(df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_fitting_results["chi2distance"] == chi2distance_min_fitting)]['xi_um_fit_at_center'])
+
+plt.scatter(x=xx, y=yy, c=chi2distance_min_deconvmethod_arr)
+plt.scatter(x=xx, y=yy, c=chi2distance_min_fitting_arr)
