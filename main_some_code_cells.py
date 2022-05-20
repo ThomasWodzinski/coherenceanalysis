@@ -830,3 +830,129 @@ df0 = df0.drop_duplicates(subset=['timestamp_pulse_id'])
 #     pixis_profile_avg = normalize(pixis_profile_avg)
 #     plt.plot(pixis_profile_avg)
 #     # why is this not giving the same profile?? in the GUI a width of 200 is defined. what was actually calculated?
+
+
+# %%
+
+xi_um_deconv_column_and_label = xi_um_deconv_column_and_label_widget.value
+xi_um_fit_column_and_label = xi_um_fit_column_and_label_widget.value
+
+xi_um_deconv_column = xi_um_deconv_column_and_label[0]
+xi_um_deconv_label = xi_um_deconv_column_and_label[1]
+xi_um_fit_column = xi_um_fit_column_and_label[0]
+xi_um_fit_label = xi_um_fit_column_and_label[1]
+
+# Loading and preparing
+
+# get all the files in a dataset:
+files = []
+# for set in [list(datasets)[0]]:
+
+for measurement in datasets_selection[dataset]:
+    # print(measurement)
+    files.extend(bgsubtracted_dir.glob('*'+ measurement + '.h5'))
+
+# testing:
+files = measurements_selection_widget.value
+
+# get all the timestamps in these files:        
+# datasets[list(datasets)[0]][0]
+timestamp_pulse_ids = []
+for f in files:
+    with h5py.File(f, "r") as hdf5_file:
+        timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+# create plot for the determined timestamps:
+# plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_um_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
+plt.scatter(df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))][xi_um_deconv_column] , \
+    df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))][xi_um_fit_column], \
+        c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'],\
+            marker='x', s=2)
+
+x = np.linspace(0,2000)
+plt.plot(x,x, c='grey', linewidth=1, alpha=0.5, linestyle="--")
+
+
+plt.colorbar()
+
+plt.xlim(0,2000)
+plt.ylim(0,2000)
+
+plt.xlabel(xi_um_deconv_label)
+plt.ylabel(xi_um_fit_label)
+plt.gca().set_aspect('equal')
+
+
+# %%
+plt.scatter(df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['chi2distance'] , \
+    df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_um_fit_at_center'], \
+            marker='x', s=2)
+
+
+# %% 
+df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['chi2distance'].describe()
+
+# %%
+outlier_timestamp_pulse_ids = df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df_fitting_results['chi2distance'] > 0.3)]['timestamp_pulse_id']
+df0[df0['timestamp_pulse_id'].isin(outlier_timestamp_pulse_ids)]['imageid']
+
+
+
+df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['chi2distance'].describe()
+
+
+plt.scatter(df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['chi2distance'] , \
+    df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_um'], \
+            marker='x', s=2)
+
+outlier_timestamp_pulse_ids = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df_deconvmethod_1d_results['chi2distance'] > 800)]['timestamp_pulse_id']
+df0[df0['timestamp_pulse_id'].isin(outlier_timestamp_pulse_ids)]['imageid']
+
+
+
+
+plt.scatter(df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['chi2distance'] , \
+    df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_um_fit_at_center'], \
+        c=df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['mod_sigma_um'] ,\
+            marker='x', s=2)
+
+plt.scatter(df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['mod_sigma_um'] , \
+    df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['chi2distance'], \
+        c=df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_um_fit_at_center'] ,\
+            marker='x', s=2)
+
+
+
+for timestamp_pulse_id in timestamp_pulse_ids:
+
+    chi2distance_min = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
+    x = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id) & df_deconvmethod_1d_results["chi2distance"] == chi2distance_min]['xi_um']
+    chi2distance_min = df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
+    y = df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id) & df_fitting_results["chi2distance"] == chi2distance_min]['xi_um_fit_at_center']
+
+    plt.scatter(x,y)
+
+
+
+
+plt.scatter(df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['chi2distance'] , \
+    df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['xi_um_fit_at_center'], \
+        c=df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['mod_sigma_um'] ,\
+            marker='x', s=2)
+
+
+
+xx = []
+yy = []
+chi2distance_min_deconvmethod_arr = []
+chi2distance_min_fitting_arr = []
+for timestamp_pulse_id in timestamp_pulse_ids:
+    chi2distance_min_deconvmethod = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
+    chi2distance_min_deconvmethod_arr.append(chi2distance_min_deconvmethod)
+    xx.append(df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_deconvmethod_1d_results['chi2distance'] == chi2distance_min_deconvmethod)]['xi_um'])
+    chi2distance_min_fitting = df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
+    chi2distance_min_fitting_arr.append(chi2distance_min_fitting)
+    yy.append(df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_fitting_results["chi2distance"] == chi2distance_min_fitting)]['xi_um_fit_at_center'])
+
+plt.scatter(x=xx, y=yy, c=chi2distance_min_deconvmethod_arr)
+plt.scatter(x=xx, y=yy, c=chi2distance_min_fitting_arr)
