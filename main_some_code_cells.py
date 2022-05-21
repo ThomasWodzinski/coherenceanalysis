@@ -1031,3 +1031,8 @@ plt.scatter(x=x, y=y, c=c, marker='x', s=2)
 
 chi2distance_min_fitting = df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == 1548010586)]['chi2distance'].min()
 df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == 1548010586) & (df_fitting_results["chi2distance"] == chi2distance_min_fitting)]['xi_um_fit_at_center']
+
+
+
+chi2distance_min_deconvmethod_1d = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
+df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_deconvmethod_1d_results['chi2distance'] == chi2distance_min_deconvmethod_1d)]['xi_um']
