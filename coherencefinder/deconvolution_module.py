@@ -706,36 +706,39 @@ def deconvmethod(
         # use the optimal sigma_y_F_gamma_um_guess to determine the corresponding sigma_x_F_gamma_um and with it the coherence lengths xi_x and xi_y
         sigma_y_F_gamma_um_guess = chi2distance_minimize_result_bounded.x
     
-    (
-        partiallycoherent_profile,
-        fullycoherent_opt,
-        fullycoherent_profile_opt,
-        partiallycoherent_rec,
-        partiallycoherent_rec_profile,
-        sigma_x_F_gamma_um_opt,
-        sigma_y_F_gamma_um,
-        F_gamma,
-        abs_gamma,
-        xi_x_um,
-        xi_y_um,
-        I_bp,
-        dX_2,
-        chi2distance,
-    ) = deconvmethod_2d_x(
-        partiallycoherent,
-        z,
-        dX_1,
-        profilewidth,
-        pixis_centery_px,
-        wavelength,
-        xi_um_guess,
-        sigma_y_F_gamma_um_guess,
-        crop_px,
-        sigma_x_F_gamma_um_multiplier,
-        scan_x,
-        create_figure,
-        deconvmethod_steps_dir
-    )
+    try:
+        (
+            partiallycoherent_profile,
+            fullycoherent_opt,
+            fullycoherent_profile_opt,
+            partiallycoherent_rec,
+            partiallycoherent_rec_profile,
+            sigma_x_F_gamma_um_opt,
+            sigma_y_F_gamma_um,
+            F_gamma,
+            abs_gamma,
+            xi_x_um,
+            xi_y_um,
+            I_bp,
+            dX_2,
+            chi2distance,
+        ) = deconvmethod_2d_x(
+            partiallycoherent,
+            z,
+            dX_1,
+            profilewidth,
+            pixis_centery_px,
+            wavelength,
+            xi_um_guess,
+            sigma_y_F_gamma_um_guess,
+            crop_px,
+            sigma_x_F_gamma_um_multiplier,
+            scan_x,
+            create_figure,
+            deconvmethod_steps_dir
+        )
+    except:
+        print('deconvmethod failed!')
 
     return (
         partiallycoherent_profile,
