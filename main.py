@@ -2077,8 +2077,6 @@ def plot_fitting_vs_deconvolution(
         if xi_um_deconv_column == 'xi_x_um':
             x = deconvmethod_2d_results_arr
         y = fitting_results_arr
-        if xi_um_deconv_column == 'xi_um':
-            x = deconvmethod_1d_results_arr
         if chi2distance_column == 'chi2distance_deconvmethod_1d':
             c = chi2distance_min_deconvmethod_1d_arr
         if chi2distance_column == 'chi2distance_deconvmethod_2d':
