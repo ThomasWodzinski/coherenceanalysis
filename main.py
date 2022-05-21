@@ -680,11 +680,11 @@ def update_load_csv_to_df_widget(change):
 
     datestring = os.path.splitext(os.path.basename(df_fits_csv_files_widget.value))[0].split('df_fits_')[1]
     df_fitting_results_file = Path.joinpath(data_dir,str('df_fitting_results_'+datestring+'.csv'))
-    df_fitting_results = pd.read_csv(df_fitting_results_file)
+    df_fitting_results = pd.read_csv(df_fitting_results_file, index_col=0)
     df_deconvmethod_1d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_results_'+datestring+'.csv'))
-    df_deconvmethod_1d_results = pd.read_csv(df_deconvmethod_1d_results_file)
+    df_deconvmethod_1d_results = pd.read_csv(df_deconvmethod_1d_results_file, index_col=0)
     df_deconvmethod_2d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_results_'+datestring+'.csv'))
-    df_deconvmethod_2d_results = pd.read_csv(df_deconvmethod_2d_results_file)
+    df_deconvmethod_2d_results = pd.read_csv(df_deconvmethod_2d_results_file, index_col=0)
 
     load_csv_to_df_widget.value = False
 
@@ -2050,21 +2050,33 @@ def plot_fitting_vs_deconvolution(
         for timestamp_pulse_id in timestamp_pulse_ids:
             chi2distance_min_deconvmethod_1d = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
             chi2distance_min_deconvmethod_1d_arr.append(chi2distance_min_deconvmethod_1d)
-            deconvmethod_1d_results_arr.append(df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_deconvmethod_1d_results['chi2distance'] == chi2distance_min_deconvmethod_1d)]['xi_um'])
+            deconvmethod_1d_results = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_deconvmethod_1d_results['chi2distance'] == chi2distance_min_deconvmethod_1d)]['xi_um']
+            if deconvmethod_1d_results.empty:
+               deconvmethod_1d_results_arr.append(np.nan)
+            else:
+                deconvmethod_1d_results_arr.append(deconvmethod_1d_results) 
+
             chi2distance_min_deconvmethod_2d = df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
             chi2distance_min_deconvmethod_2d_arr.append(chi2distance_min_deconvmethod_2d)
-            deconvmethod_2d_results_arr.append(df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_deconvmethod_2d_results['chi2distance'] == chi2distance_min_deconvmethod_2d)]['xi_x_um'])
+            deconvmethod_2d_results = df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_deconvmethod_2d_results['chi2distance'] == chi2distance_min_deconvmethod_2d)]['xi_x_um']
+            if deconvmethod_2d_results.empty:
+               deconvmethod_2d_results_arr.append(np.nan)
+            else:
+                deconvmethod_2d_results_arr.append(deconvmethod_2d_results) 
+
             chi2distance_min_fitting = df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
             chi2distance_min_fitting_arr.append(chi2distance_min_fitting)
-            fitting_results_arr.append(df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_fitting_results["chi2distance"] == chi2distance_min_fitting)][xi_um_fit_column])
+            fitting_results = df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_fitting_results['chi2distance'] == chi2distance_min_fitting)]['xi_um_fit_at_center']
+            if fitting_results.empty:
+               fitting_results_arr.append(np.nan)
+            else:
+                fitting_results_arr.append(fitting_results) 
 
         if xi_um_deconv_column == 'xi_um':
             x = deconvmethod_1d_results_arr
         if xi_um_deconv_column == 'xi_x_um':
             x = deconvmethod_2d_results_arr
         y = fitting_results_arr
-        if xi_um_deconv_column == 'xi_um':
-            x = deconvmethod_1d_results_arr
         if chi2distance_column == 'chi2distance_deconvmethod_1d':
             c = chi2distance_min_deconvmethod_1d_arr
         if chi2distance_column == 'chi2distance_deconvmethod_2d':
@@ -2082,15 +2094,32 @@ def plot_fitting_vs_deconvolution(
         chi2distance_min_deconvmethod_1d_arr = []
         chi2distance_min_deconvmethod_2d_arr = []
         chi2distance_min_fitting_arr = []
+
         chi2distance_min_deconvmethod_1d = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["imageid"] == imageid)]['chi2distance'].min()
         chi2distance_min_deconvmethod_1d_arr.append(chi2distance_min_deconvmethod_1d)
-        deconvmethod_1d_results_arr.append(df_deconvmethod_1d_results[(df_deconvmethod_1d_results["imageid"] == imageid) & (df_deconvmethod_1d_results['chi2distance'] == chi2distance_min_deconvmethod_1d)]['xi_um'])
+        deconvmethod_1d_results = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["imageid"] == imageid) & (df_deconvmethod_1d_results['chi2distance'] == chi2distance_min_deconvmethod_1d)]['xi_um']
+        if deconvmethod_1d_results.empty:
+            deconvmethod_1d_results_arr.append(np.nan)
+        else:
+            deconvmethod_1d_results_arr.append(deconvmethod_1d_results) 
+
         chi2distance_min_deconvmethod_2d = df_deconvmethod_2d_results[(df_deconvmethod_2d_results["imageid"] == imageid)]['chi2distance'].min()
         chi2distance_min_deconvmethod_2d_arr.append(chi2distance_min_deconvmethod_2d)
-        deconvmethod_2d_results_arr.append(df_deconvmethod_2d_results[(df_deconvmethod_2d_results["imageid"] == imageid) & (df_deconvmethod_2d_results['chi2distance'] == chi2distance_min_deconvmethod_2d)]['xi_x_um'])
+        deconvmethod_2d_results = df_deconvmethod_2d_results[(df_deconvmethod_2d_results["imageid"] == imageid) & (df_deconvmethod_2d_results['chi2distance'] == chi2distance_min_deconvmethod_2d)]['xi_x_um']
+        if deconvmethod_2d_results.empty:
+            deconvmethod_2d_results_arr.append(np.nan)
+        else:
+            deconvmethod_2d_results_arr.append(deconvmethod_2d_results) 
+
         chi2distance_min_fitting = df_fitting_results[(df_fitting_results["imageid"] == imageid)]['chi2distance'].min()
         chi2distance_min_fitting_arr.append(chi2distance_min_fitting)
-        fitting_results_arr.append(df_fitting_results[(df_fitting_results["imageid"] == imageid) & (df_fitting_results["chi2distance"] == chi2distance_min_fitting)][xi_um_fit_column])
+        fitting_results = df_fitting_results[(df_fitting_results["imageid"] == imageid) & (df_fitting_results['chi2distance'] == chi2distance_min_fitting)]['xi_um_fit_at_center']
+        if fitting_results.empty:
+            fitting_results_arr.append(np.nan)
+        else:
+            fitting_results_arr.append(fitting_results) 
+
+
 
         if xi_um_deconv_column == 'xi_um':
             x = deconvmethod_1d_results_arr
@@ -2187,11 +2216,9 @@ def list_results(
 
         # https://datascienceparichay.com/article/pandas-groupby-minimum/
         if chi2distance_column == 'chi2distance_deconvmethod_1d':
-            statustext_widget.value = 'chi2distance_deconvmethod_1d'
             chi2distance_min_deconvmethod_1d = pd.merge(df_deconvmethod_1d_results,df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['imageid'])[['chi2distance']].min())[['imageid','xi_um_guess','xi_um','chi2distance']].sort_values('chi2distance',ascending=False)
             display(chi2distance_min_deconvmethod_1d)
         if chi2distance_column == 'chi2distance_deconvmethod_2d':
-            statustext_widget.value = 'chi2distance_deconvmethod_2d'
             chi2distance_min_deconvmethod_2d = pd.merge(df_deconvmethod_2d_results,df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['imageid'])[['chi2distance']].min())[['imageid','xi_um_guess','xi_x_um','chi2distance']].sort_values('chi2distance',ascending=False)
             display(chi2distance_min_deconvmethod_2d)
         if chi2distance_column == 'chi2distance_fitting':

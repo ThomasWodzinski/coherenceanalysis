@@ -956,3 +956,83 @@ for timestamp_pulse_id in timestamp_pulse_ids:
 
 plt.scatter(x=xx, y=yy, c=chi2distance_min_deconvmethod_arr)
 plt.scatter(x=xx, y=yy, c=chi2distance_min_fitting_arr)
+
+
+
+
+# %% debugging 141-fitting-vs-deconvolution-plots-typeerror-cannot-convert-the-series-to-class-float
+
+
+files = measurements_selection_widget.value
+
+# get all the timestamps in these files:        
+# datasets[list(datasets)[0]][0]
+timestamp_pulse_ids = []
+for f in files:
+    with h5py.File(f, "r") as hdf5_file:
+        timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+
+
+deconvmethod_1d_results_arr = []
+deconvmethod_2d_results_arr = []
+fitting_results_arr = []
+chi2distance_min_deconvmethod_1d_arr = []
+chi2distance_min_deconvmethod_2d_arr = []
+chi2distance_min_fitting_arr = []
+for timestamp_pulse_id in timestamp_pulse_ids:
+    chi2distance_min_deconvmethod_1d = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
+    chi2distance_min_deconvmethod_1d_arr.append(chi2distance_min_deconvmethod_1d)
+    deconvmethod_1d_results_arr.append(df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_deconvmethod_1d_results['chi2distance'] == chi2distance_min_deconvmethod_1d)]['xi_um'])
+    chi2distance_min_deconvmethod_2d = df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
+    chi2distance_min_deconvmethod_2d_arr.append(chi2distance_min_deconvmethod_2d)
+    deconvmethod_2d_results_arr.append(df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_deconvmethod_2d_results['chi2distance'] == chi2distance_min_deconvmethod_2d)]['xi_x_um'])
+    chi2distance_min_fitting = df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
+    chi2distance_min_fitting_arr.append(chi2distance_min_fitting)
+    fitting_results_arr.append(df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_fitting_results["chi2distance"] == chi2distance_min_fitting)]['xi_um_fit_at_center'])
+
+xi_um_deconv_column = 'xi_um'
+# xi_um_deconv_column = 'xi_x_um'
+
+# chi2distance_column = 'chi2distance_deconvmethod_1d'
+# chi2distance_column = 'chi2distance_deconvmethod_2d'
+chi2distance_column = 'chi2distance_fitting'
+
+if xi_um_deconv_column == 'xi_um':
+    x = deconvmethod_1d_results_arr
+if xi_um_deconv_column == 'xi_x_um':
+    x = deconvmethod_2d_results_arr
+y = fitting_results_arr
+if xi_um_deconv_column == 'xi_um':
+    x = deconvmethod_1d_results_arr
+if chi2distance_column == 'chi2distance_deconvmethod_1d':
+    c = chi2distance_min_deconvmethod_1d_arr
+if chi2distance_column == 'chi2distance_deconvmethod_2d':
+    c = chi2distance_min_deconvmethod_2d_arr
+if chi2distance_column == 'chi2distance_fitting':
+    c = chi2distance_min_fitting_arr
+# plt.scatter(x=xx, y=yy, c=chi2distance_min_deconvmethod_1d_arr)
+plt.scatter(x=x, y=y, c=c, marker='x', s=2)
+# plt.colorbar(label=chi2distance_label)
+
+
+
+
+[62     762.872999
+ 200    762.872999
+ Name: xi_um_fit_at_center, dtype: float64,
+ 109    748.121275
+ Name: xi_um_fit_at_center, dtype: float64,
+ 2    714.6151
+ Name: xi_um_fit_at_center, dtype: float64,
+ 64    725.977385
+ Name: xi_um_fit_at_center, dtype: float64,
+ 65    784.325576
+
+
+chi2distance_min_fitting = df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == 1548010586)]['chi2distance'].min()
+df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == 1548010586) & (df_fitting_results["chi2distance"] == chi2distance_min_fitting)]['xi_um_fit_at_center']
+
+
+
+chi2distance_min_deconvmethod_1d = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
+df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_deconvmethod_1d_results['chi2distance'] == chi2distance_min_deconvmethod_1d)]['xi_um']
