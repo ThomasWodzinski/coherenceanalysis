@@ -1768,37 +1768,41 @@ def plot_deconvmethod(
         # Ignoring OptimizeWarning. Supressing warning as described in https://stackoverflow.com/a/14463362:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            (
-                partiallycoherent_profile,
-                fullycoherent_opt,
-                fullycoherent_profile_opt,
-                partiallycoherent_rec,
-                partiallycoherent_rec_profile,
-                sigma_x_F_gamma_um_opt,
-                sigma_y_F_gamma_um,
-                F_gamma,
-                abs_gamma,
-                xi_x_um,
-                xi_y_um,
-                I_bp,
-                dX_2,
-                chi2distance,
-            ) = deconvmethod(
-                partiallycoherent,
-                z,
-                dX_1,
-                profilewidth,
-                pixis_centery_px,
-                wavelength,
-                xi_um_guess,
-                sigma_y_F_gamma_um_guess,
-                crop_px,
-                sigma_x_F_gamma_um_multiplier,
-                scan_x,
-                xatol,
-                create_figure,
-                savefigure_dir
-            )
+            try:
+                (
+                    partiallycoherent_profile,
+                    fullycoherent_opt,
+                    fullycoherent_profile_opt,
+                    partiallycoherent_rec,
+                    partiallycoherent_rec_profile,
+                    sigma_x_F_gamma_um_opt,
+                    sigma_y_F_gamma_um,
+                    F_gamma,
+                    abs_gamma,
+                    xi_x_um,
+                    xi_y_um,
+                    I_bp,
+                    dX_2,
+                    chi2distance,
+                ) = deconvmethod(
+                    partiallycoherent,
+                    z,
+                    dX_1,
+                    profilewidth,
+                    pixis_centery_px,
+                    wavelength,
+                    xi_um_guess,
+                    sigma_y_F_gamma_um_guess,
+                    crop_px,
+                    sigma_x_F_gamma_um_multiplier,
+                    scan_x,
+                    xatol,
+                    create_figure,
+                    savefigure_dir
+                )
+            except:
+                print('deconvmethod failed!')
+                xi_x_um = np.nan
         if scan_x == True:
             deconvmethod_text_widget.value = r"%.2fum" % (xi_x_um) + r", %.2fum" % (xi_y_um)
         else:
@@ -1872,80 +1876,80 @@ def plot_deconvmethod(
                 df_deconvmethod_1d_results = df_deconvmethod_1d_results.drop_duplicates()
 
 
+        if np.isnan(xi_x_um) == False:
+            fig = plt.figure(constrained_layout=False, figsize=(8.27, 11.69), dpi=150)
 
-        fig = plt.figure(constrained_layout=False, figsize=(8.27, 11.69), dpi=150)
+            gs = gridspec.GridSpec(2, 1, figure=fig, height_ratios=[1, 2])
+            gs.update(hspace=0.1)
 
-        gs = gridspec.GridSpec(2, 1, figure=fig, height_ratios=[1, 2])
-        gs.update(hspace=0.1)
+            #     ax2 = plt.subplot(2,1,2)
+            ax10 = fig.add_subplot(gs[1, 0])
 
-        #     ax2 = plt.subplot(2,1,2)
-        ax10 = fig.add_subplot(gs[1, 0])
-
-        im_ax10 = ax10.imshow(
-            pixis_image_norm,
-            origin="lower",
-            interpolation="nearest",
-            aspect="auto",
-            cmap="jet",
-            vmin=0,
-            vmax=1,
-            extent=((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, -n / 2 * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3),
-        )
-
-        # fig.colorbar(im_ax2, ax=ax2, pad=0.05, fraction=0.1, shrink=1.00, aspect=20, orientation='horizontal')
-
-        ax10.add_patch(
-            patches.Rectangle(
-                ((-n / 2) * dX_1 * 1e3, (int(round(pixis_centery_px)) - n / 2 - pixis_profile_avg_width / 2) * dX_1 * 1e3),
-                n * dX_1 * 1e3,
-                pixis_profile_avg_width * dX_1 * 1e3,
-                color="w",
-                linestyle="-",
-                alpha=0.8,
-                fill=False,  # remove background
+            im_ax10 = ax10.imshow(
+                pixis_image_norm,
+                origin="lower",
+                interpolation="nearest",
+                aspect="auto",
+                cmap="jet",
+                vmin=0,
+                vmax=1,
+                extent=((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, -n / 2 * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3),
             )
-        )
 
-        ax10.set_xlabel("x / mm", fontsize=14)
-        ax10.set_ylabel("y / mm", fontsize=14)
-        ax10.grid(color="w", linewidth=1, alpha=0.5, linestyle="--", which="major")
+            # fig.colorbar(im_ax2, ax=ax2, pad=0.05, fraction=0.1, shrink=1.00, aspect=20, orientation='horizontal')
 
-        ax00 = fig.add_subplot(gs[0, 0], sharex=ax10)
-        #     ax = plt.subplot(2,1,1)
-
-        #     plt.plot(list(range(pixis_profile_avg.size)),ydata, color='r', linewidth=2)
-        #     plt.plot(list(range(pixis_profile_avg.size)),result.best_fit, color='b', linewidth=0.5)
-        ax00.plot(xdata * 1e3, ydata, color="r", linewidth=2, label="data")
-        ax00.plot(xdata * 1e3, partiallycoherent_rec_profile, color="g", linewidth=1, label="recovered partially coherent")
-        ax00.plot(xdata * 1e3, fullycoherent_profile_opt, color="k", linewidth=0.5, label="fully coherent")
-        
-
-        ax00.set_xlim([(-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3])
-        ax00.set_ylim([0, 1])
-
-        ax00.set_ylabel("Intensity / a.u.", fontsize=14)
-        ax00.legend()
-
-        textstr = " ".join(
-            (
-                "ph-" + pinholes + ".id" + str(int(imageid)),
-                r"$\lambda=%.2f$nm" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['wavelength_nm_fit'],),
-                orientation,
-                "\n",
-                "$d$=" + str(int(separation_um)) + "um",
-                r"$\gamma=%.2f$" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['gamma_fit'],),
-                r"$\xi_x=%.2fum$" % (xi_x_um,),
+            ax10.add_patch(
+                patches.Rectangle(
+                    ((-n / 2) * dX_1 * 1e3, (int(round(pixis_centery_px)) - n / 2 - pixis_profile_avg_width / 2) * dX_1 * 1e3),
+                    n * dX_1 * 1e3,
+                    pixis_profile_avg_width * dX_1 * 1e3,
+                    color="w",
+                    linestyle="-",
+                    alpha=0.8,
+                    fill=False,  # remove background
+                )
             )
-        )
-        ax00.set_title(textstr, fontsize=10)
+
+            ax10.set_xlabel("x / mm", fontsize=14)
+            ax10.set_ylabel("y / mm", fontsize=14)
+            ax10.grid(color="w", linewidth=1, alpha=0.5, linestyle="--", which="major")
+
+            ax00 = fig.add_subplot(gs[0, 0], sharex=ax10)
+            #     ax = plt.subplot(2,1,1)
+
+            #     plt.plot(list(range(pixis_profile_avg.size)),ydata, color='r', linewidth=2)
+            #     plt.plot(list(range(pixis_profile_avg.size)),result.best_fit, color='b', linewidth=0.5)
+            ax00.plot(xdata * 1e3, ydata, color="r", linewidth=2, label="data")
+            ax00.plot(xdata * 1e3, partiallycoherent_rec_profile, color="g", linewidth=1, label="recovered partially coherent")
+            ax00.plot(xdata * 1e3, fullycoherent_profile_opt, color="k", linewidth=0.5, label="fully coherent")
+            
+
+            ax00.set_xlim([(-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3])
+            ax00.set_ylim([0, 1])
+
+            ax00.set_ylabel("Intensity / a.u.", fontsize=14)
+            ax00.legend()
+
+            textstr = " ".join(
+                (
+                    "ph-" + pinholes + ".id" + str(int(imageid)),
+                    r"$\lambda=%.2f$nm" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['wavelength_nm_fit'],),
+                    orientation,
+                    "\n",
+                    "$d$=" + str(int(separation_um)) + "um",
+                    r"$\gamma=%.2f$" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['gamma_fit'],),
+                    r"$\xi_x=%.2fum$" % (xi_x_um,),
+                )
+            )
+            ax00.set_title(textstr, fontsize=10)
 
 
-        plt.show()
-        # fittingprogress_widget.value = 10
-        # fittingprogress_widget.bar_style = 'success'
-        # statustext_widget.value = 'done'
+            plt.show()
+            # fittingprogress_widget.value = 10
+            # fittingprogress_widget.bar_style = 'success'
+            # statustext_widget.value = 'done'
 
-        # print(gamma_fit)
+            # print(gamma_fit)
 
 
 do_plot_deconvmethod_steps_widget = widgets.Checkbox(value=False, description="Do")
@@ -2216,13 +2220,13 @@ def list_results(
 
         # https://datascienceparichay.com/article/pandas-groupby-minimum/
         if chi2distance_column == 'chi2distance_deconvmethod_1d':
-            chi2distance_min_deconvmethod_1d = pd.merge(df_deconvmethod_1d_results,df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['imageid'])[['chi2distance']].min())[['imageid','xi_um_guess','xi_um','chi2distance']].sort_values('chi2distance',ascending=False)
+            chi2distance_min_deconvmethod_1d = pd.merge(df_deconvmethod_1d_results,df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess','xi_um','chi2distance']].sort_values('chi2distance',ascending=False)
             display(chi2distance_min_deconvmethod_1d)
         if chi2distance_column == 'chi2distance_deconvmethod_2d':
-            chi2distance_min_deconvmethod_2d = pd.merge(df_deconvmethod_2d_results,df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['imageid'])[['chi2distance']].min())[['imageid','xi_um_guess','xi_x_um','chi2distance']].sort_values('chi2distance',ascending=False)
+            chi2distance_min_deconvmethod_2d = pd.merge(df_deconvmethod_2d_results,df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess','xi_x_um','chi2distance']].sort_values('chi2distance',ascending=False)
             display(chi2distance_min_deconvmethod_2d)
         if chi2distance_column == 'chi2distance_fitting':
-            chi2distance_min_fitting = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['imageid'])[['chi2distance']].min())[['imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance']].sort_values('chi2distance',ascending=False)
+            chi2distance_min_fitting = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance']].sort_values('chi2distance',ascending=False)
             display(chi2distance_min_fitting)
 
 
@@ -2343,6 +2347,10 @@ def plot_CDCs(
             # get all the timestamps in these files:        
             # datasets[list(datasets)[0]][0]
             
+            if xi_um_deconv_column == 'xi_um':
+                df_deconvmethod_results = df_deconvmethod_1d_results
+            if xi_um_deconv_column == 'xi_x_um':
+                df_deconvmethod_results = df_deconvmethod_2d_results
             
             for f in files:
                 timestamp_pulse_ids = []
@@ -2357,24 +2365,31 @@ def plot_CDCs(
                 #         c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['I_Airy2_fit'])
 
                 # Deconvolution (green)
+                # todo: implement als deconvmethod_2d_result
                 x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'].unique()
+                df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance']].sort_values('chi2distance',ascending=False)
+                
                 for separation_um in x:
-                    y_nans = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["separation_um"]==separation_um) & (df0[xi_um_deconv_column].isna())]['imageid']
+                    y_nans = df_deconvmethod_results_min[df_deconvmethod_results_min[xi_um_deconv_column].isna()]
                     if len(y_nans) > 0:
                         print('Deconvolution failed in file: ' + str(f))
                         print('separation='+str(x))
                         print('imageids:')
-                        print(y_nans)
-                y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["separation_um"]==x)][xi_um_deconv_column].max()) for x in x]
+                        display(y_nans)
+                y = [gaussian(x=x, amp=1, cen=0, sigma=df_deconvmethod_results_min[df_deconvmethod_results_min["separation_um"]==x][xi_um_deconv_column].max()) for x in x]
                 ax.scatter(x, y, marker='v', s=20, color='darkgreen', facecolors='none', label='maximum')
                 
                 # Fitting (red)
                 x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'].unique()
-                y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["separation_um"]==x)][gamma_fit_column].max() for x in x]
+                df_fitting_results_min = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance',gamma_fit_column]].sort_values('chi2distance',ascending=False)
+                y = [df_fitting_results_min[(df_fitting_results_min["separation_um"]==x)][gamma_fit_column].max() for x in x]
                 ax.scatter(x, y, marker='v', s=20, color='darkred', facecolors='none', label='maximum')
                 
+            
+            # fit a gaussian on all max of each measurement
             x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))]['separation_um'].unique()
-            y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["separation_um"]==x)][xi_um_deconv_column].max()) for x in x]
+            df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance']].sort_values('chi2distance',ascending=False)
+            y = [gaussian(x=x, amp=1, cen=0, sigma=df_deconvmethod_results_min[df_deconvmethod_results_min["separation_um"]==x][xi_um_deconv_column].max()) for x in x]
         
             xx = np.arange(0.0, 2000, 10)
             gamma_xi_x_um_max = y
@@ -2395,7 +2410,9 @@ def plot_CDCs(
             # TO DO: find mean sigma and error of the max(gamma_fit) of each separation
 
             x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))]['separation_um'].unique()
-            y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["separation_um"]==x)][gamma_fit_column].max() for x in x]
+            # y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["separation_um"]==x)][gamma_fit_column].max() for x in x]
+            df_fitting_results_min = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance']].min())[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance',gamma_fit_column]].sort_values('chi2distance',ascending=False)
+            y = [df_fitting_results_min[(df_fitting_results_min["separation_um"]==x)][gamma_fit_column].max() for x in x]
         
             xx = np.arange(0.0, 2000, 10)
             gamma_fit_max = y
@@ -2473,10 +2490,10 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
                     timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
             # create plot for the determined timestamps:
-            # plt.scatter(df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_x_um'], df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['xi_um_fit'], cmap=df0[df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)]['separation_um'])
-            plt.scatter(df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['I_Airy2_fit'] , \
-                df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))][xi_um_fit_column], \
-                    c=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'],\
+            df_fitting_results_min = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min()).sort_values('chi2distance',ascending=False)
+            plt.scatter(df_fitting_results_min['I_Airy2_fit'] , \
+                df_fitting_results_min[xi_um_fit_column], \
+                    c=df_fitting_results_min['separation_um'],\
                         marker='x', s=2)
             plt.xlabel(r"$I_2$")
             plt.ylabel(xi_um_fit_label)
