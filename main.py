@@ -2366,12 +2366,12 @@ def plot_CDCs(
                 df_deconvmethod_1d_results_min = pd.merge(df_deconvmethod_1d_results,df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess','xi_um','chi2distance']].sort_values('chi2distance',ascending=False)
                 for separation_um in x:
                     # y_nans = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["separation_um"]==separation_um) & (df0[xi_um_deconv_column].isna())]['imageid']
-                    y_nans = df_deconvmethod_1d_results_min[df_deconvmethod_1d_results_min['xi_um'].isna()][['imageid']]
+                    y_nans = df_deconvmethod_1d_results_min[df_deconvmethod_1d_results_min['xi_um'].isna()]
                     if len(y_nans) > 0:
                         print('Deconvolution failed in file: ' + str(f))
                         print('separation='+str(x))
                         print('imageids:')
-                        print(y_nans)
+                        display(y_nans)
                 # y = [gaussian(x=x, amp=1, cen=0, sigma=df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df0["separation_um"]==x)][xi_um_deconv_column].max()) for x in x]
                 y = [gaussian(x=x, amp=1, cen=0, sigma=df_deconvmethod_1d_results_min[df_deconvmethod_1d_results_min["separation_um"]==x]['xi_um'].max()) for x in x]
                 ax.scatter(x, y, marker='v', s=20, color='darkgreen', facecolors='none', label='maximum')
