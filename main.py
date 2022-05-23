@@ -969,6 +969,14 @@ chi2distance_column_and_label_widget = widgets.Dropdown(
     layout=widgets.Layout(width='auto')
 )
 
+xi_um_guess_defaults_widget = widgets.Dropdown(
+    options=[],
+    description="xi_um_guess_defaults",
+    description_tooltip='xi_um_guess_defaults',
+    disabled=False,
+    layout=widgets.Layout(width='auto')
+)
+
 deconvmethod_outlier_limit_widget = widgets.FloatText(value = 2000, description='ξ>', description_tooltip='list values above this threshold',layout=widgets.Layout(width='auto'))
 fitting_outlier_limit_widget = widgets.FloatText(value = 2000, description='ξ>', description_tooltip='list values above this threshold',layout=widgets.Layout(width='auto'))
 
@@ -2058,7 +2066,7 @@ def plot_fitting_vs_deconvolution(
             if deconvmethod_1d_results.empty:
                deconvmethod_1d_results_arr.append(np.nan)
             else:
-                deconvmethod_1d_results_arr.append(deconvmethod_1d_results) 
+                deconvmethod_1d_results_arr.append(deconvmethod_1d_results.iloc[0]) 
 
             chi2distance_min_deconvmethod_2d = df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
             chi2distance_min_deconvmethod_2d_arr.append(chi2distance_min_deconvmethod_2d)
@@ -2066,15 +2074,15 @@ def plot_fitting_vs_deconvolution(
             if deconvmethod_2d_results.empty:
                deconvmethod_2d_results_arr.append(np.nan)
             else:
-                deconvmethod_2d_results_arr.append(deconvmethod_2d_results) 
+                deconvmethod_2d_results_arr.append(deconvmethod_2d_results.iloc[0]) 
 
             chi2distance_min_fitting = df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id)]['chi2distance'].min()
             chi2distance_min_fitting_arr.append(chi2distance_min_fitting)
-            fitting_results = df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_fitting_results['chi2distance'] == chi2distance_min_fitting)]['xi_um_fit_at_center']
+            fitting_results = df_fitting_results[(df_fitting_results["timestamp_pulse_id"] == timestamp_pulse_id) & (df_fitting_results['chi2distance'] == chi2distance_min_fitting)][xi_um_fit_column]
             if fitting_results.empty:
                fitting_results_arr.append(np.nan)
             else:
-                fitting_results_arr.append(fitting_results) 
+                fitting_results_arr.append(fitting_results.iloc[0]) 
 
         if xi_um_deconv_column == 'xi_um':
             x = deconvmethod_1d_results_arr
@@ -2105,7 +2113,7 @@ def plot_fitting_vs_deconvolution(
         if deconvmethod_1d_results.empty:
             deconvmethod_1d_results_arr.append(np.nan)
         else:
-            deconvmethod_1d_results_arr.append(deconvmethod_1d_results) 
+            deconvmethod_1d_results_arr.append(deconvmethod_1d_results.iloc[0]) 
 
         chi2distance_min_deconvmethod_2d = df_deconvmethod_2d_results[(df_deconvmethod_2d_results["imageid"] == imageid)]['chi2distance'].min()
         chi2distance_min_deconvmethod_2d_arr.append(chi2distance_min_deconvmethod_2d)
@@ -2113,15 +2121,15 @@ def plot_fitting_vs_deconvolution(
         if deconvmethod_2d_results.empty:
             deconvmethod_2d_results_arr.append(np.nan)
         else:
-            deconvmethod_2d_results_arr.append(deconvmethod_2d_results) 
+            deconvmethod_2d_results_arr.append(deconvmethod_2d_results.iloc[0]) 
 
         chi2distance_min_fitting = df_fitting_results[(df_fitting_results["imageid"] == imageid)]['chi2distance'].min()
         chi2distance_min_fitting_arr.append(chi2distance_min_fitting)
-        fitting_results = df_fitting_results[(df_fitting_results["imageid"] == imageid) & (df_fitting_results['chi2distance'] == chi2distance_min_fitting)]['xi_um_fit_at_center']
+        fitting_results = df_fitting_results[(df_fitting_results["imageid"] == imageid) & (df_fitting_results['chi2distance'] == chi2distance_min_fitting)][xi_um_fit_column]
         if fitting_results.empty:
             fitting_results_arr.append(np.nan)
         else:
-            fitting_results_arr.append(fitting_results) 
+            fitting_results_arr.append(fitting_results.iloc[0]) 
 
 
 
@@ -2179,6 +2187,7 @@ def plot_fitting_vs_deconvolution(
         plt.gca().set_aspect('equal')
 
 
+use_measurement_default_result_widget = widgets.Checkbox(value=False, description="use_measurement_default_result", disabled=False)
 
 
 def list_results(
@@ -2187,6 +2196,7 @@ def list_results(
     measurement_file,
     imageid,
     chi2distance_column_and_label,
+    use_measurement_default_result
 ):
 
     if do_list_results == True:
@@ -2211,23 +2221,56 @@ def list_results(
 
         # get all the timestamps in these files:        
         # datasets[list(datasets)[0]][0]
-        timestamp_pulse_ids = []
-        for f in files:
-            with h5py.File(f, "r") as hdf5_file:
-                timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
         pd.set_option('display.max_rows', None)
 
+        timestamp_pulse_ids = []
+        
+        for f in files:
+            timestamp_pulse_ids_measurement = []
+            measurement = os.path.splitext(os.path.basename(f))[0]
+            with h5py.File(f, "r") as hdf5_file:         
+                timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+            if use_measurement_default_result == True:
+                # deconvolution defaults:
+                xi_um_guess_measurement_default = df_measurement_default[df_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+                xatol_measurement_default = df_measurement_default[df_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+                sigma_x_F_gamma_um_multiplier_measurement_default = df_measurement_default[df_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+                crop_px_measurement_default = df_measurement_default[df_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+                # fitting defaults:
+                mod_sigma_um_measurement_default = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_sigma_um_measurement_default'].iloc[0]
+                mod_shiftx_um_measurement_default = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
+                if chi2distance_column == 'chi2distance_deconvmethod_1d':
+                    df_result = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
+                        (df_deconvmethod_1d_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
+                        (df_deconvmethod_1d_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
+                        (df_deconvmethod_1d_results['crop_px'] == crop_px_measurement_default)  ]
+                if chi2distance_column == 'chi2distance_deconvmethod_2d':
+                    df_result = df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
+                        (df_deconvmethod_2d_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
+                        (df_deconvmethod_2d_results['xatol'] == xatol_measurement_default) & \
+                        (df_deconvmethod_2d_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
+                        (df_deconvmethod_2d_results['crop_px'] == crop_px_measurement_default)  ]
+                if chi2distance_column == 'chi2distance_fitting':
+                    df_result = df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
+                        (df_fitting_results['mod_sigma_um'] == mod_sigma_um_measurement_default) & \
+                        (df_fitting_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)  ]
+                display(df_result)
+ 
+
+        
+
         # https://datascienceparichay.com/article/pandas-groupby-minimum/
-        if chi2distance_column == 'chi2distance_deconvmethod_1d':
-            chi2distance_min_deconvmethod_1d = pd.merge(df_deconvmethod_1d_results,df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess','xi_um','chi2distance']].sort_values('chi2distance',ascending=False)
-            display(chi2distance_min_deconvmethod_1d)
-        if chi2distance_column == 'chi2distance_deconvmethod_2d':
-            chi2distance_min_deconvmethod_2d = pd.merge(df_deconvmethod_2d_results,df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess','xi_x_um','chi2distance']].sort_values('chi2distance',ascending=False)
-            display(chi2distance_min_deconvmethod_2d)
-        if chi2distance_column == 'chi2distance_fitting':
-            chi2distance_min_fitting = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance']].sort_values('chi2distance',ascending=False)
-            display(chi2distance_min_fitting)
+        if use_measurement_default_result == False:
+            if chi2distance_column == 'chi2distance_deconvmethod_1d':
+                chi2distance_min_deconvmethod_1d = pd.merge(df_deconvmethod_1d_results,df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess','xi_um','chi2distance']].sort_values('chi2distance',ascending=False)
+                display(chi2distance_min_deconvmethod_1d)
+            if chi2distance_column == 'chi2distance_deconvmethod_2d':
+                chi2distance_min_deconvmethod_2d = pd.merge(df_deconvmethod_2d_results,df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess','xi_x_um','chi2distance']].sort_values('chi2distance',ascending=False)
+                display(chi2distance_min_deconvmethod_2d)
+            if chi2distance_column == 'chi2distance_fitting':
+                chi2distance_min_fitting = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance']].sort_values('chi2distance',ascending=False)
+                display(chi2distance_min_fitting)
 
 
 
@@ -2725,6 +2768,7 @@ list_results_output = interactive_output(
         "measurement_file" : dph_settings_bgsubtracted_widget,
         "imageid": imageid_widget,
         "chi2distance_column_and_label" : chi2distance_column_and_label_widget,
+        'use_measurement_default_result' : use_measurement_default_result_widget
     },
 )
 
@@ -3368,7 +3412,11 @@ tabs_left.set_title(3, 'CDCs')
 tabs_left.set_title(4, 'plot_xi_um_fit_vs_I_Airy2_fit')
 tabs_left.set_title(5, 'list_results')
 
-children_right = [VBox([HBox([VBox([xi_um_deconv_column_and_label_widget, xi_um_fit_column_and_label_widget, chi2distance_column_and_label_widget]),
+children_right = [VBox([HBox([VBox([use_measurement_default_result_widget, \
+                                    xi_um_guess_defaults_widget, \
+                                    xi_um_deconv_column_and_label_widget, \
+                                    xi_um_fit_column_and_label_widget, \
+                                    chi2distance_column_and_label_widget]),
 VBox([deconvmethod_outlier_limit_widget,fitting_outlier_limit_widget]),
 VBox([xaxisrange_widget, yaxisrange_widget])]), 
 HBox([do_set_fitting_results_to_nan_widget, do_set_deconvmethod_results_to_nan_widget]),
