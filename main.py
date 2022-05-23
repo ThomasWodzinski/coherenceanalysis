@@ -2231,6 +2231,7 @@ def list_results(
             measurement = os.path.splitext(os.path.basename(f))[0]
             with h5py.File(f, "r") as hdf5_file:         
                 timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
+                timestamp_pulse_ids_measurement.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
             if use_measurement_default_result == True:
                 # deconvolution defaults:
                 xi_um_guess_measurement_default = df_measurement_default[df_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
@@ -2244,33 +2245,33 @@ def list_results(
                     df_result = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_1d_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_1d_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_1d_results['crop_px'] == crop_px_measurement_default)  ]
+                        (df_deconvmethod_1d_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','xi_um_guess','xi_um','chi2distance']].sort_values('chi2distance',ascending=False)
                 if chi2distance_column == 'chi2distance_deconvmethod_2d':
                     df_result = df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_2d_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_2d_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_2d_results['crop_px'] == crop_px_measurement_default)  ]
+                        (df_deconvmethod_2d_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','xi_um_guess','xi_x_um','chi2distance']].sort_values('chi2distance',ascending=False)
                 if chi2distance_column == 'chi2distance_fitting':
                     df_result = df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_fitting_results['mod_sigma_um'] == mod_sigma_um_measurement_default) & \
-                        (df_fitting_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)  ]
+                        (df_fitting_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)][['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance']].sort_values('chi2distance',ascending=False)
                 display(df_result)
  
 
         
 
-        # https://datascienceparichay.com/article/pandas-groupby-minimum/
-        if use_measurement_default_result == False:
-            if chi2distance_column == 'chi2distance_deconvmethod_1d':
-                chi2distance_min_deconvmethod_1d = pd.merge(df_deconvmethod_1d_results,df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess','xi_um','chi2distance']].sort_values('chi2distance',ascending=False)
-                display(chi2distance_min_deconvmethod_1d)
-            if chi2distance_column == 'chi2distance_deconvmethod_2d':
-                chi2distance_min_deconvmethod_2d = pd.merge(df_deconvmethod_2d_results,df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess','xi_x_um','chi2distance']].sort_values('chi2distance',ascending=False)
-                display(chi2distance_min_deconvmethod_2d)
-            if chi2distance_column == 'chi2distance_fitting':
-                chi2distance_min_fitting = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance']].sort_values('chi2distance',ascending=False)
-                display(chi2distance_min_fitting)
+            # https://datascienceparichay.com/article/pandas-groupby-minimum/
+            if use_measurement_default_result == False:
+                if chi2distance_column == 'chi2distance_deconvmethod_1d':
+                    chi2distance_min_deconvmethod_1d = pd.merge(df_deconvmethod_1d_results,df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess','xi_um','chi2distance']].sort_values('chi2distance',ascending=False)
+                    display(chi2distance_min_deconvmethod_1d)
+                if chi2distance_column == 'chi2distance_deconvmethod_2d':
+                    chi2distance_min_deconvmethod_2d = pd.merge(df_deconvmethod_2d_results,df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess','xi_x_um','chi2distance']].sort_values('chi2distance',ascending=False)
+                    display(chi2distance_min_deconvmethod_2d)
+                if chi2distance_column == 'chi2distance_fitting':
+                    chi2distance_min_fitting = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance']].sort_values('chi2distance',ascending=False)
+                    display(chi2distance_min_fitting)
 
 
 
