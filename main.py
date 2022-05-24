@@ -2263,17 +2263,17 @@ def plot_fitting_vs_deconvolution(
                     df_deconvmethod_result = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_1d_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_1d_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_1d_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','xi_um_guess','xi_um','chi2distance']].sort_values('chi2distance',ascending=False)
+                        (df_deconvmethod_1d_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_um','chi2distance']].sort_values('chi2distance',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um':
                     df_deconvmethod_result = df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_2d_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_2d_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_2d_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','xi_um_guess','xi_x_um','chi2distance']].sort_values('chi2distance',ascending=False)
+                        (df_deconvmethod_2d_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um','chi2distance']].sort_values('chi2distance',ascending=False)
                 if xi_um_fit_column == 'xi_um_fit_at_center':
                     df_fitting_result = df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_fitting_results['mod_sigma_um'] == mod_sigma_um_measurement_default) & \
-                        (df_fitting_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)][['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance']].sort_values('chi2distance',ascending=False)
+                        (df_fitting_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)][['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance']].sort_values('chi2distance',ascending=False)
         
 
             # https://datascienceparichay.com/article/pandas-groupby-minimum/
@@ -2407,17 +2407,17 @@ def list_results(
                     df_deconvmethod_result = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_1d_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_1d_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_1d_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','xi_um_guess','xi_um','chi2distance']].sort_values('chi2distance',ascending=False)
+                        (df_deconvmethod_1d_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_um','chi2distance']].sort_values('chi2distance',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um':
                     df_deconvmethod_result = df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_2d_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_2d_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_2d_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','xi_um_guess','xi_x_um','chi2distance']].sort_values('chi2distance',ascending=False)
+                        (df_deconvmethod_2d_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um','chi2distance']].sort_values('chi2distance',ascending=False)
                 if xi_um_fit_column == 'xi_um_fit_at_center':
                     df_fitting_result = df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_fitting_results['mod_sigma_um'] == mod_sigma_um_measurement_default) & \
-                        (df_fitting_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)][['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance']].sort_values('chi2distance',ascending=False)
+                        (df_fitting_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)][['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance']].sort_values('chi2distance',ascending=False)
         
 
             # https://datascienceparichay.com/article/pandas-groupby-minimum/
