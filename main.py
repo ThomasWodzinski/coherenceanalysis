@@ -969,14 +969,6 @@ chi2distance_column_and_label_widget = widgets.Dropdown(
     layout=widgets.Layout(width='auto')
 )
 
-xi_um_guess_defaults_widget = widgets.Dropdown(
-    options=[],
-    description="xi_um_guess_defaults",
-    description_tooltip='xi_um_guess_defaults',
-    disabled=False,
-    layout=widgets.Layout(width='auto')
-)
-
 deconvmethod_outlier_limit_widget = widgets.FloatText(value = 2000, description='ξ>', description_tooltip='list values above this threshold',layout=widgets.Layout(width='auto'))
 fitting_outlier_limit_widget = widgets.FloatText(value = 2000, description='ξ>', description_tooltip='list values above this threshold',layout=widgets.Layout(width='auto'))
 
@@ -2011,7 +2003,8 @@ def plot_fitting_vs_deconvolution(
     deconvmethod_outlier_limit,
     fitting_outlier_limit,
     xaxisrange,
-    yaxisrange
+    yaxisrange,
+    use_measurement_default_result
 ):
 
     if do_plot_fitting_vs_deconvolution == True:
@@ -2757,7 +2750,8 @@ plot_fitting_vs_deconvolution_output = interactive_output(
         "deconvmethod_outlier_limit" : deconvmethod_outlier_limit_widget,
         "fitting_outlier_limit" : fitting_outlier_limit_widget,
         'xaxisrange' : xaxisrange_widget,
-        'yaxisrange' : yaxisrange_widget
+        'yaxisrange' : yaxisrange_widget,
+        'use_measurement_default_result' : use_measurement_default_result_widget
     },
 )
 
@@ -3414,7 +3408,6 @@ tabs_left.set_title(4, 'plot_xi_um_fit_vs_I_Airy2_fit')
 tabs_left.set_title(5, 'list_results')
 
 children_right = [VBox([HBox([VBox([use_measurement_default_result_widget, \
-                                    xi_um_guess_defaults_widget, \
                                     xi_um_deconv_column_and_label_widget, \
                                     xi_um_fit_column_and_label_widget, \
                                     chi2distance_column_and_label_widget]),
