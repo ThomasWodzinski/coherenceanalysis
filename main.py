@@ -2574,7 +2574,10 @@ def plot_CDCs(
                 # Deconvolution (green)
                 # todo: implement als deconvmethod_2d_result
                 x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'].unique()
-                df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance']].sort_values('chi2distance',ascending=False)
+                if xi_um_deconv_column == 'xi_um':
+                    df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_1d']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_1d'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_1d']].sort_values('chi2distance_deconvmethod_1d',ascending=False)
+                if xi_um_deconv_column == 'xi_x_um':
+                    df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_2d']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_2d'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_2d']].sort_values('chi2distance_deconvmethod_2d',ascending=False)
                 
                 for separation_um in x:
                     y_nans = df_deconvmethod_results_min[df_deconvmethod_results_min[xi_um_deconv_column].isna()]
@@ -2588,14 +2591,17 @@ def plot_CDCs(
                 
                 # Fitting (red)
                 x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'].unique()
-                df_fitting_results_min = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance',gamma_fit_column]].sort_values('chi2distance',ascending=False)
+                df_fitting_results_min = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min(), on=['timestamp_pulse_id','chi2distance_fitting'])[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance_fitting',gamma_fit_column]].sort_values('chi2distance_fitting',ascending=False)
                 y = [df_fitting_results_min[(df_fitting_results_min["separation_um"]==x)][gamma_fit_column].max() for x in x]
                 ax.scatter(x, y, marker='v', s=20, color='darkred', facecolors='none', label='maximum')
                 
             
             # fit a gaussian on all max of each measurement
             x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))]['separation_um'].unique()
-            df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance']].min(), on=['timestamp_pulse_id','chi2distance'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance']].sort_values('chi2distance',ascending=False)
+            if xi_um_deconv_column == 'xi_um':
+                df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_1d']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_1d'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_1d']].sort_values('chi2distance_deconvmethod_1d',ascending=False)
+            if xi_um_deconv_column == 'xi_x_um':
+                df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_2d']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_2d'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_2d']].sort_values('chi2distance_deconvmethod_2d',ascending=False)
             y = [gaussian(x=x, amp=1, cen=0, sigma=df_deconvmethod_results_min[df_deconvmethod_results_min["separation_um"]==x][xi_um_deconv_column].max()) for x in x]
         
             xx = np.arange(0.0, 2000, 10)
@@ -2618,7 +2624,7 @@ def plot_CDCs(
 
             x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))]['separation_um'].unique()
             # y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["separation_um"]==x)][gamma_fit_column].max() for x in x]
-            df_fitting_results_min = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance']].min())[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance',gamma_fit_column]].sort_values('chi2distance',ascending=False)
+            df_fitting_results_min = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min())[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance_fitting',gamma_fit_column]].sort_values('chi2distance_fitting',ascending=False)
             y = [df_fitting_results_min[(df_fitting_results_min["separation_um"]==x)][gamma_fit_column].max() for x in x]
         
             xx = np.arange(0.0, 2000, 10)
