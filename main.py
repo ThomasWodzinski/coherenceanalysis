@@ -2288,15 +2288,16 @@ def plot_fitting_vs_deconvolution(
             y = df_result[xi_um_fit_column]
             c = df_result[chi2distance_column]
 
+            
             plt.scatter(x=x, y=y, c=c, marker='x', s=2)
 
-            x = df_result[(df_result['timestamp_pulse_id']== timestamp_pulse_id)][xi_um_deconv_column]
-            y = df_result[(df_result['timestamp_pulse_id']== timestamp_pulse_id)][xi_um_fit_column]
-            c = df_result[(df_result['timestamp_pulse_id']== timestamp_pulse_id)][chi2distance_column]
+            x0 = df_result[(df_result['timestamp_pulse_id']== timestamp_pulse_id)][xi_um_deconv_column]
+            y0 = df_result[(df_result['timestamp_pulse_id']== timestamp_pulse_id)][xi_um_fit_column]
+            c0 = df_result[(df_result['timestamp_pulse_id']== timestamp_pulse_id)][chi2distance_column]
 
-            plt.scatter(x=x, y=y, c='red', marker='x', s=10)
+            plt.scatter(x=x0, y=y0, c='red', marker='x', s=10)
 
-
+        plt.clim(vmin=c.min(), vmax=c.max())
         plt.colorbar(label=chi2distance_label)
 
         x = np.linspace(0,2000)
