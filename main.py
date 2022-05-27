@@ -2511,6 +2511,27 @@ do_set_deconvmethod_results_to_nan_widget.observe(do_set_deconvmethod_results_to
 
 
 
+# sort_imageids_by_chi2distance
+
+sort_imageids_by_chi2distance_widget = widgets.ToggleButton(
+    value=False,
+    description='sort by chi2distance',
+    disabled=False,
+    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+    tooltip='sort images by chi2distance',
+    icon=''
+)
+
+def sort_imageids_by_chi2distance_widget_changed(change):
+    if sort_imageids_by_chi2distance_widget.value == True:
+        imageid_widget.options = df_result['imageid_x']
+        timestamp_pulse_id_widget.options = df_result['timestamp_pulse_id']
+        
+        sort_imageids_by_chi2distance_widget.value = False
+
+sort_imageids_by_chi2distance_widget.observe(sort_imageids_by_chi2distance_widget_changed, names="value")
+
+
 # CDC from Deconvolution (green) and Fitting (red)
 def plot_CDCs(
     do_plot_CDCs,
@@ -3599,7 +3620,8 @@ tabs_left.set_title(5, 'list_results')
 children_right = [VBox([HBox([VBox([use_measurement_default_result_widget, \
                                     xi_um_deconv_column_and_label_widget, \
                                     xi_um_fit_column_and_label_widget, \
-                                    chi2distance_column_and_label_widget]),
+                                    chi2distance_column_and_label_widget, \
+                                    sort_imageids_by_chi2distance_widget]),
 VBox([deconvmethod_outlier_limit_widget,fitting_outlier_limit_widget]),
 VBox([xaxisrange_widget, yaxisrange_widget])]), 
 HBox([do_set_fitting_results_to_nan_widget, do_set_deconvmethod_results_to_nan_widget]),
