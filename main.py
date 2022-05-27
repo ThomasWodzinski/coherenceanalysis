@@ -2524,7 +2524,7 @@ sort_imageids_by_chi2distance_widget = widgets.ToggleButton(
 
 def sort_imageids_by_chi2distance_widget_changed(change):
     if sort_imageids_by_chi2distance_widget.value == True:
-        imageid_widget.options = df_result['imageid_x']
+        imageid_widget.options = df_result['imageid']
         timestamp_pulse_id_widget.options = df_result['timestamp_pulse_id']
         
         sort_imageids_by_chi2distance_widget.value = False
