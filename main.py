@@ -710,7 +710,7 @@ df_fits_csv_save_widget = widgets.ToggleButton(
 
 def update_df_fits_csv_save_widget(change):
     if df_fits_csv_save_widget.value == True:
-        df_fits = df0[['timestamp_pulse_id'] + + list(set(fits_header_list) - set(['chi2distance_fitting', 'chi2distance_deconvmethod_1d', 'chi2distance_deconvmethod_2d']))]
+        df_fits = df0[['timestamp_pulse_id'] + list(set(fits_header_list) - set(['chi2distance_fitting', 'chi2distance_deconvmethod_1d', 'chi2distance_deconvmethod_2d']))]
         df_fits_csv_file = df_fits_csv_files_widget.value
         df_fits.to_csv(df_fits_csv_file)
 
