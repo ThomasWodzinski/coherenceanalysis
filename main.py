@@ -2199,7 +2199,7 @@ def plot_fitting_vs_deconvolution(
     do_plot_fitting_vs_deconvolution,
     dataset,
     measurement_file,
-    imageid,
+    timestamp_pulse_id,
     xi_um_deconv_column_and_label,
     xi_um_fit_column_and_label,
     chi2distance_column_and_label,
@@ -2346,7 +2346,7 @@ def list_results(
     do_list_results,
     dataset,
     measurement_file,
-    imageid,
+    timestamp_pulse_id,
     xi_um_deconv_column_and_label,
     xi_um_fit_column_and_label,
     chi2distance_column_and_label,
@@ -2357,7 +2357,7 @@ def list_results(
 
         global df_result
 
-        timestamp_pulse_id = timestamp_pulse_id_widget.value
+        # timestamp_pulse_id = timestamp_pulse_id_widget.value
 
         xi_um_deconv_column = xi_um_deconv_column_and_label[0]
         xi_um_deconv_label = xi_um_deconv_column_and_label[1]
@@ -2918,7 +2918,7 @@ plot_fitting_vs_deconvolution_output = interactive_output(
         "do_plot_fitting_vs_deconvolution": do_plot_fitting_vs_deconvolution_widget,
         "dataset" : datasets_widget,
         "measurement_file" : dph_settings_bgsubtracted_widget,
-        "imageid": imageid_widget,
+        "timestamp_pulse_id": timestamp_pulse_id_widget,
         "xi_um_deconv_column_and_label" : xi_um_deconv_column_and_label_widget,
         "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget,
         "chi2distance_column_and_label" : chi2distance_column_and_label_widget,
@@ -2936,7 +2936,7 @@ list_results_output = interactive_output(
         "do_list_results": do_list_results_widget,
         "dataset" : datasets_widget,
         "measurement_file" : dph_settings_bgsubtracted_widget,
-        "imageid": imageid_widget,
+        "timestamp_pulse_id": timestamp_pulse_id_widget,
         "xi_um_deconv_column_and_label" : xi_um_deconv_column_and_label_widget,
         "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget,
         "chi2distance_column_and_label" : chi2distance_column_and_label_widget,
