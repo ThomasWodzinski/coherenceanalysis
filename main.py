@@ -2703,7 +2703,7 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
                     timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
             # create plot for the determined timestamps:
-            df_fitting_results_min = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance']].min()).sort_values('chi2distance',ascending=False)
+            df_fitting_results_min = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min()).sort_values('chi2distance_fitting',ascending=False)
             plt.scatter(df_fitting_results_min['I_Airy2_fit'] , \
                 df_fitting_results_min[xi_um_fit_column], \
                     c=df_fitting_results_min['separation_um'],\
