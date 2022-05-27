@@ -1064,21 +1064,21 @@ def plot_fitting(
 
         # Loading and preparing
 
-        imageid = imageid_widget.value[0]
+        imageid = imageid_widget.value
         hdf5_file_path = dph_settings_bgsubtracted_widget.value
 
         with h5py.File(hdf5_file_path, "r") as hdf5_file:
             pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ]
             pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ]
             timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ][2]
             pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ][0]
 
         pinholes = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
@@ -1721,21 +1721,21 @@ def plot_deconvmethod(
 
         # Loading and preparing
 
-        imageid = imageid_widget.value[0]
+        imageid = imageid_widget.value
         hdf5_file_path = dph_settings_bgsubtracted_widget.value
 
         with h5py.File(hdf5_file_path, "r") as hdf5_file:
             pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ]
             # pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
-            #     np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+            #     np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             # ]
             timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ][2]
             pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ][0]
 
         pinholes = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
@@ -2017,8 +2017,6 @@ def plot_fitting_vs_deconvolution_v0(
 
     if do_plot_fitting_vs_deconvolution == True:
 
-        imageid = imageid[0]
-
         xi_um_deconv_column = xi_um_deconv_column_and_label[0]
         xi_um_deconv_label = xi_um_deconv_column_and_label[1]
         xi_um_fit_column = xi_um_fit_column_and_label[0]
@@ -2214,7 +2212,6 @@ def plot_fitting_vs_deconvolution(
 
     if do_plot_fitting_vs_deconvolution == True:
 
-        imageid = imageid[0]
         timestamp_pulse_id = timestamp_pulse_id_widget.value
 
         xi_um_deconv_column = xi_um_deconv_column_and_label[0]
@@ -2358,7 +2355,8 @@ def list_results(
 
     if do_list_results == True:
 
-        imageid = imageid[0]
+        global df_result
+
         timestamp_pulse_id = timestamp_pulse_id_widget.value
 
         xi_um_deconv_column = xi_um_deconv_column_and_label[0]
@@ -2972,10 +2970,13 @@ def dph_settings_bgsubtracted_widget_changed(change):
     # imageid_widget.options = None
     # imageid_index_widget.disabled = True   
     with h5py.File(dph_settings_bgsubtracted_widget.value, "r") as hdf5_file:
+        imageids_float=[]
+        imageids_float = hdf5_file["/bgsubtracted/imageid"][:]
         imageids=[]
-        imageids = hdf5_file["/bgsubtracted/imageid"][:]
         imageid_widget.value = None
         imageid_widget.options = None
+        for imageid in imageids_float:
+            imageids.append(int(imageid[0]))
         imageid_widget.options = imageids
         timestamp_pulse_ids=[]
         timestamps = hdf5_file["Timing/time stamp/fl2user1"][:]
@@ -3057,7 +3058,7 @@ def imageid_widget_changed(change):
     if imageid_widget.value is not None and imageid_widget.options is not None:
     # if do_fitting_widget.value == True:
     
-        imageid_index_widget.value = np.where(imageid_widget.options == imageid_widget.value)[0][0]
+        imageid_index_widget.value = np.where(np.array(imageid_widget.options) == imageid_widget.value)[0][0]
 
         clear_plot_deconvmethod_steps_widget.value = True
         clear_plot_deconvmethod_steps_widget.value = False
@@ -3080,11 +3081,11 @@ def imageid_widget_changed(change):
         with h5py.File(hdf5_file_path, "r") as hdf5_file:
             
             timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ][2]
             statustext_widget.value = str(timestamp_pulse_id)
             pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ][
                 0
             ]  # needed for what?
@@ -3101,7 +3102,7 @@ def imageid_widget_changed(change):
                 beamsize_text_widget.value = r"%.2fum" % (pinholes_bg_avg_sy_um,)
 
             pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
-                    np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+                    np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ]
 
             # determine how far the maximum of the image is shifted from the center
@@ -3546,16 +3547,16 @@ with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
     hdf5_file_path = dph_settings_bgsubtracted_widget.value
     with h5py.File(hdf5_file_path, "r") as hdf5_file:
         pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
-            np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+            np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
         ]
         pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
-            np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+            np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
         ]
         timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
-            np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+            np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
         ][2]
         pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
-            np.where(hdf5_file["/bgsubtracted/imageid"][:] == imageid)[0][0]
+            np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
         ][0]
 
     pinholes = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
