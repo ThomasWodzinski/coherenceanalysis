@@ -2282,7 +2282,7 @@ def plot_fitting_vs_deconvolution(
                 if xi_um_fit_column == 'xi_um_fit_at_center':
                     df_fitting_result = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min(), on=['timestamp_pulse_id','chi2distance_fitting'])[['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
             
-            df_result = pd.merge(df_deconvmethod_result,df_fitting_result,on=['timestamp_pulse_id'])
+            df_result = pd.merge(df_deconvmethod_result,df_fitting_result, left_index=True, right_index=True, suffixes=('', '_DROP')).filter(regex='^(?!.*_DROP)').sort_values(chi2distance_column,ascending=False)
             
             x = df_result[xi_um_deconv_column]
             y = df_result[xi_um_fit_column]
@@ -2427,7 +2427,7 @@ def list_results(
                 if xi_um_fit_column == 'xi_um_fit_at_center':
                     df_fitting_result = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min(), on=['timestamp_pulse_id','chi2distance_fitting'])[['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
             
-            df_result = pd.merge(df_deconvmethod_result,df_fitting_result,on=['timestamp_pulse_id']).sort_values(chi2distance_column,ascending=False)
+            df_result = pd.merge(df_deconvmethod_result,df_fitting_result, left_index=True, right_index=True, suffixes=('', '_DROP')).filter(regex='^(?!.*_DROP)').sort_values(chi2distance_column,ascending=False)
             
             display(df_result.style.apply(
                 lambda x: ['background-color: yellow' if x.timestamp_pulse_id == timestamp_pulse_id else '' for i in x],
@@ -2524,7 +2524,7 @@ sort_imageids_by_chi2distance_widget = widgets.ToggleButton(
 
 def sort_imageids_by_chi2distance_widget_changed(change):
     if sort_imageids_by_chi2distance_widget.value == True:
-        imageid_widget.options = df_result['imageid_x']
+        imageid_widget.options = df_result['imageid']
         timestamp_pulse_id_widget.options = df_result['timestamp_pulse_id']
         
         sort_imageids_by_chi2distance_widget.value = False
