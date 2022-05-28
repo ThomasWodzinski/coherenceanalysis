@@ -597,9 +597,9 @@ fittingprogress_widget = widgets.IntProgress(
 statustext_widget = widgets.Text(value="", placeholder="status", description="", disabled=False)
 
 do_fitting_widget = widgets.Checkbox(value=False, description="do_fitting", disabled=False)
-do_deconvmethod_widget = widgets.Checkbox(value=False, description="do_deconvmethod", disabled=False)
+do_plot_deconvmethod_1d_widget = widgets.Checkbox(value=False, description="deconvmethod_1d", disabled=False)
+do_plot_deconvmethod_2d_widget = widgets.Checkbox(value=False, description="deconvmethod_2d", disabled=False)
 xi_um_guess_widget = widgets.FloatText(value=900, description='xi_um_guess')
-scan_x_widget = widgets.Checkbox(value=False, description="scan_x", disabled=False)
 xatol_widget = widgets.FloatText(value=5, description='xatol')
 sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget')
 crop_px_widget = widgets.FloatText(value=200, description='crop_px')
@@ -1698,7 +1698,7 @@ def plot_fitting(
 
 
 def plot_deconvmethod(
-    do_deconvmethod,
+    do_plot_deconvmethod,
     pixis_profile_avg_width,
     xi_um_guess,
     scan_x,
@@ -1712,7 +1712,7 @@ def plot_deconvmethod(
     global df_deconvmethod_1d_results
     global df_deconvmethod_2d_results
 
-    if do_deconvmethod == True:
+    if do_plot_deconvmethod == True:
 
         if scan_x == True:
             deconvmethod_text_widget.value = ''
@@ -1958,6 +1958,62 @@ def plot_deconvmethod(
             # statustext_widget.value = 'done'
 
             # print(gamma_fit)
+
+
+def plot_deconvmethod_1d(
+    do_plot_deconvmethod_1d,
+    pixis_profile_avg_width,
+    xi_um_guess,
+    xatol,
+    sigma_x_F_gamma_um_multiplier,
+    crop_px,
+    # hdf5_file_path,
+    # imageid,
+    save_to_df 
+):
+    do_plot_deconvmethod = do_plot_deconvmethod_1d
+    scan_x = False
+    plot_deconvmethod(
+        do_plot_deconvmethod,
+        pixis_profile_avg_width,
+        xi_um_guess,
+        scan_x,
+        xatol,
+        sigma_x_F_gamma_um_multiplier,
+        crop_px,
+        # hdf5_file_path,
+        # imageid,
+        save_to_df
+        )
+
+def plot_deconvmethod_2d(
+    do_plot_deconvmethod_2d,
+    pixis_profile_avg_width,
+    xi_um_guess,
+    xatol,
+    sigma_x_F_gamma_um_multiplier,
+    crop_px,
+    # hdf5_file_path,
+    # imageid,
+    save_to_df 
+):
+    do_plot_deconvmethod = do_plot_deconvmethod_2d
+    scan_x = True
+    plot_deconvmethod(
+        do_plot_deconvmethod,
+        pixis_profile_avg_width,
+        xi_um_guess,
+        scan_x,
+        xatol,
+        sigma_x_F_gamma_um_multiplier,
+        crop_px,
+        # hdf5_file_path,
+        # imageid,
+        save_to_df
+        )
+
+
+
 
 
 do_plot_deconvmethod_steps_widget = widgets.Checkbox(value=False, description="Do")
@@ -2750,14 +2806,14 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
 column0 = widgets.VBox(
     [
         do_fitting_widget,
-        do_deconvmethod_widget,
+        do_plot_deconvmethod_1d_widget,
+        do_plot_deconvmethod_2d_widget,
         do_plot_fitting_vs_deconvolution_widget,
         do_list_results_widget,
         do_plot_CDCs_widget,
         do_plot_xi_um_fit_vs_I_Airy2_fit_widget,
         pixis_profile_avg_width_widget,
         xi_um_guess_widget,
-        scan_x_widget,
         xatol_widget,
         sigma_x_F_gamma_um_multiplier_widget,
         crop_px_widget,
@@ -2907,13 +2963,27 @@ plot_fitting_interactive_output = interactive_output(
     },
 )
 
-plot_deconvmethod_interactive_output = interactive_output(
-    plot_deconvmethod,
+plot_deconvmethod_1d_interactive_output = interactive_output(
+    plot_deconvmethod_1d,
     {
-        "do_deconvmethod": do_deconvmethod_widget,
+        "do_plot_deconvmethod_1d": do_plot_deconvmethod_1d_widget,
         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
         "xi_um_guess" : xi_um_guess_widget,
-        "scan_x" : scan_x_widget,
+        "xatol" : xatol_widget,
+        "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_widget,
+        "crop_px" : crop_px_widget,
+        # "hdf5_file_path": dph_settings_bgsubtracted_widget,
+        # "imageid": imageid_widget,
+        "save_to_df": save_to_df_widget,
+    },
+)
+
+plot_deconvmethod_2d_interactive_output = interactive_output(
+    plot_deconvmethod_2d,
+    {
+        "do_plot_deconvmethod_2d": do_plot_deconvmethod_2d_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
+        "xi_um_guess" : xi_um_guess_widget,
         "xatol" : xatol_widget,
         "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_widget,
         "crop_px" : crop_px_widget,
@@ -3090,10 +3160,15 @@ def imageid_widget_changed(change):
             do_fitting_widget_was_active = True
             do_fitting_widget.value = False
 
-        do_deconvmethod_widget_was_active = False
-        if do_deconvmethod_widget.value == True:
-            do_deconvmethod_widget_was_active = True
-            do_deconvmethod_widget.value = False
+        do_plot_deconvmethod_1d_widget_was_active = False
+        if do_plot_deconvmethod_1d_widget.value == True:
+            do_plot_deconvmethod_1d_widget_was_active = True
+            do_plot_deconvmethod_1d_widget.value = False
+
+        do_plot_deconvmethod_2d_widget_was_active = False
+        if do_plot_deconvmethod_2d_widget.value == True:
+            do_plot_deconvmethod_2d_widget_was_active = True
+            do_plot_deconvmethod_2d_widget.value = False
 
         hdf5_file_path = dph_settings_bgsubtracted_widget.value
         imageid = imageid_widget.value
@@ -3355,8 +3430,11 @@ def imageid_widget_changed(change):
         if do_fitting_widget_was_active == True:
             do_fitting_widget.value = True
 
-        if do_deconvmethod_widget_was_active == True:
-            do_deconvmethod_widget.value = True
+        if do_plot_deconvmethod_1d_widget_was_active == True:
+            do_plot_deconvmethod_1d_widget.value = True
+        
+        if do_plot_deconvmethod_2d_widget_was_active == True:
+            do_plot_deconvmethod_2d_widget.value = True
 
 imageid_widget.observe(imageid_widget_changed, names="value")
 
@@ -3603,7 +3681,8 @@ display(
 )  # https://stackoverflow.com/a/57346765
 
 children_left = [plot_fitting_interactive_output,
-                 plot_deconvmethod_interactive_output,
+                 plot_deconvmethod_1d_interactive_output,
+                 plot_deconvmethod_2d_interactive_output,
                  VBox([HBox([do_plot_deconvmethod_steps_widget, clear_plot_deconvmethod_steps_widget,
                       deconvmethod_ystep_widget, deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
                  plot_CDCs_output,
@@ -3612,11 +3691,12 @@ children_left = [plot_fitting_interactive_output,
 tabs_left = widgets.Tab(layout=widgets.Layout(height='1000px', width='67%'))
 tabs_left.children = children_left
 tabs_left.set_title(0, 'Fitting')
-tabs_left.set_title(1, 'Deconvolution')
-tabs_left.set_title(2, 'Deconvolution Steps')
-tabs_left.set_title(3, 'CDCs')
-tabs_left.set_title(4, 'plot_xi_um_fit_vs_I_Airy2_fit')
-tabs_left.set_title(5, 'list_results')
+tabs_left.set_title(1, 'Deconvolution 1d')
+tabs_left.set_title(2, 'Deconvolution 2d')
+tabs_left.set_title(3, 'Deconvolution Steps')
+tabs_left.set_title(4, 'CDCs')
+tabs_left.set_title(5, 'plot_xi_um_fit_vs_I_Airy2_fit')
+tabs_left.set_title(6, 'list_results')
 
 children_right = [VBox([HBox([VBox([use_measurement_default_result_widget, \
                                     xi_um_deconv_column_and_label_widget, \
