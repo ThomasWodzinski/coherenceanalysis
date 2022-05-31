@@ -11,6 +11,7 @@ Original file is located at
 # %% Imports
 
 import time
+from datetime import datetime
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -833,7 +834,9 @@ def deconvmethod_v1(
     crop_px = 200
     
     j = 0
+    start = datetime.now()
     for sigma_y_F_gamma_um in sigma_y_F_gamma_um_list:
+        
         sigma_x_F_gamma_um_list = np.arange(sigma_x_F_gamma_um_min,sigma_x_F_gamma_um_max,1)
         fullycoherent_profile_min_list = []
         i = 0
@@ -1032,9 +1035,12 @@ def deconvmethod_v1(
         
         
         
-
-
         j = j+1
+        end = datetime.now()
+        time_taken = end - start
+        time_left = time_taken/j * (len(sigma_y_F_gamma_um_list) - j)
+        print('time taken | time left:' +  str(time_taken) + "|" + str(time_left))
+        
         
         
     
