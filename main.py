@@ -2980,11 +2980,7 @@ def plot_deconvmethod_2d_v1(
         print('xi_x_um_list[index_opt]='+str(xi_x_um_list[index_opt]))
         print('xi_y_um_list[index_opt]='+str(xi_y_um_list[index_opt]))
 
-        # to do:
-        # store xi_x_um_v1, xi_x_um_v1, chi2distance_deconvmethod2d_v1 to df_deconvmethod_2d_v1
-        # create widgets
-        # estimate time left
-        # implement no display figures to accelerate
+
 
 
         fig, axs = plt.subplots(nrows=7,ncols=1, sharex=True, figsize=(5,15))
