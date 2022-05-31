@@ -3016,6 +3016,11 @@ def plot_deconvmethod_2d_v1(
 
 
         if np.isnan(xi_x_um) == False:
+            n = pixis_profile_avg.size  # number of sampling point  # number of pixels
+            dX_1 = 13e-6
+            xdata = np.linspace((-n / 2) * dX_1, (+n / 2 - 1) * dX_1, n)
+
+
             fig = plt.figure(constrained_layout=False, figsize=(8.27, 11.69), dpi=150)
 
             gs = gridspec.GridSpec(2, 1, figure=fig, height_ratios=[1, 2])
@@ -3058,7 +3063,7 @@ def plot_deconvmethod_2d_v1(
 
             #     plt.plot(list(range(pixis_profile_avg.size)),ydata, color='r', linewidth=2)
             #     plt.plot(list(range(pixis_profile_avg.size)),result.best_fit, color='b', linewidth=0.5)
-            ax00.plot(xdata * 1e3, ydata, color="r", linewidth=2, label="data")
+            ax00.plot(xdata * 1e3, partiallycoherent_profile, color="r", linewidth=2, label="data")
             ax00.plot(xdata * 1e3, fullycoherent_profile_opt_list[index_opt], color="g", linewidth=1, label="recovered partially coherent")
             ax00.plot(xdata * 1e3, partiallycoherent_rec_profile_list[index_opt], color="k", linewidth=0.5, label="fully coherent")
             
