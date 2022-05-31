@@ -824,6 +824,7 @@ def deconvmethod_v1(
     partiallycoherent_rec_profile_min_list = []
     delta_rec_min_list = []
     delta_profiles_cropped_list = []
+    chi2distance_list = []
     
     F_gamma_list = []
     gamma_list = []
@@ -863,6 +864,46 @@ def deconvmethod_v1(
             fullycoherent_profile_min_list.append(fullycoherent_profile_min)
 
             # print('sigma_x_F_gamma=' + str(sigma_x_F_gamma_um) + ' sigma_y_F_gamma=' + str(sigma_y_F_gamma_um) + ' fullycoherent_profile_min=' + str(fullycoherent_profile_min))
+
+            create_figure = True
+            if create_figure == True:
+                fig = plt.figure(constrained_layout=False, figsize=(10, 6), dpi=300)
+                gs = gridspec.GridSpec(8, 3, figure=fig)
+                ax00 = fig.add_subplot(gs[0, 0])
+                ax10 = fig.add_subplot(gs[1, 0])
+                ax20 = fig.add_subplot(gs[2, 0])
+                ax30 = fig.add_subplot(gs[3, 0])
+                ax40 = fig.add_subplot(gs[4, 0])
+                ax50 = fig.add_subplot(gs[5, 0])
+                ax60 = fig.add_subplot(gs[6, 0])
+                ax70 = fig.add_subplot(gs[7, 0])
+
+                ax = fig.add_subplot(gs[:, 1:])
+
+                ax70.scatter(sigma_x_F_gamma_um_list[:i], fullycoherent_profile_min_list[:i])
+                ax70.axhline(0, color="k")
+
+                n = partiallycoherent_profile.shape[0]
+                xdata = np.linspace((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, n)
+
+                ax.cla()
+                ax.plot(xdata, partiallycoherent_profile, "b-", label="measured partially coherent", linewidth=1)
+                ax.plot(xdata, fullycoherent_profile, "r-", label="recovered fully coherent", linewidth=1)
+                ax.axhline(0, color="k")
+                ax.axvline(-(n/2-crop_px) * dX_1 * 1e3, color="k")
+                ax.axvline((n/2-crop_px) * dX_1 * 1e3, color="k")
+                ax.set_xlabel("x / mm", fontsize=8)
+                ax.set_ylabel("Intensity / a.u.", fontsize=8)
+                ax.set_ylim(-0.2,1.2)
+
+                ax60.cla()
+                ax60.scatter(sigma_y_F_gamma_um_list[:j], chi2distance_list[:j])
+
+                plt.title('j='+str(j) + '/' + str(len(sigma_y_F_gamma_um_list)-1) + ' | i='+str(i))
+
+                display(plt.gcf())
+                plt.close(fig)
+                clear_output(wait=True)   
 
             if fullycoherent_profile_min<0:
                 break
@@ -908,6 +949,46 @@ def deconvmethod_v1(
 
             # print('sigma_x_F_gamma=' + str(sigma_x_F_gamma_um) + ' sigma_y_F_gamma=' + str(sigma_y_F_gamma_um) + ' fullycoherent_profile_min=' + str(fullycoherent_profile_min))
 
+            create_figure = True
+            if create_figure == True:
+                fig = plt.figure(constrained_layout=False, figsize=(10, 6), dpi=300)
+                gs = gridspec.GridSpec(8, 3, figure=fig)
+                ax00 = fig.add_subplot(gs[0, 0])
+                ax10 = fig.add_subplot(gs[1, 0])
+                ax20 = fig.add_subplot(gs[2, 0])
+                ax30 = fig.add_subplot(gs[3, 0])
+                ax40 = fig.add_subplot(gs[4, 0])
+                ax50 = fig.add_subplot(gs[5, 0])
+                ax60 = fig.add_subplot(gs[6, 0])
+                ax70 = fig.add_subplot(gs[7, 0])
+
+                ax = fig.add_subplot(gs[:, 1:])
+
+                ax70.scatter(sigma_x_F_gamma_um_list[:i], fullycoherent_profile_min_list[:i])
+                ax70.axhline(0, color="k")
+
+                n = partiallycoherent_profile.shape[0]
+                xdata = np.linspace((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, n)
+
+                ax.cla()
+                ax.plot(xdata, partiallycoherent_profile, "b-", label="measured partially coherent", linewidth=1)
+                ax.plot(xdata, fullycoherent_profile, "r-", label="recovered fully coherent", linewidth=1)
+                ax.axhline(0, color="k")
+                ax.axvline(-(n/2-crop_px) * dX_1 * 1e3, color="k")
+                ax.axvline((n/2-crop_px) * dX_1 * 1e3, color="k")
+                ax.set_xlabel("x / mm", fontsize=8)
+                ax.set_ylabel("Intensity / a.u.", fontsize=8)
+                ax.set_ylim(-0.2,1.2)
+
+                ax60.cla()
+                ax60.scatter(sigma_y_F_gamma_um_list[:j], chi2distance_list[:j])
+
+                plt.title('j='+str(j) + '/' + str(len(sigma_y_F_gamma_um_list)-1) + ' | i='+str(i))
+
+                display(plt.gcf())
+                plt.close(fig)
+                clear_output(wait=True)   
+
             if fullycoherent_profile_min<0:
                 break
             i = i + 1
@@ -941,6 +1022,17 @@ def deconvmethod_v1(
         delta_profiles_cropped_list.append(np.sum(partiallycoherent_profile[crop_px:-crop_px] - partiallycoherent_rec_profile[crop_px:-crop_px]))
         
 #         print('sigma_x_F_gamma_opt=' + str(sigma_x_F_gamma_um_opt) + 'sigma_y_F_gamma=' + str(sigma_y_F_gamma_um) + ' fullycoherent_profile_min=' + str(fullycoherent_profile_min_list[i-1]) + '\\' + ' correlation partiallycohernet measurement and reconstruction = ' + str(round(cor*100,2)) + '%')
+
+        
+        number_of_bins = 100
+        hist1, bin_edges1 = np.histogram(partiallycoherent.ravel(), bins=np.linspace(0,1,number_of_bins))
+        hist2, bin_edges2 = np.histogram(partiallycoherent_rec.ravel(), bins=np.linspace(0,1,number_of_bins))
+        chi2distance_list.append(chi2_distance(hist1, hist2))
+        
+        
+        
+        
+
 
         j = j+1
         
@@ -998,7 +1090,8 @@ def deconvmethod_v1(
     cor_list, 
     cor_profiles_list, 
     cor_profiles_list, 
-    index_opt)
+    index_opt,
+    chi2distance_list)
 
 
     

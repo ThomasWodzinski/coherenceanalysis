@@ -2826,7 +2826,8 @@ def plot_deconvmethod_2d_v1(
             cor_list, 
             cor_profiles_list, 
             cor_profiles_cropped_list, 
-            index_opt
+            index_opt,
+            chi2distance_list
         ) = deconvmethod_v1(
             partiallycoherent, 
             z, 
@@ -2842,12 +2843,12 @@ def plot_deconvmethod_2d_v1(
             crop_px
         )
 
-        chi2distance_list = []
-        for partiallycoherent_rec in partiallycoherent_rec_list:
-            number_of_bins = 100
-            hist1, bin_edges1 = np.histogram(partiallycoherent.ravel(), bins=np.linspace(0,1,number_of_bins))
-            hist2, bin_edges2 = np.histogram(partiallycoherent_rec.ravel(), bins=np.linspace(0,1,number_of_bins))
-            chi2distance_list.append(chi2_distance(hist1, hist2))
+        # chi2distance_list = []
+        # for partiallycoherent_rec in partiallycoherent_rec_list:
+        #     number_of_bins = 100
+        #     hist1, bin_edges1 = np.histogram(partiallycoherent.ravel(), bins=np.linspace(0,1,number_of_bins))
+        #     hist2, bin_edges2 = np.histogram(partiallycoherent_rec.ravel(), bins=np.linspace(0,1,number_of_bins))
+        #     chi2distance_list.append(chi2_distance(hist1, hist2))
 
         #index_opt = np.where(np.abs(np.asarray(delta_profiles_cropped_list)) == np.min(np.abs(np.asarray(delta_profiles_cropped_list))))[0][0]
         index_opt = np.where(np.asarray(chi2distance_list) == np.min(np.asarray(chi2distance_list)))[0][0]
@@ -2942,7 +2943,8 @@ def plot_deconvmethod_2d_v1(
         cor_list, 
         cor_profiles_list, 
         cor_profiles_cropped_list, 
-        index_opt
+        index_opt,
+        chi2distance_list
         ) = deconvmethod_v1(
             partiallycoherent, 
             z, 
@@ -2959,12 +2961,12 @@ def plot_deconvmethod_2d_v1(
         )
 
 
-        chi2distance_list = []
-        for partiallycoherent_rec in partiallycoherent_rec_list:
-            number_of_bins = 100
-            hist1, bin_edges1 = np.histogram(partiallycoherent.ravel(), bins=np.linspace(0,1,number_of_bins))
-            hist2, bin_edges2 = np.histogram(partiallycoherent_rec.ravel(), bins=np.linspace(0,1,number_of_bins))
-            chi2distance_list.append(chi2_distance(hist1, hist2))
+        # chi2distance_list = []
+        # for partiallycoherent_rec in partiallycoherent_rec_list:
+        #     number_of_bins = 100
+        #     hist1, bin_edges1 = np.histogram(partiallycoherent.ravel(), bins=np.linspace(0,1,number_of_bins))
+        #     hist2, bin_edges2 = np.histogram(partiallycoherent_rec.ravel(), bins=np.linspace(0,1,number_of_bins))
+        #     chi2distance_list.append(chi2_distance(hist1, hist2))
 
         index_opt = np.where(np.asarray(chi2distance_list) == np.min(np.asarray(chi2distance_list)))[0][0]
 
@@ -2977,6 +2979,13 @@ def plot_deconvmethod_2d_v1(
         print('sigma_y_F_gamma_um_list[index_opt]='+str(sigma_y_F_gamma_um_list[index_opt]))
         print('xi_x_um_list[index_opt]='+str(xi_x_um_list[index_opt]))
         print('xi_y_um_list[index_opt]='+str(xi_y_um_list[index_opt]))
+
+        # to do:
+        # store xi_x_um_v1, xi_x_um_v1, chi2distance_deconvmethod2d_v1 to df_deconvmethod_2d_v1
+        # create widgets
+        # estimate time left
+        # implement no display figures to accelerate
+
 
         fig, axs = plt.subplots(nrows=7,ncols=1, sharex=True, figsize=(5,15))
         ax = axs[0]
