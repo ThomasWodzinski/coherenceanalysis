@@ -2893,7 +2893,7 @@ def plot_deconvmethod_2d_v1(
 
         fig.tight_layout()
 
-        # plt.close(fig)
+        plt.close(fig)
 
         #### only the  profiles
         for idx in range(len(fullycoherent_profile_opt_list)):
@@ -2914,7 +2914,7 @@ def plot_deconvmethod_2d_v1(
 
             plt.title('d / $\mu$m = '+str(int(separation_um)) + ' coherence length $\\xi_x$ / $\mu$m = ' + str(round(xi_x_um_list[idx],2)) + ' $\\xi_y$ / $\mu$m = ' + str(round(xi_y_um_list[idx],2)), fontsize=12)
 
-            # plt.close(fig)
+            plt.close(fig)
 
 
 
@@ -3012,6 +3012,7 @@ def plot_deconvmethod_2d_v1(
         ax.axvline(sigma_y_F_gamma_um_list[index_opt])
 
         fig.tight_layout()
+        plt.close(fig)
 
 
         if np.isnan(xi_x_um) == False:
