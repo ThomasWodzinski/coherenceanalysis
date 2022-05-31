@@ -92,7 +92,7 @@ from IPython.display import display, clear_output
 import os.path
 
 
-from coherencefinder.deconvolution_module import calc_sigma_F_gamma_um, deconvmethod, normalize
+from coherencefinder.deconvolution_module import calc_sigma_F_gamma_um, deconvmethod, deconvmethod_v1, normalize, chi2_distance
 from coherencefinder.fitting_module import Airy, find_sigma, fit_profile_v1, fit_profile_v2, gaussian
 
 # import pickle as pl
@@ -609,6 +609,7 @@ do_plot_fitting_v1_widget = widgets.Checkbox(value=False, description="do_fittin
 do_fitting_widget = widgets.Checkbox(value=False, description="do_fitting", disabled=False)
 do_plot_deconvmethod_1d_widget = widgets.Checkbox(value=False, description="deconvmethod_1d", disabled=False)
 do_plot_deconvmethod_2d_widget = widgets.Checkbox(value=False, description="deconvmethod_2d", disabled=False)
+do_plot_deconvmethod_2d_v1_widget = widgets.Checkbox(value=False, description="deconvmethod_2d_v1", disabled=False)
 xi_um_guess_widget = widgets.FloatText(value=900, description='xi_um_guess')
 xatol_widget = widgets.FloatText(value=5, description='xatol')
 sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget')
@@ -2737,6 +2738,354 @@ def plot_deconvmethod_steps(do_plot_deconvmethod_steps, clear_plot_deconvmethod_
         clear_output()
 
 
+def plot_deconvmethod_2d_v1(
+    do_plot_deconvmethod_2d_v1,
+    pixis_profile_avg_width,
+    crop_px   
+):
+    if do_plot_deconvmethod_2d_v1 == True:
+
+        statustext_widget.value = 'calculating deconvmethod_2d_v1 ...'
+
+        # Loading and preparing
+
+        imageid = imageid_widget.value
+        hdf5_file_path = dph_settings_bgsubtracted_widget.value
+
+        with h5py.File(hdf5_file_path, "r") as hdf5_file:
+            pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+            ]
+            # pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
+            #     np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+            # ]
+            timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+            ][2]
+            pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+            ][0]
+
+        pinholes = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
+        separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
+        orientation = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["orientation"].iloc[0]
+        setting_wavelength_nm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["setting_wavelength_nm"].iloc[0]
+        pinholes_bg_avg_sx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sx_um"].iloc[0]
+        pinholes_bg_avg_sy_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sy_um"].iloc[0]
+        # pixis_avg_width = 200  # read from df0 instead!
+
+        pixis_profile_avg = pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:]
+
+
+        partiallycoherent = pixis_image_norm
+        z = 5781 * 1e-3
+        dX_1 = 13 * 1e-6
+        profilewidth = 200  # pixis_avg_width  # defined where?
+        pixis_centery_px = int(pixis_centery_px)
+        wavelength = setting_wavelength_nm * 1e-9
+        # xi_um_guess = 475
+        # guess sigma_y_F_gamma_um based on the xi_um_guess assuming to be the beams intensity rms width
+
+        pixis_profile_avg = np.average(pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:],axis=0)
+        pixis_profile_avg = pixis_profile_avg / np.max(pixis_profile_avg)
+
+        n = pixis_profile_avg.size  # number of sampling point  # number of pixels
+        dX_1 = 13e-6
+        xdata = np.linspace((-n / 2) * dX_1, (+n / 2 - 1) * dX_1, n)
+        ydata = pixis_profile_avg  # defined in the cells above, still to implement: select
+        
+
+        create_figure = True
+        savefigure_dir = scratch_dir
+
+
+        sigma_x_F_gamma_um_min = 7
+        sigma_x_F_gamma_um_max = 40
+
+        sigma_y_F_gamma_um_min = 7
+        sigma_y_F_gamma_um_max = 40
+        sigma_y_F_gamma_um_stepsize = 1
+
+        (
+            partiallycoherent_profile, 
+            fullycoherent_opt_list, 
+            fullycoherent_profile_opt_list,  
+            partiallycoherent_rec_list, 
+            partiallycoherent_rec_profile_list, 
+            partiallycoherent_rec_profile_min_list, 
+            delta_rec_min_list, 
+            delta_profiles_cropped_list, 
+            sigma_x_F_gamma_um_opt, 
+            sigma_y_F_gamma_um_list, 
+            F_gamma_list, 
+            abs_gamma_list, 
+            xi_x_um_list, 
+            xi_y_um_list, 
+            I_bp, 
+            dX_2, 
+            cor_list, 
+            cor_profiles_list, 
+            cor_profiles_cropped_list, 
+            index_opt
+        ) = deconvmethod_v1(
+            partiallycoherent, 
+            z, 
+            dX_1, 
+            profilewidth, 
+            pixis_centery_px, 
+            wavelength, 
+            sigma_x_F_gamma_um_min, 
+            sigma_x_F_gamma_um_max, 
+            sigma_y_F_gamma_um_min, 
+            sigma_y_F_gamma_um_max, 
+            sigma_y_F_gamma_um_stepsize, 
+            crop_px
+        )
+
+        chi2distance_list = []
+        for partiallycoherent_rec in partiallycoherent_rec_list:
+            number_of_bins = 100
+            hist1, bin_edges1 = np.histogram(partiallycoherent.ravel(), bins=np.linspace(0,1,number_of_bins))
+            hist2, bin_edges2 = np.histogram(partiallycoherent_rec.ravel(), bins=np.linspace(0,1,number_of_bins))
+            chi2distance_list.append(chi2_distance(hist1, hist2))
+
+        #index_opt = np.where(np.abs(np.asarray(delta_profiles_cropped_list)) == np.min(np.abs(np.asarray(delta_profiles_cropped_list))))[0][0]
+        index_opt = np.where(np.asarray(chi2distance_list) == np.min(np.asarray(chi2distance_list)))[0][0]
+
+        xi_um = xi_x_um_list[index_opt]
+        print('sigma_x_F_gamma_um_opt='+str(sigma_x_F_gamma_um_opt))
+        print('sigma_y_F_gamma_um_list[index_opt]='+str(sigma_y_F_gamma_um_list[index_opt]))
+        print('xi_x_um_list[index_opt]='+str(xi_x_um_list[index_opt]))
+        print('xi_y_um_list[index_opt]='+str(xi_y_um_list[index_opt]))
+
+        fig, axs = plt.subplots(nrows=7,ncols=1, sharex=True, figsize=(5,15))
+        ax = axs[0]
+        ax.plot(sigma_y_F_gamma_um_list, cor_list)
+        ax.set_ylabel('cor')
+
+        ax = axs[1]
+        ax.plot(sigma_y_F_gamma_um_list, cor_profiles_list)
+        ax.set_ylabel('cor profiles')
+
+        ax = axs[2]
+        ax.plot(sigma_y_F_gamma_um_list, chi2distance_list)
+        ax.set_ylabel('chi2distance')
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+
+        ax = axs[3]
+        ax.plot(sigma_y_F_gamma_um_list, delta_rec_min_list)
+        ax.set_ylabel('delta minimum')
+
+        ax = axs[4]
+        ax.plot(sigma_y_F_gamma_um_list, delta_profiles_cropped_list)
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+        ax.set_ylabel('delta profiles cropped')
+
+        ax = axs[5]
+        ax.plot(sigma_y_F_gamma_um_list, xi_x_um_list)
+        ax.set_ylabel('xi_x')
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+
+        ax = axs[6]
+        ax.plot(sigma_y_F_gamma_um_list, xi_y_um_list)
+        ax.set_ylabel('xi_y')
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+
+        fig.tight_layout()
+
+        # plt.close(fig)
+
+        #### only the  profiles
+        for idx in range(len(fullycoherent_profile_opt_list)):
+            n = partiallycoherent_profile.shape[0]
+
+            xdata = np.linspace((-n/2)*dX_1*1e3, (+n/2-1)*dX_1*1e3, n)
+
+            fig=plt.figure(figsize=(11.69,8.27), dpi= 300, facecolor='w', edgecolor='k')  # A4 sheet in landscape
+            ax = plt.subplot(1,1,1)
+            plt.plot(xdata, partiallycoherent_profile, 'b-', label='measured partially coherent', linewidth=1)
+            plt.plot(xdata, fullycoherent_profile_opt_list[idx], 'r-', label='recovered fully coherent', linewidth=1)
+            plt.plot(xdata, partiallycoherent_rec_profile_list[idx], 'g-', label='recovered partially coherent', linewidth=1)
+            #plt.plot(xdata, gaussianbeam(xdata, 1, popt_gauss[0] ,popt_gauss[1], 0), 'r-', label='fit: m=%5.1f px, w=%5.1f px' % tuple([popt_gauss[0] ,popt_gauss[1]]))
+            plt.axhline(0, color='k')
+            plt.xlabel('x / mm', fontsize = 14)
+            plt.ylabel('Intensity / a.u.', fontsize = 14)
+            plt.legend()
+
+            plt.title('d / $\mu$m = '+str(int(separation_um)) + ' coherence length $\\xi_x$ / $\mu$m = ' + str(round(xi_x_um_list[idx],2)) + ' $\\xi_y$ / $\mu$m = ' + str(round(xi_y_um_list[idx],2)), fontsize=12)
+
+            # plt.close(fig)
+
+
+
+        sigma_y_F_gamma_um_min = sigma_y_F_gamma_um_list[index_opt] - 0.5
+        sigma_y_F_gamma_um_max = sigma_y_F_gamma_um_list[index_opt] + 0.5
+        sigma_y_F_gamma_um_stepsize = 0.1
+
+        (
+        partiallycoherent_profile, 
+        fullycoherent_opt_list, 
+        fullycoherent_profile_opt_list,  
+        partiallycoherent_rec_list, 
+        partiallycoherent_rec_profile_list, 
+        partiallycoherent_rec_profile_min_list, 
+        delta_rec_min_list, 
+        delta_profiles_cropped_list, 
+        sigma_x_F_gamma_um_opt, 
+        sigma_y_F_gamma_um_list, 
+        F_gamma_list, 
+        abs_gamma_list, 
+        xi_x_um_list, 
+        xi_y_um_list, 
+        I_bp, 
+        dX_2, 
+        cor_list, 
+        cor_profiles_list, 
+        cor_profiles_cropped_list, 
+        index_opt
+        ) = deconvmethod_v1(
+            partiallycoherent, 
+            z, 
+            dX_1, 
+            profilewidth, 
+            pixis_centery_px, 
+            wavelength, 
+            sigma_x_F_gamma_um_min, 
+            sigma_x_F_gamma_um_max, 
+            sigma_y_F_gamma_um_min, 
+            sigma_y_F_gamma_um_max, 
+            sigma_y_F_gamma_um_stepsize, 
+            crop_px
+        )
+
+
+        chi2distance_list = []
+        for partiallycoherent_rec in partiallycoherent_rec_list:
+            number_of_bins = 100
+            hist1, bin_edges1 = np.histogram(partiallycoherent.ravel(), bins=np.linspace(0,1,number_of_bins))
+            hist2, bin_edges2 = np.histogram(partiallycoherent_rec.ravel(), bins=np.linspace(0,1,number_of_bins))
+            chi2distance_list.append(chi2_distance(hist1, hist2))
+
+        index_opt = np.where(np.asarray(chi2distance_list) == np.min(np.asarray(chi2distance_list)))[0][0]
+
+
+        xi_um = xi_x_um_list[index_opt]
+        xi_x_um = xi_x_um_list[index_opt]
+        xi_y_um = xi_y_um_list[index_opt]
+
+        print('sigma_x_F_gamma_um_opt='+str(sigma_x_F_gamma_um_opt))
+        print('sigma_y_F_gamma_um_list[index_opt]='+str(sigma_y_F_gamma_um_list[index_opt]))
+        print('xi_x_um_list[index_opt]='+str(xi_x_um_list[index_opt]))
+        print('xi_y_um_list[index_opt]='+str(xi_y_um_list[index_opt]))
+
+        fig, axs = plt.subplots(nrows=7,ncols=1, sharex=True, figsize=(5,15))
+        ax = axs[0]
+        ax.plot(sigma_y_F_gamma_um_list, cor_list)
+        ax.set_ylabel('cor')
+
+        ax = axs[1]
+        ax.plot(sigma_y_F_gamma_um_list, cor_profiles_list)
+        ax.set_ylabel('cor profiles')
+
+        ax = axs[2]
+        ax.plot(sigma_y_F_gamma_um_list, chi2distance_list)
+        ax.set_ylabel('chi2distance')
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+
+        ax = axs[3]
+        ax.plot(sigma_y_F_gamma_um_list, delta_rec_min_list)
+        ax.set_ylabel('delta minimum')
+
+        ax = axs[4]
+        ax.plot(sigma_y_F_gamma_um_list, delta_profiles_cropped_list)
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+        ax.set_ylabel('delta profiles cropped')
+
+        ax = axs[5]
+        ax.plot(sigma_y_F_gamma_um_list, xi_x_um_list)
+        ax.set_ylabel('xi_x')
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+
+        ax = axs[6]
+        ax.plot(sigma_y_F_gamma_um_list, xi_y_um_list)
+        ax.set_ylabel('xi_y')
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+
+        fig.tight_layout()
+
+
+        if np.isnan(xi_x_um) == False:
+            fig = plt.figure(constrained_layout=False, figsize=(8.27, 11.69), dpi=150)
+
+            gs = gridspec.GridSpec(2, 1, figure=fig, height_ratios=[1, 2])
+            gs.update(hspace=0.1)
+
+            #     ax2 = plt.subplot(2,1,2)
+            ax10 = fig.add_subplot(gs[1, 0])
+
+            im_ax10 = ax10.imshow(
+                pixis_image_norm,
+                origin="lower",
+                interpolation="nearest",
+                aspect="auto",
+                cmap="jet",
+                vmin=0,
+                vmax=1,
+                extent=((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, -n / 2 * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3),
+            )
+
+            # fig.colorbar(im_ax2, ax=ax2, pad=0.05, fraction=0.1, shrink=1.00, aspect=20, orientation='horizontal')
+
+            ax10.add_patch(
+                patches.Rectangle(
+                    ((-n / 2) * dX_1 * 1e3, (int(round(pixis_centery_px)) - n / 2 - pixis_profile_avg_width / 2) * dX_1 * 1e3),
+                    n * dX_1 * 1e3,
+                    pixis_profile_avg_width * dX_1 * 1e3,
+                    color="w",
+                    linestyle="-",
+                    alpha=0.8,
+                    fill=False,  # remove background
+                )
+            )
+
+            ax10.set_xlabel("x / mm", fontsize=14)
+            ax10.set_ylabel("y / mm", fontsize=14)
+            ax10.grid(color="w", linewidth=1, alpha=0.5, linestyle="--", which="major")
+
+            ax00 = fig.add_subplot(gs[0, 0], sharex=ax10)
+            #     ax = plt.subplot(2,1,1)
+
+            #     plt.plot(list(range(pixis_profile_avg.size)),ydata, color='r', linewidth=2)
+            #     plt.plot(list(range(pixis_profile_avg.size)),result.best_fit, color='b', linewidth=0.5)
+            ax00.plot(xdata * 1e3, ydata, color="r", linewidth=2, label="data")
+            ax00.plot(xdata * 1e3, fullycoherent_profile_opt_list[index_opt], color="g", linewidth=1, label="recovered partially coherent")
+            ax00.plot(xdata * 1e3, partiallycoherent_rec_profile_list[index_opt], color="k", linewidth=0.5, label="fully coherent")
+            
+
+            ax00.set_xlim([(-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3])
+            ax00.set_ylim([0, 1])
+
+            ax00.set_ylabel("Intensity / a.u.", fontsize=14)
+            ax00.legend()
+
+            textstr = " ".join(
+                (
+                    "ph-" + pinholes + ".id" + str(int(imageid)),
+                    r"$\lambda=%.2f$nm" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['wavelength_nm_fit'],),
+                    orientation,
+                    "\n",
+                    "$d$=" + str(int(separation_um)) + "um",
+                    r"$\gamma=%.2f$" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['gamma_fit'],),
+                    r"$\xi_x=%.2fum$" % (xi_x_um,),
+                )
+            )
+            ax00.set_title(textstr, fontsize=10)
+
+
+            plt.show()
+
+
+
 
 
 def plot_fitting_vs_deconvolution_v0(
@@ -3503,6 +3852,7 @@ column0 = widgets.VBox(
         do_fitting_widget,
         do_plot_deconvmethod_1d_widget,
         do_plot_deconvmethod_2d_widget,
+        do_plot_deconvmethod_2d_v1_widget,
         do_plot_fitting_vs_deconvolution_widget,
         do_list_results_widget,
         do_plot_CDCs_widget,
@@ -3748,6 +4098,14 @@ plot_deconvmethod_steps_interactive_output = interactive_output(
     },
 )
 
+plot_deconvmethod_2d_v1_interactive_output = interactive_output(
+    plot_deconvmethod_2d_v1,
+    {
+        "do_plot_deconvmethod_2d_v1": do_plot_deconvmethod_2d_v1_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
+        "crop_px" : crop_px_widget
+    },
+)
 
 plot_fitting_vs_deconvolution_output = interactive_output(
     plot_fitting_vs_deconvolution,
@@ -4439,6 +4797,7 @@ children_left = [plot_fitting_v1_interactive_output,
                  plot_deconvmethod_2d_interactive_output,
                  VBox([HBox([do_plot_deconvmethod_steps_widget, clear_plot_deconvmethod_steps_widget,
                       deconvmethod_ystep_widget, deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
+                 plot_deconvmethod_2d_v1_interactive_output,
                  plot_CDCs_output,
                  plot_xi_um_fit_vs_I_Airy2_fit_output,
                  list_results_output]
@@ -4449,9 +4808,10 @@ tabs_left.set_title(1, 'Fitting')
 tabs_left.set_title(2, 'Deconvolution 1d')
 tabs_left.set_title(3, 'Deconvolution 2d')
 tabs_left.set_title(4, 'Deconvolution Steps')
-tabs_left.set_title(5, 'CDCs')
-tabs_left.set_title(6, 'plot_xi_um_fit_vs_I_Airy2_fit')
-tabs_left.set_title(7, 'list_results')
+tabs_left.set_title(5, 'Deconvolution 2d_v1')
+tabs_left.set_title(6, 'CDCs')
+tabs_left.set_title(7, 'plot_xi_um_fit_vs_I_Airy2_fit')
+tabs_left.set_title(8, 'list_results')
 
 children_right = [VBox([HBox([VBox([use_measurement_default_result_widget, \
                                     xi_um_deconv_column_and_label_widget, \

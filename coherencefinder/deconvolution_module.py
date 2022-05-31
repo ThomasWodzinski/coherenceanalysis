@@ -760,4 +760,249 @@ def deconvmethod(
 
 
 
+
+def deconvmethod_v1(
+    partiallycoherent, 
+    z, 
+    dX_1, 
+    profilewidth, 
+    pixis_centery_px, 
+    wavelength, 
+    sigma_x_F_gamma_um_min, 
+    sigma_x_F_gamma_um_max, 
+    sigma_y_F_gamma_um_min, 
+    sigma_y_F_gamma_um_max, 
+    sigma_y_F_gamma_um_stepsize, 
+    crop_px):
+
+    
+    #number of pixels
+    n = partiallycoherent.shape[0]
+    nx = n
+    ny = nx
+
+
+    # pixel size of the detector dX_1
+    
+    dY_1 = dX_1
+
+    # 2D grid and axes at the CCD:
+    #x = np.arange(-n/2, n/2, 1) * dX_1
+    #y = np.arange(-n/2, n/2, 1) * dX_1
+    x = np.arange(-n/2, n/2, 1)
+    y = np.arange(-n/2, n/2, 1)
+    X1_axis, Y1_axis = np.meshgrid(x*dX_1, y*dX_1, sparse=False)
+    #X1_axis, Y1_axis = np.meshgrid(x, y, sparse=False)
+
+
+    # "pixelsize" at the pinholes:
+    dX_2 = wavelength*z/(n*dX_1)
+    dY_2 = wavelength*z/(n*dY_1)
+
+    # 2D grid and axes at the double pinholes:
+    X2_axis, Y2_axis = np.meshgrid(x*dX_2, y*dY_2, sparse=False)
+
+
+    
+    #psf = gauss2d(X1_axis,Y1_axis,1.9*13*1e-6)
+    #psf = psf / np.max(psf)
+    #sigma_F_gamma_um = 24.7
+    
+    
+    sigma_y_F_gamma_um_list = np.arange(sigma_y_F_gamma_um_min,sigma_y_F_gamma_um_max,sigma_y_F_gamma_um_stepsize)
+    xi_x_um_list = []
+    xi_y_um_list = []
+    
+    cor_list = []
+    cor_profiles_list = []
+    
+    fullycoherent_profile_min_opt_list = []
+    fullycoherent_profile_opt_list = []
+    fullycoherent_opt_list = []
+    partiallycoherent_rec_list = []
+    partiallycoherent_rec_profile_list = []
+    partiallycoherent_rec_profile_min_list = []
+    delta_rec_min_list = []
+    delta_profiles_cropped_list = []
+    
+    F_gamma_list = []
+    gamma_list = []
+    abs_gamma_list = []
+    
+    crop_px = 200
+    
+    j = 0
+    for sigma_y_F_gamma_um in sigma_y_F_gamma_um_list:
+        sigma_x_F_gamma_um_list = np.arange(sigma_x_F_gamma_um_min,sigma_x_F_gamma_um_max,1)
+        fullycoherent_profile_min_list = []
+        i = 0
+        for sigma_x_F_gamma_um in sigma_x_F_gamma_um_list:
+
+            sigma_x_F_gamma = sigma_x_F_gamma_um * 1e-6
+            sigma_y_F_gamma = sigma_y_F_gamma_um * 1e-6
+            F_gamma = gauss2d(X1_axis/dX_1,Y1_axis/dY_1,sigma_x_F_gamma/dX_1, sigma_y_F_gamma/dX_1)
+            #psf = gauss2d(X1_axis,Y1_axis,1.9)
+
+            # Restore Image using Richardson-Lucy algorithm
+            #fullycoherent = restoration.richardson_lucy(partiallycoherent, psf, 5)
+            fullycoherent = restoration.wiener(partiallycoherent, F_gamma, 1)
+            #fullycoherent = np.real(deconvolve(partiallycoherent, psf))
+
+
+
+            fullycoherent = fullycoherent / np.max(fullycoherent[200:-200,200:-200])
+
+            partiallycoherent_profile = np.mean(partiallycoherent[pixis_centery_px-int(profilewidth/2):pixis_centery_px+int(profilewidth/2),:], axis=0)
+            partiallycoherent_profile = normalize(partiallycoherent_profile)
+
+            fullycoherent_profile = np.mean(fullycoherent[pixis_centery_px-int(profilewidth/2):pixis_centery_px+int(profilewidth/2),:], axis=0)
+            #fullycoherent_profile = normalize(fullycoherent_profile)
+            fullycoherent_profile = fullycoherent_profile / np.max(fullycoherent_profile[200:-200]) # ignore what happens on the edges
+
+            fullycoherent_profile_min = np.min(fullycoherent_profile[200:-200]) # ignore what happens on the edges
+            fullycoherent_profile_min_list.append(fullycoherent_profile_min)
+
+            # print('sigma_x_F_gamma=' + str(sigma_x_F_gamma_um) + ' sigma_y_F_gamma=' + str(sigma_y_F_gamma_um) + ' fullycoherent_profile_min=' + str(fullycoherent_profile_min))
+
+            if fullycoherent_profile_min<0:
+                break
+            i = i + 1
+        sigma_x_F_gamma_um_opt = sigma_x_F_gamma_um_list[i-1]
+
+        # fine-tuning in stepsize of 0.1
+
+        sigma_x_F_gamma_um_list = np.arange(sigma_x_F_gamma_um_opt,sigma_x_F_gamma_um_opt+1,0.05)
+        fullycoherent_list = []
+        fullycoherent_profile_list = []
+        fullycoherent_profile_min_list = []
+        i = 0
+        for sigma_x_F_gamma_um in sigma_x_F_gamma_um_list:
+
+            sigma_x_F_gamma = sigma_x_F_gamma_um * 1e-6
+            sigma_y_F_gamma = sigma_y_F_gamma_um * 1e-6
+            F_gamma = gauss2d(X1_axis/dX_1,Y1_axis/dY_1,sigma_x_F_gamma/dX_1, sigma_y_F_gamma/dX_1)
+            #psf = gauss2d(X1_axis,Y1_axis,1.9)
+
+            # Restore Image using Richardson-Lucy algorithm
+            #fullycoherent = restoration.richardson_lucy(partiallycoherent, psf, 5)
+            fullycoherent = restoration.wiener(partiallycoherent, F_gamma, 1)
+            #fullycoherent = np.real(deconvolve(partiallycoherent, psf))
+
+
+
+            fullycoherent = fullycoherent / np.max(fullycoherent[200:-200,200:-200])
+            fullycoherent_list.append(fullycoherent)
+            
+
+            partiallycoherent_profile = np.mean(partiallycoherent[pixis_centery_px-int(profilewidth/2):pixis_centery_px+int(profilewidth/2),:], axis=0)
+            partiallycoherent_profile = normalize(partiallycoherent_profile)
+            
+
+            fullycoherent_profile = np.mean(fullycoherent[pixis_centery_px-int(profilewidth/2):pixis_centery_px+int(profilewidth/2),:], axis=0)
+            #fullycoherent_profile = normalize(fullycoherent_profile)
+            fullycoherent_profile = fullycoherent_profile / np.max(fullycoherent_profile[200:-200]) # ignore what happens on the edges
+            fullycoherent_profile_list.append(fullycoherent_profile)
+
+            fullycoherent_profile_min = np.min(fullycoherent_profile[200:-200]) # ignore what happens on the edges
+            fullycoherent_profile_min_list.append(fullycoherent_profile_min)
+
+            # print('sigma_x_F_gamma=' + str(sigma_x_F_gamma_um) + ' sigma_y_F_gamma=' + str(sigma_y_F_gamma_um) + ' fullycoherent_profile_min=' + str(fullycoherent_profile_min))
+
+            if fullycoherent_profile_min<0:
+                break
+            i = i + 1
+        sigma_x_F_gamma_um_opt = sigma_x_F_gamma_um_list[i-1]
+        fullycoherent_opt = fullycoherent_list[i-1]
+        fullycoherent_opt_list.append(fullycoherent_opt)
+        fullycoherent_profile_opt = fullycoherent_profile_list[i-1]
+        fullycoherent_profile_opt_list.append(fullycoherent_profile_opt)
+        fullycoherent_profile_min_opt = fullycoherent_profile_min_list[i-1]
+        fullycoherent_profile_min_opt_list.append(fullycoherent_profile_min_opt)
+        
+        F_gamma = gauss2d(X1_axis/dX_1,Y1_axis/dY_1,sigma_x_F_gamma_um_opt*1e-6/dX_1, sigma_y_F_gamma_um*1e-6/dX_1)
+        F_gamma_list.append(F_gamma)
+        gamma = fftpack.fftshift(fftpack.ifftn(fftpack.ifftshift(F_gamma)))
+        gamma_list.append(gamma)
+    
+        partiallycoherent_rec = np.abs(convolve(fullycoherent,F_gamma))
+        partiallycoherent_rec = normalize(partiallycoherent_rec)
+        partiallycoherent_rec_list.append(partiallycoherent_rec)
+        partiallycoherent_rec_profile = np.mean(partiallycoherent_rec[pixis_centery_px-int(profilewidth/2):pixis_centery_px+int(profilewidth/2),:], axis=0)
+        partiallycoherent_rec_profile = normalize(partiallycoherent_rec_profile)
+        partiallycoherent_rec_profile_list.append(partiallycoherent_rec_profile)
+        partiallycoherent_rec_profile_min_list.append(np.min(partiallycoherent_rec_profile))
+        #partiallycoherent_rec_profile = partiallycoherent_rec_profile / partiallycoherent_rec_profile[np.where(partiallycoherent_profile == 1.0)[0][0]]
+        cor = corr2(partiallycoherent, partiallycoherent_rec)
+        cor_profiles = corr2(partiallycoherent_profile, partiallycoherent_rec_profile)
+        cor_list.append(corr2(partiallycoherent, partiallycoherent_rec))
+        cor_profiles_list.append(cor_profiles)
+        #sigma_y_F_gamma_um_opt = sigma_y_F_gamma_um
+        
+        delta_profiles_cropped_list.append(np.sum(partiallycoherent_profile[crop_px:-crop_px] - partiallycoherent_rec_profile[crop_px:-crop_px]))
+        
+#         print('sigma_x_F_gamma_opt=' + str(sigma_x_F_gamma_um_opt) + 'sigma_y_F_gamma=' + str(sigma_y_F_gamma_um) + ' fullycoherent_profile_min=' + str(fullycoherent_profile_min_list[i-1]) + '\\' + ' correlation partiallycohernet measurement and reconstruction = ' + str(round(cor*100,2)) + '%')
+
+        j = j+1
+        
+        
+    
+
+        xdata = list(range(n))
+        ydata = fullycoherent[pixis_centery_px,:]
+        ydata = ydata / np.max(ydata)
+
+        
+        abs_gamma = np.abs(gamma)
+        abs_gamma = abs_gamma / np.max(abs_gamma)
+        abs_gamma_list.append(abs_gamma)
+        xdata = list(range(n))
+        ydata = abs_gamma[int(n/2),:]
+        p0 = (int(n/2), 1)
+        popt_gauss, pcov_gaussian = curve_fit(lambda x, m, w: gaussianbeam(x, 1, m ,w, 0), xdata, ydata, p0)
+        xi_x_px = popt_gauss[1]/2
+        xi_x_um = xi_x_px * dX_2 * 1e6
+        xi_x_um_list.append(xi_x_um)
+        
+        xdata = list(range(n))
+        ydata = abs_gamma[:,int(n/2)]
+        p0 = (int(n/2), 1)
+        popt_gauss, pcov_gaussian = curve_fit(lambda x, m, w: gaussianbeam(x, 1, m ,w, 0), xdata, ydata, p0)
+        xi_y_px = popt_gauss[1]/2
+        xi_y_um = xi_y_px * dX_2 * 1e6
+        xi_y_um_list.append(xi_y_um)
+        #print('coherence length xi/um = ' + str(xi_um))
+        
+        
+    delta_rec_min_list = partiallycoherent_rec_profile_min_list - np.min(partiallycoherent_profile)
+    index_opt = np.where( np.abs(partiallycoherent_rec_profile_min_list - np.min(partiallycoherent_profile)) == np.min(np.abs(partiallycoherent_rec_profile_min_list - np.min(partiallycoherent_profile)) ) )[0][0]
+        
+    A_bp = fftpack.fftshift(fftpack.ifftn(fftpack.ifftshift(np.sqrt(partiallycoherent))))  # amplitude
+    I_bp = np.abs(A_bp)**2  # intensity
+    
+    return (partiallycoherent_profile, 
+    fullycoherent_opt_list, 
+    fullycoherent_profile_opt_list,  
+    partiallycoherent_rec_list, 
+    partiallycoherent_rec_profile_list, 
+    partiallycoherent_rec_profile_min_list, 
+    delta_rec_min_list, 
+    delta_profiles_cropped_list, 
+    sigma_x_F_gamma_um_opt, 
+    sigma_y_F_gamma_um_list, 
+    F_gamma_list, 
+    abs_gamma_list, 
+    xi_x_um_list, 
+    xi_y_um_list, 
+    I_bp, 
+    dX_2, 
+    cor_list, 
+    cor_profiles_list, 
+    cor_profiles_list, 
+    index_opt)
+
+
+    
+
+
+
 # %%
