@@ -209,7 +209,7 @@ def find_sigma(x,y, dely, sigma_init, use_dely):
     return (xi_um_fit, xi_um_fit_stderr)
 
 
-def fit_profile(
+def fit_profile_v1(
     pixis_image_norm,
     pixis_profile_avg,
     shiftx_um,

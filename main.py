@@ -92,8 +92,8 @@ from IPython.display import display, clear_output
 import os.path
 
 
-from coherencefinder.deconvolution_module import calc_sigma_F_gamma_um, deconvmethod, normalize
-from coherencefinder.fitting_module import Airy, find_sigma, fit_profile, fit_profile_v2, gaussian
+from coherencefinder.deconvolution_module import calc_sigma_F_gamma_um, deconvmethod, deconvmethod_v1, normalize, chi2_distance
+from coherencefinder.fitting_module import Airy, find_sigma, fit_profile_v1, fit_profile_v2, gaussian
 
 # import pickle as pl
 
@@ -480,7 +480,7 @@ fits_header_list5 = [
 ]
 
 # fitting results
-fits_header_list6 = [
+fits_header_list6a = [
     "shiftx_um_fit",
     "wavelength_nm_fit",
     "z_mm_fit",
@@ -493,12 +493,20 @@ fits_header_list6 = [
     "I_Airy2_fit",
     "x1_um_fit",
     "x2_um_fit",
+    'chi2distance_fitting'
+]
+
+fits_header_list6a_v1 = []
+for header in fits_header_list6a:
+    fits_header_list6a_v1.append(header + '_v1')
+
+# fitting results
+fits_header_list6b = [
     # fitting results of version 2
     'mod_sigma_um_fit',
     'mod_shiftx_um_fit',
     'gamma_fit_at_center',
-    'xi_um_fit_at_center',
-    "chi2distance_fitting"
+    'xi_um_fit_at_center'
 ]
 
 # deconvolution parameter
@@ -507,7 +515,19 @@ fits_header_list7 = [
     'xi_um_guess',
     'sigma_x_F_gamma_um_multiplier',
     'crop_px',
+    'xatol'
+]
+
+# deconvolution parameter
+fits_header_list7_v1 = [ 
+    'pixis_profile_avg_width',
+    'crop_px',
     'xatol',
+    'sigma_x_F_gamma_um_min', 
+    'sigma_x_F_gamma_um_max', 
+    'sigma_y_F_gamma_um_min', 
+    'sigma_y_F_gamma_um_max', 
+    'sigma_y_F_gamma_um_stepsize', 
 ]
 
 # deconvolution_1d results
@@ -523,10 +543,12 @@ fits_header_list9 = [
     "xi_y_um",
     "chi2distance_deconvmethod_2d"
 ]
+fits_header_list9_v1 = []
+for header in fits_header_list9:
+    fits_header_list9_v1.append(header + '_v1')
 
 
-
-fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4 + fits_header_list5 + fits_header_list6 + fits_header_list7 + fits_header_list8 + fits_header_list9
+fits_header_list = fits_header_list1 + fits_header_list2 + fits_header_list3 + fits_header_list4 + fits_header_list5 + fits_header_list6a + fits_header_list6b + fits_header_list7 + fits_header_list8 + fits_header_list9
 
 
 # fits_header_list1 already exists in saved csv, only adding fits_header_list2, only initiate when
@@ -555,11 +577,14 @@ for dataset in list(datasets):
         measurement_arr.append(measurement)
         dataset_arr.append(dataset)
 
+
+
+
 df_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
                                     'measurement' : measurement_arr})
 
 measurement_default_headers = []
-for header in fits_header_list7 + fits_header_list8:
+for header in fits_header_list7 + fits_header_list8: # double-check these
     measurement_default_headers.append(header + '_measurement_default')
 
 df_measurement_default = df_measurement_default.reindex(columns = df_measurement_default.columns.tolist() + list(set(measurement_default_headers) - set(df_measurement_default.columns.tolist())) )
@@ -570,10 +595,16 @@ df_measurement_default_file = Path.joinpath(data_dir, 'df_measurement_default.cs
 if os.path.isfile(df_measurement_default_file):
     df_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-df_fitting_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + fits_header_list4 + fits_header_list5 + fits_header_list6 )
+
+
+df_fitting_v1_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + fits_header_list4 + fits_header_list5 + fits_header_list6a_v1 )
+df_fitting_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + fits_header_list4 + fits_header_list5 + fits_header_list6a + fits_header_list6b )
 
 df_deconvmethod_1d_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + list(set(fits_header_list7) - set(['xatol'])) + fits_header_list8)
 df_deconvmethod_2d_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + fits_header_list7 + fits_header_list9)
+
+
+df_deconvmethod_2d_v1_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + fits_header_list7_v1 + fits_header_list9_v1)
 
 
 # %%
@@ -596,14 +627,13 @@ fittingprogress_widget = widgets.IntProgress(
 
 statustext_widget = widgets.Text(value="", placeholder="status", description="", disabled=False)
 
+do_plot_fitting_v1_widget = widgets.Checkbox(value=False, description="do_fitting_v1", disabled=False)
 do_fitting_widget = widgets.Checkbox(value=False, description="do_fitting", disabled=False)
-do_deconvmethod_widget = widgets.Checkbox(value=False, description="do_deconvmethod", disabled=False)
-xi_um_guess_widget = widgets.FloatText(value=900, description='xi_um_guess')
-scan_x_widget = widgets.Checkbox(value=False, description="scan_x", disabled=False)
-xatol_widget = widgets.FloatText(value=5, description='xatol')
-sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget')
-crop_px_widget = widgets.FloatText(value=200, description='crop_px')
-pixis_profile_avg_width_widget = widgets.IntText(value=200, description='profile width / px')
+do_plot_deconvmethod_1d_widget = widgets.Checkbox(value=False, description="deconvmethod_1d", disabled=False)
+do_plot_deconvmethod_2d_widget = widgets.Checkbox(value=False, description="deconvmethod_2d", disabled=False)
+do_plot_deconvmethod_2d_v1_widget = widgets.Checkbox(value=False, description="deconvmethod_2d_v1", disabled=False)
+
+
 
 timestamp_pulse_id_widget_layout = widgets.Layout(width="100%")
 timestamp_pulse_id_widget = widgets.Dropdown(
@@ -676,6 +706,7 @@ load_csv_to_df_widget = widgets.ToggleButton(
 
 def update_load_csv_to_df_widget(change):
     global df0
+    global df_fitting_v1_results
     global df_fitting_results
     global df_deconvmethod_1d_results
     global df_deconvmethod_2d_results
@@ -687,6 +718,8 @@ def update_load_csv_to_df_widget(change):
     df0 = pd.merge(df_temp, df_fits, on="timestamp_pulse_id", how="outer")
 
     datestring = os.path.splitext(os.path.basename(df_fits_csv_files_widget.value))[0].split('df_fits_')[1]
+    df_fitting_v1_results_file = Path.joinpath(data_dir,str('df_fitting_v1_results_'+datestring+'.csv'))
+    df_fitting_v1_results = pd.read_csv(df_fitting_v1_results_file, index_col=0)
     df_fitting_results_file = Path.joinpath(data_dir,str('df_fitting_results_'+datestring+'.csv'))
     df_fitting_results = pd.read_csv(df_fitting_results_file, index_col=0)
     df_deconvmethod_1d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_results_'+datestring+'.csv'))
@@ -715,6 +748,8 @@ def update_df_fits_csv_save_widget(change):
         df_fits.to_csv(df_fits_csv_file)
 
         datestring = os.path.splitext(os.path.basename(df_fits_csv_files_widget.value))[0].split('df_fits_')[1]
+        df_fitting_v1_results_file = Path.joinpath(data_dir,str('df_fitting_v1_results_'+datestring+'.csv'))
+        df_fitting_v1_results.to_csv(df_fitting_v1_results_file)
         df_fitting_results_file = Path.joinpath(data_dir,str('df_fitting_results_'+datestring+'.csv'))
         df_fitting_results.to_csv(df_fitting_results_file)
         df_deconvmethod_1d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_results_'+datestring+'.csv'))
@@ -744,6 +779,8 @@ def create_new_csv_file(change):
     df_fits_csv_files_widget.options=df_fits_csv_files
     df_fits_csv_files_widget.value = df_fits_csv_file
 
+    df_fitting_v1_results_file = Path.joinpath(data_dir,str('df_fitting_v1_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_fitting_v1_results.to_csv(df_fitting_v1_results_file)
     df_fitting_results_file = Path.joinpath(data_dir,str('df_fitting_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
     df_fitting_results.to_csv(df_fitting_results_file)
     df_deconvmethod_1d_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
@@ -830,13 +867,16 @@ run_over_all_datasets_progress_widget = widgets.IntProgress(
 run_over_all_datasets_statustext_widget = widgets.Text(value="", placeholder="status", description="time taken|left:", disabled=False)
 
 
-
+# result widgets
 
 do_textbox_widget = widgets.Checkbox(value=False, description="do_textbox", disabled=False)
 
 textarea_widget = widgets.Textarea(value="info", placeholder="Type something", description="Fitting:", disabled=False)
 beamsize_text_widget = widgets.Text(
     value="", placeholder="beamsize in rms", description=r"beam rms", disabled=False
+)
+xi_um_fit_v1_widget = widgets.Text(
+    value="", placeholder="xi_fit_v1", description='ξ (fit v1)  / μm', disabled=False # r"\({\xi}_{fit}_{center}\)"
 )
 fit_profile_text_widget = widgets.Text(
     value="", placeholder="xi_fit_um", description='ξ (fit) / μm', disabled=False # \({\xi}_{fit}\
@@ -849,7 +889,19 @@ deconvmethod_simple_text_widget = widgets.Text(
 ) 
 deconvmethod_text_widget = widgets.Text(
     value="", placeholder="(xi_x_um, xi_y_um)", description='(ξˣ, ξʸ) / μm', disabled=False # r"\({\xi}_x,{\xi}_y\)"
-)  # latex only working in browser?
+)  
+
+deconvmethod_2d_v1_result_widget = widgets.Text(
+    value="", placeholder="(xi_x_um, xi_y_um) (v1)", description='(ξˣ, ξʸ) / μm (v1)', disabled=False # r"\({\xi}_x,{\xi}_y\)"
+)  
+
+
+# general parameter widgets
+
+crop_px_widget = widgets.FloatText(value=200, description='crop_px')
+pixis_profile_avg_width_widget = widgets.IntText(value=200, description='profile width / px')
+
+# fitting parameter widgets
 
 shiftx_um_widget = widgets.FloatSlider(min=-n / 2 * 13, max=n / 2 * 13, value=477, step=1, description="shiftx_um")
 # wavelength_nm_widget = widgets.FloatSlider(value=_lambda_widget.value, description='wavelength_nm')
@@ -941,16 +993,38 @@ mod_sigma_um_value_widget = widgets.Text(value="", description="",layout=value_w
 mod_shiftx_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
 
 
+# deconvolution parameter widgets
+
+xi_um_guess_widget = widgets.FloatText(value=900, description='xi_um_guess')
+xatol_widget = widgets.FloatText(value=5, description='xatol')
+sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget')
+
+# deconvolution_v1 parameter widgets
+
+sigma_x_F_gamma_um_min_widget = widgets.FloatText(value=7, description='sigma_x_F_gamma_um_min')
+sigma_x_F_gamma_um_max_widget = widgets.FloatText(value=40, description='sigma_x_F_gamma_um_max')
+sigma_y_F_gamma_um_min_widget = widgets.FloatText(value=7, description='sigma_y_F_gamma_um_min')
+sigma_y_F_gamma_um_max_widget = widgets.FloatText(value=40, description='sigma_y_F_gamma_um_max')
+sigma_y_F_gamma_um_stepsize_widget = widgets.FloatText(value=1, description='sigma_y_F_gamma_um_stepsize')
+
+
+# plot result widgets
+
 do_plot_fitting_vs_deconvolution_widget = widgets.Checkbox(value=False, description="do fitting vs deconv plot")
 do_list_results_widget = widgets.Checkbox(value=False, description="do list results")
 
 xi_um_deconv_options = [('xi_x_um',('xi_x_um',r"$\xi_x$ / um (deconv)")),('xi_um',('xi_um',r"$\xi$ / um (deconv)")),
+('xi_x_um_v1',('xi_x_um_v1',r"$\xi_x$ / um (deconv v1)")),
 ('xi_x_um_measurement_default_result',('xi_x_um_measurement_default_result',r"$\xi_x$ / um (deconv)")),('xi_um_measurement_default_result',('xi_um_measurement_default_result',r"$\xi$ / um (deconv)")),]
-xi_um_fit_options = [('xi_um_fit',('xi_um_fit',r"$\xi$ / um (fit)")),('xi_um_fit_at_center',('xi_um_fit_at_center',r"$\xi_c$ / um (fit)")),
-('xi_um_fit_measurement_default_result',('xi_um_fit_measurement_default_result',r"$\xi$ / um (fit)")),('xi_um_fit_at_center_measurement_default_result',('xi_um_fit_at_center_measurement_default_result',r"$\xi_c$ / um (fit)"))]
+xi_um_fit_options = [('xi_um_fit_v1',('xi_um_fit_v1',r"$\xi$ / um (fit)")), \
+('xi_um_fit',('xi_um_fit',r"$\xi$ / um (fit)")),('xi_um_fit_at_center',('xi_um_fit_at_center',r"$\xi_c$ / um (fit)")), \
+('xi_um_fit_measurement_default_result',('xi_um_fit_measurement_default_result',r"$\xi$ / um (fit)")), \
+('xi_um_fit_at_center_measurement_default_result',('xi_um_fit_at_center_measurement_default_result',r"$\xi_c$ / um (fit)"))]
 
 chi2distance_options = [('chi2distance_deconvmethod_1d',('chi2distance_deconvmethod_1d',r"$\chi^2$ (deconv1d)")), \
                         ('chi2distance_deconvmethod_2d',('chi2distance_deconvmethod_2d',r"$\chi^2$ (deconv2d)")), \
+                        ('chi2distance_deconvmethod_2d_v1',('chi2distance_deconvmethod_2d_v1',r"$\chi^2$ (deconv2d)")), \
+                        ('chi2distance_fitting_v1',('chi2distance_fitting_v1',r"$\chi^2$ (fitting)")), \
                         ('chi2distance_fitting',('chi2distance_fitting',r"$\chi^2$ (fitting)"))]
 
 xi_um_deconv_column_and_label_widget = widgets.Dropdown(
@@ -991,6 +1065,666 @@ do_plot_xi_um_fit_vs_I_Airy2_fit_widget = widgets.Checkbox(value=False, descript
 
 
 # function using the widgets:
+
+
+
+def plot_fitting_v1(
+    do_plot_fitting_v1,
+    pixis_profile_avg_width,
+    crop_px,
+    # hdf5_file_path,
+    # imageid,
+    savefigure,
+    save_to_df,
+    do_textbox,
+    shiftx_um,
+    shiftx_um_range,
+    shiftx_um_do_fit,
+    wavelength_nm,
+    wavelength_nm_range,
+    wavelength_nm_do_fit,
+    z_mm,
+    z_mm_range,
+    z_mm_do_fit,
+    d_um,
+    d_um_range,
+    d_um_do_fit,
+    gamma,
+    gamma_range,
+    gamma_do_fit,
+    w1_um,
+    w1_um_range,
+    w1_um_do_fit,
+    w2_um,
+    w2_um_range,
+    w2_um_do_fit,
+    I_Airy1,
+    I_Airy1_range,
+    I_Airy1_do_fit,
+    I_Airy2,
+    I_Airy2_range,
+    I_Airy2_do_fit,
+    x1_um,
+    x1_um_range,
+    x1_um_do_fit,
+    x2_um,
+    x2_um_range,
+    x2_um_do_fit,
+    normfactor,
+    normfactor_range,
+    normfactor_do_fit,
+):
+
+    if do_plot_fitting_v1 == True:  # workaround, so that the function is not executed while several inputs are changed
+
+        global df_fitting_v1_results
+
+        # fittingprogress_widget.bar_style = 'info'
+        # fittingprogress_widget.value = 0
+        # statustext_widget.value = 'fitting ...'
+        # textarea_widget.value = ''
+
+        xi_um_fit_v1_widget.value = ''
+
+
+        # Loading and preparing
+
+        imageid = imageid_widget.value
+        hdf5_file_path = dph_settings_bgsubtracted_widget.value
+
+        with h5py.File(hdf5_file_path, "r") as hdf5_file:
+            pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+            ]
+            pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+            ]
+            timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+            ][2]
+            pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+            ][0]
+
+        pinholes = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
+        separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
+        orientation = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["orientation"].iloc[0]
+        setting_wavelength_nm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["setting_wavelength_nm"].iloc[0]
+        pinholes_bg_avg_sx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sx_um"].iloc[0]
+        pinholes_bg_avg_sy_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sy_um"].iloc[0]
+        # pixis_profile_avg_width = 200  # read from df0 instead!
+
+        # fittingprogress_widget.value = 2
+        #     hdf5_file_name_image = hdf5_file_name_image_widget.value
+        #     dataset_image_args = dataset_image_args_widget.value
+        xi_um_fit_v1_widget.value = 'calculating ...'
+
+        
+
+
+        # imageids_by_energy_hall = get_imageids_with_bgs(beamposition_horizontal_interval)
+        imageids_by_energy_hall = imageids
+
+        # if imageid == -1:
+        #     beamposx = df['beam position hall horizontal pulse resolved'].mean(axis=0)
+        #     beamposy = df['beam position hall vertical pulse resolved'].mean(axis=0)
+        #     energy_hall_uJ = df['energy hall'].mean(axis=0)
+        # else:
+        #     beamposx = df[df['imageid']==imageid]['beam position hall horizontal pulse resolved']
+        #     beamposy = df[df['imageid']==imageid]['beam position hall vertical pulse resolved']
+        #     energy_hall_uJ = df[df['imageid']==imageid]['energy hall'].iloc[0]
+
+        pixis_profile_avg = np.average(pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:],axis=0)
+        pixis_profile_avg = pixis_profile_avg / np.max(pixis_profile_avg)
+
+        n = pixis_profile_avg.size  # number of sampling point  # number of pixels
+        dX_1 = 13e-6
+        xdata = np.linspace((-n / 2) * dX_1, (+n / 2 - 1) * dX_1, n)
+        # ydata = pixis_profile_avg_dataset[imageid]*datafactor
+        ydata = pixis_profile_avg  # defined in the cells above, still to implement: select
+       
+        #still to average over y!
+
+        fringeseparation_um = z_mm * 1e-3 * wavelength_nm * 1e-9 / (d_um * 1e-6) * 1e6
+        fringeseparation_px = fringeseparation_um / 13
+
+        # Fitting
+
+        result = fit_profile_v1(
+            pixis_image_norm,
+            pixis_profile_avg,
+            shiftx_um,
+            shiftx_um_range,
+            shiftx_um_do_fit,
+            wavelength_nm,
+            wavelength_nm_range,
+            wavelength_nm_do_fit,
+            z_mm,
+            z_mm_range,
+            z_mm_do_fit,
+            d_um,
+            d_um_range,
+            d_um_do_fit,
+            gamma,
+            gamma_range,
+            gamma_do_fit,
+            w1_um,
+            w1_um_range,
+            w1_um_do_fit,
+            w2_um,
+            w2_um_range,
+            w2_um_do_fit,
+            I_Airy1,
+            I_Airy1_range,
+            I_Airy1_do_fit,
+            I_Airy2,
+            I_Airy2_range,
+            I_Airy2_do_fit,
+            x1_um,
+            x1_um_range,
+            x1_um_do_fit,
+            x2_um,
+            x2_um_range,
+            x2_um_do_fit,
+            normfactor,
+            normfactor_range,
+            normfactor_do_fit,
+        )
+
+        shiftx_um_fit = result.params["shiftx_um"].value
+        wavelength_nm_fit = result.params["wavelength_nm"].value
+        z_mm_fit = result.params["z_mm"].value
+        d_um_fit = result.params["d_um"].value
+        w1_um_fit = result.params["w1_um"].value
+        w2_um_fit = result.params["w2_um"].value
+        I_Airy1_fit = result.params["I_Airy1"].value
+        I_Airy2_fit = result.params["I_Airy2"].value
+        x1_um_fit = result.params["x1_um"].value
+        x2_um_fit = result.params["x2_um"].value
+        gamma_fit = result.params["gamma"].value
+        normfactor_fit = result.params["normfactor"].value
+
+        textarea_widget.value = result.fit_report()
+        chi2distance = result.chisqr
+
+        # # print number of function efvals
+        # print result.nfev
+        # # print number of data points
+        # print result.ndata
+        # # print number of variables
+        # print result.nvarys
+        # # chi-sqr
+        # print result.chisqr
+        # # reduce chi-sqr
+        # print result.redchi
+        # #Akaike info crit
+        # print result.aic
+        # #Bayesian info crit
+        # print result.bic
+
+        shiftx_um_value_widget.value = r"%.2f" % (shiftx_um_fit)
+        wavelength_nm_value_widget.value = r"%.2f" % (wavelength_nm_fit)
+        z_mm_value_widget.value = r"%.2f" % (z_mm_fit)
+        d_um_value_widget.value = r"%.2f" % (d_um_fit)
+        gamma_value_widget.value = r"%.2f" % (gamma_fit)
+        w1_um_value_widget.value = r"%.2f" % (w1_um_fit)
+        w2_um_value_widget.value = r"%.2f" % (w2_um_fit)
+        I_Airy1_value_widget.value = r"%.2f" % (I_Airy1_fit)
+        I_Airy2_value_widget.value = r"%.2f" % (I_Airy2_fit)
+        x1_um_value_widget.value = r"%.2f" % (x1_um_fit)
+        x2_um_value_widget.value = r"%.2f" % (x2_um_fit)
+        normfactor_value_widget.value = r"%.2f" % (normfactor_fit)
+
+        # calculate gamma_fit at the center between the two airy disks
+        
+        d_um_at_detector = x2_um_fit - x1_um_fit
+
+        fringeseparation_um = z_mm * 1e-3 * wavelength_nm_fit * 1e-9 / (d_um * 1e-6) * 1e6
+        fringeseparation_px = fringeseparation_um / 13
+
+        # lmfit throws RuntimeWarnings, maybe its a bug. Supressing warning as described in https://stackoverflow.com/a/14463362:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            (xi_um_fit, xi_um_fit_stderr) = find_sigma([0.0, d_um], [1.0, gamma_fit], [0, 0], 470, False)
+                
+        xi_um_fit_v1_widget.value = r"%.2fum" % (xi_um_fit)
+
+        if save_to_df == True:
+            # fitting results
+            if load_from_df_widget.value == True: # store fine-tuned individual results
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit'] = xi_um_fit  # add this first to the df_fits dataframe
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit'] = wavelength_nm_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector'] = d_um_at_detector
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit'] = I_Airy1_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_fit'] = I_Airy2_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_fit'] = w1_um_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_fit'] = w2_um_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_fit'] = shiftx_um_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] = x1_um_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_fit'] = x2_um_fit
+
+
+            if load_from_df_widget.value == False: # store results from measurement default parameters
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_measurement_default_result'] = gamma_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit_measurement_default_result'] = xi_um_fit  # add this first to the df_fits dataframe
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit_measurement_default_result'] = wavelength_nm_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector_measurement_default_result'] = d_um_at_detector
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit_measurement_default_result'] = I_Airy1_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_fit_measurement_default_result'] = I_Airy2_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_fit_measurement_default_result'] = w1_um_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_fit_measurement_default_result'] = w2_um_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_fit_measurement_default_result'] = shiftx_um_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit_measurement_default_result'] = x1_um_fit
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_fit_measurement_default_result'] = x2_um_fit
+            
+
+            # guess parameters - fitting
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'pixis_profile_avg_width' ] = pixis_profile_avg_width
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um' ] = shiftx_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_range_0' ] = shiftx_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_range_1' ] = shiftx_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_do_fit' ] = shiftx_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm' ] = wavelength_nm
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_range_0' ] = wavelength_nm_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_range_1' ] = wavelength_nm_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_do_fit' ] = wavelength_nm_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm' ] = z_mm
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_range_0' ] = z_mm_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_range_1' ] = z_mm_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_do_fit' ] = z_mm_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um' ] = d_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_range_0' ] = d_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_range_1' ] = d_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_do_fit' ] = d_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma' ] = gamma
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_range_0' ] = gamma_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_range_1' ] = gamma_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_do_fit' ] = gamma_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um' ] = w1_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_range_0' ] = w1_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_range_1' ] = w1_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_do_fit' ] = w1_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um' ] = w2_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_range_0' ] = w2_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_range_1' ] = w2_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_do_fit' ] = w2_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1' ] = I_Airy1
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_range_0' ] = I_Airy1_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_range_1' ] = I_Airy1_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_do_fit' ] = I_Airy1_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2' ] = I_Airy2
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_range_0' ] = I_Airy2_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_range_1' ] = I_Airy2_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_do_fit' ] = I_Airy2_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um' ] = x1_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_range_0' ] = x1_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_range_1' ] = x1_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_do_fit' ] = x1_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um' ] = x2_um
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_range_0' ] = x2_um_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_range_1' ] = x2_um_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_do_fit' ] = x2_um_do_fit
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor'	] = normfactor
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_range_0' ] = normfactor_range[0]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_range_1' ] = normfactor_range[1]
+            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_do_fit' ] = normfactor_do_fit
+
+
+            measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]
+            df_fitting_v1_results = df_fitting_v1_results.append(
+                    {
+                        # image identifiers
+                        'measurement' : measurement,
+                        'timestamp_pulse_id' : timestamp_pulse_id,
+                        'imageid' : imageid,
+                        'separation_um' : separation_um,
+                        # fitting parameters
+                        'pixis_profile_avg_width' : pixis_profile_avg_width,
+                        'shiftx_um' : shiftx_um,
+                        'shiftx_um_range_0' : shiftx_um_range[0],
+                        'shiftx_um_range_1' : shiftx_um_range[1],
+                        'shiftx_um_do_fit' : shiftx_um_do_fit,
+                        'wavelength_nm' : wavelength_nm,
+                        'wavelength_nm_range_0' : wavelength_nm_range[0],
+                        'wavelength_nm_range_1' : wavelength_nm_range[1],
+                        'wavelength_nm_do_fit' : wavelength_nm_do_fit,
+                        'z_mm' : z_mm,
+                        'z_mm_range_0' : z_mm_range[0],
+                        'z_mm_range_1' : z_mm_range[1],
+                        'z_mm_do_fit' : z_mm_do_fit,
+                        'd_um' : d_um,
+                        'd_um_range_0' : d_um_range[0],
+                        'd_um_range_1' : d_um_range[1],
+                        'd_um_do_fit' : d_um_do_fit,
+                        'gamma' : gamma,
+                        'gamma_range_0' : gamma_range[0],
+                        'gamma_range_1' : gamma_range[1],
+                        'gamma_do_fit' : gamma_do_fit,
+                        'w1_um' : w1_um,
+                        'w1_um_range_0' : w1_um_range[0],
+                        'w1_um_range_1' : w1_um_range[1],
+                        'w1_um_do_fit' : w1_um_do_fit,
+                        'w2_um' : w2_um,
+                        'w2_um_range_0' : w2_um_range[0],
+                        'w2_um_range_1' : w2_um_range[1],
+                        'w2_um_do_fit' : w2_um_do_fit,
+                        'I_Airy1' : I_Airy1,
+                        'I_Airy1_range_0' : I_Airy1_range[0],
+                        'I_Airy1_range_1' : I_Airy1_range[1],
+                        'I_Airy1_do_fit' : I_Airy1_do_fit,
+                        'I_Airy2' : I_Airy2,
+                        'I_Airy2_range_0' : I_Airy2_range[0],
+                        'I_Airy2_range_1' : I_Airy2_range[1],
+                        'I_Airy2_do_fit' : I_Airy2_do_fit,
+                        'x1_um' : x1_um,
+                        'x1_um_range_0' : x1_um_range[0],
+                        'x1_um_range_1' : x1_um_range[1],
+                        'x1_um_do_fit' : x1_um_do_fit,
+                        'x2_um' : x2_um,
+                        'x2_um_range_0' : x2_um_range[0],
+                        'x2_um_range_1' : x2_um_range[1],
+                        'x2_um_do_fit' : x2_um_do_fit,
+                        'normfactor' :  normfactor,
+                        'normfactor_range_0' : normfactor_range[0],
+                        'normfactor_range_1' : normfactor_range[1],
+                        'normfactor_do_fit' : normfactor_do_fit,
+                        # fitting results
+                        'gamma_fit_v1' :  gamma_fit,
+                        'xi_um_fit_v1' :  xi_um_fit,  # add this first to the df_fits dataframe
+                        'wavelength_nm_fit_v1' :  wavelength_nm_fit,
+                        'd_um_at_detector_v1' :  d_um_at_detector,
+                        'I_Airy1_fit_v1' :  I_Airy1_fit,
+                        'I_Airy2_fit_v1' :  I_Airy2_fit,
+                        'w1_um_fit_v1' :  w1_um_fit,
+                        'w2_um_fit_v1' :  w2_um_fit,
+                        'shiftx_um_fit_v1' :  shiftx_um_fit,
+                        'x1_um_fit_v1' :  x1_um_fit,
+                        'x2_um_fit_v1' :  x2_um_fit,
+                        'chi2distance_fitting_v1' : chi2distance                       
+                    }, ignore_index = True
+                )
+            df_fitting_v1_results = df_fitting_v1_results.drop_duplicates()
+
+            
+
+
+
+
+        # print('fringeseparation_px=' + str(round(fringeseparation_px,2)))
+
+        # textarea_widget.value = result.fit_report()
+
+        # fittingprogress_widget.value = 8
+        # statustext_widget.value = 'Generating Plot ...'
+
+        # Plotting
+
+        #     fig=plt.figure(figsize=(11.69,8.27), dpi= 150, facecolor='w', edgecolor='k')  # A4 sheet in landscape
+        fig = plt.figure(constrained_layout=False, figsize=(8.27, 11.69), dpi=150)
+
+        gs = gridspec.GridSpec(2, 1, figure=fig, height_ratios=[1, 2])
+        gs.update(hspace=0.1)
+
+        #     ax2 = plt.subplot(2,1,2)
+        ax10 = fig.add_subplot(gs[1, 0])
+
+        im_ax10 = ax10.imshow(
+            pixis_image_norm,
+            origin="lower",
+            interpolation="nearest",
+            aspect="auto",
+            cmap="jet",
+            vmin=0,
+            vmax=1,
+            extent=((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, -n / 2 * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3),
+        )
+
+        # fig.colorbar(im_ax2, ax=ax2, pad=0.05, fraction=0.1, shrink=1.00, aspect=20, orientation='horizontal')
+
+        ax10.add_patch(
+            patches.Rectangle(
+                ((-n / 2) * dX_1 * 1e3, (int(round(pixis_centery_px)) - n / 2 - pixis_profile_avg_width / 2) * dX_1 * 1e3),
+                n * dX_1 * 1e3,
+                pixis_profile_avg_width * dX_1 * 1e3,
+                color="w",
+                linestyle="-",
+                alpha=0.8,
+                fill=False,  # remove background
+            )
+        )
+
+        ax10.set_xlabel("x / mm", fontsize=14)
+        ax10.set_ylabel("y / mm", fontsize=14)
+        ax10.grid(color="w", linewidth=1, alpha=0.5, linestyle="--", which="major")
+
+        ax00 = fig.add_subplot(gs[0, 0], sharex=ax10)
+        #     ax = plt.subplot(2,1,1)
+
+        #     plt.plot(list(range(pixis_profile_avg.size)),ydata, color='r', linewidth=2)
+        #     plt.plot(list(range(pixis_profile_avg.size)),result.best_fit, color='b', linewidth=0.5)
+        ax00.plot(xdata * 1e3, ydata, color="r", linewidth=2, label="data")
+        ax00.plot(xdata * 1e3, result.best_fit, color="b", linewidth=1, label="fit")
+
+        Airy1 = [
+            I_Airy1_fit
+            * Airy(
+                (x - shiftx_um_fit * 1e-6),
+                w1_um_fit * 1e-6,
+                wavelength_nm_fit * 1e-9,
+                z_mm_fit * 1e-3,
+                x1_um_fit * 1e-6,
+            )
+            ** 2
+            for x in xdata
+        ]
+        Airy1 = normalize(Airy1) / I_Airy2_fit
+        Airy2 = [
+            I_Airy2_fit
+            * Airy(
+                (x - shiftx_um_fit * 1e-6),
+                w2_um_fit * 1e-6,
+                wavelength_nm_fit * 1e-9,
+                z_mm_fit * 1e-3,
+                x2_um_fit * 1e-6,
+            )
+            ** 2
+            for x in xdata
+        ]
+        Airy2 = normalize(Airy2)
+
+        do_plot_Airys = False
+        if do_plot_Airys == True:
+            plt.plot(xdata * 1e3, Airy1, color="k", label="Airy1", linewidth=1)
+            plt.plot(xdata * 1e3, Airy2, color="grey", label="Airy2", linewidth=1)
+
+        # plt.vlines([x1_loc_px_fit, pixis_centerx_px, x2_loc_px_fit],0,1)
+        ax00.vlines(
+            [(shiftx_um_fit + x1_um_fit) * 1e-3, shiftx_um_fit * 1e-3, (shiftx_um_fit + x2_um_fit) * 1e-3], 0, 0.1
+        )
+        #     ax00.annotate('xshift',
+        #                xy=((shiftx_um_fit)*1e-3,0), xycoords='data',
+        #                xytext=(0,-20), textcoords='offset points',
+        #                 bbox=dict(boxstyle="round", fc="w"),
+        #                 arrowprops=dict(arrowstyle="->"))
+        ax00.annotate(
+            "$x_2$",
+            xy=((shiftx_um_fit + x2_um_fit) * 1e-3, 0),
+            xycoords="data",
+            xytext=(0, -20),
+            textcoords="offset points",
+            bbox=dict(boxstyle="round", fc="w"),
+            arrowprops=dict(arrowstyle="->"),
+        )
+        ax00.annotate(
+            "$x_1$",
+            xy=((shiftx_um_fit + x1_um_fit) * 1e-3, 0),
+            xycoords="data",
+            xytext=(0, -20),
+            textcoords="offset points",
+            bbox=dict(boxstyle="round", fc="w"),
+            arrowprops=dict(arrowstyle="->"),
+        )
+
+        # plt.hlines(0,0,n)
+
+        textstr = "\n".join(
+            (
+                r"imageid=%.2f" % (imageid,),
+                r"shiftx_um=%.2f" % (shiftx_um_fit,),
+                r"$\lambda=%.2f$nm" % (wavelength_nm_fit,),
+                r"fringesepar_um=%.2f" % (fringeseparation_um,),
+                r"w1_um=%.2f" % (w1_um_fit,),
+                r"w2_um=%.2f" % (w2_um_fit,),
+                r"I_Airy1=%.2f" % (I_Airy1_fit,),
+                r"I_Airy2=%.2f" % (I_Airy2_fit,),
+                r"x1_um=%.2f" % (x1_um_fit,),
+                r"x2_um=%.2f" % (x2_um_fit,),
+                r"$\gamma=%.2f$" % (gamma_fit,),
+                r"normfactor=%.2f" % (normfactor_fit,),
+                r"d_um_at_detector=%.2f" % (d_um_at_detector,),
+            )
+        )
+
+        # these are matplotlib.patch.Patch properties
+        props = dict(boxstyle="round", facecolor="wheat", alpha=0.5)
+
+        # place a text box in upper left in axes coords
+
+        if do_textbox == True:
+            ax.text(1, 0.95, textstr, transform=ax.transAxes, fontsize=6, verticalalignment="top", bbox=props)
+
+        ax00.set_xlim([(-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3])
+        ax00.set_ylim([0, 1])
+
+        ax00.set_ylabel("Intensity / a.u.", fontsize=14)
+        ax00.legend()
+
+        textstr = " ".join(
+            (
+                "ph-" + pinholes + ".id" + str(int(imageid)),
+                r"$\lambda=%.2f$nm" % (result.params["wavelength_nm"].value,),
+                orientation,
+                "$d$=" + str(int(separation_um)) + "um",
+                r"$d_{det}$=%.2fum" % (d_um_at_detector,),
+                "\n",
+                r"$w_1$=%.2fum" % (result.params["w1_um"].value,),
+                r"$w_2$=%.2fum" % (result.params["w2_um"].value,),
+                r"$I_1$=%.2f" % (result.params["I_Airy1"].value,),
+                r"$I_2=$%.2f" % (result.params["I_Airy2"].value,),
+                r"$\gamma=%.2f$" % (gamma_fit,),
+                r"$\xi=%.2fum$" % (xi_um_fit,),
+            )
+        )
+        ax00.set_title(textstr, fontsize=10)
+
+        if savefigure == True:
+            savefigure_dir = str(scratch_dir) + "/" + dph_settings_bgsubtracted_widget.value.name
+            if os.path.isdir(savefigure_dir) == False:
+                os.mkdir(savefigure_dir)
+            # savefigure_dir = str(scratch_dir) + '/' + hdf5_file_name_image + '_ph_'+str(ph) + '_d_'+str(separation_um)
+            savefigure_dir = (
+                str(scratch_dir)
+                + "/"
+                + dph_settings_bgsubtracted_widget.value.name
+                + "/"
+                + "profilewidth_px_"
+                + str(int(pixis_avg_width))
+                + "_"
+                + "bg_intervall_um_"
+                + str(int(beamposition_horizontal_interval))
+            )
+            if os.path.isdir(savefigure_dir) == False:
+                os.mkdir(savefigure_dir)
+            savefigure_dir = (
+                str(scratch_dir)
+                + "/"
+                + dph_settings_bgsubtracted_widget.value.name
+                + "/"
+                + "profilewidth_px_"
+                + str(int(pixis_avg_width))
+                + "_"
+                + "bg_intervall_um_"
+                + str(int(beamposition_horizontal_interval))
+                + "/profiles_fit/"
+            )
+            if os.path.isdir(savefigure_dir) == False:
+                os.mkdir(savefigure_dir)
+            plt.savefig(
+                savefigure_dir
+                + "/"
+                + "profiles_fit_"
+                + hdf5_file_name_image_widget.value
+                + "_ph_"
+                + str(pinholes)
+                + "_d_"
+                + str(separation_um)
+                + "_E_"
+                + str(format(energy_hall_uJ, ".4f")).zfill(6)
+                + "_image_"
+                + str(imageid)
+                + ".png",
+                dpi=300,
+                facecolor="w",
+                edgecolor="w",
+                orientation="portrait",
+                papertype=None,
+                format=None,
+                transparent=False,
+                bbox_inches=None,
+                pad_inches=0.1,
+                frameon=None,
+            )
+            plt.savefig(
+                savefigure_dir
+                + "/"
+                + "profiles_fit_"
+                + hdf5_file_name_image_widget.value
+                + "_ph_"
+                + str(pinholes)
+                + "_d_"
+                + str(separation_um)
+                + "_E_"
+                + str(format(energy_hall_uJ, ".4f")).zfill(6)
+                + "_image_"
+                + str(imageid)
+                + ".pdf",
+                dpi=None,
+                facecolor="w",
+                edgecolor="w",
+                orientation="portrait",
+                papertype=None,
+                format=None,
+                transparent=False,
+                bbox_inches=None,
+                pad_inches=0.1,
+                frameon=None,
+            )
+
+        
+
+            
+            
+            
+
+
+        plt.show()
+        # fittingprogress_widget.value = 10
+        # fittingprogress_widget.bar_style = 'success'
+        # statustext_widget.value = 'done'
+
+        # print(gamma_fit)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1060,7 +1794,6 @@ def plot_fitting(
 
         fit_profile_text_widget.value = ''
         xi_um_fit_at_center_text_widget.value = ''
-        deconvmethod_text_widget.value = ''
 
         # Loading and preparing
 
@@ -1697,8 +2430,9 @@ def plot_fitting(
 
 
 
+
 def plot_deconvmethod(
-    do_deconvmethod,
+    do_plot_deconvmethod,
     pixis_profile_avg_width,
     xi_um_guess,
     scan_x,
@@ -1712,7 +2446,7 @@ def plot_deconvmethod(
     global df_deconvmethod_1d_results
     global df_deconvmethod_2d_results
 
-    if do_deconvmethod == True:
+    if do_plot_deconvmethod == True:
 
         if scan_x == True:
             deconvmethod_text_widget.value = ''
@@ -1960,6 +2694,62 @@ def plot_deconvmethod(
             # print(gamma_fit)
 
 
+def plot_deconvmethod_1d(
+    do_plot_deconvmethod_1d,
+    pixis_profile_avg_width,
+    xi_um_guess,
+    xatol,
+    sigma_x_F_gamma_um_multiplier,
+    crop_px,
+    # hdf5_file_path,
+    # imageid,
+    save_to_df 
+):
+    do_plot_deconvmethod = do_plot_deconvmethod_1d
+    scan_x = False
+    plot_deconvmethod(
+        do_plot_deconvmethod,
+        pixis_profile_avg_width,
+        xi_um_guess,
+        scan_x,
+        xatol,
+        sigma_x_F_gamma_um_multiplier,
+        crop_px,
+        # hdf5_file_path,
+        # imageid,
+        save_to_df
+        )
+
+def plot_deconvmethod_2d(
+    do_plot_deconvmethod_2d,
+    pixis_profile_avg_width,
+    xi_um_guess,
+    xatol,
+    sigma_x_F_gamma_um_multiplier,
+    crop_px,
+    # hdf5_file_path,
+    # imageid,
+    save_to_df 
+):
+    do_plot_deconvmethod = do_plot_deconvmethod_2d
+    scan_x = True
+    plot_deconvmethod(
+        do_plot_deconvmethod,
+        pixis_profile_avg_width,
+        xi_um_guess,
+        scan_x,
+        xatol,
+        sigma_x_F_gamma_um_multiplier,
+        crop_px,
+        # hdf5_file_path,
+        # imageid,
+        save_to_df
+        )
+
+
+
+
+
 do_plot_deconvmethod_steps_widget = widgets.Checkbox(value=False, description="Do")
 clear_plot_deconvmethod_steps_widget = widgets.Checkbox(value=False, description="Clear")
 
@@ -1996,6 +2786,403 @@ def plot_deconvmethod_steps(do_plot_deconvmethod_steps, clear_plot_deconvmethod_
 
     if clear_plot_deconvmethod_steps == True:
         clear_output()
+
+
+def plot_deconvmethod_2d_v1(
+    do_plot_deconvmethod_2d_v1,
+    pixis_profile_avg_width,
+    crop_px,
+    sigma_x_F_gamma_um_min, 
+    sigma_x_F_gamma_um_max, 
+    sigma_y_F_gamma_um_min, 
+    sigma_y_F_gamma_um_max, 
+    sigma_y_F_gamma_um_stepsize,
+    save_to_df    
+):
+    if do_plot_deconvmethod_2d_v1 == True:
+
+        global df_deconvmethod_2d_v1_results
+
+        
+
+        # Loading and preparing
+
+        imageid = imageid_widget.value
+        hdf5_file_path = dph_settings_bgsubtracted_widget.value
+
+        with h5py.File(hdf5_file_path, "r") as hdf5_file:
+            pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+            ]
+            # pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
+            #     np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+            # ]
+            timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+            ][2]
+            pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+            ][0]
+
+        pinholes = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
+        separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
+        orientation = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["orientation"].iloc[0]
+        setting_wavelength_nm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["setting_wavelength_nm"].iloc[0]
+        pinholes_bg_avg_sx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sx_um"].iloc[0]
+        pinholes_bg_avg_sy_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sy_um"].iloc[0]
+        # pixis_avg_width = 200  # read from df0 instead!
+
+        pixis_profile_avg = pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:]
+
+
+        partiallycoherent = pixis_image_norm
+        z = 5781 * 1e-3
+        dX_1 = 13 * 1e-6
+        profilewidth = 200  # pixis_avg_width  # defined where?
+        pixis_centery_px = int(pixis_centery_px)
+        wavelength = setting_wavelength_nm * 1e-9
+        # xi_um_guess = 475
+        # guess sigma_y_F_gamma_um based on the xi_um_guess assuming to be the beams intensity rms width
+
+        pixis_profile_avg = np.average(pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:],axis=0)
+        pixis_profile_avg = pixis_profile_avg / np.max(pixis_profile_avg)
+
+        n = pixis_profile_avg.size  # number of sampling point  # number of pixels
+        dX_1 = 13e-6
+        xdata = np.linspace((-n / 2) * dX_1, (+n / 2 - 1) * dX_1, n)
+        ydata = pixis_profile_avg  # defined in the cells above, still to implement: select
+        
+
+        create_figure = True
+        savefigure_dir = scratch_dir
+
+
+        # sigma_x_F_gamma_um_min = 7
+        # sigma_x_F_gamma_um_max = 40
+
+        # sigma_y_F_gamma_um_min = 7
+        # sigma_y_F_gamma_um_max = 40
+        # sigma_y_F_gamma_um_stepsize = 1
+
+        statustext_widget.value = 'deconvmethod_2d_v1 rough scan ...'
+
+        (
+            partiallycoherent_profile, 
+            fullycoherent_opt_list, 
+            fullycoherent_profile_opt_list,  
+            partiallycoherent_rec_list, 
+            partiallycoherent_rec_profile_list, 
+            partiallycoherent_rec_profile_min_list, 
+            delta_rec_min_list, 
+            delta_profiles_cropped_list, 
+            sigma_x_F_gamma_um_opt, 
+            sigma_y_F_gamma_um_list, 
+            F_gamma_list, 
+            abs_gamma_list, 
+            xi_x_um_list, 
+            xi_y_um_list, 
+            I_bp, 
+            dX_2, 
+            cor_list, 
+            cor_profiles_list, 
+            cor_profiles_cropped_list, 
+            index_opt,
+            chi2distance_list
+        ) = deconvmethod_v1(
+            partiallycoherent, 
+            z, 
+            dX_1, 
+            profilewidth, 
+            pixis_centery_px, 
+            wavelength, 
+            sigma_x_F_gamma_um_min, 
+            sigma_x_F_gamma_um_max, 
+            sigma_y_F_gamma_um_min, 
+            sigma_y_F_gamma_um_max, 
+            sigma_y_F_gamma_um_stepsize, 
+            crop_px
+        )
+
+        # chi2distance_list = []
+        # for partiallycoherent_rec in partiallycoherent_rec_list:
+        #     number_of_bins = 100
+        #     hist1, bin_edges1 = np.histogram(partiallycoherent.ravel(), bins=np.linspace(0,1,number_of_bins))
+        #     hist2, bin_edges2 = np.histogram(partiallycoherent_rec.ravel(), bins=np.linspace(0,1,number_of_bins))
+        #     chi2distance_list.append(chi2_distance(hist1, hist2))
+
+        #index_opt = np.where(np.abs(np.asarray(delta_profiles_cropped_list)) == np.min(np.abs(np.asarray(delta_profiles_cropped_list))))[0][0]
+        index_opt = np.where(np.asarray(chi2distance_list) == np.min(np.asarray(chi2distance_list)))[0][0]
+
+        xi_um = xi_x_um_list[index_opt]
+        print('sigma_x_F_gamma_um_opt='+str(sigma_x_F_gamma_um_opt))
+        print('sigma_y_F_gamma_um_list[index_opt]='+str(sigma_y_F_gamma_um_list[index_opt]))
+        print('xi_x_um_list[index_opt]='+str(xi_x_um_list[index_opt]))
+        print('xi_y_um_list[index_opt]='+str(xi_y_um_list[index_opt]))
+
+        fig, axs = plt.subplots(nrows=7,ncols=1, sharex=True, figsize=(5,15))
+        ax = axs[0]
+        ax.plot(sigma_y_F_gamma_um_list, cor_list)
+        ax.set_ylabel('cor')
+
+        ax = axs[1]
+        ax.plot(sigma_y_F_gamma_um_list, cor_profiles_list)
+        ax.set_ylabel('cor profiles')
+
+        ax = axs[2]
+        ax.plot(sigma_y_F_gamma_um_list, chi2distance_list)
+        ax.set_ylabel('chi2distance')
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+
+        ax = axs[3]
+        ax.plot(sigma_y_F_gamma_um_list, delta_rec_min_list)
+        ax.set_ylabel('delta minimum')
+
+        ax = axs[4]
+        ax.plot(sigma_y_F_gamma_um_list, delta_profiles_cropped_list)
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+        ax.set_ylabel('delta profiles cropped')
+
+        ax = axs[5]
+        ax.plot(sigma_y_F_gamma_um_list, xi_x_um_list)
+        ax.set_ylabel('xi_x')
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+
+        ax = axs[6]
+        ax.plot(sigma_y_F_gamma_um_list, xi_y_um_list)
+        ax.set_ylabel('xi_y')
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+
+        fig.tight_layout()
+
+        plt.close(fig)
+
+        #### only the  profiles
+        for idx in range(len(fullycoherent_profile_opt_list)):
+            n = partiallycoherent_profile.shape[0]
+
+            xdata = np.linspace((-n/2)*dX_1*1e3, (+n/2-1)*dX_1*1e3, n)
+
+            fig=plt.figure(figsize=(11.69,8.27), dpi= 300, facecolor='w', edgecolor='k')  # A4 sheet in landscape
+            ax = plt.subplot(1,1,1)
+            plt.plot(xdata, partiallycoherent_profile, 'b-', label='measured partially coherent', linewidth=1)
+            plt.plot(xdata, fullycoherent_profile_opt_list[idx], 'r-', label='recovered fully coherent', linewidth=1)
+            plt.plot(xdata, partiallycoherent_rec_profile_list[idx], 'g-', label='recovered partially coherent', linewidth=1)
+            #plt.plot(xdata, gaussianbeam(xdata, 1, popt_gauss[0] ,popt_gauss[1], 0), 'r-', label='fit: m=%5.1f px, w=%5.1f px' % tuple([popt_gauss[0] ,popt_gauss[1]]))
+            plt.axhline(0, color='k')
+            plt.xlabel('x / mm', fontsize = 14)
+            plt.ylabel('Intensity / a.u.', fontsize = 14)
+            plt.legend()
+
+            plt.title('d / $\mu$m = '+str(int(separation_um)) + ' coherence length $\\xi_x$ / $\mu$m = ' + str(round(xi_x_um_list[idx],2)) + ' $\\xi_y$ / $\mu$m = ' + str(round(xi_y_um_list[idx],2)), fontsize=12)
+
+            plt.close(fig)
+
+
+        statustext_widget.value = 'deconvmethod_2d_v1 fine scan ...'
+
+        sigma_y_F_gamma_um_min = sigma_y_F_gamma_um_list[index_opt] - 0.5
+        sigma_y_F_gamma_um_max = sigma_y_F_gamma_um_list[index_opt] + 0.5
+        sigma_y_F_gamma_um_stepsize = 0.1
+
+        (
+        partiallycoherent_profile, 
+        fullycoherent_opt_list, 
+        fullycoherent_profile_opt_list,  
+        partiallycoherent_rec_list, 
+        partiallycoherent_rec_profile_list, 
+        partiallycoherent_rec_profile_min_list, 
+        delta_rec_min_list, 
+        delta_profiles_cropped_list, 
+        sigma_x_F_gamma_um_opt, 
+        sigma_y_F_gamma_um_list, 
+        F_gamma_list, 
+        abs_gamma_list, 
+        xi_x_um_list, 
+        xi_y_um_list, 
+        I_bp, 
+        dX_2, 
+        cor_list, 
+        cor_profiles_list, 
+        cor_profiles_cropped_list, 
+        index_opt,
+        chi2distance_list
+        ) = deconvmethod_v1(
+            partiallycoherent, 
+            z, 
+            dX_1, 
+            profilewidth, 
+            pixis_centery_px, 
+            wavelength, 
+            sigma_x_F_gamma_um_min, 
+            sigma_x_F_gamma_um_max, 
+            sigma_y_F_gamma_um_min, 
+            sigma_y_F_gamma_um_max, 
+            sigma_y_F_gamma_um_stepsize, 
+            crop_px
+        )
+
+
+        # chi2distance_list = []
+        # for partiallycoherent_rec in partiallycoherent_rec_list:
+        #     number_of_bins = 100
+        #     hist1, bin_edges1 = np.histogram(partiallycoherent.ravel(), bins=np.linspace(0,1,number_of_bins))
+        #     hist2, bin_edges2 = np.histogram(partiallycoherent_rec.ravel(), bins=np.linspace(0,1,number_of_bins))
+        #     chi2distance_list.append(chi2_distance(hist1, hist2))
+
+        index_opt = np.where(np.asarray(chi2distance_list) == np.min(np.asarray(chi2distance_list)))[0][0]
+
+
+        xi_um = xi_x_um_list[index_opt]
+        xi_x_um = xi_x_um_list[index_opt]
+        xi_y_um = xi_y_um_list[index_opt]
+
+        deconvmethod_2d_v1_result_widget.value = r"%.2fum" % (xi_x_um) + r", %.2fum" % (xi_y_um)
+
+        print('sigma_x_F_gamma_um_opt='+str(sigma_x_F_gamma_um_opt))
+        print('sigma_y_F_gamma_um_list[index_opt]='+str(sigma_y_F_gamma_um_list[index_opt]))
+        print('xi_x_um_list[index_opt]='+str(xi_x_um_list[index_opt]))
+        print('xi_y_um_list[index_opt]='+str(xi_y_um_list[index_opt]))
+
+        
+        if save_to_df == True:
+            df_deconvmethod_2d_v1_results = df_deconvmethod_2d_v1_results.append(
+                    {
+                        # image identifiers
+                        'measurement' : measurement,
+                        'timestamp_pulse_id' : timestamp_pulse_id,
+                        'imageid' : imageid,
+                        'separation_um' : separation_um,
+                        # deconvolution parameters
+                        'pixis_profile_avg_width' : pixis_profile_avg_width,
+                        'crop_px' : crop_px,
+                        'sigma_x_F_gamma_um_min' : sigma_x_F_gamma_um_min,
+                        'sigma_x_F_gamma_um_max' : sigma_x_F_gamma_um_max,
+                        'sigma_y_F_gamma_um_min' : sigma_y_F_gamma_um_min,
+                        'sigma_y_F_gamma_um_max' : sigma_y_F_gamma_um_max,
+                        'sigma_y_F_gamma_um_stepsize' : sigma_y_F_gamma_um_stepsize,
+                        # deconvolution results
+                        'xi_x_um_v1' : xi_x_um,
+                        'xi_y_um_v1' : xi_y_um,
+                        'chi2distance_deconvmethod_2d_v1' : chi2distance_list[index_opt]                     
+                    }, ignore_index = True
+                )
+            df_deconvmethod_2d_v1_results = df_deconvmethod_2d_v1_results.drop_duplicates()
+
+
+
+
+        fig, axs = plt.subplots(nrows=7,ncols=1, sharex=True, figsize=(5,15))
+        ax = axs[0]
+        ax.plot(sigma_y_F_gamma_um_list, cor_list)
+        ax.set_ylabel('cor')
+
+        ax = axs[1]
+        ax.plot(sigma_y_F_gamma_um_list, cor_profiles_list)
+        ax.set_ylabel('cor profiles')
+
+        ax = axs[2]
+        ax.plot(sigma_y_F_gamma_um_list, chi2distance_list)
+        ax.set_ylabel('chi2distance')
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+
+        ax = axs[3]
+        ax.plot(sigma_y_F_gamma_um_list, delta_rec_min_list)
+        ax.set_ylabel('delta minimum')
+
+        ax = axs[4]
+        ax.plot(sigma_y_F_gamma_um_list, delta_profiles_cropped_list)
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+        ax.set_ylabel('delta profiles cropped')
+
+        ax = axs[5]
+        ax.plot(sigma_y_F_gamma_um_list, xi_x_um_list)
+        ax.set_ylabel('xi_x')
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+
+        ax = axs[6]
+        ax.plot(sigma_y_F_gamma_um_list, xi_y_um_list)
+        ax.set_ylabel('xi_y')
+        ax.axvline(sigma_y_F_gamma_um_list[index_opt])
+
+        fig.tight_layout()
+        plt.close(fig)
+
+
+        if np.isnan(xi_x_um) == False:
+            n = pixis_profile_avg.size  # number of sampling point  # number of pixels
+            dX_1 = 13e-6
+            xdata = np.linspace((-n / 2) * dX_1, (+n / 2 - 1) * dX_1, n)
+
+
+            fig = plt.figure(constrained_layout=False, figsize=(8.27, 11.69), dpi=150)
+
+            gs = gridspec.GridSpec(2, 1, figure=fig, height_ratios=[1, 2])
+            gs.update(hspace=0.1)
+
+            #     ax2 = plt.subplot(2,1,2)
+            ax10 = fig.add_subplot(gs[1, 0])
+
+            im_ax10 = ax10.imshow(
+                pixis_image_norm,
+                origin="lower",
+                interpolation="nearest",
+                aspect="auto",
+                cmap="jet",
+                vmin=0,
+                vmax=1,
+                extent=((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, -n / 2 * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3),
+            )
+
+            # fig.colorbar(im_ax2, ax=ax2, pad=0.05, fraction=0.1, shrink=1.00, aspect=20, orientation='horizontal')
+
+            ax10.add_patch(
+                patches.Rectangle(
+                    ((-n / 2) * dX_1 * 1e3, (int(round(pixis_centery_px)) - n / 2 - pixis_profile_avg_width / 2) * dX_1 * 1e3),
+                    n * dX_1 * 1e3,
+                    pixis_profile_avg_width * dX_1 * 1e3,
+                    color="w",
+                    linestyle="-",
+                    alpha=0.8,
+                    fill=False,  # remove background
+                )
+            )
+
+            ax10.set_xlabel("x / mm", fontsize=14)
+            ax10.set_ylabel("y / mm", fontsize=14)
+            ax10.grid(color="w", linewidth=1, alpha=0.5, linestyle="--", which="major")
+
+            ax00 = fig.add_subplot(gs[0, 0], sharex=ax10)
+            #     ax = plt.subplot(2,1,1)
+
+            #     plt.plot(list(range(pixis_profile_avg.size)),ydata, color='r', linewidth=2)
+            #     plt.plot(list(range(pixis_profile_avg.size)),result.best_fit, color='b', linewidth=0.5)
+            ax00.plot(xdata * 1e3, partiallycoherent_profile, color="r", linewidth=2, label="data")
+            ax00.plot(xdata * 1e3, fullycoherent_profile_opt_list[index_opt], color="g", linewidth=1, label="recovered partially coherent")
+            ax00.plot(xdata * 1e3, partiallycoherent_rec_profile_list[index_opt], color="k", linewidth=0.5, label="fully coherent")
+            
+
+            ax00.set_xlim([(-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3])
+            ax00.set_ylim([0, 1])
+
+            ax00.set_ylabel("Intensity / a.u.", fontsize=14)
+            ax00.legend()
+
+            textstr = " ".join(
+                (
+                    "ph-" + pinholes + ".id" + str(int(imageid)),
+                    r"$\lambda=%.2f$nm" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['wavelength_nm_fit'],),
+                    orientation,
+                    "\n",
+                    "$d$=" + str(int(separation_um)) + "um",
+                    r"$\gamma=%.2f$" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['gamma_fit'],),
+                    r"$\xi_x=%.2fum$" % (xi_x_um,),
+                )
+            )
+            ax00.set_title(textstr, fontsize=10)
+
+
+            plt.show()
+
 
 
 
@@ -2267,7 +3454,9 @@ def plot_fitting_vs_deconvolution(
                         (df_deconvmethod_2d_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
                         (df_deconvmethod_2d_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d']].sort_values('chi2distance_deconvmethod_2d',ascending=False)
-                if xi_um_fit_column == 'xi_um_fit_at_center':
+                if xi_um_fit_column == 'xi_um_fit_v1': # to fix !!! consider here the measurement defaults for fitting!
+                    df_fitting_result = df_fitting_v1_results[(df_fitting_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))][['separation_um','imageid','timestamp_pulse_id',xi_um_fit_column,'chi2distance_fitting_v1']].sort_values('chi2distance_fitting_v1',ascending=False)        
+                if (xi_um_fit_column == 'xi_um_fit_at_center') or (xi_um_fit_column == 'xi_um_fit'):
                     df_fitting_result = df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_fitting_results['mod_sigma_um'] == mod_sigma_um_measurement_default) & \
                         (df_fitting_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)][['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
@@ -2279,7 +3468,13 @@ def plot_fitting_vs_deconvolution(
                     df_deconvmethod_result = pd.merge(df_deconvmethod_1d_results,df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_1d']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_1d'])[['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_um','chi2distance_deconvmethod_1d']].sort_values('chi2distance_deconvmethod_1d',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um':
                     df_deconvmethod_result = pd.merge(df_deconvmethod_2d_results,df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_2d']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_2d'])[['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d']].sort_values('chi2distance_deconvmethod_2d',ascending=False)
-                if xi_um_fit_column == 'xi_um_fit_at_center':
+                if xi_um_deconv_column == 'xi_x_um_v1':
+                    df_deconvmethod_result = pd.merge(df_deconvmethod_2d_v1_results,df_deconvmethod_2d_v1_results[(df_deconvmethod_2d_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_2d_v1']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_2d_v1'])[['separation_um','imageid','timestamp_pulse_id','xi_x_um_v1','chi2distance_deconvmethod_2d_v1']].sort_values('chi2distance_deconvmethod_2d_v1',ascending=False)
+                
+
+                if xi_um_fit_column == 'xi_um_fit_v1':
+                    df_fitting_result = pd.merge(df_fitting_v1_results,df_fitting_v1_results[(df_fitting_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting_v1']].min(), on=['timestamp_pulse_id','chi2distance_fitting_v1'])[['separation_um','imageid','timestamp_pulse_id',xi_um_fit_column,'chi2distance_fitting_v1']].sort_values('chi2distance_fitting_v1',ascending=False)
+                if (xi_um_fit_column == 'xi_um_fit_at_center') or (xi_um_fit_column == 'xi_um_fit'):
                     df_fitting_result = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min(), on=['timestamp_pulse_id','chi2distance_fitting'])[['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
             
             df_result = pd.merge(df_deconvmethod_result,df_fitting_result, on='timestamp_pulse_id', suffixes=('', '_DROP')).filter(regex='^(?!.*_DROP)').sort_values(chi2distance_column,ascending=False)
@@ -2413,7 +3608,11 @@ def list_results(
                         (df_deconvmethod_2d_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
                         (df_deconvmethod_2d_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d']].sort_values('chi2distance_deconvmethod_2d',ascending=False)
-                if xi_um_fit_column == 'xi_um_fit_at_center':
+                
+                
+                if xi_um_fit_column == 'xi_um_fit_v1':
+                    df_fitting_result = df_fitting_v1_results[(df_fitting_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))][['separation_um','imageid','timestamp_pulse_id',xi_um_fit_column,'chi2distance_fitting_v1']].sort_values('chi2distance_fitting_v1',ascending=False)        
+                if (xi_um_fit_column == 'xi_um_fit_at_center') or (xi_um_fit_column == 'xi_um_fit'):
                     df_fitting_result = df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_fitting_results['mod_sigma_um'] == mod_sigma_um_measurement_default) & \
                         (df_fitting_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)][['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
@@ -2425,9 +3624,16 @@ def list_results(
                     df_deconvmethod_result = pd.merge(df_deconvmethod_1d_results,df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_1d']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_1d'])[['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_um','chi2distance_deconvmethod_1d']].sort_values('chi2distance_deconvmethod_1d',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um':
                     df_deconvmethod_result = pd.merge(df_deconvmethod_2d_results,df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_2d']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_2d'])[['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d']].sort_values('chi2distance_deconvmethod_2d',ascending=False)
-                if xi_um_fit_column == 'xi_um_fit_at_center':
+                if xi_um_deconv_column == 'xi_x_um_v1':
+                    df_deconvmethod_result = pd.merge(df_deconvmethod_2d_v1_results,df_deconvmethod_2d_v1_results[(df_deconvmethod_2d_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_2d_v1']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_2d_v1'])[['separation_um','imageid','timestamp_pulse_id','xi_x_um_v1','chi2distance_deconvmethod_2d_v1']].sort_values('chi2distance_deconvmethod_2d_v1',ascending=False)
+                
+
+
+                if xi_um_fit_column == 'xi_um_fit_v1':
+                    df_fitting_result = pd.merge(df_fitting_v1_results,df_fitting_v1_results[(df_fitting_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting_v1']].min(), on=['timestamp_pulse_id','chi2distance_fitting_v1'])[['separation_um','imageid','timestamp_pulse_id',xi_um_fit_column,'chi2distance_fitting_v1']].sort_values('chi2distance_fitting_v1',ascending=False)
+                if (xi_um_fit_column == 'xi_um_fit_at_center') or (xi_um_fit_column == 'xi_um_fit'):
                     df_fitting_result = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min(), on=['timestamp_pulse_id','chi2distance_fitting'])[['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
-            
+
             df_result = pd.merge(df_deconvmethod_result,df_fitting_result, on='timestamp_pulse_id', suffixes=('', '_DROP')).filter(regex='^(?!.*_DROP)').sort_values(chi2distance_column,ascending=False)
             
             display(df_result.style.apply(
@@ -2749,17 +3955,16 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
 
 column0 = widgets.VBox(
     [
+        do_plot_fitting_v1_widget,
         do_fitting_widget,
-        do_deconvmethod_widget,
+        do_plot_deconvmethod_1d_widget,
+        do_plot_deconvmethod_2d_widget,
+        do_plot_deconvmethod_2d_v1_widget,
         do_plot_fitting_vs_deconvolution_widget,
         do_list_results_widget,
         do_plot_CDCs_widget,
         do_plot_xi_um_fit_vs_I_Airy2_fit_widget,
         pixis_profile_avg_width_widget,
-        xi_um_guess_widget,
-        scan_x_widget,
-        xatol_widget,
-        sigma_x_F_gamma_um_multiplier_widget,
         crop_px_widget,
         timestamp_pulse_id_widget,
         HBox([imageid_widget,imageid_index_widget]),
@@ -2770,6 +3975,20 @@ column0 = widgets.VBox(
 )
 
 column1 = widgets.VBox(
+    [
+        xi_um_guess_widget,
+        xatol_widget,
+        sigma_x_F_gamma_um_multiplier_widget,
+
+        sigma_x_F_gamma_um_min_widget,
+        sigma_x_F_gamma_um_max_widget,
+        sigma_y_F_gamma_um_min_widget,
+        sigma_y_F_gamma_um_max_widget,
+        sigma_y_F_gamma_um_stepsize_widget,        
+    ]
+)
+
+column2 = widgets.VBox(
     [
         shiftx_um_widget,
         wavelength_nm_widget,
@@ -2788,7 +4007,8 @@ column1 = widgets.VBox(
     ]
 )
 
-column2 = widgets.VBox(
+
+column3 = widgets.VBox(
     [
         shiftx_um_value_widget,
         wavelength_nm_value_widget,
@@ -2808,7 +4028,7 @@ column2 = widgets.VBox(
 )
 
 
-column3 = widgets.VBox(
+column4 = widgets.VBox(
     [
         shiftx_um_do_fit_widget,
         wavelength_nm_do_fit_widget,
@@ -2827,7 +4047,7 @@ column3 = widgets.VBox(
     ]
 )
 
-column4 = widgets.VBox(
+column5 = widgets.VBox(
     [
         shiftx_um_range_widget,
         wavelength_nm_range_widget,
@@ -2846,10 +4066,69 @@ column4 = widgets.VBox(
     ]
 )
 
-column5 = widgets.VBox([textarea_widget, beamsize_text_widget, fit_profile_text_widget, xi_um_fit_at_center_text_widget, deconvmethod_simple_text_widget, deconvmethod_text_widget])
+column6 = widgets.VBox(
+    [
+        textarea_widget, 
+        beamsize_text_widget, 
+        xi_um_fit_v1_widget, 
+        fit_profile_text_widget, 
+        xi_um_fit_at_center_text_widget, 
+        deconvmethod_simple_text_widget, 
+        deconvmethod_text_widget,
+        deconvmethod_2d_v1_result_widget])
 
-plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3, column4, column5])
+plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3, column4, column5, column6])
 
+
+plot_fitting_v1_interactive_output = interactive_output(
+    plot_fitting_v1,
+    {
+        "do_plot_fitting_v1": do_plot_fitting_v1_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
+        "crop_px" : crop_px_widget,
+        # "hdf5_file_path": dph_settings_bgsubtracted_widget,
+        # "imageid": imageid_widget,
+        "savefigure": savefigure_profile_fit_widget,
+        "save_to_df": save_to_df_widget,
+        "do_textbox": do_textbox_widget,
+        "shiftx_um": shiftx_um_widget,
+        "shiftx_um_range": shiftx_um_range_widget,
+        "shiftx_um_do_fit": shiftx_um_do_fit_widget,
+        "wavelength_nm": wavelength_nm_widget,
+        "wavelength_nm_range": wavelength_nm_range_widget,
+        "wavelength_nm_do_fit": wavelength_nm_do_fit_widget,
+        "z_mm": z_mm_widget,
+        "z_mm_range": z_mm_range_widget,
+        "z_mm_do_fit": z_mm_do_fit_widget,
+        "d_um": d_um_widget,
+        "d_um_range": d_um_range_widget,
+        "d_um_do_fit": d_um_do_fit_widget,
+        "gamma": gamma_widget,
+        "gamma_range": gamma_range_widget,
+        "gamma_do_fit": gamma_do_fit_widget,
+        "w1_um": w1_um_widget,
+        "w1_um_range": w1_um_range_widget,
+        "w1_um_do_fit": w1_um_do_fit_widget,
+        "w2_um": w2_um_widget,
+        "w2_um_range": w2_um_range_widget,
+        "w2_um_do_fit": w2_um_do_fit_widget,
+        "I_Airy1": I_Airy1_widget,
+        "I_Airy1_range": I_Airy1_range_widget,
+        "I_Airy1_do_fit": I_Airy1_do_fit_widget,
+        "I_Airy2": I_Airy2_widget,
+        "I_Airy2_range": I_Airy2_range_widget,
+        "I_Airy2_do_fit": I_Airy2_do_fit_widget,
+        "x1_um": x1_um_widget,
+        "x1_um_range": x1_um_range_widget,
+        "x1_um_do_fit": x1_um_do_fit_widget,
+        "x2_um": x2_um_widget,
+        "x2_um_range": x2_um_range_widget,
+        "x2_um_do_fit": x2_um_do_fit_widget,
+        "normfactor": normfactor_widget,
+        "normfactor_range": normfactor_range_widget,
+        "normfactor_do_fit": normfactor_do_fit_widget,
+    },
+)
 
 plot_fitting_interactive_output = interactive_output(
     plot_fitting,
@@ -2907,13 +4186,27 @@ plot_fitting_interactive_output = interactive_output(
     },
 )
 
-plot_deconvmethod_interactive_output = interactive_output(
-    plot_deconvmethod,
+plot_deconvmethod_1d_interactive_output = interactive_output(
+    plot_deconvmethod_1d,
     {
-        "do_deconvmethod": do_deconvmethod_widget,
+        "do_plot_deconvmethod_1d": do_plot_deconvmethod_1d_widget,
         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
         "xi_um_guess" : xi_um_guess_widget,
-        "scan_x" : scan_x_widget,
+        "xatol" : xatol_widget,
+        "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_widget,
+        "crop_px" : crop_px_widget,
+        # "hdf5_file_path": dph_settings_bgsubtracted_widget,
+        # "imageid": imageid_widget,
+        "save_to_df": save_to_df_widget,
+    },
+)
+
+plot_deconvmethod_2d_interactive_output = interactive_output(
+    plot_deconvmethod_2d,
+    {
+        "do_plot_deconvmethod_2d": do_plot_deconvmethod_2d_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
+        "xi_um_guess" : xi_um_guess_widget,
         "xatol" : xatol_widget,
         "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_widget,
         "crop_px" : crop_px_widget,
@@ -2933,6 +4226,20 @@ plot_deconvmethod_steps_interactive_output = interactive_output(
     },
 )
 
+plot_deconvmethod_2d_v1_interactive_output = interactive_output(
+    plot_deconvmethod_2d_v1,
+    {
+        "do_plot_deconvmethod_2d_v1": do_plot_deconvmethod_2d_v1_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
+        "crop_px" : crop_px_widget,
+        "sigma_x_F_gamma_um_min" : sigma_x_F_gamma_um_min_widget, 
+        "sigma_x_F_gamma_um_max" : sigma_x_F_gamma_um_max_widget, 
+        "sigma_y_F_gamma_um_min" : sigma_y_F_gamma_um_min_widget, 
+        "sigma_y_F_gamma_um_max" : sigma_y_F_gamma_um_max_widget, 
+        "sigma_y_F_gamma_um_stepsize" : sigma_y_F_gamma_um_stepsize_widget, 
+        "save_to_df": save_to_df_widget,
+    },
+)
 
 plot_fitting_vs_deconvolution_output = interactive_output(
     plot_fitting_vs_deconvolution,
@@ -3085,15 +4392,30 @@ def imageid_widget_changed(change):
         clear_plot_deconvmethod_steps_widget.value = True
         clear_plot_deconvmethod_steps_widget.value = False
 
+        do_plot_fitting_v1_widget_was_active = False
+        if do_plot_fitting_v1_widget.value == True:
+            do_plot_fitting_v1_widget_was_active = True
+            do_plot_fitting_v1_widget.value = False
+
         do_fitting_widget_was_active = False
         if do_fitting_widget.value == True:
             do_fitting_widget_was_active = True
             do_fitting_widget.value = False
 
-        do_deconvmethod_widget_was_active = False
-        if do_deconvmethod_widget.value == True:
-            do_deconvmethod_widget_was_active = True
-            do_deconvmethod_widget.value = False
+        do_plot_deconvmethod_1d_widget_was_active = False
+        if do_plot_deconvmethod_1d_widget.value == True:
+            do_plot_deconvmethod_1d_widget_was_active = True
+            do_plot_deconvmethod_1d_widget.value = False
+
+        do_plot_deconvmethod_2d_widget_was_active = False
+        if do_plot_deconvmethod_2d_widget.value == True:
+            do_plot_deconvmethod_2d_widget_was_active = True
+            do_plot_deconvmethod_2d_widget.value = False
+
+        do_plot_deconvmethod_2d_v1_widget_was_active = False
+        if do_plot_deconvmethod_2d_v1_widget.value == True:
+            do_plot_deconvmethod_2d_v1_widget_was_active = True
+            do_plot_deconvmethod_2d_v1_widget.value = False
 
         hdf5_file_path = dph_settings_bgsubtracted_widget.value
         imageid = imageid_widget.value
@@ -3352,11 +4674,20 @@ def imageid_widget_changed(change):
             sigma_x_F_gamma_um_multiplier_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
             crop_px_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
 
+        if do_plot_fitting_v1_widget_was_active == True:
+            do_plot_fitting_v1_widget.value = True
+
         if do_fitting_widget_was_active == True:
             do_fitting_widget.value = True
 
-        if do_deconvmethod_widget_was_active == True:
-            do_deconvmethod_widget.value = True
+        if do_plot_deconvmethod_1d_widget_was_active == True:
+            do_plot_deconvmethod_1d_widget.value = True
+        
+        if do_plot_deconvmethod_2d_widget_was_active == True:
+            do_plot_deconvmethod_2d_widget.value = True
+
+        if do_plot_deconvmethod_2d_v1_widget_was_active == True:
+            do_plot_deconvmethod_2d_v1_widget.value = True
 
 imageid_widget.observe(imageid_widget_changed, names="value")
 
@@ -3603,20 +4934,26 @@ display(
 )  # https://stackoverflow.com/a/57346765
 
 children_left = [plot_fitting_interactive_output,
-                 plot_deconvmethod_interactive_output,
+                 plot_fitting_v1_interactive_output,
+                 plot_deconvmethod_1d_interactive_output,
+                 plot_deconvmethod_2d_interactive_output,
                  VBox([HBox([do_plot_deconvmethod_steps_widget, clear_plot_deconvmethod_steps_widget,
                       deconvmethod_ystep_widget, deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
+                 plot_deconvmethod_2d_v1_interactive_output,
                  plot_CDCs_output,
                  plot_xi_um_fit_vs_I_Airy2_fit_output,
                  list_results_output]
 tabs_left = widgets.Tab(layout=widgets.Layout(height='1000px', width='67%'))
 tabs_left.children = children_left
 tabs_left.set_title(0, 'Fitting')
-tabs_left.set_title(1, 'Deconvolution')
-tabs_left.set_title(2, 'Deconvolution Steps')
-tabs_left.set_title(3, 'CDCs')
-tabs_left.set_title(4, 'plot_xi_um_fit_vs_I_Airy2_fit')
-tabs_left.set_title(5, 'list_results')
+tabs_left.set_title(1, 'Fitting_v1')
+tabs_left.set_title(2, 'Deconvolution 1d')
+tabs_left.set_title(3, 'Deconvolution 2d')
+tabs_left.set_title(4, 'Deconvolution Steps')
+tabs_left.set_title(5, 'Deconvolution 2d_v1')
+tabs_left.set_title(6, 'CDCs')
+tabs_left.set_title(7, 'plot_xi_um_fit_vs_I_Airy2_fit')
+tabs_left.set_title(8, 'list_results')
 
 children_right = [VBox([HBox([VBox([use_measurement_default_result_widget, \
                                     xi_um_deconv_column_and_label_widget, \
