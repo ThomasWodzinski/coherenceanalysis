@@ -953,7 +953,7 @@ deconvmethod_2d_v1_result_widget = widgets.Text(
 # general parameter widgets
 
 crop_px_widget = widgets.FloatText(value=200, description='crop_px')
-pixis_profile_avg_width_widget = widgets.IntText(value=200, description='profile width / px')
+pixis_profile_avg_width_widget = widgets.FloatText(value=200, description='profile width / px')
 
 # fitting parameter widgets
 
@@ -4720,7 +4720,7 @@ def imageid_widget_changed(change):
             mod_sigma_um_range_0 = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_sigma_um_range_0_measurement_default'].iloc[0]
             mod_sigma_um_range_1 = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_sigma_um_range_1_measurement_default'].iloc[0]
             mod_sigma_um_range_widget.value = [mod_sigma_um_range_0, mod_sigma_um_range_1]
-            # mod_sigma_um_do_fit_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_sigma_um_do_fit_measurement_default'].iloc[0]
+            # mod_sigma_um_do_fit_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_sigma_um_do_fit_measurement_default'].iloc[0] # boolean leads to a problem in the exported csv when importing back!
             mod_shiftx_um_widget.value = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
             mod_shiftx_um_range_0 = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_shiftx_um_range_0_measurement_default'].iloc[0]
             mod_shiftx_um_range_1 = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_shiftx_um_range_1_measurement_default'].iloc[0]
@@ -4729,7 +4729,7 @@ def imageid_widget_changed(change):
 
         # Set default values for Deconvmethod
         if load_from_df_widget.value == False or np.isnan(xi_um_guess) == True:
-            pixis_profile_avg_width_widget.value = 200
+            pixis_profile_avg_width_widget.value = df_deconvmethod_2d_measurement_default[df_deconvmethod_2d_measurement_default['measurement']==measurement]['pixis_profile_avg_width_measurement_default'].iloc[0]
             xi_um_guess_widget.value = df_deconvmethod_2d_measurement_default[df_deconvmethod_2d_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
             xatol_widget.value = df_deconvmethod_2d_measurement_default[df_deconvmethod_2d_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
             sigma_x_F_gamma_um_multiplier_widget.value = df_deconvmethod_2d_measurement_default[df_deconvmethod_2d_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
@@ -4910,7 +4910,7 @@ def save_measurement_default_to_csv(change):
         df_deconvmethod_1d_measurement_default.to_csv(df_measurement_default_file)
 
         df_measurement_default_file = Path.joinpath(data_dir, 'df_deconvmethod_2d_measurement_default.csv')
-        df_deconvmethod_1d_measurement_default.to_csv(df_measurement_default_file)
+        df_deconvmethod_2d_measurement_default.to_csv(df_measurement_default_file)
 
         df_measurement_default_file = Path.joinpath(data_dir, 'df_deconvmethod_2d_v1_measurement_default.csv')
         df_deconvmethod_2d_v1_measurement_default.to_csv(df_measurement_default_file)
