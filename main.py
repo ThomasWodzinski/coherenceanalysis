@@ -4720,7 +4720,7 @@ def imageid_widget_changed(change):
             mod_sigma_um_range_0 = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_sigma_um_range_0_measurement_default'].iloc[0]
             mod_sigma_um_range_1 = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_sigma_um_range_1_measurement_default'].iloc[0]
             mod_sigma_um_range_widget.value = [mod_sigma_um_range_0, mod_sigma_um_range_1]
-            # mod_sigma_um_do_fit_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_sigma_um_do_fit_measurement_default'].iloc[0]
+            # mod_sigma_um_do_fit_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_sigma_um_do_fit_measurement_default'].iloc[0] # boolean leads to a problem in the exported csv when importing back!
             mod_shiftx_um_widget.value = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
             mod_shiftx_um_range_0 = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_shiftx_um_range_0_measurement_default'].iloc[0]
             mod_shiftx_um_range_1 = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_shiftx_um_range_1_measurement_default'].iloc[0]
