@@ -3699,77 +3699,7 @@ def list_results(
                 
 
 
-def set_fitting_results_to_nan(
-    do_set_fitting_results_to_nan,
-):
-    measurement_file = dph_settings_bgsubtracted_widget.value
-    if do_set_fitting_results_to_nan == True:
-        timestamp_pulse_ids = []
-        with h5py.File(measurement_file, "r") as hdf5_file:
-            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'gamma_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'gamma_fit_at_center'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'xi_um_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'xi_um_fit_at_center'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'wavelength_nm_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'd_um_at_detector'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'I_Airy1_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'I_Airy2_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'w1_um_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'w2_um_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'shiftx_um_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'x1_um_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'mod_sigma_um_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'mod_shiftx_um_fit'] =  np.nan
-
-do_set_fitting_results_to_nan_widget = widgets.ToggleButton(
-    value=False,
-    description='fitting>NaN',
-    disabled=False,
-    button_style='', # 'success', 'info', 'warning', 'danger' or ''
-    tooltip='set fitting results to NaN for this measurement',
-    icon=''
-)
-def do_set_fitting_results_to_nan_widget_changed(change):
-    if do_set_fitting_results_to_nan_widget.value == True:
-        do_set_fitting_results_to_nan_widget.button_style = 'danger'
-        set_fitting_results_to_nan(True)
-    if do_set_fitting_results_to_nan_widget.value == False:
-        do_set_fitting_results_to_nan_widget.button_style = ''
-
-do_set_fitting_results_to_nan_widget.observe(do_set_fitting_results_to_nan_widget_changed, names="value")
-
-
-
-def set_deconvmethod_results_to_nan(
-    do_set_deconvmethod_results_to_nan,
-):
-    measurement_file = dph_settings_bgsubtracted_widget.value
-    if do_set_deconvmethod_results_to_nan == True:
-        timestamp_pulse_ids = []
-        with h5py.File(measurement_file, "r") as hdf5_file:
-            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
-
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'xi_um'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'xi_x_um'] =  np.nan
-
-do_set_deconvmethod_results_to_nan_widget = widgets.ToggleButton(
-    value=False,
-    description='deconv>NaN',
-    disabled=False,
-    button_style='', # 'success', 'info', 'warning', 'danger' or ''
-    tooltip='set deconvmethod results to NaN for this measurement',
-    icon=''
-)
-def do_set_deconvmethod_results_to_nan_widget_changed(change):
-    if do_set_deconvmethod_results_to_nan_widget.value == True:
-        do_set_deconvmethod_results_to_nan_widget.button_style = 'danger'
-        set_deconvmethod_results_to_nan(True)
-    if do_set_deconvmethod_results_to_nan_widget.value == False:
-        do_set_deconvmethod_results_to_nan_widget.button_style = ''
-        
-do_set_deconvmethod_results_to_nan_widget.observe(do_set_deconvmethod_results_to_nan_widget_changed, names="value")
 
 
 
@@ -5162,7 +5092,6 @@ children_right = [VBox([HBox([VBox([use_measurement_default_result_widget, \
                                     sort_imageids_by_chi2distance_widget]),
 VBox([deconvmethod_outlier_limit_widget,fitting_outlier_limit_widget]),
 VBox([xaxisrange_widget, yaxisrange_widget])]), 
-HBox([do_set_fitting_results_to_nan_widget, do_set_deconvmethod_results_to_nan_widget]),
 plot_fitting_vs_deconvolution_output])]
 tabs_right = widgets.Tab(layout=widgets.Layout(height='1000px', width='33%'))
 tabs_right.children = children_right
