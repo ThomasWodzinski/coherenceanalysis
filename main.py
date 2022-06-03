@@ -4984,10 +4984,11 @@ def run_over_all_images():
             time_taken = end - start
             time_left = time_taken/i * (len(imageid_widget.options) - i)
             run_over_all_images_statustext_widget.value = str(time_taken) + "|" + str(time_left)
-    
-    df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
-    df_fits_csv_file = df_fits_csv_files_widget.value
-    df_fits.to_csv(df_fits_csv_file)
+
+    # disable for now, there is a problem with the fits_header_list, possible duplicate columns?
+    # df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
+    # df_fits_csv_file = df_fits_csv_files_widget.value
+    # df_fits.to_csv(df_fits_csv_file)
 
     if os.path.isfile(run_over_all_images_continue_file):
         run_over_all_images_progress_widget.bar_style = 'success'
