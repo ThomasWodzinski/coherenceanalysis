@@ -3960,12 +3960,22 @@ column0 = widgets.VBox(
     ]
 )
 
-column1 = widgets.VBox(
+column1a = widgets.VBox(
+    [
+        xi_um_guess_widget,
+        sigma_x_F_gamma_um_multiplier_widget,      
+    ]
+)
+column1b = widgets.VBox(
     [
         xi_um_guess_widget,
         xatol_widget,
-        sigma_x_F_gamma_um_multiplier_widget,
+        sigma_x_F_gamma_um_multiplier_widget,      
+    ]
+)
 
+column1c = widgets.VBox(
+    [
         sigma_x_F_gamma_um_min_widget,
         sigma_x_F_gamma_um_max_widget,
         sigma_x_F_gamma_um_stepsize_widget,        
@@ -3975,7 +3985,25 @@ column1 = widgets.VBox(
     ]
 )
 
-column2 = widgets.VBox(
+column2a = widgets.VBox(
+    [
+        shiftx_um_widget,
+        wavelength_nm_widget,
+        z_mm_widget,
+        d_um_widget,
+        gamma_widget,
+        w1_um_widget,
+        w2_um_widget,
+        I_Airy1_widget,
+        I_Airy2_widget,
+        x1_um_widget,
+        x2_um_widget,
+        normfactor_widget,
+
+    ]
+)
+
+column2b = widgets.VBox(
     [
         shiftx_um_widget,
         wavelength_nm_widget,
@@ -3995,7 +4023,24 @@ column2 = widgets.VBox(
 )
 
 
-column3 = widgets.VBox(
+column3a = widgets.VBox(
+    [
+        shiftx_um_value_widget,
+        wavelength_nm_value_widget,
+        z_mm_value_widget,
+        d_um_value_widget,
+        gamma_value_widget,
+        w1_um_value_widget,
+        w2_um_value_widget,
+        I_Airy1_value_widget,
+        I_Airy2_value_widget,
+        x1_um_value_widget,
+        x2_um_value_widget,
+        normfactor_value_widget,
+    ]
+)
+
+column3b = widgets.VBox(
     [
         shiftx_um_value_widget,
         wavelength_nm_value_widget,
@@ -4015,7 +4060,24 @@ column3 = widgets.VBox(
 )
 
 
-column4 = widgets.VBox(
+column4a = widgets.VBox(
+    [
+        shiftx_um_do_fit_widget,
+        wavelength_nm_do_fit_widget,
+        z_mm_do_fit_widget,
+        d_um_do_fit_widget,
+        gamma_do_fit_widget,
+        w1_um_do_fit_widget,
+        w2_um_do_fit_widget,
+        I_Airy1_do_fit_widget,
+        I_Airy2_do_fit_widget,
+        x1_um_do_fit_widget,
+        x2_um_do_fit_widget,
+        normfactor_do_fit_widget,
+    ]
+)
+
+column4b = widgets.VBox(
     [
         shiftx_um_do_fit_widget,
         wavelength_nm_do_fit_widget,
@@ -4034,7 +4096,24 @@ column4 = widgets.VBox(
     ]
 )
 
-column5 = widgets.VBox(
+column5a = widgets.VBox(
+    [
+        shiftx_um_range_widget,
+        wavelength_nm_range_widget,
+        z_mm_range_widget,
+        d_um_range_widget,
+        gamma_range_widget,
+        w1_um_range_widget,
+        w2_um_range_widget,
+        I_Airy1_range_widget,
+        I_Airy2_range_widget,
+        x1_um_range_widget,
+        x2_um_range_widget,
+        normfactor_range_widget,
+    ]
+)
+
+column5b = widgets.VBox(
     [
         shiftx_um_range_widget,
         wavelength_nm_range_widget,
@@ -4062,9 +4141,26 @@ column6 = widgets.VBox(
         xi_um_fit_at_center_text_widget, 
         deconvmethod_simple_text_widget, 
         deconvmethod_text_widget,
-        deconvmethod_2d_v1_result_widget])
+        deconvmethod_2d_v1_result_widget
+    ]
+)
 
-plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3, column4, column5, column6])
+
+tabs_input_parameter_children = [widgets.HBox([column2b,column3b,column4b,column5b]),
+                                widgets.HBox([column2a,column3a,column4a,column5a]),
+                                column1a,
+                                column1b,
+                                column1c
+]
+tabs_input_parameter = widgets.Tab()
+tabs_input_parameter.children = tabs_input_parameter_children
+tabs_input_parameter.set_title(0, 'Fitting')
+tabs_input_parameter.set_title(1, 'Fitting_v1')
+tabs_input_parameter.set_title(2, 'Deconvolution 1d')
+tabs_input_parameter.set_title(3, 'Deconvolution 2d')
+tabs_input_parameter.set_title(4, 'Deconvolution 2d_v1')
+
+plotprofile_interactive_input = widgets.HBox([column0, tabs_input_parameter, column6])
 
 
 plot_fitting_v1_interactive_output = interactive_output(
