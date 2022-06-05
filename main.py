@@ -681,11 +681,11 @@ fittingprogress_widget = widgets.IntProgress(
 
 statustext_widget = widgets.Text(value="", placeholder="status", description="", disabled=False)
 
-do_plot_fitting_v1_widget = widgets.Checkbox(value=False, description="do_fitting_v1", disabled=False)
-do_fitting_widget = widgets.Checkbox(value=False, description="do_fitting", disabled=False)
-do_plot_deconvmethod_1d_widget = widgets.Checkbox(value=False, description="deconvmethod_1d", disabled=False)
-do_plot_deconvmethod_2d_widget = widgets.Checkbox(value=False, description="deconvmethod_2d", disabled=False)
-do_plot_deconvmethod_2d_v1_widget = widgets.Checkbox(value=False, description="deconvmethod_2d_v1", disabled=False)
+do_plot_fitting_v1_widget = widgets.Checkbox(value=False, description='', tooltip="do_fitting_v1", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
+do_fitting_widget = widgets.Checkbox(value=False, description='', tooltip="do_fitting", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
+do_plot_deconvmethod_1d_widget = widgets.Checkbox(value=False, description='', tooltip="deconvmethod_1d", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
+do_plot_deconvmethod_2d_widget = widgets.Checkbox(value=False, description='', tooltip="deconvmethod_2d", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
+do_plot_deconvmethod_2d_v1_widget = widgets.Checkbox(value=False, description='', tooltip="deconvmethod_2d_v1", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
 
 
 
@@ -923,31 +923,39 @@ run_over_all_datasets_statustext_widget = widgets.Text(value="", placeholder="st
 
 # result widgets
 
-do_textbox_widget = widgets.Checkbox(value=False, description="do_textbox", disabled=False)
+result_widget_style = {'description_width': 'initial'}
 
-textarea_widget = widgets.Textarea(value="info", placeholder="Type something", description="Fitting:", disabled=False)
+do_textbox_widget = widgets.Checkbox(
+    value=False, description="do_textbox", disabled=False)
+
+textarea_widget = widgets.Textarea(
+    value="info", placeholder="Type something", description="Fitting:", disabled=False)
 beamsize_text_widget = widgets.Text(
-    value="", placeholder="beamsize in rms", description=r"beam rms", disabled=False
+    value="", placeholder="beamsize in rms", description=r"beam rms", disabled=False, layout=widgets.Layout(width='auto'), style=result_widget_style
 )
 xi_um_fit_v1_widget = widgets.Text(
-    value="", placeholder="xi_fit_v1", description='ξ (fit v1)  / μm', disabled=False # r"\({\xi}_{fit}_{center}\)"
+    # r"\({\xi}_{fit}_{center}\)"
+    value="", placeholder="xi_fit_v1", description='Fitting v1 ξ / μm', disabled=False, layout=widgets.Layout(width='auto'), 
 )
 fit_profile_text_widget = widgets.Text(
-    value="", placeholder="xi_fit_um", description='ξ (fit) / μm', disabled=False # \({\xi}_{fit}\
+    value="", placeholder="xi_fit_um", description='Fitting v2 ξ (fit) / μm', disabled=False, layout=widgets.Layout(width='auto')  # \({\xi}_{fit}\
 )
 xi_um_fit_at_center_text_widget = widgets.Text(
-    value="", placeholder="xi_fit_um_at_center", description='ξ (fit at center)  / μm', disabled=False # r"\({\xi}_{fit}_{center}\)"
+    # r"\({\xi}_{fit}_{center}\)"
+    value="", placeholder="xi_fit_um_at_center", description='Fitting v2 ξ / μm', disabled=False, layout=widgets.Layout(width='auto')
 )
 deconvmethod_simple_text_widget = widgets.Text(
-    value="", placeholder="xi_um", description='ξ / μm', disabled=False
-) 
+    value="", placeholder="xi_um", description='1D-Deconvolution ξ / μm', disabled=False, layout=widgets.Layout(width='auto')
+)
 deconvmethod_text_widget = widgets.Text(
-    value="", placeholder="(xi_x_um, xi_y_um)", description='(ξˣ, ξʸ) / μm', disabled=False # r"\({\xi}_x,{\xi}_y\)"
-)  
+    # r"\({\xi}_x,{\xi}_y\)"
+    value="", placeholder="(xi_x_um, xi_y_um)", description='2D-Deconvolution v2 (ξˣ, ξʸ) / μm', disabled=False, layout=widgets.Layout(width='auto')
+)
 
 deconvmethod_2d_v1_result_widget = widgets.Text(
-    value="", placeholder="(xi_x_um, xi_y_um) (v1)", description='(ξˣ, ξʸ) / μm (v1)', disabled=False # r"\({\xi}_x,{\xi}_y\)"
-)  
+    # r"\({\xi}_x,{\xi}_y\)"
+    value="", placeholder="(xi_x_um, xi_y_um) (v1)", description='2D-Deconvolution v1 (ξˣ, ξʸ) / μm', disabled=False, layout=widgets.Layout(width='auto')
+)
 
 
 # general parameter widgets
@@ -4128,7 +4136,7 @@ fitting_result_tab.set_title(0,'Result')
 
 fitting_do_fit_tab = widgets.Tab()
 fitting_do_fit_tab.children = [widgets.HBox([column4b])]
-fitting_do_fit_tab.set_title(0,'do fit')
+fitting_do_fit_tab.set_title(0,'fit')
 
 fitting_columns = widgets.HBox([
                                 fitting_do_fit_tab, 
@@ -5168,7 +5176,7 @@ display(
 )  # https://stackoverflow.com/a/57346765
 
 
-output_tabs_right_ratio_widget = widgets.IntText(value=33)
+output_tabs_right_ratio_widget = widgets.IntSlider(value=35)
 
 
 children_left = [plot_fitting_interactive_output,
@@ -5200,21 +5208,18 @@ tabs_left.set_title(8, 'list_results')
 
 column0 = widgets.VBox(
     [
-        do_plot_fitting_v1_widget,
-        do_fitting_widget,
-        do_plot_deconvmethod_1d_widget,
-        do_plot_deconvmethod_2d_widget,
-        do_plot_deconvmethod_2d_v1_widget,        
+        HBox([do_fitting_widget,xi_um_fit_at_center_text_widget]),
+        HBox([do_plot_fitting_v1_widget,xi_um_fit_v1_widget]),        
+        HBox([do_plot_deconvmethod_1d_widget,deconvmethod_simple_text_widget]),
+        HBox([do_plot_deconvmethod_2d_widget,deconvmethod_text_widget]),
+        HBox([do_plot_deconvmethod_2d_v1_widget,deconvmethod_2d_v1_result_widget])
     ]
 )
 
 column6 = widgets.VBox(
-    [
-        textarea_widget, 
-        beamsize_text_widget, 
+    [        
         xi_um_fit_v1_widget, 
-        fit_profile_text_widget, 
-        xi_um_fit_at_center_text_widget, 
+        xi_um_fit_at_center_text_widget,
         deconvmethod_simple_text_widget, 
         deconvmethod_text_widget,
         deconvmethod_2d_v1_result_widget
@@ -5223,13 +5228,9 @@ column6 = widgets.VBox(
 
 
 
-children_right = [parameter_tabs,
-HBox(
-    [
-        column0,
-        column6
-    ]
-),
+children_right = [
+column0,
+parameter_tabs,
 VBox([HBox([VBox([use_measurement_default_result_widget, \
                                     xi_um_deconv_column_and_label_widget, \
                                     xi_um_fit_column_and_label_widget, \
@@ -5237,7 +5238,10 @@ VBox([HBox([VBox([use_measurement_default_result_widget, \
                                     sort_imageids_by_chi2distance_widget]),
 VBox([deconvmethod_outlier_limit_widget,fitting_outlier_limit_widget]),
 VBox([xaxisrange_widget, yaxisrange_widget])]), 
-plot_fitting_vs_deconvolution_output])]
+plot_fitting_vs_deconvolution_output]),
+VBox([textarea_widget, 
+beamsize_text_widget]),
+]
 
 
 
@@ -5245,9 +5249,11 @@ plot_fitting_vs_deconvolution_output])]
 # tabs_right = widgets.Tab(layout=widgets.Layout(height='1000px', width='33%'))
 tabs_right = widgets.Tab(layout=widgets.Layout(height='1000px', width=str(output_tabs_right_ratio_widget.value)+'%'))
 tabs_right.children = children_right
-tabs_right.set_title(0, 'Parameter')
-tabs_right.set_title(1, 'Results')
+tabs_right.set_title(0, 'Methods & Results')
+tabs_right.set_title(1, 'Parameter')
 tabs_right.set_title(2, 'Fitting vs. Deconvolution')
+tabs_right.set_title(3, 'other')
+
 
 grid = widgets.GridspecLayout(1, 3, height='1000px', width='100%')
 grid[0, 0:1] = tabs_left
