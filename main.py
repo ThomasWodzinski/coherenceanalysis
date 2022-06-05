@@ -5176,7 +5176,7 @@ display(
 )  # https://stackoverflow.com/a/57346765
 
 
-output_tabs_right_ratio_widget = widgets.IntSlider(value=35)
+output_tabs_right_ratio_widget = widgets.IntSlider(value=35, description='right box width / %')
 
 
 children_left = [plot_fitting_interactive_output,
@@ -5277,6 +5277,7 @@ input_widgets = VBox([
     ])
 
 input_settings_widgets = VBox([
+    datasets_widget,
     measurements_selection_widget,
     HBox([
         datasets_selection_py_files_widget,
