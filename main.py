@@ -284,7 +284,7 @@ for pattern in ['*'+ s + '.h5' for s in datasets[datasets_widget.value]]:
     dph_settings_bgsubtracted.extend(bgsubtracted_dir.glob(pattern))
 
 
-dph_settings_bgsubtracted_widget_layout = widgets.Layout(width="100%")
+dph_settings_bgsubtracted_widget_layout = widgets.Layout(width="50%")
 dph_settings_bgsubtracted_widget = widgets.Dropdown(
     options=dph_settings_bgsubtracted,
     layout=dph_settings_bgsubtracted_widget_layout,
@@ -689,28 +689,31 @@ do_plot_deconvmethod_2d_v1_widget = widgets.Checkbox(value=False, description=''
 
 
 
-timestamp_pulse_id_widget_layout = widgets.Layout(width="100%")
+timestamp_pulse_id_widget_layout = widgets.Layout(width="auto")
 timestamp_pulse_id_widget = widgets.Dropdown(
     options=[],
     description="timestamp_pulse_id:",
     disabled=False,
-    layout=timestamp_pulse_id_widget_layout
+    layout=timestamp_pulse_id_widget_layout,
+    indent = False
 )
 
-imageid_widget_layout = widgets.Layout(width="50%")
+imageid_widget_layout = widgets.Layout(width="auto")
 imageid_widget = widgets.Dropdown(
     options=[],
     description="imageid:",
     disabled=False,
-    layout=imageid_widget_layout
+    layout=imageid_widget_layout,
+    indent = False
 )
 
-imageid_index_widget_layout = widgets.Layout(width="50%")
+imageid_index_widget_layout = widgets.Layout(width="auto")
 imageid_index_widget = widgets.BoundedIntText(
     options=[],
     description="idx",
     disabled=False,
-    layout=imageid_index_widget_layout
+    layout=imageid_index_widget_layout,
+    indent = False
 )
 
 savefigure_profile_fit_widget = widgets.Checkbox(value=False, description="savefigure", disabled=False)
@@ -5186,9 +5189,19 @@ children_left = [plot_fitting_interactive_output,
                  VBox([HBox([do_plot_deconvmethod_steps_widget, clear_plot_deconvmethod_steps_widget,
                       deconvmethod_ystep_widget, deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
                  plot_deconvmethod_2d_v1_interactive_output,
-                 plot_CDCs_output,
-                 plot_xi_um_fit_vs_I_Airy2_fit_output,
-                 list_results_output]
+                 VBox([
+                     do_plot_CDCs_widget,
+                     plot_CDCs_output
+                 ]),
+                 VBox([
+                     do_plot_xi_um_fit_vs_I_Airy2_fit_widget,
+                     plot_xi_um_fit_vs_I_Airy2_fit_output,
+                 ]),
+                 VBox([
+                     do_list_results_widget,
+                     list_results_output
+                 ])
+                 ]
 
 
 
@@ -5229,18 +5242,41 @@ column6 = widgets.VBox(
 
 
 children_right = [
-column0,
-parameter_tabs,
-VBox([HBox([VBox([use_measurement_default_result_widget, \
-                                    xi_um_deconv_column_and_label_widget, \
-                                    xi_um_fit_column_and_label_widget, \
-                                    chi2distance_column_and_label_widget, \
-                                    sort_imageids_by_chi2distance_widget]),
-VBox([deconvmethod_outlier_limit_widget,fitting_outlier_limit_widget]),
-VBox([xaxisrange_widget, yaxisrange_widget])]), 
-plot_fitting_vs_deconvolution_output]),
-VBox([textarea_widget, 
-beamsize_text_widget]),
+                    column0,
+                    VBox([
+                        column0,
+                        VBox([
+                            HBox([
+                                load_measurement_default_from_csv_widget,
+                                set_measurement_default_widget,
+                                save_measurement_default_to_csv_widget,
+                                ]),
+                            HBox([
+                                save_to_df_widget,
+                                load_from_df_widget,
+                                ]),
+                            ]),
+                        parameter_tabs,
+                        ]),
+                    VBox([column0,
+                        do_plot_fitting_vs_deconvolution_widget,
+                        HBox([VBox([use_measurement_default_result_widget, \
+                                                        xi_um_deconv_column_and_label_widget, \
+                                                        xi_um_fit_column_and_label_widget, \
+                                                        chi2distance_column_and_label_widget, \
+                                                        sort_imageids_by_chi2distance_widget]),
+                    VBox([deconvmethod_outlier_limit_widget,fitting_outlier_limit_widget]),
+                    VBox([xaxisrange_widget, yaxisrange_widget])]), 
+                    plot_fitting_vs_deconvolution_output]),
+                    VBox([
+                        textarea_widget, 
+                        beamsize_text_widget,
+                        pixis_profile_avg_width_widget,
+                        crop_px_widget,
+                        savefigure_profile_fit_widget,
+                        do_textbox_widget,
+                        output_tabs_right_ratio_widget
+                        ]),
 ]
 
 
@@ -5267,53 +5303,43 @@ output_tabs_right_ratio_widget.observe(update_output_tabs_widths)
 
 
 input_widgets = VBox([
-    datasets_widget,
-    dph_settings_bgsubtracted_widget,
-    HBox([timestamp_pulse_id_widget, imageid_widget,imageid_index_widget]),
+    HBox([datasets_widget,
+          dph_settings_bgsubtracted_widget,
+          timestamp_pulse_id_widget,
+          imageid_widget, imageid_index_widget]),
     HBox([run_over_all_datasets_widget, run_over_all_datasets_progress_widget, run_over_all_datasets_statustext_widget,
-                run_over_all_measurements_widget, run_over_all_measurements_progress_widget, run_over_all_measurements_statustext_widget,
-                 run_over_all_images_widget, run_over_all_images_progress_widget, run_over_all_images_statustext_widget]),
-            
+          run_over_all_measurements_widget, run_over_all_measurements_progress_widget, run_over_all_measurements_statustext_widget,
+          run_over_all_images_widget, run_over_all_images_progress_widget, run_over_all_images_statustext_widget]),
+
     ])
 
-input_settings_widgets = VBox([
+measurement_selection_settings_widgets = VBox([
     datasets_widget,
     measurements_selection_widget,
     HBox([
         datasets_selection_py_files_widget,
         create_new_datasets_selection_py_file_widget,
     ]),
-    HBox([
-            load_measurement_default_from_csv_widget,
-            set_measurement_default_widget,
-            save_measurement_default_to_csv_widget,
-            save_to_df_widget,
-            load_from_df_widget,
+    
+])
+
+import_export_results_widgets = HBox([
             scan_for_df_fits_csv_files_widget,
             df_fits_csv_files_widget,
             load_csv_to_df_widget,
             df_fits_csv_save_widget,
             create_new_csv_file_widget
-        ]),
-        pixis_profile_avg_width_widget,
-        crop_px_widget,
-        do_plot_fitting_vs_deconvolution_widget,
-        do_list_results_widget,
-        do_plot_CDCs_widget,
-        do_plot_xi_um_fit_vs_I_Airy2_fit_widget,
-        savefigure_profile_fit_widget,
-        do_textbox_widget,
-        output_tabs_right_ratio_widget
-        
-])
+        ])
 
 input_tabs_children = [ input_widgets,
-                        input_settings_widgets
+                        measurement_selection_settings_widgets,
+                        import_export_results_widgets
                       ]
 input_tabs = widgets.Tab()
 input_tabs.children = input_tabs_children
 input_tabs.set_title(0, 'Input')
 input_tabs.set_title(1, 'Settings')
+input_tabs.set_title(2, 'Import/Export results')
 
 
 # Display widgets and outputs
