@@ -284,7 +284,7 @@ for pattern in ['*'+ s + '.h5' for s in datasets[datasets_widget.value]]:
     dph_settings_bgsubtracted.extend(bgsubtracted_dir.glob(pattern))
 
 
-dph_settings_bgsubtracted_widget_layout = widgets.Layout(width="100%")
+dph_settings_bgsubtracted_widget_layout = widgets.Layout(width="50%")
 dph_settings_bgsubtracted_widget = widgets.Dropdown(
     options=dph_settings_bgsubtracted,
     layout=dph_settings_bgsubtracted_widget_layout,
@@ -681,36 +681,39 @@ fittingprogress_widget = widgets.IntProgress(
 
 statustext_widget = widgets.Text(value="", placeholder="status", description="", disabled=False)
 
-do_plot_fitting_v1_widget = widgets.Checkbox(value=False, description="do_fitting_v1", disabled=False)
-do_fitting_widget = widgets.Checkbox(value=False, description="do_fitting", disabled=False)
-do_plot_deconvmethod_1d_widget = widgets.Checkbox(value=False, description="deconvmethod_1d", disabled=False)
-do_plot_deconvmethod_2d_widget = widgets.Checkbox(value=False, description="deconvmethod_2d", disabled=False)
-do_plot_deconvmethod_2d_v1_widget = widgets.Checkbox(value=False, description="deconvmethod_2d_v1", disabled=False)
+do_plot_fitting_v1_widget = widgets.Checkbox(value=False, description='', tooltip="do_fitting_v1", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
+do_fitting_widget = widgets.Checkbox(value=False, description='', tooltip="do_fitting", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
+do_plot_deconvmethod_1d_widget = widgets.Checkbox(value=False, description='', tooltip="deconvmethod_1d", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
+do_plot_deconvmethod_2d_widget = widgets.Checkbox(value=False, description='', tooltip="deconvmethod_2d", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
+do_plot_deconvmethod_2d_v1_widget = widgets.Checkbox(value=False, description='', tooltip="deconvmethod_2d_v1", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
 
 
 
-timestamp_pulse_id_widget_layout = widgets.Layout(width="100%")
+timestamp_pulse_id_widget_layout = widgets.Layout(width="auto")
 timestamp_pulse_id_widget = widgets.Dropdown(
     options=[],
     description="timestamp_pulse_id:",
     disabled=False,
-    layout=timestamp_pulse_id_widget_layout
+    layout=timestamp_pulse_id_widget_layout,
+    indent = False
 )
 
-imageid_widget_layout = widgets.Layout(width="50%")
+imageid_widget_layout = widgets.Layout(width="auto")
 imageid_widget = widgets.Dropdown(
     options=[],
     description="imageid:",
     disabled=False,
-    layout=imageid_widget_layout
+    layout=imageid_widget_layout,
+    indent = False
 )
 
-imageid_index_widget_layout = widgets.Layout(width="50%")
+imageid_index_widget_layout = widgets.Layout(width="auto")
 imageid_index_widget = widgets.BoundedIntText(
     options=[],
     description="idx",
     disabled=False,
-    layout=imageid_index_widget_layout
+    layout=imageid_index_widget_layout,
+    indent = False
 )
 
 savefigure_profile_fit_widget = widgets.Checkbox(value=False, description="savefigure", disabled=False)
@@ -923,31 +926,39 @@ run_over_all_datasets_statustext_widget = widgets.Text(value="", placeholder="st
 
 # result widgets
 
-do_textbox_widget = widgets.Checkbox(value=False, description="do_textbox", disabled=False)
+result_widget_style = {'description_width': 'initial'}
 
-textarea_widget = widgets.Textarea(value="info", placeholder="Type something", description="Fitting:", disabled=False)
+do_textbox_widget = widgets.Checkbox(
+    value=False, description="do_textbox", disabled=False)
+
+textarea_widget = widgets.Textarea(
+    value="info", placeholder="Type something", description="Fitting:", disabled=False)
 beamsize_text_widget = widgets.Text(
-    value="", placeholder="beamsize in rms", description=r"beam rms", disabled=False
+    value="", placeholder="beamsize in rms", description=r"beam rms", disabled=False, layout=widgets.Layout(width='auto'), style=result_widget_style
 )
 xi_um_fit_v1_widget = widgets.Text(
-    value="", placeholder="xi_fit_v1", description='ξ (fit v1)  / μm', disabled=False # r"\({\xi}_{fit}_{center}\)"
+    # r"\({\xi}_{fit}_{center}\)"
+    value="", placeholder="xi_fit_v1", description='Fitting v1 ξ / μm', disabled=False, layout=widgets.Layout(width='auto'), 
 )
 fit_profile_text_widget = widgets.Text(
-    value="", placeholder="xi_fit_um", description='ξ (fit) / μm', disabled=False # \({\xi}_{fit}\
+    value="", placeholder="xi_fit_um", description='Fitting v2 ξ (fit) / μm', disabled=False, layout=widgets.Layout(width='auto')  # \({\xi}_{fit}\
 )
 xi_um_fit_at_center_text_widget = widgets.Text(
-    value="", placeholder="xi_fit_um_at_center", description='ξ (fit at center)  / μm', disabled=False # r"\({\xi}_{fit}_{center}\)"
+    # r"\({\xi}_{fit}_{center}\)"
+    value="", placeholder="xi_fit_um_at_center", description='Fitting v2 ξ / μm', disabled=False, layout=widgets.Layout(width='auto')
 )
 deconvmethod_simple_text_widget = widgets.Text(
-    value="", placeholder="xi_um", description='ξ / μm', disabled=False
-) 
+    value="", placeholder="xi_um", description='1D-Deconvolution ξ / μm', disabled=False, layout=widgets.Layout(width='auto')
+)
 deconvmethod_text_widget = widgets.Text(
-    value="", placeholder="(xi_x_um, xi_y_um)", description='(ξˣ, ξʸ) / μm', disabled=False # r"\({\xi}_x,{\xi}_y\)"
-)  
+    # r"\({\xi}_x,{\xi}_y\)"
+    value="", placeholder="(xi_x_um, xi_y_um)", description='2D-Deconvolution v2 (ξˣ, ξʸ) / μm', disabled=False, layout=widgets.Layout(width='auto')
+)
 
 deconvmethod_2d_v1_result_widget = widgets.Text(
-    value="", placeholder="(xi_x_um, xi_y_um) (v1)", description='(ξˣ, ξʸ) / μm (v1)', disabled=False # r"\({\xi}_x,{\xi}_y\)"
-)  
+    # r"\({\xi}_x,{\xi}_y\)"
+    value="", placeholder="(xi_x_um, xi_y_um) (v1)", description='2D-Deconvolution v1 (ξˣ, ξʸ) / μm', disabled=False, layout=widgets.Layout(width='auto')
+)
 
 
 # general parameter widgets
@@ -1015,22 +1026,23 @@ mod_shiftx_um_range_widget = widgets.FloatRangeSlider(
     min=-30000, max=30000, value=[-10000, 10000], step=100, description="mod_shiftx_um"
 )
 
-shiftx_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
-wavelength_nm_do_fit_widget = widgets.Checkbox(value=True, description="fit")
-z_mm_do_fit_widget = widgets.Checkbox(value=False, description="fit")
-d_um_do_fit_widget = widgets.Checkbox(value=False, description="fit")
-gamma_do_fit_widget = widgets.Checkbox(value=True, description="fit")
-w1_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
-w2_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
-I_Airy1_do_fit_widget = widgets.Checkbox(value=False, description="fit")
-I_Airy2_do_fit_widget = widgets.Checkbox(value=True, description="fit")
-x1_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
-x2_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
-normfactor_do_fit_widget = widgets.Checkbox(value=False, description="fit")
-mod_sigma_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
-mod_shiftx_um_do_fit_widget = widgets.Checkbox(value=True, description="fit")
+do_fit_widget_layout = widgets.Layout(width="auto")
+shiftx_um_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+wavelength_nm_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+z_mm_do_fit_widget = widgets.Checkbox(value=False, description="", indent=False, layout=do_fit_widget_layout)
+d_um_do_fit_widget = widgets.Checkbox(value=False, description="", indent=False, layout=do_fit_widget_layout)
+gamma_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+w1_um_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+w2_um_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+I_Airy1_do_fit_widget = widgets.Checkbox(value=False, description="", indent=False, layout=do_fit_widget_layout)
+I_Airy2_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+x1_um_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+x2_um_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+normfactor_do_fit_widget = widgets.Checkbox(value=False, description="", indent=False, layout=do_fit_widget_layout)
+mod_sigma_um_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+mod_shiftx_um_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
 
-value_widget_layout = widgets.Layout(width="100px")
+value_widget_layout = widgets.Layout(width="80px")
 shiftx_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
 wavelength_nm_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
 z_mm_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
@@ -3699,77 +3711,7 @@ def list_results(
                 
 
 
-def set_fitting_results_to_nan(
-    do_set_fitting_results_to_nan,
-):
-    measurement_file = dph_settings_bgsubtracted_widget.value
-    if do_set_fitting_results_to_nan == True:
-        timestamp_pulse_ids = []
-        with h5py.File(measurement_file, "r") as hdf5_file:
-            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'gamma_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'gamma_fit_at_center'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'xi_um_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'xi_um_fit_at_center'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'wavelength_nm_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'd_um_at_detector'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'I_Airy1_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'I_Airy2_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'w1_um_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'w2_um_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'shiftx_um_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'x1_um_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'mod_sigma_um_fit'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'mod_shiftx_um_fit'] =  np.nan
-
-do_set_fitting_results_to_nan_widget = widgets.ToggleButton(
-    value=False,
-    description='fitting>NaN',
-    disabled=False,
-    button_style='', # 'success', 'info', 'warning', 'danger' or ''
-    tooltip='set fitting results to NaN for this measurement',
-    icon=''
-)
-def do_set_fitting_results_to_nan_widget_changed(change):
-    if do_set_fitting_results_to_nan_widget.value == True:
-        do_set_fitting_results_to_nan_widget.button_style = 'danger'
-        set_fitting_results_to_nan(True)
-    if do_set_fitting_results_to_nan_widget.value == False:
-        do_set_fitting_results_to_nan_widget.button_style = ''
-
-do_set_fitting_results_to_nan_widget.observe(do_set_fitting_results_to_nan_widget_changed, names="value")
-
-
-
-def set_deconvmethod_results_to_nan(
-    do_set_deconvmethod_results_to_nan,
-):
-    measurement_file = dph_settings_bgsubtracted_widget.value
-    if do_set_deconvmethod_results_to_nan == True:
-        timestamp_pulse_ids = []
-        with h5py.File(measurement_file, "r") as hdf5_file:
-            timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
-
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'xi_um'] =  np.nan
-        df0.loc[df0['timestamp_pulse_id'].isin(timestamp_pulse_ids), 'xi_x_um'] =  np.nan
-
-do_set_deconvmethod_results_to_nan_widget = widgets.ToggleButton(
-    value=False,
-    description='deconv>NaN',
-    disabled=False,
-    button_style='', # 'success', 'info', 'warning', 'danger' or ''
-    tooltip='set deconvmethod results to NaN for this measurement',
-    icon=''
-)
-def do_set_deconvmethod_results_to_nan_widget_changed(change):
-    if do_set_deconvmethod_results_to_nan_widget.value == True:
-        do_set_deconvmethod_results_to_nan_widget.button_style = 'danger'
-        set_deconvmethod_results_to_nan(True)
-    if do_set_deconvmethod_results_to_nan_widget.value == False:
-        do_set_deconvmethod_results_to_nan_widget.button_style = ''
-        
-do_set_deconvmethod_results_to_nan_widget.observe(do_set_deconvmethod_results_to_nan_widget_changed, names="value")
 
 
 
@@ -4009,33 +3951,24 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
 
 # Structuring the input widgets
 
-column0 = widgets.VBox(
+
+
+column1a = widgets.VBox(
     [
-        do_plot_fitting_v1_widget,
-        do_fitting_widget,
-        do_plot_deconvmethod_1d_widget,
-        do_plot_deconvmethod_2d_widget,
-        do_plot_deconvmethod_2d_v1_widget,
-        do_plot_fitting_vs_deconvolution_widget,
-        do_list_results_widget,
-        do_plot_CDCs_widget,
-        do_plot_xi_um_fit_vs_I_Airy2_fit_widget,
-        pixis_profile_avg_width_widget,
-        crop_px_widget,
-        timestamp_pulse_id_widget,
-        HBox([imageid_widget,imageid_index_widget]),
-        savefigure_profile_fit_widget,
-        
-        do_textbox_widget,
+        xi_um_guess_widget,
+        sigma_x_F_gamma_um_multiplier_widget,      
     ]
 )
-
-column1 = widgets.VBox(
+column1b = widgets.VBox(
     [
         xi_um_guess_widget,
         xatol_widget,
-        sigma_x_F_gamma_um_multiplier_widget,
+        sigma_x_F_gamma_um_multiplier_widget,      
+    ]
+)
 
+column1c = widgets.VBox(
+    [
         sigma_x_F_gamma_um_min_widget,
         sigma_x_F_gamma_um_max_widget,
         sigma_x_F_gamma_um_stepsize_widget,        
@@ -4045,7 +3978,25 @@ column1 = widgets.VBox(
     ]
 )
 
-column2 = widgets.VBox(
+column2a = widgets.VBox(
+    [
+        shiftx_um_widget,
+        wavelength_nm_widget,
+        z_mm_widget,
+        d_um_widget,
+        gamma_widget,
+        w1_um_widget,
+        w2_um_widget,
+        I_Airy1_widget,
+        I_Airy2_widget,
+        x1_um_widget,
+        x2_um_widget,
+        normfactor_widget,
+
+    ]
+)
+
+column2b = widgets.VBox(
     [
         shiftx_um_widget,
         wavelength_nm_widget,
@@ -4065,7 +4016,24 @@ column2 = widgets.VBox(
 )
 
 
-column3 = widgets.VBox(
+column3a = widgets.VBox(
+    [
+        shiftx_um_value_widget,
+        wavelength_nm_value_widget,
+        z_mm_value_widget,
+        d_um_value_widget,
+        gamma_value_widget,
+        w1_um_value_widget,
+        w2_um_value_widget,
+        I_Airy1_value_widget,
+        I_Airy2_value_widget,
+        x1_um_value_widget,
+        x2_um_value_widget,
+        normfactor_value_widget,
+    ]
+)
+
+column3b = widgets.VBox(
     [
         shiftx_um_value_widget,
         wavelength_nm_value_widget,
@@ -4085,7 +4053,24 @@ column3 = widgets.VBox(
 )
 
 
-column4 = widgets.VBox(
+column4a = widgets.VBox(
+    [
+        shiftx_um_do_fit_widget,
+        wavelength_nm_do_fit_widget,
+        z_mm_do_fit_widget,
+        d_um_do_fit_widget,
+        gamma_do_fit_widget,
+        w1_um_do_fit_widget,
+        w2_um_do_fit_widget,
+        I_Airy1_do_fit_widget,
+        I_Airy2_do_fit_widget,
+        x1_um_do_fit_widget,
+        x2_um_do_fit_widget,
+        normfactor_do_fit_widget,
+    ]
+)
+
+column4b = widgets.VBox(
     [
         shiftx_um_do_fit_widget,
         wavelength_nm_do_fit_widget,
@@ -4104,7 +4089,24 @@ column4 = widgets.VBox(
     ]
 )
 
-column5 = widgets.VBox(
+column5a = widgets.VBox(
+    [
+        shiftx_um_range_widget,
+        wavelength_nm_range_widget,
+        z_mm_range_widget,
+        d_um_range_widget,
+        gamma_range_widget,
+        w1_um_range_widget,
+        w2_um_range_widget,
+        I_Airy1_range_widget,
+        I_Airy2_range_widget,
+        x1_um_range_widget,
+        x2_um_range_widget,
+        normfactor_range_widget,
+    ]
+)
+
+column5b = widgets.VBox(
     [
         shiftx_um_range_widget,
         wavelength_nm_range_widget,
@@ -4123,18 +4125,61 @@ column5 = widgets.VBox(
     ]
 )
 
-column6 = widgets.VBox(
-    [
-        textarea_widget, 
-        beamsize_text_widget, 
-        xi_um_fit_v1_widget, 
-        fit_profile_text_widget, 
-        xi_um_fit_at_center_text_widget, 
-        deconvmethod_simple_text_widget, 
-        deconvmethod_text_widget,
-        deconvmethod_2d_v1_result_widget])
 
-plotprofile_interactive_input = widgets.HBox([column0, column1, column2, column3, column4, column5, column6])
+
+fitting_parameter_tab = widgets.Tab()
+fitting_parameter_tab.children = [widgets.HBox([column2b]),
+                                  widgets.HBox([column5b])]
+fitting_parameter_tab.set_title(0,'Guess')
+fitting_parameter_tab.set_title(1,'Range')
+
+fitting_result_tab = widgets.Tab()
+fitting_result_tab.children = [widgets.HBox([column3b])]
+fitting_result_tab.set_title(0,'Result')
+
+fitting_do_fit_tab = widgets.Tab()
+fitting_do_fit_tab.children = [widgets.HBox([column4b])]
+fitting_do_fit_tab.set_title(0,'fit')
+
+fitting_columns = widgets.HBox([
+                                fitting_do_fit_tab, 
+                                fitting_parameter_tab,
+                                fitting_result_tab
+                                ])
+
+fitting_v1_parameter_tab = widgets.Tab()
+fitting_v1_parameter_tab.children = [widgets.HBox([column2a]),
+                                  widgets.HBox([column5a])]
+fitting_v1_parameter_tab.set_title(0,'Guess')
+fitting_v1_parameter_tab.set_title(1,'Range')
+
+fitting_v1_result_tab = widgets.Tab()
+fitting_v1_result_tab.children = [widgets.HBox([column3a])]
+fitting_v1_result_tab.set_title(0,'Result')
+
+fitting_v1_do_fit_tab = widgets.Tab()
+fitting_v1_do_fit_tab.children = [widgets.HBox([column4a])]
+fitting_v1_do_fit_tab.set_title(0,'do fit')
+
+fitting_v1_columns = widgets.HBox([
+                                fitting_v1_do_fit_tab, 
+                                fitting_v1_parameter_tab,
+                                fitting_v1_result_tab
+                                ])
+
+parameter_tabs_children = [ fitting_columns,
+                                fitting_v1_columns,
+                                column1a,
+                                column1b,
+                                column1c
+]
+parameter_tabs = widgets.Tab()
+parameter_tabs.children = parameter_tabs_children
+parameter_tabs.set_title(0, 'Fitting')
+parameter_tabs.set_title(1, 'Fitting_v1')
+parameter_tabs.set_title(2, 'Deconvolution_1d')
+parameter_tabs.set_title(3, 'Deconvolution_2d')
+parameter_tabs.set_title(4, 'Deconvolution_2d_v1')
 
 
 plot_fitting_v1_interactive_output = interactive_output(
@@ -5133,6 +5178,10 @@ display(
     Javascript("""google.colab.output.setIframeHeight(0, true, {maxHeight: 5000})""")
 )  # https://stackoverflow.com/a/57346765
 
+
+output_tabs_right_ratio_widget = widgets.IntSlider(value=35, description='right box width / %')
+
+
 children_left = [plot_fitting_interactive_output,
                  plot_fitting_v1_interactive_output,
                  plot_deconvmethod_1d_interactive_output,
@@ -5140,10 +5189,24 @@ children_left = [plot_fitting_interactive_output,
                  VBox([HBox([do_plot_deconvmethod_steps_widget, clear_plot_deconvmethod_steps_widget,
                       deconvmethod_ystep_widget, deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
                  plot_deconvmethod_2d_v1_interactive_output,
-                 plot_CDCs_output,
-                 plot_xi_um_fit_vs_I_Airy2_fit_output,
-                 list_results_output]
-tabs_left = widgets.Tab(layout=widgets.Layout(height='1000px', width='67%'))
+                 VBox([
+                     do_plot_CDCs_widget,
+                     plot_CDCs_output
+                 ]),
+                 VBox([
+                     do_plot_xi_um_fit_vs_I_Airy2_fit_widget,
+                     plot_xi_um_fit_vs_I_Airy2_fit_output,
+                 ]),
+                 VBox([
+                     do_list_results_widget,
+                     list_results_output
+                 ])
+                 ]
+
+
+
+# tabs_left = widgets.Tab(layout=widgets.Layout(height='1000px', width='67%'))
+tabs_left = widgets.Tab(layout=widgets.Layout(height='1000px', width=str(100-output_tabs_right_ratio_widget.value)+'%'))
 tabs_left.children = children_left
 tabs_left.set_title(0, 'Fitting')
 tabs_left.set_title(1, 'Fitting_v1')
@@ -5155,22 +5218,128 @@ tabs_left.set_title(6, 'CDCs')
 tabs_left.set_title(7, 'plot_xi_um_fit_vs_I_Airy2_fit')
 tabs_left.set_title(8, 'list_results')
 
-children_right = [VBox([HBox([VBox([use_measurement_default_result_widget, \
-                                    xi_um_deconv_column_and_label_widget, \
-                                    xi_um_fit_column_and_label_widget, \
-                                    chi2distance_column_and_label_widget, \
-                                    sort_imageids_by_chi2distance_widget]),
-VBox([deconvmethod_outlier_limit_widget,fitting_outlier_limit_widget]),
-VBox([xaxisrange_widget, yaxisrange_widget])]), 
-HBox([do_set_fitting_results_to_nan_widget, do_set_deconvmethod_results_to_nan_widget]),
-plot_fitting_vs_deconvolution_output])]
-tabs_right = widgets.Tab(layout=widgets.Layout(height='1000px', width='33%'))
+
+column0 = widgets.VBox(
+    [
+        HBox([do_fitting_widget,xi_um_fit_at_center_text_widget]),
+        HBox([do_plot_fitting_v1_widget,xi_um_fit_v1_widget]),        
+        HBox([do_plot_deconvmethod_1d_widget,deconvmethod_simple_text_widget]),
+        HBox([do_plot_deconvmethod_2d_widget,deconvmethod_text_widget]),
+        HBox([do_plot_deconvmethod_2d_v1_widget,deconvmethod_2d_v1_result_widget])
+    ]
+)
+
+column6 = widgets.VBox(
+    [        
+        xi_um_fit_v1_widget, 
+        xi_um_fit_at_center_text_widget,
+        deconvmethod_simple_text_widget, 
+        deconvmethod_text_widget,
+        deconvmethod_2d_v1_result_widget
+    ]
+)
+
+
+
+children_right = [
+                    column0,
+                    VBox([
+                        column0,
+                        VBox([
+                            HBox([
+                                load_measurement_default_from_csv_widget,
+                                set_measurement_default_widget,
+                                save_measurement_default_to_csv_widget,
+                                ]),
+                            HBox([
+                                save_to_df_widget,
+                                load_from_df_widget,
+                                ]),
+                            ]),
+                        parameter_tabs,
+                        ]),
+                    VBox([column0,
+                        do_plot_fitting_vs_deconvolution_widget,
+                        HBox([VBox([use_measurement_default_result_widget, \
+                                                        xi_um_deconv_column_and_label_widget, \
+                                                        xi_um_fit_column_and_label_widget, \
+                                                        chi2distance_column_and_label_widget, \
+                                                        sort_imageids_by_chi2distance_widget]),
+                    VBox([deconvmethod_outlier_limit_widget,fitting_outlier_limit_widget]),
+                    VBox([xaxisrange_widget, yaxisrange_widget])]), 
+                    plot_fitting_vs_deconvolution_output]),
+                    VBox([
+                        textarea_widget, 
+                        beamsize_text_widget,
+                        pixis_profile_avg_width_widget,
+                        crop_px_widget,
+                        savefigure_profile_fit_widget,
+                        do_textbox_widget,
+                        output_tabs_right_ratio_widget
+                        ]),
+]
+
+
+
+
+# tabs_right = widgets.Tab(layout=widgets.Layout(height='1000px', width='33%'))
+tabs_right = widgets.Tab(layout=widgets.Layout(height='1000px', width=str(output_tabs_right_ratio_widget.value)+'%'))
 tabs_right.children = children_right
-tabs_right.set_title(0, 'Fitting vs. Deconvolution')
+tabs_right.set_title(0, 'Methods & Results')
+tabs_right.set_title(1, 'Parameter')
+tabs_right.set_title(2, 'Fitting vs. Deconvolution')
+tabs_right.set_title(3, 'other')
+
 
 grid = widgets.GridspecLayout(1, 3, height='1000px', width='100%')
 grid[0, 0:1] = tabs_left
 grid[0, 2] = tabs_right
+
+
+def update_output_tabs_widths(change):
+    tabs_right.layout.width = str(output_tabs_right_ratio_widget.value)+'%'
+    tabs_left.layout.width = str(100-output_tabs_right_ratio_widget.value)+'%'
+output_tabs_right_ratio_widget.observe(update_output_tabs_widths)
+
+
+input_widgets = VBox([
+    HBox([datasets_widget,
+          dph_settings_bgsubtracted_widget,
+          timestamp_pulse_id_widget,
+          imageid_widget, imageid_index_widget]),
+    HBox([run_over_all_datasets_widget, run_over_all_datasets_progress_widget, run_over_all_datasets_statustext_widget,
+          run_over_all_measurements_widget, run_over_all_measurements_progress_widget, run_over_all_measurements_statustext_widget,
+          run_over_all_images_widget, run_over_all_images_progress_widget, run_over_all_images_statustext_widget]),
+
+    ])
+
+measurement_selection_settings_widgets = VBox([
+    datasets_widget,
+    measurements_selection_widget,
+    HBox([
+        datasets_selection_py_files_widget,
+        create_new_datasets_selection_py_file_widget,
+    ]),
+    
+])
+
+import_export_results_widgets = HBox([
+            scan_for_df_fits_csv_files_widget,
+            df_fits_csv_files_widget,
+            load_csv_to_df_widget,
+            df_fits_csv_save_widget,
+            create_new_csv_file_widget
+        ])
+
+input_tabs_children = [ input_widgets,
+                        measurement_selection_settings_widgets,
+                        import_export_results_widgets
+                      ]
+input_tabs = widgets.Tab()
+input_tabs.children = input_tabs_children
+input_tabs.set_title(0, 'Input')
+input_tabs.set_title(1, 'Settings')
+input_tabs.set_title(2, 'Import/Export results')
 
 
 # Display widgets and outputs
@@ -5178,15 +5347,7 @@ display(
     VBox(
         [
             HBox([fittingprogress_widget, statustext_widget]),
-            HBox([datasets_widget,datasets_selection_py_files_widget,create_new_datasets_selection_py_file_widget]),
-            dph_settings_bgsubtracted_widget,
-            measurements_selection_widget,
-            plotprofile_interactive_input,
-            HBox([load_measurement_default_from_csv_widget, set_measurement_default_widget, save_measurement_default_to_csv_widget, save_to_df_widget, load_from_df_widget, scan_for_df_fits_csv_files_widget, df_fits_csv_files_widget, load_csv_to_df_widget, df_fits_csv_save_widget, create_new_csv_file_widget
-                 ]),
-            HBox([run_over_all_datasets_widget, run_over_all_datasets_progress_widget, run_over_all_datasets_statustext_widget,
-                run_over_all_measurements_widget, run_over_all_measurements_progress_widget, run_over_all_measurements_statustext_widget,
-                 run_over_all_images_widget, run_over_all_images_progress_widget, run_over_all_images_statustext_widget]),
+            input_tabs,
             HBox([tabs_left,tabs_right])
         ]
     )
