@@ -2517,12 +2517,18 @@ def plot_deconvmethod(
     crop_px,
     # hdf5_file_path,
     # imageid,
-    save_to_df    
+    save_to_df,
+    create_steps_figures,
+    create_figure    
 ):
     global df_deconvmethod_1d_results
     global df_deconvmethod_2d_results
 
+    
+
     if do_plot_deconvmethod == True:
+
+        start = datetime.now()
 
         if scan_x == True:
             deconvmethod_text_widget.value = ''
@@ -2547,6 +2553,10 @@ def plot_deconvmethod(
             pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
                 np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ][0]
+
+        end = datetime.now()
+        time_taken = end - start
+        statustext_widget.value = 'Loading from HDF5: ' + str(time_taken)    
 
         pinholes = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
         separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
@@ -2580,9 +2590,15 @@ def plot_deconvmethod(
         ydata = pixis_profile_avg  # defined in the cells above, still to implement: select
         
         sigma_y_F_gamma_um_guess = calc_sigma_F_gamma_um(xi_um_guess, n, dX_1, setting_wavelength_nm, False)
-        create_figure = True
+        # create_steps_figures = True
         savefigure_dir = local_scratch_dir
 
+
+        end = datetime.now()
+        time_taken = end - start
+        statustext_widget.value = 'Start Deconvmethod: ' + str(time_taken) 
+
+        
         # Ignoring OptimizeWarning. Supressing warning as described in https://stackoverflow.com/a/14463362:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
@@ -2615,12 +2631,13 @@ def plot_deconvmethod(
                     sigma_x_F_gamma_um_multiplier,
                     scan_x,
                     xatol,
-                    create_figure,
+                    create_steps_figures,
                     savefigure_dir
                 )
             except:
-                print('deconvmethod failed!')
+                print('deconvmethod called in plot_deconvmethod failed!')
                 xi_x_um = np.nan
+        
         if scan_x == True:
             deconvmethod_text_widget.value = r"%.2fum" % (xi_x_um) + r", %.2fum" % (xi_y_um)
         else:
@@ -2693,81 +2710,85 @@ def plot_deconvmethod(
                 )
                 df_deconvmethod_1d_results = df_deconvmethod_1d_results.drop_duplicates()
 
+        if create_figure == True:
+            if np.isnan(xi_x_um) == False:
+                fig = plt.figure(constrained_layout=False, figsize=(8.27, 11.69), dpi=150)
 
-        if np.isnan(xi_x_um) == False:
-            fig = plt.figure(constrained_layout=False, figsize=(8.27, 11.69), dpi=150)
+                gs = gridspec.GridSpec(2, 1, figure=fig, height_ratios=[1, 2])
+                gs.update(hspace=0.1)
 
-            gs = gridspec.GridSpec(2, 1, figure=fig, height_ratios=[1, 2])
-            gs.update(hspace=0.1)
+                #     ax2 = plt.subplot(2,1,2)
+                ax10 = fig.add_subplot(gs[1, 0])
 
-            #     ax2 = plt.subplot(2,1,2)
-            ax10 = fig.add_subplot(gs[1, 0])
-
-            im_ax10 = ax10.imshow(
-                pixis_image_norm,
-                origin="lower",
-                interpolation="nearest",
-                aspect="auto",
-                cmap="jet",
-                vmin=0,
-                vmax=1,
-                extent=((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, -n / 2 * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3),
-            )
-
-            # fig.colorbar(im_ax2, ax=ax2, pad=0.05, fraction=0.1, shrink=1.00, aspect=20, orientation='horizontal')
-
-            ax10.add_patch(
-                patches.Rectangle(
-                    ((-n / 2) * dX_1 * 1e3, (int(round(pixis_centery_px)) - n / 2 - pixis_profile_avg_width / 2) * dX_1 * 1e3),
-                    n * dX_1 * 1e3,
-                    pixis_profile_avg_width * dX_1 * 1e3,
-                    color="w",
-                    linestyle="-",
-                    alpha=0.8,
-                    fill=False,  # remove background
+                im_ax10 = ax10.imshow(
+                    pixis_image_norm,
+                    origin="lower",
+                    interpolation="nearest",
+                    aspect="auto",
+                    cmap="jet",
+                    vmin=0,
+                    vmax=1,
+                    extent=((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, -n / 2 * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3),
                 )
-            )
 
-            ax10.set_xlabel("x / mm", fontsize=14)
-            ax10.set_ylabel("y / mm", fontsize=14)
-            ax10.grid(color="w", linewidth=1, alpha=0.5, linestyle="--", which="major")
+                # fig.colorbar(im_ax2, ax=ax2, pad=0.05, fraction=0.1, shrink=1.00, aspect=20, orientation='horizontal')
 
-            ax00 = fig.add_subplot(gs[0, 0], sharex=ax10)
-            #     ax = plt.subplot(2,1,1)
-
-            #     plt.plot(list(range(pixis_profile_avg.size)),ydata, color='r', linewidth=2)
-            #     plt.plot(list(range(pixis_profile_avg.size)),result.best_fit, color='b', linewidth=0.5)
-            ax00.plot(xdata * 1e3, ydata, color="r", linewidth=2, label="data")
-            ax00.plot(xdata * 1e3, partiallycoherent_rec_profile, color="g", linewidth=1, label="recovered partially coherent")
-            ax00.plot(xdata * 1e3, fullycoherent_profile_opt, color="k", linewidth=0.5, label="fully coherent")
-            
-
-            ax00.set_xlim([(-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3])
-            ax00.set_ylim([0, 1])
-
-            ax00.set_ylabel("Intensity / a.u.", fontsize=14)
-            ax00.legend()
-
-            textstr = " ".join(
-                (
-                    "ph-" + pinholes + ".id" + str(int(imageid)),
-                    r"$\lambda=%.2f$nm" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['wavelength_nm_fit'],),
-                    orientation,
-                    "\n",
-                    "$d$=" + str(int(separation_um)) + "um",
-                    r"$\gamma=%.2f$" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['gamma_fit'],),
-                    r"$\xi_x=%.2fum$" % (xi_x_um,),
+                ax10.add_patch(
+                    patches.Rectangle(
+                        ((-n / 2) * dX_1 * 1e3, (int(round(pixis_centery_px)) - n / 2 - pixis_profile_avg_width / 2) * dX_1 * 1e3),
+                        n * dX_1 * 1e3,
+                        pixis_profile_avg_width * dX_1 * 1e3,
+                        color="w",
+                        linestyle="-",
+                        alpha=0.8,
+                        fill=False,  # remove background
+                    )
                 )
-            )
-            ax00.set_title(textstr, fontsize=10)
+
+                ax10.set_xlabel("x / mm", fontsize=14)
+                ax10.set_ylabel("y / mm", fontsize=14)
+                ax10.grid(color="w", linewidth=1, alpha=0.5, linestyle="--", which="major")
+
+                ax00 = fig.add_subplot(gs[0, 0], sharex=ax10)
+                #     ax = plt.subplot(2,1,1)
+
+                #     plt.plot(list(range(pixis_profile_avg.size)),ydata, color='r', linewidth=2)
+                #     plt.plot(list(range(pixis_profile_avg.size)),result.best_fit, color='b', linewidth=0.5)
+                ax00.plot(xdata * 1e3, ydata, color="r", linewidth=2, label="data")
+                ax00.plot(xdata * 1e3, partiallycoherent_rec_profile, color="g", linewidth=1, label="recovered partially coherent")
+                ax00.plot(xdata * 1e3, fullycoherent_profile_opt, color="k", linewidth=0.5, label="fully coherent")
+                
+
+                ax00.set_xlim([(-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3])
+                ax00.set_ylim([0, 1])
+
+                ax00.set_ylabel("Intensity / a.u.", fontsize=14)
+                ax00.legend()
+
+                textstr = " ".join(
+                    (
+                        "ph-" + pinholes + ".id" + str(int(imageid)),
+                        r"$\lambda=%.2f$nm" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['wavelength_nm_fit'],),
+                        orientation,
+                        "\n",
+                        "$d$=" + str(int(separation_um)) + "um",
+                        r"$\gamma=%.2f$" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['gamma_fit'],),
+                        r"$\xi_x=%.2fum$" % (xi_x_um,),
+                    )
+                )
+                ax00.set_title(textstr, fontsize=10)
 
 
-            plt.show()
-            # fittingprogress_widget.value = 10
-            # fittingprogress_widget.bar_style = 'success'
-            # statustext_widget.value = 'done'
+                plt.show()
+                # fittingprogress_widget.value = 10
+                # fittingprogress_widget.bar_style = 'success'
+                # statustext_widget.value = 'done'
 
-            # print(gamma_fit)
+                # print(gamma_fit)
+
+        end = datetime.now()
+        time_taken = end - start
+        statustext_widget.value = 'End Deconvmethod: ' + str(time_taken)    
 
 
 def plot_deconvmethod_1d(
@@ -2779,7 +2800,9 @@ def plot_deconvmethod_1d(
     crop_px,
     # hdf5_file_path,
     # imageid,
-    save_to_df 
+    save_to_df,
+    create_steps_figures,
+    create_figure 
 ):
     do_plot_deconvmethod = do_plot_deconvmethod_1d
     scan_x = False
@@ -2793,7 +2816,9 @@ def plot_deconvmethod_1d(
         crop_px,
         # hdf5_file_path,
         # imageid,
-        save_to_df
+        save_to_df,
+        create_steps_figures,
+        create_figure
         )
 
 def plot_deconvmethod_2d(
@@ -2805,7 +2830,9 @@ def plot_deconvmethod_2d(
     crop_px,
     # hdf5_file_path,
     # imageid,
-    save_to_df 
+    save_to_df,
+    create_steps_figures,
+    create_figure 
 ):
     do_plot_deconvmethod = do_plot_deconvmethod_2d
     scan_x = True
@@ -2819,12 +2846,15 @@ def plot_deconvmethod_2d(
         crop_px,
         # hdf5_file_path,
         # imageid,
-        save_to_df
+        save_to_df,
+        create_steps_figures,
+        create_figure
         )
 
 
 
-
+create_steps_figures_widget = widgets.Checkbox(value=False, description="create step figure")
+create_figure_widget = widgets.Checkbox(value=False, description="create figure")
 
 do_plot_deconvmethod_steps_widget = widgets.Checkbox(value=False, description="Do")
 clear_plot_deconvmethod_steps_widget = widgets.Checkbox(value=False, description="Clear")
@@ -4309,6 +4339,8 @@ plot_deconvmethod_1d_interactive_output = interactive_output(
         # "hdf5_file_path": dph_settings_bgsubtracted_widget,
         # "imageid": imageid_widget,
         "save_to_df": save_to_df_widget,
+        "create_steps_figures": create_steps_figures_widget,
+        "create_figure": create_figure_widget
     },
 )
 
@@ -4324,6 +4356,8 @@ plot_deconvmethod_2d_interactive_output = interactive_output(
         # "hdf5_file_path": dph_settings_bgsubtracted_widget,
         # "imageid": imageid_widget,
         "save_to_df": save_to_df_widget,
+        "create_steps_figures": create_steps_figures_widget,
+        "create_figure": create_figure_widget
     },
 )
 
@@ -4539,7 +4573,6 @@ def imageid_widget_changed(change):
             timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
                 np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ][2]
-            statustext_widget.value = str(timestamp_pulse_id)
             pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
                 np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ][
@@ -5234,7 +5267,9 @@ column0 = widgets.VBox(
         HBox([do_plot_fitting_v1_widget,xi_um_fit_v1_widget]),        
         HBox([do_plot_deconvmethod_1d_widget,deconvmethod_simple_text_widget]),
         HBox([do_plot_deconvmethod_2d_widget,deconvmethod_text_widget]),
-        HBox([do_plot_deconvmethod_2d_v1_widget,deconvmethod_2d_v1_result_widget])
+        HBox([do_plot_deconvmethod_2d_v1_widget,deconvmethod_2d_v1_result_widget]),
+        create_steps_figures_widget,
+        create_figure_widget
     ]
 )
 
