@@ -12,11 +12,24 @@ from pathlib import Path  # see https://docs.python.org/3/library/pathlib.html#b
 from google.colab import drive
 
 drive.mount('/content/gdrive', force_remount=True)
-data_dir = Path('/content/gdrive/MyDrive/PhD/coherence/data/')
-useful_dir = Path('/content/gdrive/MyDrive/PhD/coherence/data/useful/')
-bgsubtracted_dir = Path('/content/gdrive/MyDrive/PhD/coherence/data/bgsubtracted/')
-print(useful_dir)
-scratch_dir = Path('/content/gdrive/MyDrive/PhD/coherence/data/scratch_cc/')
+
+# Prerequiste: shared folder 'coherence' has to be added as a shortcut to own Google Drive
+
+# Directory containing the data:
+data_dir = Path('/content/gdrive/MyDrive/coherence/data/')
+# Directory containing the useful hdf5 files (cleaned)
+useful_dir = Path('/content/gdrive/MyDrive/coherence/data/useful/')
+# Directory containing the background-subtracted hdf5 files
+bgsubtracted_dir = Path('/content/gdrive/MyDrive/coherence/data/bgsubtracted/')
+# Directory for temporary files:
+scratch_dir = Path('/content/gdrive/MyDrive/coherence/data/scratch_cc/')
+# Directory for local temporary files:
+local_scratch_dir = Path("/content/coherence-analysis/scratch/")
+import os
+if os.path.isdir(local_scratch_dir) == False:
+    if os.path.isdir(local_scratch_dir.parent.absolute()) == False:
+        os.mkdir(local_scratch_dir.parent.absolute())    
+    os.mkdir(local_scratch_dir)
 #prebgsubtracted_dir
 #bgsubtracted_dir = Path.joinpath('/content/gdrive/MyDrive/PhD/coherence/data/scratch_cc/','bgsubtracted')
 

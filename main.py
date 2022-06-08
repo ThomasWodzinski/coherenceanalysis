@@ -4,12 +4,21 @@
 from pathlib import Path  # see https://docs.python.org/3/library/pathlib.html#basic-use
 
 ## Define paths
-
+# Directory containing the data:
 data_dir = Path("g:/My Drive/PhD/coherence/data/")
+# Directory containing the useful hdf5 files (cleaned)
 useful_dir = Path("g:/My Drive/PhD/coherence/data/useful/")
+# Directory containing the background-subtracted hdf5 files
 bgsubtracted_dir = Path("g:/My Drive/PhD/coherence/data/bgsubtracted/")
-print(useful_dir)
+# Directory for temporary files:
 scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
+# Directory for local temporary files:
+local_scratch_dir = Path("c:/temp/coherence-analysis_scratch/")
+if os.path.isdir(local_scratch_dir) == False:
+    if os.path.isdir(local_scratch_dir.parent.absolute()) == False:
+        os.mkdir(local_scratch_dir.parent.absolute())    
+    os.mkdir(local_scratch_dir)
+
 # prebgsubtracted_dir
 # bgsubtracted_dir = Path.joinpath('/content/gdrive/MyDrive/PhD/coherence/data/scratch_cc/','bgsubtracted')
 
@@ -2572,7 +2581,7 @@ def plot_deconvmethod(
         
         sigma_y_F_gamma_um_guess = calc_sigma_F_gamma_um(xi_um_guess, n, dX_1, setting_wavelength_nm, False)
         create_figure = True
-        savefigure_dir = scratch_dir
+        savefigure_dir = local_scratch_dir
 
         # Ignoring OptimizeWarning. Supressing warning as described in https://stackoverflow.com/a/14463362:
         with warnings.catch_warnings():
