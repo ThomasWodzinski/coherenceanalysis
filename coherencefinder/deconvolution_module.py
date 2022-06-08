@@ -218,7 +218,7 @@ def deconvmethod_2d_x(
     crop_px,
     sigma_x_F_gamma_um_multiplier,
     scan_x,
-    create_figure,
+    create_steps_figures,
     deconvmethod_steps_dir
 ):
 
@@ -247,7 +247,7 @@ def deconvmethod_2d_x(
     # 2D grid and axes at the double pinholes:
     X2_axis, Y2_axis = np.meshgrid(x * dX_2, y * dY_2, sparse=False)
 
-    if create_figure == True:
+    if create_steps_figures == True:
         fig = plt.figure(constrained_layout=False, figsize=(10, 6), dpi=300)
         gs = gridspec.GridSpec(8, 3, figure=fig)
         ax00 = fig.add_subplot(gs[0, 0])
@@ -281,7 +281,7 @@ def deconvmethod_2d_x(
     )
     partiallycoherent_profile = normalize(partiallycoherent_profile)
 
-    if create_figure == True:
+    if create_steps_figures == True:
         ax70.cla()
 
     # to do: guess sigma_x_F_gamma_um to be the same as the beams rms width
@@ -293,8 +293,8 @@ def deconvmethod_2d_x(
         sigma_x_F_gamma_um = sigma_y_F_gamma_um
 
 
-    savefigure = True
-    if savefigure == True:
+    # savefigure = True
+    if create_steps_figures == True:
         if os.path.isdir(deconvmethod_steps_dir) == False:
             os.mkdir(deconvmethod_steps_dir)
 
@@ -341,7 +341,7 @@ def deconvmethod_2d_x(
         fullycoherent_profile_min = np.min(fullycoherent_profile[crop_px:-crop_px])  # ignore what happens on the edges
         fullycoherent_profile_min_list.append(fullycoherent_profile_min)
 
-        if create_figure == True:
+        if create_steps_figures == True:
 
             csvfile = os.path.join(
                     deconvmethod_steps_dir,
@@ -387,6 +387,7 @@ def deconvmethod_2d_x(
             # see https://stackoverflow.com/a/29675706
             display(plt.gcf())
           
+            savefigure = True
             if savefigure == True:
                 plt.savefig(
                     os.path.join(
@@ -442,7 +443,7 @@ def deconvmethod_2d_x(
         sigma_x_F_gamma_um_opt = np.nan
               
     
-    if create_figure == True:
+    if create_steps_figures == True:
         ax70.plot(np.array(sigma_x_F_gamma_um_list), func(np.array(sigma_x_F_gamma_um_list), a, b, c))
         ax70.axvline(sigma_x_F_gamma_um_opt)
 
@@ -522,23 +523,25 @@ def deconvmethod_2d_x(
         A_bp = fftpack.fftshift(fftpack.ifftn(fftpack.ifftshift(np.sqrt(partiallycoherent))))  # amplitude
         I_bp = np.abs(A_bp) ** 2  # intensity
 
-        list_data = [ystep, sigma_y_F_gamma_um_guess, chi2distance]
-        csvfile = os.path.join(
-                    deconvmethod_steps_dir,
-                    'sigma_y_F_gamma_um_guess_scan.csv')
-        with open(csvfile, 'a', newline='') as f_object:  
-            writer_object = writer(f_object)
-            writer_object.writerow(list_data)  
-            f_object.close()
+        if create_steps_figures == True:
 
-        if os.path.exists(csvfile):
-                df_deconv_scany = pd.read_csv(Path.joinpath(deconvmethod_steps_dir, "sigma_y_F_gamma_um_guess_scan.csv"),
-                                header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
-                ax60.cla()
-                ax60.scatter(df_deconv_scany['ystep'], df_deconv_scany['chi2distance'])
+            list_data = [ystep, sigma_y_F_gamma_um_guess, chi2distance]
+            csvfile = os.path.join(
+                        deconvmethod_steps_dir,
+                        'sigma_y_F_gamma_um_guess_scan.csv')
+            with open(csvfile, 'a', newline='') as f_object:  
+                writer_object = writer(f_object)
+                writer_object.writerow(list_data)  
+                f_object.close()
+
+            if os.path.exists(csvfile):
+                    df_deconv_scany = pd.read_csv(Path.joinpath(deconvmethod_steps_dir, "sigma_y_F_gamma_um_guess_scan.csv"),
+                                    header=None, names=['ystep', 'sigma_y_F_gamma_um_guess', 'chi2distance'])
+                    ax60.cla()
+                    ax60.scatter(df_deconv_scany['ystep'], df_deconv_scany['chi2distance'])
 
 
-        if create_figure == True:
+        
             xdata = np.linspace((-n / 2) * dX_1 * 1e3, (+n / 2 - 1) * dX_1 * 1e3, n)
             ax.cla()
             ax.plot(xdata, partiallycoherent_profile, "b-", label="measured partially coherent", linewidth=1)
@@ -648,25 +651,23 @@ def deconvmethod(
     sigma_x_F_gamma_um_multiplier,
     scan_x,
     xatol,
-    create_figure,
+    create_steps_figures,
     savefigure_dir
 ):
 
     # chi2distance_minimize_result = minimize_and_store(sigma_y_F_gamma_um_guess, calc_chi2distance)
     
-    savefigure = True
-    if savefigure == True:
-        deconvmethod_steps_dir = Path(str(savefigure_dir) + "/" + 'deconvmethod_steps')
-        if os.path.isdir(deconvmethod_steps_dir) == False:
-            os.mkdir(deconvmethod_steps_dir)
+    deconvmethod_steps_dir = Path(str(savefigure_dir) + "/" + 'deconvmethod_steps')
+    if os.path.isdir(deconvmethod_steps_dir) == False:
+        os.mkdir(deconvmethod_steps_dir)
 
-        files = []
-        files.extend(deconvmethod_steps_dir.glob('*'))
-        for f in files:
-            try:
-                f.unlink()
-            except OSError as e:
-                print("Error: %s : %s" % (f, e.strerror))
+    files = []
+    files.extend(deconvmethod_steps_dir.glob('*'))
+    for f in files:
+        try:
+            f.unlink()
+        except OSError as e:
+            print("Error: %s : %s" % (f, e.strerror))
 
 
 
@@ -685,7 +686,7 @@ def deconvmethod(
                 crop_px,
                 sigma_x_F_gamma_um_multiplier,
                 scan_x,
-                create_figure,
+                create_steps_figures,
                 deconvmethod_steps_dir
             )[-1],
             bounds=[sigma_y_F_gamma_um_guess / 4, sigma_y_F_gamma_um_guess * 2],
@@ -735,11 +736,11 @@ def deconvmethod(
             crop_px,
             sigma_x_F_gamma_um_multiplier,
             scan_x,
-            create_figure,
+            create_steps_figures,
             deconvmethod_steps_dir
         )
     except:
-        print('deconvmethod failed!')
+        print('deconvmethod_2d_x in deconvmethod failed!')
 
     return (
         partiallycoherent_profile,
