@@ -6,7 +6,7 @@ with open("notebook_preamble.py") as fpin:
     text1 = fpin.read()
 
 with open("main.py") as fpin:
-    text2_list = fpin.readlines()[14:]
+    text2_list = fpin.readlines()[24:]
     text2 = "".join([l for l in text2_list]) 
 # text2 = '# <codecell>\n%load main.py'
 
