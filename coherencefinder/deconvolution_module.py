@@ -18,6 +18,8 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as patches
 
+import cv2
+
 from csv import writer
 
 from pathlib import Path  # see https://docs.python.org/3/library/pathlib.html#basic-use
@@ -326,7 +328,21 @@ def deconvmethod_2d_x(
 
         F_gamma = gauss2d(X1_axis / dX_1, Y1_axis / dY_1, sigma_x_F_gamma / dX_1, sigma_y_F_gamma / dX_1)
 
+        start = datetime.now()
+        print('restoration wiener start ...' ) 
         fullycoherent = restoration.wiener(partiallycoherent, F_gamma, 1)
+        end = datetime.now()
+        time_taken = end - start
+        print('restoration wiener time taken: ' + str(time_taken) ) 
+
+        # https://github.com/michal2229/dft-wiener-deconvolution-with-psf/blob/master/deconv_cv.py
+        # https://docs.opencv.org/3.4/de/d3c/tutorial_out_of_focus_deblur_filter.html
+
+        float_arr = partiallycoherent
+        uint_img = np.array(float_arr*255).astype('uint8')
+        grayImage = cv2.cvtColor(uint_img, cv2.COLOR_GRAY2BGR)
+
+
         fullycoherent = fullycoherent / np.max(fullycoherent[crop_px:-crop_px, crop_px:-crop_px])
 
         fullycoherent_profile = np.mean(

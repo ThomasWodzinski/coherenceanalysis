@@ -1,0 +1,16 @@
+opencv-python
+numpy
+matplotlib
+pandas
+lmfit
+wget
+scipy
+h5py
+ipywidgets
+
+
+conda install numpy matplotlib pandas scipy h5py ipywidgets scikit-image
+conda install -c conda-forge lmfit
+conda install -c conda-forge wget
+conda install -c conda-forge opencv
+conda update --all
