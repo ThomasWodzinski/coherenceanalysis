@@ -694,6 +694,9 @@ do_plot_fitting_v1_widget = widgets.Checkbox(value=False, description='', toolti
 do_fitting_widget = widgets.Checkbox(value=False, description='', tooltip="do_fitting", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
 do_plot_deconvmethod_1d_widget = widgets.Checkbox(value=False, description='', tooltip="deconvmethod_1d", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
 do_plot_deconvmethod_2d_widget = widgets.Checkbox(value=False, description='', tooltip="deconvmethod_2d", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
+do_plot_deconvmethod_1d_v3_widget = widgets.Checkbox(value=False, description='', tooltip="deconvmethod_1d_v3", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
+do_plot_deconvmethod_2d_v3_widget = widgets.Checkbox(value=False, description='', tooltip="deconvmethod_2d_v3", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
+
 do_plot_deconvmethod_2d_v1_widget = widgets.Checkbox(value=False, description='', tooltip="deconvmethod_2d_v1", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
 
 
@@ -969,6 +972,14 @@ deconvmethod_2d_v1_result_widget = widgets.Text(
     value="", placeholder="(xi_x_um, xi_y_um) (v1)", description='2D-Deconvolution v1 (ξˣ, ξʸ) / μm', disabled=False, layout=widgets.Layout(width='auto')
 )
 
+deconvmethod_1d_v3_result_widget = widgets.Text(
+    value="", placeholder="xi_um (v3)", description='1D-Deconvolution v3 ξ / μm', disabled=False, layout=widgets.Layout(width='auto')
+)
+
+deconvmethod_2d_v3_result_widget = widgets.Text(
+    # r"\({\xi}_x,{\xi}_y\)"
+    value="", placeholder="(xi_x_um, xi_y_um) (v3)", description='2D-Deconvolution v3 (ξˣ, ξʸ) / μm', disabled=False, layout=widgets.Layout(width='auto')
+)
 
 # general parameter widgets
 
@@ -1070,6 +1081,8 @@ mod_shiftx_um_value_widget = widgets.Text(value="", description="",layout=value_
 
 # deconvolution parameter widgets
 
+balance_widget = widgets.FloatText(value=1, description='balance (scikit)')
+noise_widget = widgets.FloatText(value=0.003, description='noise (opencv)', step=0.001)
 xi_um_guess_widget = widgets.FloatText(value=900, description='xi_um_guess')
 xatol_widget = widgets.FloatText(value=5, description='xatol')
 sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget')
@@ -2509,6 +2522,9 @@ def plot_fitting(
 
 def plot_deconvmethod(
     do_plot_deconvmethod,
+    wienerimplementation,
+    balance,
+    noise,
     pixis_profile_avg_width,
     xi_um_guess,
     scan_x,
@@ -2523,6 +2539,8 @@ def plot_deconvmethod(
 ):
     global df_deconvmethod_1d_results
     global df_deconvmethod_2d_results
+    global df_deconvmethod_1d_v3_results
+    global df_deconvmethod_2d_v3_results
 
     
 
@@ -2530,10 +2548,6 @@ def plot_deconvmethod(
 
         start = datetime.now()
 
-        if scan_x == True:
-            deconvmethod_text_widget.value = ''
-        else:
-            deconvmethod_simple_text_widget.value = ''
 
         # Loading and preparing
 
@@ -2569,9 +2583,15 @@ def plot_deconvmethod(
         pixis_profile_avg = pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:]
 
         if scan_x == True:
-            deconvmethod_text_widget.value = 'calculating ...'
+            if wienerimplementation == 'scikit':
+                deconvmethod_text_widget.value = 'calculating ...'
+            if wienerimplementation == 'opencv':
+                deconvmethod_2d_v3_result_widget.value =  'calculating ...'
         else:
-            deconvmethod_simple_text_widget.value = 'calculating ...'
+            if wienerimplementation == 'scikit':
+                deconvmethod_simple_text_widget.value = 'calculating ...'
+            if wienerimplementation == 'opencv':
+                deconvmethod_1d_v3_result_widget.value = 'calculating ...'
         partiallycoherent = pixis_image_norm
         z = 5781 * 1e-3
         dX_1 = 13 * 1e-6
@@ -2596,7 +2616,7 @@ def plot_deconvmethod(
 
         end = datetime.now()
         time_taken = end - start
-        statustext_widget.value = 'Start Deconvmethod: ' + str(time_taken) 
+        statustext_widget.value = 'Start Deconvmethod (' + wienerimplementation +'): ' + str(time_taken) 
 
         
         # Ignoring OptimizeWarning. Supressing warning as described in https://stackoverflow.com/a/14463362:
@@ -2619,6 +2639,9 @@ def plot_deconvmethod(
                     dX_2,
                     chi2distance,
                 ) = deconvmethod(
+                    wienerimplementation,
+                    balance,
+                    noise,
                     partiallycoherent,
                     z,
                     dX_1,
@@ -2639,9 +2662,15 @@ def plot_deconvmethod(
                 xi_x_um = np.nan
         
         if scan_x == True:
-            deconvmethod_text_widget.value = r"%.2fum" % (xi_x_um) + r", %.2fum" % (xi_y_um)
+            if wienerimplementation == 'scikit':
+                deconvmethod_text_widget.value = r"%.2fum" % (xi_x_um) + r", %.2fum" % (xi_y_um)
+            if wienerimplementation == 'opencv':
+                deconvmethod_2d_v3_result_widget.value =  r"%.2fum" % (xi_x_um) + r", %.2fum" % (xi_y_um)
         else:
-            deconvmethod_simple_text_widget.value = r"%.2fum" % (xi_x_um)
+            if wienerimplementation == 'scikit':
+                deconvmethod_simple_text_widget.value = r"%.2fum" % (xi_x_um)
+            if wienerimplementation == 'opencv':
+                deconvmethod_1d_v3_result_widget.value = r"%.2fum" % (xi_x_um)
         # str(round(xi_x_um, 2)) + ', ' + str(round(xi_y_um, 2))
 
         if save_to_df == True:
@@ -2669,46 +2698,48 @@ def plot_deconvmethod(
             measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]
 
             if scan_x == True:
-                df_deconvmethod_2d_results = df_deconvmethod_2d_results.append(
-                    {
-                        # image identifiers
-                        'measurement' : measurement,
-                        'timestamp_pulse_id' : timestamp_pulse_id,
-                        'imageid' : imageid,
-                        'separation_um' : separation_um,
-                        # deconvolution parameters
-                        'pixis_profile_avg_width' : pixis_profile_avg_width,
-                        'xi_um_guess' : xi_um_guess,
-                        'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
-                        'crop_px' : crop_px,
-                        'xatol' : xatol,
-                        # deconvolution results
-                        'xi_x_um' : xi_x_um,
-                        'xi_y_um' : xi_y_um,
-                        'chi2distance_deconvmethod_2d' : chi2distance                        
-                    }, ignore_index = True
-                )
-                df_deconvmethod_2d_results = df_deconvmethod_2d_results.drop_duplicates()
+                if wienerimplementation == 'scikit':
+                    df_deconvmethod_2d_results = df_deconvmethod_2d_results.append(
+                        {
+                            # image identifiers
+                            'measurement' : measurement,
+                            'timestamp_pulse_id' : timestamp_pulse_id,
+                            'imageid' : imageid,
+                            'separation_um' : separation_um,
+                            # deconvolution parameters
+                            'pixis_profile_avg_width' : pixis_profile_avg_width,
+                            'xi_um_guess' : xi_um_guess,
+                            'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
+                            'crop_px' : crop_px,
+                            'xatol' : xatol,
+                            # deconvolution results
+                            'xi_x_um' : xi_x_um,
+                            'xi_y_um' : xi_y_um,
+                            'chi2distance_deconvmethod_2d' : chi2distance                        
+                        }, ignore_index = True
+                    )
+                    df_deconvmethod_2d_results = df_deconvmethod_2d_results.drop_duplicates()
             else:
-                df_deconvmethod_1d_results = df_deconvmethod_1d_results.append(
-                    {
-                        # image identifiers
-                        'measurement' : measurement,
-                        'timestamp_pulse_id' : timestamp_pulse_id,
-                        'imageid' : imageid,
-                        'separation_um' : separation_um,
-                        # deconvolution parameters
-                        'pixis_profile_avg_width' : pixis_profile_avg_width,
-                        'xi_um_guess' : xi_um_guess,
-                        'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
-                        'crop_px' : crop_px,
-                        # deconvolution results
-                        # 'sigma_F_gamma_um_opt' : sigma_F_gamma_um_opt, not calculated?
-                        'xi_um' : xi_x_um,
-                        'chi2distance_deconvmethod_1d' : chi2distance    
-                    }, ignore_index = True
-                )
-                df_deconvmethod_1d_results = df_deconvmethod_1d_results.drop_duplicates()
+                if wienerimplementation == 'scikit':
+                    df_deconvmethod_1d_results = df_deconvmethod_1d_results.append(
+                        {
+                            # image identifiers
+                            'measurement' : measurement,
+                            'timestamp_pulse_id' : timestamp_pulse_id,
+                            'imageid' : imageid,
+                            'separation_um' : separation_um,
+                            # deconvolution parameters
+                            'pixis_profile_avg_width' : pixis_profile_avg_width,
+                            'xi_um_guess' : xi_um_guess,
+                            'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
+                            'crop_px' : crop_px,
+                            # deconvolution results
+                            # 'sigma_F_gamma_um_opt' : sigma_F_gamma_um_opt, not calculated?
+                            'xi_um' : xi_x_um,
+                            'chi2distance_deconvmethod_1d' : chi2distance    
+                        }, ignore_index = True
+                    )
+                    df_deconvmethod_1d_results = df_deconvmethod_1d_results.drop_duplicates()
 
         if create_figure == True:
             if np.isnan(xi_x_um) == False:
@@ -2793,6 +2824,7 @@ def plot_deconvmethod(
 
 def plot_deconvmethod_1d(
     do_plot_deconvmethod_1d,
+    balance,
     pixis_profile_avg_width,
     xi_um_guess,
     xatol,
@@ -2805,9 +2837,13 @@ def plot_deconvmethod_1d(
     create_figure 
 ):
     do_plot_deconvmethod = do_plot_deconvmethod_1d
+    wienerimplementation = 'scikit'
     scan_x = False
     plot_deconvmethod(
         do_plot_deconvmethod,
+        wienerimplementation,
+        balance,
+        _, #noise
         pixis_profile_avg_width,
         xi_um_guess,
         scan_x,
@@ -2823,6 +2859,7 @@ def plot_deconvmethod_1d(
 
 def plot_deconvmethod_2d(
     do_plot_deconvmethod_2d,
+    balance,
     pixis_profile_avg_width,
     xi_um_guess,
     xatol,
@@ -2835,9 +2872,13 @@ def plot_deconvmethod_2d(
     create_figure 
 ):
     do_plot_deconvmethod = do_plot_deconvmethod_2d
+    wienerimplementation = 'scikit'
     scan_x = True
     plot_deconvmethod(
         do_plot_deconvmethod,
+        wienerimplementation,
+        balance,
+        _, #noise
         pixis_profile_avg_width,
         xi_um_guess,
         scan_x,
@@ -2851,6 +2892,76 @@ def plot_deconvmethod_2d(
         create_figure
         )
 
+def plot_deconvmethod_1d_v3(
+    do_plot_deconvmethod_1d_v3,
+    noise,
+    pixis_profile_avg_width,
+    xi_um_guess,
+    xatol,
+    sigma_x_F_gamma_um_multiplier,
+    crop_px,
+    # hdf5_file_path,
+    # imageid,
+    save_to_df,
+    create_steps_figures,
+    create_figure 
+):
+    do_plot_deconvmethod = do_plot_deconvmethod_1d_v3
+    wienerimplementation = 'opencv'
+    scan_x = False
+    plot_deconvmethod(
+        do_plot_deconvmethod,
+        wienerimplementation,
+        _, #balance
+        noise,
+        pixis_profile_avg_width,
+        xi_um_guess,
+        scan_x,
+        xatol,
+        sigma_x_F_gamma_um_multiplier,
+        crop_px,
+        # hdf5_file_path,
+        # imageid,
+        save_to_df,
+        create_steps_figures,
+        create_figure
+        )
+
+def plot_deconvmethod_2d_v3(
+    do_plot_deconvmethod_2d_v3,
+    noise,
+    pixis_profile_avg_width,
+    xi_um_guess,
+    xatol,
+    sigma_x_F_gamma_um_multiplier,
+    crop_px,
+    # hdf5_file_path,
+    # imageid,
+    save_to_df,
+    create_steps_figures,
+    create_figure 
+):
+    do_plot_deconvmethod = do_plot_deconvmethod_2d_v3
+    wienerimplementation = 'opencv'
+    
+    scan_x = True
+    plot_deconvmethod(
+        do_plot_deconvmethod,
+        wienerimplementation,
+        _, #balance
+        noise,
+        pixis_profile_avg_width,
+        xi_um_guess,
+        scan_x,
+        xatol,
+        sigma_x_F_gamma_um_multiplier,
+        crop_px,
+        # hdf5_file_path,
+        # imageid,
+        save_to_df,
+        create_steps_figures,
+        create_figure
+        )
 
 
 create_steps_figures_widget = widgets.Checkbox(value=False, description="create step figure")
@@ -3994,12 +4105,16 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
 
 column1a = widgets.VBox(
     [
+        balance_widget,
+        noise_widget,
         xi_um_guess_widget,
         sigma_x_F_gamma_um_multiplier_widget,      
     ]
 )
 column1b = widgets.VBox(
     [
+        balance_widget,
+        noise_widget,
         xi_um_guess_widget,
         xatol_widget,
         sigma_x_F_gamma_um_multiplier_widget,      
@@ -4331,6 +4446,7 @@ plot_deconvmethod_1d_interactive_output = interactive_output(
     plot_deconvmethod_1d,
     {
         "do_plot_deconvmethod_1d": do_plot_deconvmethod_1d_widget,
+        "balance" : balance_widget,
         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
         "xi_um_guess" : xi_um_guess_widget,
         "xatol" : xatol_widget,
@@ -4348,6 +4464,43 @@ plot_deconvmethod_2d_interactive_output = interactive_output(
     plot_deconvmethod_2d,
     {
         "do_plot_deconvmethod_2d": do_plot_deconvmethod_2d_widget,
+        "balance" : balance_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
+        "xi_um_guess" : xi_um_guess_widget,
+        "xatol" : xatol_widget,
+        "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_widget,
+        "crop_px" : crop_px_widget,
+        # "hdf5_file_path": dph_settings_bgsubtracted_widget,
+        # "imageid": imageid_widget,
+        "save_to_df": save_to_df_widget,
+        "create_steps_figures": create_steps_figures_widget,
+        "create_figure": create_figure_widget
+    },
+)
+
+plot_deconvmethod_1d_v3_interactive_output = interactive_output(
+    plot_deconvmethod_1d_v3,
+    {
+        "do_plot_deconvmethod_1d_v3": do_plot_deconvmethod_1d_v3_widget,
+        "noise" : noise_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
+        "xi_um_guess" : xi_um_guess_widget,
+        "xatol" : xatol_widget,
+        "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_widget,
+        "crop_px" : crop_px_widget,
+        # "hdf5_file_path": dph_settings_bgsubtracted_widget,
+        # "imageid": imageid_widget,
+        "save_to_df": save_to_df_widget,
+        "create_steps_figures": create_steps_figures_widget,
+        "create_figure": create_figure_widget
+    },
+)
+
+plot_deconvmethod_2d_v3_interactive_output = interactive_output(
+    plot_deconvmethod_2d_v3,
+    {
+        "do_plot_deconvmethod_2d_v3": do_plot_deconvmethod_2d_v3_widget,
+        "noise" : noise_widget,
         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
         "xi_um_guess" : xi_um_guess_widget,
         "xatol" : xatol_widget,
@@ -4557,6 +4710,16 @@ def imageid_widget_changed(change):
         if do_plot_deconvmethod_2d_widget.value == True:
             do_plot_deconvmethod_2d_widget_was_active = True
             do_plot_deconvmethod_2d_widget.value = False
+
+        do_plot_deconvmethod_1d_v3_widget_was_active = False
+        if do_plot_deconvmethod_1d_v3_widget.value == True:
+            do_plot_deconvmethod_1d_v3_widget_was_active = True
+            do_plot_deconvmethod_1d_v3_widget.value = False
+
+        do_plot_deconvmethod_2d_v3_widget_was_active = False
+        if do_plot_deconvmethod_2d_v3_widget.value == True:
+            do_plot_deconvmethod_2d_v3_widget_was_active = True
+            do_plot_deconvmethod_2d_v3_widget.value = False
 
         do_plot_deconvmethod_2d_v1_widget_was_active = False
         if do_plot_deconvmethod_2d_v1_widget.value == True:
@@ -4834,6 +4997,12 @@ def imageid_widget_changed(change):
         if do_plot_deconvmethod_2d_widget_was_active == True:
             do_plot_deconvmethod_2d_widget.value = True
 
+        if do_plot_deconvmethod_1d_v3_widget_was_active == True:
+            do_plot_deconvmethod_1d_v3_widget.value = True
+        
+        if do_plot_deconvmethod_2d_v3_widget_was_active == True:
+            do_plot_deconvmethod_2d_v3_widget.value = True
+
         if do_plot_deconvmethod_2d_v1_widget_was_active == True:
             do_plot_deconvmethod_2d_v1_widget.value = True
 
@@ -5022,6 +5191,8 @@ def load_measurement_default_from_csv(change):
     global df_fitting_v1_measurement_default
     global df_deconvmethod_1d_measurement_default
     global df_deconvmethod_2d_measurement_default
+    global df_deconvmethod_1d_v3_measurement_default
+    global df_deconvmethod_2d_v3_measurement_default
     global df_deconvmethod_2d_v1_measurement_default
 
     if load_measurement_default_from_csv_widget.value == True:
@@ -5041,11 +5212,19 @@ def load_measurement_default_from_csv(change):
     if os.path.isfile(df_measurement_default_file):
         df_deconvmethod_2d_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
+    df_measurement_default_file = Path.joinpath(data_dir, 'df_deconvmethod_1d_v3_measurement_default.csv')
+    if os.path.isfile(df_measurement_default_file):
+        df_deconvmethod_1d_v3_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+
+    df_measurement_default_file = Path.joinpath(data_dir, 'df_deconvmethod_2d_v3_measurement_default.csv')
+    if os.path.isfile(df_measurement_default_file):
+        df_deconvmethod_2d_v3_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+
     df_measurement_default_file = Path.joinpath(data_dir, 'df_deconvmethod_2d_v1_measurement_default.csv')
     if os.path.isfile(df_measurement_default_file):
         df_deconvmethod_2d_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-        load_measurement_default_from_csv_widget.value = False
+    load_measurement_default_from_csv_widget.value = False
 
 load_measurement_default_from_csv_widget.observe(load_measurement_default_from_csv, names="value")
 
@@ -5228,6 +5407,8 @@ children_left = [plot_fitting_interactive_output,
                  plot_fitting_v1_interactive_output,
                  plot_deconvmethod_1d_interactive_output,
                  plot_deconvmethod_2d_interactive_output,
+                 plot_deconvmethod_1d_v3_interactive_output,
+                 plot_deconvmethod_2d_v3_interactive_output,
                  VBox([HBox([do_plot_deconvmethod_steps_widget, clear_plot_deconvmethod_steps_widget,
                       deconvmethod_ystep_widget, deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
                  plot_deconvmethod_2d_v1_interactive_output,
@@ -5254,11 +5435,13 @@ tabs_left.set_title(0, 'Fitting')
 tabs_left.set_title(1, 'Fitting_v1')
 tabs_left.set_title(2, 'Deconvolution 1d')
 tabs_left.set_title(3, 'Deconvolution 2d')
-tabs_left.set_title(4, 'Deconvolution Steps')
-tabs_left.set_title(5, 'Deconvolution 2d_v1')
-tabs_left.set_title(6, 'CDCs')
-tabs_left.set_title(7, 'plot_xi_um_fit_vs_I_Airy2_fit')
-tabs_left.set_title(8, 'list_results')
+tabs_left.set_title(4, 'Deconvolution 1d_v3')
+tabs_left.set_title(5, 'Deconvolution 2d_v3')
+tabs_left.set_title(6, 'Deconvolution Steps')
+tabs_left.set_title(7, 'Deconvolution 2d_v1')
+tabs_left.set_title(8, 'CDCs')
+tabs_left.set_title(9, 'plot_xi_um_fit_vs_I_Airy2_fit')
+tabs_left.set_title(10, 'list_results')
 
 
 column0 = widgets.VBox(
@@ -5267,6 +5450,8 @@ column0 = widgets.VBox(
         HBox([do_plot_fitting_v1_widget,xi_um_fit_v1_widget]),        
         HBox([do_plot_deconvmethod_1d_widget,deconvmethod_simple_text_widget]),
         HBox([do_plot_deconvmethod_2d_widget,deconvmethod_text_widget]),
+        HBox([do_plot_deconvmethod_1d_v3_widget,deconvmethod_1d_v3_result_widget]),
+        HBox([do_plot_deconvmethod_2d_v3_widget,deconvmethod_2d_v3_result_widget]),
         HBox([do_plot_deconvmethod_2d_v1_widget,deconvmethod_2d_v1_result_widget]),
         create_steps_figures_widget,
         create_figure_widget
