@@ -211,7 +211,7 @@ def calc_sigma_F_gamma_um(sigma_gamma_um, n, dX_1, wavelength_nm, create_figure)
 def deconvmethod_2d_x(
     wienerimplementation,
     balance,
-    noise,
+    snr_db,
     partiallycoherent,
     z,
     dX_1,
@@ -320,8 +320,8 @@ def deconvmethod_2d_x(
 
     # for sigma_x_F_gamma_um in sigma_x_F_gamma_um_list:
 
-    # noise = 10**(-0.1*25) = 0.00316
-    # balance = 1
+    if wienerimplementation == 'opencv':
+        noise = 10**(-0.1*snr_db)
 
     step_max = 10
     for i in np.arange(step_max):
@@ -721,7 +721,7 @@ def minimize_and_store(x0, f):
 def deconvmethod(
     wienerimplementation,
     balance,
-    noise,
+    snr_db,
     partiallycoherent,
     z,
     dX_1,
@@ -767,7 +767,7 @@ def deconvmethod(
             lambda sigma_y_F_gamma_um_guess: deconvmethod_2d_x(
                 wienerimplementation,
                 balance,
-                noise,
+                snr_db,
                 partiallycoherent,
                 z,
                 dX_1,
@@ -820,7 +820,7 @@ def deconvmethod(
         ) = deconvmethod_2d_x(
             wienerimplementation,
             balance,
-            noise,
+            snr_db,
             partiallycoherent,
             z,
             dX_1,

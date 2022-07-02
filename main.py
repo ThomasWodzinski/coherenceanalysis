@@ -1082,7 +1082,7 @@ mod_shiftx_um_value_widget = widgets.Text(value="", description="",layout=value_
 # deconvolution parameter widgets
 
 balance_widget = widgets.FloatText(value=1, description='balance (scikit)')
-noise_widget = widgets.FloatText(value=0.003, description='noise (opencv)', step=0.001)
+snr_db_widget = widgets.FloatText(value=26.8, description='snr_db (opencv)', step=0.1)
 xi_um_guess_widget = widgets.FloatText(value=900, description='xi_um_guess')
 xatol_widget = widgets.FloatText(value=5, description='xatol')
 sigma_x_F_gamma_um_multiplier_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget')
@@ -2524,7 +2524,7 @@ def plot_deconvmethod(
     do_plot_deconvmethod,
     wienerimplementation,
     balance,
-    noise,
+    snr_db,
     pixis_profile_avg_width,
     xi_um_guess,
     scan_x,
@@ -2641,7 +2641,7 @@ def plot_deconvmethod(
                 ) = deconvmethod(
                     wienerimplementation,
                     balance,
-                    noise,
+                    snr_db,
                     partiallycoherent,
                     z,
                     dX_1,
@@ -2843,7 +2843,7 @@ def plot_deconvmethod_1d(
         do_plot_deconvmethod,
         wienerimplementation,
         balance,
-        _, #noise
+        _, #snr_db
         pixis_profile_avg_width,
         xi_um_guess,
         scan_x,
@@ -2878,7 +2878,7 @@ def plot_deconvmethod_2d(
         do_plot_deconvmethod,
         wienerimplementation,
         balance,
-        _, #noise
+        _, #snr_db
         pixis_profile_avg_width,
         xi_um_guess,
         scan_x,
@@ -2894,7 +2894,7 @@ def plot_deconvmethod_2d(
 
 def plot_deconvmethod_1d_v3(
     do_plot_deconvmethod_1d_v3,
-    noise,
+    snr_db,
     pixis_profile_avg_width,
     xi_um_guess,
     xatol,
@@ -2913,7 +2913,7 @@ def plot_deconvmethod_1d_v3(
         do_plot_deconvmethod,
         wienerimplementation,
         _, #balance
-        noise,
+        snr_db,
         pixis_profile_avg_width,
         xi_um_guess,
         scan_x,
@@ -2929,7 +2929,7 @@ def plot_deconvmethod_1d_v3(
 
 def plot_deconvmethod_2d_v3(
     do_plot_deconvmethod_2d_v3,
-    noise,
+    snr_db,
     pixis_profile_avg_width,
     xi_um_guess,
     xatol,
@@ -2949,7 +2949,7 @@ def plot_deconvmethod_2d_v3(
         do_plot_deconvmethod,
         wienerimplementation,
         _, #balance
-        noise,
+        snr_db,
         pixis_profile_avg_width,
         xi_um_guess,
         scan_x,
@@ -4106,7 +4106,7 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
 column1a = widgets.VBox(
     [
         balance_widget,
-        noise_widget,
+        snr_db_widget,
         xi_um_guess_widget,
         sigma_x_F_gamma_um_multiplier_widget,      
     ]
@@ -4114,7 +4114,7 @@ column1a = widgets.VBox(
 column1b = widgets.VBox(
     [
         balance_widget,
-        noise_widget,
+        snr_db_widget,
         xi_um_guess_widget,
         xatol_widget,
         sigma_x_F_gamma_um_multiplier_widget,      
@@ -4482,7 +4482,7 @@ plot_deconvmethod_1d_v3_interactive_output = interactive_output(
     plot_deconvmethod_1d_v3,
     {
         "do_plot_deconvmethod_1d_v3": do_plot_deconvmethod_1d_v3_widget,
-        "noise" : noise_widget,
+        "snr_db" : snr_db_widget,
         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
         "xi_um_guess" : xi_um_guess_widget,
         "xatol" : xatol_widget,
@@ -4500,7 +4500,7 @@ plot_deconvmethod_2d_v3_interactive_output = interactive_output(
     plot_deconvmethod_2d_v3,
     {
         "do_plot_deconvmethod_2d_v3": do_plot_deconvmethod_2d_v3_widget,
-        "noise" : noise_widget,
+        "snr_db" : snr_db_widget,
         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
         "xi_um_guess" : xi_um_guess_widget,
         "xatol" : xatol_widget,
