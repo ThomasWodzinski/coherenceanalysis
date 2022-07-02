@@ -3927,6 +3927,7 @@ def list_results(
                 timestamp_pulse_ids_measurement.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
             if use_measurement_default_result == True:
                 # deconvolution defaults:
+                balance_measurement_default = df_deconvmethod_2d_measurement_default[df_deconvmethod_2d_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
                 xi_um_guess_measurement_default = df_deconvmethod_2d_measurement_default[df_deconvmethod_2d_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
                 xatol_measurement_default = df_deconvmethod_2d_measurement_default[df_deconvmethod_2d_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
                 sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_2d_measurement_default[df_deconvmethod_2d_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
@@ -3936,11 +3937,13 @@ def list_results(
                 mod_shiftx_um_measurement_default = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
                 if xi_um_deconv_column == 'xi_um':
                     df_deconvmethod_result = df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
+                        (df_deconvmethod_1d_results['balance'] == balance_measurement_default) & \
                         (df_deconvmethod_1d_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_1d_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
                         (df_deconvmethod_1d_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_um','chi2distance_deconvmethod_1d']].sort_values('chi2distance_deconvmethod_1d',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um':
                     df_deconvmethod_result = df_deconvmethod_2d_results[(df_deconvmethod_2d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
+                        (df_deconvmethod_2d_results['balance'] == balance_measurement_default) & \
                         (df_deconvmethod_2d_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_2d_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
