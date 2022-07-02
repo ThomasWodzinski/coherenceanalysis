@@ -9,6 +9,10 @@ h5py
 ipywidgets
 
 
+conda update conda
+conda create --name coherenceanalysis
+conda activate coherenceanalysis
+
 conda install numpy matplotlib pandas scipy h5py ipywidgets scikit-image
 conda install -c conda-forge lmfit
 conda install -c conda-forge wget
