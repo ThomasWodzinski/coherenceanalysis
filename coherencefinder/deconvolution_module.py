@@ -18,6 +18,8 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as patches
 
+import cv2 as cv
+
 from csv import writer
 
 from pathlib import Path  # see https://docs.python.org/3/library/pathlib.html#basic-use
@@ -207,6 +209,9 @@ def calc_sigma_F_gamma_um(sigma_gamma_um, n, dX_1, wavelength_nm, create_figure)
 
 
 def deconvmethod_2d_x(
+    wienerimplementation,
+    balance,
+    snr_db,
     partiallycoherent,
     z,
     dX_1,
@@ -221,6 +226,8 @@ def deconvmethod_2d_x(
     create_steps_figures,
     deconvmethod_steps_dir
 ):
+
+    print('start deconvmethod_2d_x')
 
     crop_px = int(crop_px)
 
@@ -313,6 +320,9 @@ def deconvmethod_2d_x(
 
     # for sigma_x_F_gamma_um in sigma_x_F_gamma_um_list:
 
+    if wienerimplementation == 'opencv':
+        noise = 10**(-0.1*snr_db)
+
     step_max = 10
     for i in np.arange(step_max):
 
@@ -326,7 +336,41 @@ def deconvmethod_2d_x(
 
         F_gamma = gauss2d(X1_axis / dX_1, Y1_axis / dY_1, sigma_x_F_gamma / dX_1, sigma_y_F_gamma / dX_1)
 
-        fullycoherent = restoration.wiener(partiallycoherent, F_gamma, 1)
+        print('sigma_x_F_gamma_um=' + str(sigma_x_F_gamma_um))
+        
+        start = datetime.now()
+        print('restoration wiener (' + wienerimplementation + ') start ...' ) 
+        
+        if wienerimplementation == 'scikit':
+            # https://scikit-image.org/docs/stable/api/skimage.restoration.html?highlight=wiener#skimage.restoration.wiener
+            # why was balance chosen to 1 ?
+            fullycoherent = restoration.wiener(partiallycoherent, F_gamma, balance)
+            
+        if wienerimplementation == 'opencv':
+            # https://github.com/opencv/opencv/blob/master/samples/python/deconvolution.py
+            img = partiallycoherent
+            IMG = cv.dft(img, flags=cv.DFT_COMPLEX_OUTPUT)
+
+            psf = F_gamma
+            psf /= psf.sum()
+            psf_pad = np.zeros_like(img)
+            kh, kw = psf.shape
+            psf_pad[:kh, :kw] = psf
+            PSF = cv.dft(psf_pad, flags=cv.DFT_COMPLEX_OUTPUT, nonzeroRows = kh)
+            PSF2 = (PSF**2).sum(-1)
+            iPSF = PSF / (PSF2 + noise)[...,np.newaxis]
+            RES = cv.mulSpectrums(IMG, iPSF, 0)
+            res = cv.idft(RES, flags=cv.DFT_SCALE | cv.DFT_REAL_OUTPUT )
+            res = np.roll(res, -kh//2, 0)
+            res = np.roll(res, -kw//2, 1)
+            fullycoherent = res
+
+        end = datetime.now()
+        time_taken = end - start
+        print('restoration wiener (' + wienerimplementation + ') time taken: ' + str(time_taken) ) 
+
+
+
         fullycoherent = fullycoherent / np.max(fullycoherent[crop_px:-crop_px, crop_px:-crop_px])
 
         fullycoherent_profile = np.mean(
@@ -456,7 +500,41 @@ def deconvmethod_2d_x(
             sigma_y_F_gamma = sigma_y_F_gamma_um * 1e-6
         F_gamma = gauss2d(X1_axis / dX_1, Y1_axis / dY_1, sigma_x_F_gamma / dX_1, sigma_y_F_gamma / dX_1)
 
-        fullycoherent_opt = restoration.wiener(partiallycoherent, F_gamma, 1)
+        print('sigma_x_F_gamma_um_opt=' + str(sigma_x_F_gamma_um))
+        
+        start = datetime.now()
+        print('restoration wiener optimal (' + wienerimplementation + ') start ...' ) 
+
+        if wienerimplementation == 'scikit':
+            # https://scikit-image.org/docs/stable/api/skimage.restoration.html?highlight=wiener#skimage.restoration.wiener
+            # why was balance chosen to 1 ?
+            fullycoherent = restoration.wiener(partiallycoherent, F_gamma, balance)
+            
+        if wienerimplementation == 'opencv':
+            # https://github.com/opencv/opencv/blob/master/samples/python/deconvolution.py
+            img = partiallycoherent
+            IMG = cv.dft(img, flags=cv.DFT_COMPLEX_OUTPUT)
+
+            psf = F_gamma
+            psf /= psf.sum()
+            psf_pad = np.zeros_like(img)
+            kh, kw = psf.shape
+            psf_pad[:kh, :kw] = psf
+            PSF = cv.dft(psf_pad, flags=cv.DFT_COMPLEX_OUTPUT, nonzeroRows = kh)
+            PSF2 = (PSF**2).sum(-1)
+            iPSF = PSF / (PSF2 + noise)[...,np.newaxis]
+            RES = cv.mulSpectrums(IMG, iPSF, 0)
+            res = cv.idft(RES, flags=cv.DFT_SCALE | cv.DFT_REAL_OUTPUT )
+            res = np.roll(res, -kh//2, 0)
+            res = np.roll(res, -kw//2, 1)
+            fullycoherent = res
+
+        end = datetime.now()
+        time_taken = end - start
+        print('restoration wiener optimal (' + wienerimplementation + ') time taken: ' + str(time_taken) ) 
+
+        fullycoherent_opt = fullycoherent
+
         fullycoherent_opt = fullycoherent_opt / np.max(fullycoherent_opt[crop_px:-crop_px, crop_px:-crop_px])
 
         fullycoherent_profile_opt = np.mean(
@@ -602,6 +680,8 @@ def deconvmethod_2d_x(
         dX_2 = np.nan
         chi2distance = np.nan
 
+    print('end deconvmethod_2d_x')
+
     # decide what to return if it fails ...
     return (
         partiallycoherent_profile,
@@ -639,6 +719,9 @@ def minimize_and_store(x0, f):
 
 
 def deconvmethod(
+    wienerimplementation,
+    balance,
+    snr_db,
     partiallycoherent,
     z,
     dX_1,
@@ -654,6 +737,13 @@ def deconvmethod(
     create_steps_figures,
     savefigure_dir
 ):
+
+    start = datetime.now()
+    if scan_x == False:
+        print('Deconvolution 1D (' + wienerimplementation + ') start ...' )
+    else:
+        print('Deconvolution 2D (' + wienerimplementation + ') start ...' ) 
+
 
     # chi2distance_minimize_result = minimize_and_store(sigma_y_F_gamma_um_guess, calc_chi2distance)
     
@@ -675,6 +765,9 @@ def deconvmethod(
         # find the minimal chi2 distance depending on sigma_y_F_gamma_um_guess
         chi2distance_minimize_result_bounded = optimize.minimize_scalar(
             lambda sigma_y_F_gamma_um_guess: deconvmethod_2d_x(
+                wienerimplementation,
+                balance,
+                snr_db,
                 partiallycoherent,
                 z,
                 dX_1,
@@ -725,6 +818,9 @@ def deconvmethod(
             dX_2,
             chi2distance,
         ) = deconvmethod_2d_x(
+            wienerimplementation,
+            balance,
+            snr_db,
             partiallycoherent,
             z,
             dX_1,
@@ -741,6 +837,13 @@ def deconvmethod(
         )
     except:
         print('deconvmethod_2d_x in deconvmethod failed!')
+
+    end = datetime.now()
+    time_taken = end - start
+    if scan_x == False:
+        print('Deconvolution 1D (' + wienerimplementation + ') time taken: ' + str(time_taken) )
+    else:
+        print('Deconvolution 2D (' + wienerimplementation + ') time taken: ' + str(time_taken) ) 
 
     return (
         partiallycoherent_profile,
