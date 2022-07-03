@@ -3587,7 +3587,7 @@ def plot_fitting_vs_deconvolution(
                         (df_deconvmethod_1d_v2_results['balance'] == balance_measurement_default) & \
                         (df_deconvmethod_1d_v2_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_1d_v2_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_1d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_um_v2','chi2distance_deconvmethod_1d_v2']].sort_values('chi2distance_deconvmethod_1d_v2',ascending=False)
+                        (df_deconvmethod_1d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','balance','xi_um_guess','xi_um_v2','chi2distance_deconvmethod_1d_v2']].sort_values('chi2distance_deconvmethod_1d_v2',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um_v2':
                     # deconvolution 2d v2 defaults:
                     balance_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
@@ -3600,7 +3600,7 @@ def plot_fitting_vs_deconvolution(
                         (df_deconvmethod_2d_v2_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_2d_v2_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_v2_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_2d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d']].sort_values('chi2distance_deconvmethod_2d',ascending=False)               
+                        (df_deconvmethod_2d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','balance','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d']].sort_values('chi2distance_deconvmethod_2d',ascending=False)               
                 if xi_um_deconv_column == 'xi_um_v3':
                     # deconvolution v3 defaults:
                     snr_db_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
@@ -3612,7 +3612,7 @@ def plot_fitting_vs_deconvolution(
                         (df_deconvmethod_1d_v3_results['snr_db'] == snr_db_measurement_default) & \
                         (df_deconvmethod_1d_v3_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_1d_v3_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_1d_v3_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_um_v3','chi2distance_deconvmethod_1d_v3']].sort_values('chi2distance_deconvmethod_1d_v3',ascending=False)
+                        (df_deconvmethod_1d_v3_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','snr_db','xi_um_guess','xi_um_v3','chi2distance_deconvmethod_1d_v3']].sort_values('chi2distance_deconvmethod_1d_v3',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um_v3':
                     # deconvolution v3 defaults:
                     snr_db_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
@@ -3625,8 +3625,8 @@ def plot_fitting_vs_deconvolution(
                         (df_deconvmethod_2d_v3_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_2d_v3_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_v3_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_2d_v3_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d_v3']].sort_values('chi2distance_deconvmethod_2d_v3',ascending=False)               
-                
+                        (df_deconvmethod_2d_v3_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','snr_db','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d_v3']].sort_values('chi2distance_deconvmethod_2d_v3',ascending=False)               
+                 
                 
                 if xi_um_fit_column == 'xi_um_fit_v1':
                     df_fitting_result = df_fitting_v1_results[(df_fitting_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))][['separation_um','imageid','timestamp_pulse_id',xi_um_fit_column,'chi2distance_fitting_v1']].sort_values('chi2distance_fitting_v1',ascending=False)        
@@ -3796,7 +3796,7 @@ def list_results(
                         (df_deconvmethod_1d_v2_results['balance'] == balance_measurement_default) & \
                         (df_deconvmethod_1d_v2_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_1d_v2_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_1d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_um_v2','chi2distance_deconvmethod_1d_v2']].sort_values('chi2distance_deconvmethod_1d_v2',ascending=False)
+                        (df_deconvmethod_1d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','balance','xi_um_guess','xi_um_v2','chi2distance_deconvmethod_1d_v2']].sort_values('chi2distance_deconvmethod_1d_v2',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um_v2':
                     # deconvolution 2d v2 defaults:
                     balance_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
@@ -3809,7 +3809,7 @@ def list_results(
                         (df_deconvmethod_2d_v2_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_2d_v2_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_v2_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_2d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d']].sort_values('chi2distance_deconvmethod_2d',ascending=False)               
+                        (df_deconvmethod_2d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','balance','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d']].sort_values('chi2distance_deconvmethod_2d',ascending=False)               
                 if xi_um_deconv_column == 'xi_um_v3':
                     # deconvolution v3 defaults:
                     snr_db_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
@@ -3821,7 +3821,7 @@ def list_results(
                         (df_deconvmethod_1d_v3_results['snr_db'] == snr_db_measurement_default) & \
                         (df_deconvmethod_1d_v3_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_1d_v3_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_1d_v3_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_um_v3','chi2distance_deconvmethod_1d_v3']].sort_values('chi2distance_deconvmethod_1d_v3',ascending=False)
+                        (df_deconvmethod_1d_v3_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','snr_db','xi_um_guess','xi_um_v3','chi2distance_deconvmethod_1d_v3']].sort_values('chi2distance_deconvmethod_1d_v3',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um_v3':
                     # deconvolution v3 defaults:
                     snr_db_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
@@ -3834,7 +3834,7 @@ def list_results(
                         (df_deconvmethod_2d_v3_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_2d_v3_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_v3_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_2d_v3_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d_v3']].sort_values('chi2distance_deconvmethod_2d_v3',ascending=False)               
+                        (df_deconvmethod_2d_v3_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','snr_db','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d_v3']].sort_values('chi2distance_deconvmethod_2d_v3',ascending=False)               
                 
                 
                 if xi_um_fit_column == 'xi_um_fit_v1':
