@@ -4379,11 +4379,13 @@ parameter_tabs = widgets.Tab()
 parameter_tabs.children = parameter_tabs_children
 parameter_tabs.set_title(0, 'Fitting_v2')
 parameter_tabs.set_title(1, 'Fitting_v1')
-parameter_tabs.set_title(2, 'Deconvolution_1d_v3')
-parameter_tabs.set_title(3, 'Deconvolution_2d_v3')
-parameter_tabs.set_title(4, 'Deconvolution_1d_v2')
-parameter_tabs.set_title(5, 'Deconvolution_2d_v2')
-parameter_tabs.set_title(6, 'Deconvolution_2d_v1')
+parameter_tabs.set_title(2, 'Deconv_1d_v3')
+parameter_tabs.set_title(3, 'Deconv_2d_v3')
+parameter_tabs.set_title(4, 'Deconv_1d_v2')
+parameter_tabs.set_title(5, 'Deconv_2d_v2')
+parameter_tabs.set_title(6, 'Deconv_2d_v1')
+
+
 
 
 plot_fitting_v1_interactive_output = interactive_output(
@@ -5501,12 +5503,12 @@ tabs_left = widgets.Tab(layout=widgets.Layout(height='1000px', width=str(100-out
 tabs_left.children = children_left
 tabs_left.set_title(0, 'Fitting_v2')
 tabs_left.set_title(1, 'Fitting_v1')
-tabs_left.set_title(2, 'Deconvolution 1d_v3')
-tabs_left.set_title(3, 'Deconvolution 2d_v3')
-tabs_left.set_title(4, 'Deconvolution 1d_v2')
-tabs_left.set_title(5, 'Deconvolution 2d_v2')
-tabs_left.set_title(6, 'Deconvolution Steps')
-tabs_left.set_title(7, 'Deconvolution 2d_v1')
+tabs_left.set_title(2, 'Deconv_1d_v3')
+tabs_left.set_title(3, 'Deconv_2d_v3')
+tabs_left.set_title(4, 'Deconv_1d_v2')
+tabs_left.set_title(5, 'Deconv_2d_v2')
+tabs_left.set_title(6, 'Deconv Steps')
+tabs_left.set_title(7, 'Deconv_2d_v1')
 tabs_left.set_title(8, 'CDCs')
 tabs_left.set_title(9, 'plot_xi_um_fit_vs_I_Airy2_fit')
 tabs_left.set_title(10, 'list_results')
