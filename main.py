@@ -3950,6 +3950,11 @@ def plot_CDCs(
                 df_deconvmethod_results = df_deconvmethod_1d_v2_results
             if xi_um_deconv_column == 'xi_x_um_v2':
                 df_deconvmethod_results = df_deconvmethod_2d_v2_results
+
+            if xi_um_deconv_column == 'xi_um_v3':
+                df_deconvmethod_results = df_deconvmethod_1d_v3_results
+            if xi_um_deconv_column == 'xi_x_um_v3':
+                df_deconvmethod_results = df_deconvmethod_2d_v3_results
             
             for f in files:
                 timestamp_pulse_ids = []
@@ -3970,6 +3975,10 @@ def plot_CDCs(
                     df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_1d_v2']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_1d_v2'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_1d_v2']].sort_values('chi2distance_deconvmethod_1d_v2',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um_v2':
                     df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_2d_v2']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_2d_v2'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_2d_v2']].sort_values('chi2distance_deconvmethod_2d_v2',ascending=False)
+                if xi_um_deconv_column == 'xi_um_v3':
+                    df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_1d_v3']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_1d_v3'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_1d_v3']].sort_values('chi2distance_deconvmethod_1d_v3',ascending=False)
+                if xi_um_deconv_column == 'xi_x_um_v3':
+                    df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_2d_v3']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_2d_v3'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_2d_v3']].sort_values('chi2distance_deconvmethod_2d_v3',ascending=False)
                 
                 for separation_um in x:
                     y_nans = df_deconvmethod_results_min[df_deconvmethod_results_min[xi_um_deconv_column].isna()]
@@ -3994,6 +4003,10 @@ def plot_CDCs(
                 df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_1d_v2']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_1d_v2'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_1d_v2']].sort_values('chi2distance_deconvmethod_1d_v2',ascending=False)
             if xi_um_deconv_column == 'xi_x_um_v2':
                 df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_2d_v2']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_2d_v2'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_2d_v2']].sort_values('chi2distance_deconvmethod_2d_v2',ascending=False)
+            if xi_um_deconv_column == 'xi_um_v3':
+                df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_1d_v3']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_1d_v3'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_1d_v3']].sort_values('chi2distance_deconvmethod_1d_v3',ascending=False)
+            if xi_um_deconv_column == 'xi_x_um_v3':
+                df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_2d_v3']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_2d_v3'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_2d_v3']].sort_values('chi2distance_deconvmethod_2d_v3',ascending=False)
             y = [gaussian(x=x, amp=1, cen=0, sigma=df_deconvmethod_results_min[df_deconvmethod_results_min["separation_um"]==x][xi_um_deconv_column].max()) for x in x]
         
             xx = np.arange(0.0, 2000, 10)
