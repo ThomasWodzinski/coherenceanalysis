@@ -2774,6 +2774,7 @@ def plot_deconvmethod(
                             'imageid' : imageid,
                             'separation_um' : separation_um,
                             # deconvolution parameters
+                            'balance' : balance,
                             'pixis_profile_avg_width' : pixis_profile_avg_width,
                             'xi_um_guess' : xi_um_guess,
                             'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
@@ -2795,6 +2796,7 @@ def plot_deconvmethod(
                             'imageid' : imageid,
                             'separation_um' : separation_um,
                             # deconvolution parameters
+                            'snr_db' : snr_db,
                             'pixis_profile_avg_width' : pixis_profile_avg_width,
                             'xi_um_guess' : xi_um_guess,
                             'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
@@ -2817,6 +2819,7 @@ def plot_deconvmethod(
                             'imageid' : imageid,
                             'separation_um' : separation_um,
                             # deconvolution parameters
+                            'balance' : balance,
                             'pixis_profile_avg_width' : pixis_profile_avg_width,
                             'xi_um_guess' : xi_um_guess,
                             'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
@@ -2837,6 +2840,7 @@ def plot_deconvmethod(
                             'imageid' : imageid,
                             'separation_um' : separation_um,
                             # deconvolution parameters
+                            'snr_db' : snr_db,
                             'pixis_profile_avg_width' : pixis_profile_avg_width,
                             'xi_um_guess' : xi_um_guess,
                             'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
