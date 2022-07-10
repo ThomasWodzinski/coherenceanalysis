@@ -521,8 +521,8 @@ fits_header_list6b = [
     # fitting results of version 2
     'mod_sigma_um_fit',
     'mod_shiftx_um_fit',
-    'gamma_fit_at_center',
-    'xi_um_fit_at_center'
+    'gamma_fit_v2', # at center
+    'xi_um_fit_v2' # at center
 ]
 
 # deconvolution parameter
@@ -660,7 +660,7 @@ df_deconvmethod_v3_measurement_default = df_deconvmethod_v3_measurement_default.
 
 # store also 'measurement' into df_fits to be able to cross-correlate!
 
-df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_measurement_default.csv')
+df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_v2_measurement_default.csv')
 if os.path.isfile(df_measurement_default_file):
     df_fitting_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
@@ -684,7 +684,7 @@ if os.path.isfile(df_measurement_default_file):
 
 
 df_fitting_v1_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + fits_header_list4 + fits_header_list5 + fits_header_list6a_v1 )
-df_fitting_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + fits_header_list4 + fits_header_list5 + fits_header_list6a + fits_header_list6b )
+df_fitting_v2_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + fits_header_list4 + fits_header_list5 + fits_header_list6a + fits_header_list6b )
 
 df_deconvmethod_2d_v1_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + fits_header_list7_v1 + fits_header_list9_v1)
 df_deconvmethod_1d_v2_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + list(set(fits_header_list7) - set(['xatol'])) + fits_header_list8_v2) 
@@ -715,7 +715,7 @@ fittingprogress_widget = widgets.IntProgress(
 statustext_widget = widgets.Text(value="", placeholder="status", description="", disabled=False)
 
 do_plot_fitting_v1_widget = widgets.Checkbox(value=False, description='', tooltip="do_fitting_v1", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
-do_fitting_widget = widgets.Checkbox(value=False, description='', tooltip="do_fitting", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
+do_plot_fitting_v2_widget = widgets.Checkbox(value=False, description='', tooltip="do_fitting_v2", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
 
 do_plot_deconvmethod_2d_v1_widget = widgets.Checkbox(value=False, description='', tooltip="deconvmethod_2d_v1", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
 do_plot_deconvmethod_1d_v2_widget = widgets.Checkbox(value=False, description='', tooltip="deconvmethod_1d_v2", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
@@ -801,7 +801,7 @@ load_csv_to_df_widget = widgets.ToggleButton(
 def update_load_csv_to_df_widget(change):
     global df0
     global df_fitting_v1_results
-    global df_fitting_results
+    global df_fitting_v2_results
     # global df_deconvmethod_1d_v1_results
     global df_deconvmethod_2d_v1_results
     global df_deconvmethod_1d_v2_results
@@ -818,8 +818,8 @@ def update_load_csv_to_df_widget(change):
     datestring = os.path.splitext(os.path.basename(df_fits_csv_files_widget.value))[0].split('df_fits_')[1]
     df_fitting_v1_results_file = Path.joinpath(data_dir,str('df_fitting_v1_results_'+datestring+'.csv'))
     df_fitting_v1_results = pd.read_csv(df_fitting_v1_results_file, index_col=0)
-    df_fitting_results_file = Path.joinpath(data_dir,str('df_fitting_results_'+datestring+'.csv'))
-    df_fitting_results = pd.read_csv(df_fitting_results_file, index_col=0)
+    df_fitting_v2_results_file = Path.joinpath(data_dir,str('df_fitting_v2_results_'+datestring+'.csv'))
+    df_fitting_v2_results = pd.read_csv(df_fitting_v2_results_file, index_col=0)
     # df_deconvmethod_1d_v1_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_v1_results_'+datestring+'.csv'))
     # df_deconvmethod_1d_v1_results = pd.read_csv(df_deconvmethod_1d_v1_results_file, index_col=0)
     df_deconvmethod_2d_v1_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_v1_results_'+datestring+'.csv'))
@@ -856,8 +856,8 @@ def update_df_fits_csv_save_widget(change):
         datestring = os.path.splitext(os.path.basename(df_fits_csv_files_widget.value))[0].split('df_fits_')[1]
         df_fitting_v1_results_file = Path.joinpath(data_dir,str('df_fitting_v1_results_'+datestring+'.csv'))
         df_fitting_v1_results.to_csv(df_fitting_v1_results_file)
-        df_fitting_results_file = Path.joinpath(data_dir,str('df_fitting_results_'+datestring+'.csv'))
-        df_fitting_results.to_csv(df_fitting_results_file)
+        df_fitting_v2_results_file = Path.joinpath(data_dir,str('df_fitting_v2_results_'+datestring+'.csv'))
+        df_fitting_v2_results.to_csv(df_fitting_v2_results_file)
         # df_deconvmethod_1d_v1_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_v1_results_'+datestring+'.csv'))
         # df_deconvmethod_1d_v1_results.to_csv(df_deconvmethod_1d_v1_results_file)
         df_deconvmethod_2d_v1_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_v1_results_'+datestring+'.csv'))
@@ -895,8 +895,8 @@ def create_new_csv_file(change):
 
     df_fitting_v1_results_file = Path.joinpath(data_dir,str('df_fitting_v1_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
     df_fitting_v1_results.to_csv(df_fitting_v1_results_file)
-    df_fitting_results_file = Path.joinpath(data_dir,str('df_fitting_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
-    df_fitting_results.to_csv(df_fitting_results_file)
+    df_fitting_v2_results_file = Path.joinpath(data_dir,str('df_fitting_v2_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_fitting_v2_results.to_csv(df_fitting_v2_results_file)
     # df_deconvmethod_1d_v1_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_v1_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
     # df_deconvmethod_1d_v1_results.to_csv(df_deconvmethod_1d_v1_results_file)
     df_deconvmethod_2d_v1_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_v1_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
@@ -1003,14 +1003,14 @@ beamsize_text_widget = widgets.Text(
 )
 xi_um_fit_v1_widget = widgets.Text(
     # r"\({\xi}_{fit}_{center}\)"
-    value="", placeholder="xi_fit_v1", description='Fitting v1 ξ / μm', disabled=False, layout=widgets.Layout(width='auto'), 
+    value="", placeholder="xi_fit (v1)", description='Fitting v1 ξ / μm', disabled=False, layout=widgets.Layout(width='auto'), 
 )
 fit_profile_text_widget = widgets.Text(
-    value="", placeholder="xi_fit_um", description='Fitting v2 ξ (fit) / μm', disabled=False, layout=widgets.Layout(width='auto')  # \({\xi}_{fit}\
+    value="", placeholder="xi_fit_v2_off_center", description='Fitting v2 ξ (fit) / μm', disabled=False, layout=widgets.Layout(width='auto')  # \({\xi}_{fit}\
 )
-xi_um_fit_at_center_text_widget = widgets.Text(
+xi_um_fit_v2_widget = widgets.Text(
     # r"\({\xi}_{fit}_{center}\)"
-    value="", placeholder="xi_fit_um_at_center", description='Fitting v2 ξ / μm', disabled=False, layout=widgets.Layout(width='auto')
+    value="", placeholder="xi_fit (v2)", description='Fitting v2 ξ / μm', disabled=False, layout=widgets.Layout(width='auto')
 )
 
 deconvmethod_2d_v1_result_widget = widgets.Text(
@@ -1166,11 +1166,11 @@ xi_um_deconv_options = [
     ('xi_x_um_measurement_default_result',('xi_x_um_measurement_default_result',r"$\xi_x$ / um (deconv)")),
     ('xi_um_measurement_default_result',('xi_um_measurement_default_result',r"$\xi$ / um (deconv)")),]
 xi_um_fit_options = [
-    ('xi_um_fit_at_center',('xi_um_fit_at_center',r"$\xi_c$ / um (fit)")), \
-    ('xi_um_fit_v1',('xi_um_fit_v1',r"$\xi$ / um (fit)")), \
-    ('xi_um_fit',('xi_um_fit',r"$\xi$ / um (fit)")),
+    ('xi_um_fit_v2',('xi_um_fit_v2',r"$\xi$ / um (fitting_v2)")), \
+    ('xi_um_fit_v1',('xi_um_fit_v1',r"$\xi$ / um (fitting_v1)")), \
+    ('xi_um_fit_v2_off_center',('xi_um_fit',r"$\xi$ / um (fitting_v2_off_center)")),
     ('xi_um_fit_measurement_default_result',('xi_um_fit_measurement_default_result',r"$\xi$ / um (fit)")), \
-    ('xi_um_fit_at_center_measurement_default_result',('xi_um_fit_at_center_measurement_default_result',r"$\xi_c$ / um (fit)"))
+    ('xi_um_fit_v2_measurement_default_result',('xi_um_fit_v2_measurement_default_result',r"$\xi_c$ / um (fit)"))
     ]
 
 chi2distance_options = [
@@ -1179,8 +1179,8 @@ chi2distance_options = [
     ('chi2distance_deconvmethod_1d_v2',('chi2distance_deconvmethod_1d_v2',r"$\chi^2$ (deconv1d_v2)")), \
     ('chi2distance_deconvmethod_2d_v2',('chi2distance_deconvmethod_2d_v2',r"$\chi^2$ (deconv2d_v2)")), \
     ('chi2distance_deconvmethod_2d_v1',('chi2distance_deconvmethod_2d_v1',r"$\chi^2$ (deconv2d_v1)")), \
-    ('chi2distance_fitting_v1',('chi2distance_fitting_v1',r"$\chi^2$ (fitting)")), \
-    ('chi2distance_fitting',('chi2distance_fitting',r"$\chi^2$ (fitting)"))
+    ('chi2distance_fitting_v1',('chi2distance_fitting_v1',r"$\chi^2$ (fitting_v1)")), \
+    ('chi2distance_fitting_v2',('chi2distance_fitting',r"$\chi^2$ (fitting_v2)"))
                         ]
 
 xi_um_deconv_column_and_label_widget = widgets.Dropdown(
@@ -1886,8 +1886,8 @@ def plot_fitting_v1(
 
 
 
-def plot_fitting(
-    plotprofile_active,
+def plot_fitting_v2(
+    do_plot_fitting_v2,
     pixis_profile_avg_width,
     crop_px,
     # hdf5_file_path,
@@ -1939,9 +1939,10 @@ def plot_fitting(
     mod_shiftx_um_do_fit,
 ):
 
-    if plotprofile_active == True:  # workaround, so that the function is not executed while several inputs are changed
+    if do_plot_fitting_v2 == True:  # workaround, so that the function is not executed while several inputs are changed
 
-        global df_fitting_results
+        global df_fitting_v1_results
+        global df_fitting_v2_results
 
         # fittingprogress_widget.bar_style = 'info'
         # fittingprogress_widget.value = 0
@@ -1949,7 +1950,7 @@ def plot_fitting(
         # textarea_widget.value = ''
 
         fit_profile_text_widget.value = ''
-        xi_um_fit_at_center_text_widget.value = ''
+        xi_um_fit_v2_widget.value = ''
 
         # Loading and preparing
 
@@ -1982,7 +1983,7 @@ def plot_fitting(
         #     hdf5_file_name_image = hdf5_file_name_image_widget.value
         #     dataset_image_args = dataset_image_args_widget.value
         fit_profile_text_widget.value = 'calculating ...'
-        xi_um_fit_at_center_text_widget.value = 'calculating ...'
+        xi_um_fit_v2_widget.value = 'calculating ...'
         
 
 
@@ -2110,7 +2111,7 @@ def plot_fitting(
         mod_shiftx_um_value_widget.value = r"%.2f" % (mod_shiftx_um_fit)
 
         # calculate gamma_fit at the center between the two airy disks
-        gamma_fit_at_center = gaussian(0,1,mod_shiftx_um_fit,mod_sigma_um_fit)*gamma_fit
+        gamma_fit_v2 = gaussian(0,1,mod_shiftx_um_fit,mod_sigma_um_fit)*gamma_fit
 
         d_um_at_detector = x2_um_fit - x1_um_fit
 
@@ -2123,18 +2124,18 @@ def plot_fitting(
             (xi_um_fit, xi_um_fit_stderr) = find_sigma([0.0, d_um], [1.0, gamma_fit], [0, 0], 470, False)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            (xi_um_fit_at_center, xi_um_fit_at_center_stderr) = find_sigma([0.0, d_um], [1.0, gamma_fit_at_center], [0, 0], 470, False)
+            (xi_um_fit_v2, xi_um_fit_v2_stderr) = find_sigma([0.0, d_um], [1.0, gamma_fit_v2], [0, 0], 470, False)
                 
         fit_profile_text_widget.value = r"%.2fum" % (xi_um_fit)
-        xi_um_fit_at_center_text_widget.value = r"%.2fum" % (xi_um_fit_at_center)
+        xi_um_fit_v2_widget.value = r"%.2fum" % (xi_um_fit_v2)
 
         if save_to_df == True:
             # fitting results
             if load_from_df_widget.value == True: # store fine-tuned individual results
                 df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_at_center'] = gamma_fit_at_center
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_v2'] = gamma_fit_v2
                 df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit'] = xi_um_fit  # add this first to the df_fits dataframe
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit_at_center'] = xi_um_fit_at_center  # add this first to the df_fits dataframe
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit_v2'] = xi_um_fit_v2  # add this first to the df_fits dataframe
                 df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit'] = wavelength_nm_fit
                 df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector'] = d_um_at_detector
                 df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit'] = I_Airy1_fit
@@ -2149,9 +2150,9 @@ def plot_fitting(
 
             if load_from_df_widget.value == False: # store results from measurement default parameters
                 df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_measurement_default_result'] = gamma_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_at_center_measurement_default_result'] = gamma_fit_at_center
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_v2_measurement_default_result'] = gamma_fit_v2
                 df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit_measurement_default_result'] = xi_um_fit  # add this first to the df_fits dataframe
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit_at_center_measurement_default_result'] = xi_um_fit_at_center  # add this first to the df_fits dataframe
+                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit_v2_measurement_default_result'] = xi_um_fit_v2  # add this first to the df_fits dataframe
                 df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit_measurement_default_result'] = wavelength_nm_fit
                 df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector_measurement_default_result'] = d_um_at_detector
                 df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit_measurement_default_result'] = I_Airy1_fit
@@ -2225,7 +2226,7 @@ def plot_fitting(
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_do_fit' ] = mod_shiftx_um_do_fit
 
             measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]
-            df_fitting_results = df_fitting_results.append(
+            df_fitting_v2_results = df_fitting_v2_results.append(
                     {
                         # image identifiers
                         'measurement' : measurement,
@@ -2292,9 +2293,9 @@ def plot_fitting(
                         'mod_shiftx_um_do_fit' : mod_shiftx_um_do_fit,
                         # fitting results
                         'gamma_fit' :  gamma_fit,
-                        'gamma_fit_at_center' :  gamma_fit_at_center,
+                        'gamma_fit_v2' :  gamma_fit_v2,
                         'xi_um_fit' :  xi_um_fit,  # add this first to the df_fits dataframe
-                        'xi_um_fit_at_center' :  xi_um_fit_at_center,  # add this first to the df_fits dataframe
+                        'xi_um_fit_v2' :  xi_um_fit_v2,  # add this first to the df_fits dataframe
                         'wavelength_nm_fit' :  wavelength_nm_fit,
                         'd_um_at_detector' :  d_um_at_detector,
                         'I_Airy1_fit' :  I_Airy1_fit,
@@ -2309,7 +2310,7 @@ def plot_fitting(
                         'chi2distance_fitting' : chi2distance                       
                     }, ignore_index = True
                 )
-            df_fitting_results = df_fitting_results.drop_duplicates()
+            df_fitting_v2_results = df_fitting_v2_results.drop_duplicates()
 
             
 
@@ -2446,7 +2447,7 @@ def plot_fitting(
                 r"x1_um=%.2f" % (x1_um_fit,),
                 r"x2_um=%.2f" % (x2_um_fit,),
                 r"$\gamma=%.2f$" % (gamma_fit,),
-                r"$\gamma=%.2f$" % (gamma_fit_at_center,),
+                r"$\gamma=%.2f$" % (gamma_fit_v2,),
                 r"normfactor=%.2f" % (normfactor_fit,),
                 r"d_um_at_detector=%.2f" % (d_um_at_detector,),
             )
@@ -2479,8 +2480,9 @@ def plot_fitting(
                 r"$I_1$=%.2f" % (result.params["I_Airy1"].value,),
                 r"$I_2=$%.2f" % (result.params["I_Airy2"].value,),
                 r"$\gamma=%.2f$" % (gamma_fit,),
-                r"$\gamma_c=%.2f$" % (gamma_fit_at_center,),
+                r"$\gamma_c=%.2f$" % (gamma_fit_v2,),
                 r"$\xi=%.2fum$" % (xi_um_fit,),
+                r"$\xi_c=%.2fum$" % (xi_um_fit_v2,),
             )
         )
         ax00.set_title(textstr, fontsize=10)
@@ -2774,6 +2776,7 @@ def plot_deconvmethod(
                             'imageid' : imageid,
                             'separation_um' : separation_um,
                             # deconvolution parameters
+                            'balance' : balance,
                             'pixis_profile_avg_width' : pixis_profile_avg_width,
                             'xi_um_guess' : xi_um_guess,
                             'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
@@ -2795,6 +2798,7 @@ def plot_deconvmethod(
                             'imageid' : imageid,
                             'separation_um' : separation_um,
                             # deconvolution parameters
+                            'snr_db' : snr_db,
                             'pixis_profile_avg_width' : pixis_profile_avg_width,
                             'xi_um_guess' : xi_um_guess,
                             'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
@@ -2817,6 +2821,7 @@ def plot_deconvmethod(
                             'imageid' : imageid,
                             'separation_um' : separation_um,
                             # deconvolution parameters
+                            'balance' : balance,
                             'pixis_profile_avg_width' : pixis_profile_avg_width,
                             'xi_um_guess' : xi_um_guess,
                             'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
@@ -2837,6 +2842,7 @@ def plot_deconvmethod(
                             'imageid' : imageid,
                             'separation_um' : separation_um,
                             # deconvolution parameters
+                            'snr_db' : snr_db,
                             'pixis_profile_avg_width' : pixis_profile_avg_width,
                             'xi_um_guess' : xi_um_guess,
                             'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
@@ -3575,7 +3581,7 @@ def plot_fitting_vs_deconvolution(
                         (df_deconvmethod_2d_v1_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_2d_v1_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_v1_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_2d_v1_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d_v1']].sort_values('chi2distance_deconvmethod_2d_v1',ascending=False)               
+                        (df_deconvmethod_2d_v1_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um_v1','chi2distance_deconvmethod_2d_v1']].sort_values('chi2distance_deconvmethod_2d_v1',ascending=False)               
                 if xi_um_deconv_column == 'xi_um_v2':
                     # deconvolution 2d v2 defaults:
                     balance_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
@@ -3600,7 +3606,7 @@ def plot_fitting_vs_deconvolution(
                         (df_deconvmethod_2d_v2_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_2d_v2_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_v2_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_2d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','balance','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d']].sort_values('chi2distance_deconvmethod_2d',ascending=False)               
+                        (df_deconvmethod_2d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','balance','xi_um_guess','xi_x_um_v2','chi2distance_deconvmethod_2d_v2']].sort_values('chi2distance_deconvmethod_2d_v2',ascending=False)               
                 if xi_um_deconv_column == 'xi_um_v3':
                     # deconvolution v3 defaults:
                     snr_db_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
@@ -3625,18 +3631,18 @@ def plot_fitting_vs_deconvolution(
                         (df_deconvmethod_2d_v3_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_2d_v3_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_v3_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_2d_v3_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','snr_db','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d_v3']].sort_values('chi2distance_deconvmethod_2d_v3',ascending=False)               
+                        (df_deconvmethod_2d_v3_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','snr_db','xi_um_guess','xi_x_um_v3','chi2distance_deconvmethod_2d_v3']].sort_values('chi2distance_deconvmethod_2d_v3',ascending=False)               
                  
                 
                 if xi_um_fit_column == 'xi_um_fit_v1':
                     df_fitting_result = df_fitting_v1_results[(df_fitting_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))][['separation_um','imageid','timestamp_pulse_id',xi_um_fit_column,'chi2distance_fitting_v1']].sort_values('chi2distance_fitting_v1',ascending=False)        
-                if (xi_um_fit_column == 'xi_um_fit_at_center') or (xi_um_fit_column == 'xi_um_fit'):
+                if (xi_um_fit_column == 'xi_um_fit_v2') or (xi_um_fit_column == 'xi_um_fit'):
                     # fitting v2 defaults:
                     mod_sigma_um_measurement_default = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_sigma_um_measurement_default'].iloc[0]
                     mod_shiftx_um_measurement_default = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
-                    df_fitting_result = df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
-                        (df_fitting_results['mod_sigma_um'] == mod_sigma_um_measurement_default) & \
-                        (df_fitting_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)][['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
+                    df_fitting_result = df_fitting_v2_results[(df_fitting_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
+                        (df_fitting_v2_results['mod_sigma_um'] == mod_sigma_um_measurement_default) & \
+                        (df_fitting_v2_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)][['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
         
 
             # https://datascienceparichay.com/article/pandas-groupby-minimum/
@@ -3657,8 +3663,8 @@ def plot_fitting_vs_deconvolution(
 
                 if xi_um_fit_column == 'xi_um_fit_v1':
                     df_fitting_result = pd.merge(df_fitting_v1_results,df_fitting_v1_results[(df_fitting_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting_v1']].min(), on=['timestamp_pulse_id','chi2distance_fitting_v1'])[['separation_um','imageid','timestamp_pulse_id',xi_um_fit_column,'chi2distance_fitting_v1']].sort_values('chi2distance_fitting_v1',ascending=False)
-                if (xi_um_fit_column == 'xi_um_fit_at_center') or (xi_um_fit_column == 'xi_um_fit'):
-                    df_fitting_result = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min(), on=['timestamp_pulse_id','chi2distance_fitting'])[['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
+                if (xi_um_fit_column == 'xi_um_fit_v2') or (xi_um_fit_column == 'xi_um_fit'):
+                    df_fitting_result = pd.merge(df_fitting_v2_results,df_fitting_v2_results[(df_fitting_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min(), on=['timestamp_pulse_id','chi2distance_fitting'])[['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
             
             df_result = pd.merge(df_deconvmethod_result,df_fitting_result, on='timestamp_pulse_id', suffixes=('', '_DROP')).filter(regex='^(?!.*_DROP)').sort_values(chi2distance_column,ascending=False)
             
@@ -3688,7 +3694,7 @@ def plot_fitting_vs_deconvolution(
         # print('Deconvmethod outliers > ' + str(deconvmethod_outlier_limit))
         # print(deconvmethod_outliers)
         
-        # fitting_outliers = df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df_fitting_results[xi_um_fit_column] > fitting_outlier_limit)][['imageid','separation_um', xi_um_fit_column]].sort_values(by=xi_um_fit_column, ascending=False)
+        # fitting_outliers = df_fitting_v2_results[(df_fitting_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df_fitting_v2_results[xi_um_fit_column] > fitting_outlier_limit)][['imageid','separation_um', xi_um_fit_column]].sort_values(by=xi_um_fit_column, ascending=False)
         # print('Fitting method outliers > ' + str(fitting_outlier_limit))
         # print(fitting_outliers)
 
@@ -3697,7 +3703,7 @@ def plot_fitting_vs_deconvolution(
         #     timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
         # plt.scatter(df_deconvmethod_1d_results[(df_deconvmethod_1d_results["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df_deconvmethod_1d_results["imageid"] == int(imageid))][xi_um_deconv_column] , \
-        #     df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df_fitting_results["imageid"] == int(imageid))][xi_um_fit_column], \
+        #     df_fitting_v2_results[(df_fitting_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids)) & (df_fitting_v2_results["imageid"] == int(imageid))][xi_um_fit_column], \
         #         c='red',\
         #             marker='x', s=10)
 
@@ -3784,7 +3790,7 @@ def list_results(
                         (df_deconvmethod_2d_v1_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_2d_v1_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_v1_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_2d_v1_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d_v1']].sort_values('chi2distance_deconvmethod_2d_v1',ascending=False)               
+                        (df_deconvmethod_2d_v1_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um_v1','chi2distance_deconvmethod_2d_v1']].sort_values('chi2distance_deconvmethod_2d_v1',ascending=False)               
                 if xi_um_deconv_column == 'xi_um_v2':
                     # deconvolution 2d v2 defaults:
                     balance_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
@@ -3809,7 +3815,7 @@ def list_results(
                         (df_deconvmethod_2d_v2_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_2d_v2_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_v2_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_2d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','balance','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d']].sort_values('chi2distance_deconvmethod_2d',ascending=False)               
+                        (df_deconvmethod_2d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','balance','xi_um_guess','xi_x_um_v2','chi2distance_deconvmethod_2d_v2']].sort_values('chi2distance_deconvmethod_2d_v2',ascending=False)               
                 if xi_um_deconv_column == 'xi_um_v3':
                     # deconvolution v3 defaults:
                     snr_db_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
@@ -3834,18 +3840,18 @@ def list_results(
                         (df_deconvmethod_2d_v3_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
                         (df_deconvmethod_2d_v3_results['xatol'] == xatol_measurement_default) & \
                         (df_deconvmethod_2d_v3_results['sigma_x_F_gamma_um_multiplier'] == sigma_x_F_gamma_um_multiplier_measurement_default) & \
-                        (df_deconvmethod_2d_v3_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','snr_db','xi_um_guess','xi_x_um','chi2distance_deconvmethod_2d_v3']].sort_values('chi2distance_deconvmethod_2d_v3',ascending=False)               
+                        (df_deconvmethod_2d_v3_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','snr_db','xi_um_guess','xi_x_um_v3','chi2distance_deconvmethod_2d_v3']].sort_values('chi2distance_deconvmethod_2d_v3',ascending=False)               
                 
                 
                 if xi_um_fit_column == 'xi_um_fit_v1':
                     df_fitting_result = df_fitting_v1_results[(df_fitting_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))][['separation_um','imageid','timestamp_pulse_id',xi_um_fit_column,'chi2distance_fitting_v1']].sort_values('chi2distance_fitting_v1',ascending=False)        
-                if (xi_um_fit_column == 'xi_um_fit_at_center') or (xi_um_fit_column == 'xi_um_fit'):
+                if (xi_um_fit_column == 'xi_um_fit_v2') or (xi_um_fit_column == 'xi_um_fit'):
                     # fitting v2 defaults:
                     mod_sigma_um_measurement_default = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_sigma_um_measurement_default'].iloc[0]
                     mod_shiftx_um_measurement_default = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
-                    df_fitting_result = df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
-                        (df_fitting_results['mod_sigma_um'] == mod_sigma_um_measurement_default) & \
-                        (df_fitting_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)][['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
+                    df_fitting_result = df_fitting_v2_results[(df_fitting_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
+                        (df_fitting_v2_results['mod_sigma_um'] == mod_sigma_um_measurement_default) & \
+                        (df_fitting_v2_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)][['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
         
 
             # https://datascienceparichay.com/article/pandas-groupby-minimum/
@@ -3867,8 +3873,8 @@ def list_results(
 
                 if xi_um_fit_column == 'xi_um_fit_v1':
                     df_fitting_result = pd.merge(df_fitting_v1_results,df_fitting_v1_results[(df_fitting_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting_v1']].min(), on=['timestamp_pulse_id','chi2distance_fitting_v1'])[['separation_um','imageid','timestamp_pulse_id',xi_um_fit_column,'chi2distance_fitting_v1']].sort_values('chi2distance_fitting_v1',ascending=False)
-                if (xi_um_fit_column == 'xi_um_fit_at_center') or (xi_um_fit_column == 'xi_um_fit'):
-                    df_fitting_result = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min(), on=['timestamp_pulse_id','chi2distance_fitting'])[['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
+                if (xi_um_fit_column == 'xi_um_fit_v2') or (xi_um_fit_column == 'xi_um_fit'):
+                    df_fitting_result = pd.merge(df_fitting_v2_results,df_fitting_v2_results[(df_fitting_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min(), on=['timestamp_pulse_id','chi2distance_fitting'])[['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
 
             df_result = pd.merge(df_deconvmethod_result,df_fitting_result, on='timestamp_pulse_id', suffixes=('', '_DROP')).filter(regex='^(?!.*_DROP)').sort_values(chi2distance_column,ascending=False)
             
@@ -3950,6 +3956,11 @@ def plot_CDCs(
                 df_deconvmethod_results = df_deconvmethod_1d_v2_results
             if xi_um_deconv_column == 'xi_x_um_v2':
                 df_deconvmethod_results = df_deconvmethod_2d_v2_results
+
+            if xi_um_deconv_column == 'xi_um_v3':
+                df_deconvmethod_results = df_deconvmethod_1d_v3_results
+            if xi_um_deconv_column == 'xi_x_um_v3':
+                df_deconvmethod_results = df_deconvmethod_2d_v3_results
             
             for f in files:
                 timestamp_pulse_ids = []
@@ -3970,6 +3981,10 @@ def plot_CDCs(
                     df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_1d_v2']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_1d_v2'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_1d_v2']].sort_values('chi2distance_deconvmethod_1d_v2',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um_v2':
                     df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_2d_v2']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_2d_v2'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_2d_v2']].sort_values('chi2distance_deconvmethod_2d_v2',ascending=False)
+                if xi_um_deconv_column == 'xi_um_v3':
+                    df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_1d_v3']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_1d_v3'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_1d_v3']].sort_values('chi2distance_deconvmethod_1d_v3',ascending=False)
+                if xi_um_deconv_column == 'xi_x_um_v3':
+                    df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_2d_v3']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_2d_v3'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_2d_v3']].sort_values('chi2distance_deconvmethod_2d_v3',ascending=False)
                 
                 for separation_um in x:
                     y_nans = df_deconvmethod_results_min[df_deconvmethod_results_min[xi_um_deconv_column].isna()]
@@ -3983,8 +3998,8 @@ def plot_CDCs(
                 
                 # Fitting (red)
                 x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'].unique()
-                df_fitting_results_min = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min(), on=['timestamp_pulse_id','chi2distance_fitting'])[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance_fitting',gamma_fit_column]].sort_values('chi2distance_fitting',ascending=False)
-                y = [df_fitting_results_min[(df_fitting_results_min["separation_um"]==x)][gamma_fit_column].max() for x in x]
+                df_fitting_v2_results_min = pd.merge(df_fitting_v2_results,df_fitting_v2_results[(df_fitting_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min(), on=['timestamp_pulse_id','chi2distance_fitting'])[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance_fitting',gamma_fit_column]].sort_values('chi2distance_fitting',ascending=False)
+                y = [df_fitting_v2_results_min[(df_fitting_v2_results_min["separation_um"]==x)][gamma_fit_column].max() for x in x]
                 ax.scatter(x, y, marker='v', s=20, color='darkred', facecolors='none', label='maximum')
                 
             
@@ -3994,6 +4009,10 @@ def plot_CDCs(
                 df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_1d_v2']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_1d_v2'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_1d_v2']].sort_values('chi2distance_deconvmethod_1d_v2',ascending=False)
             if xi_um_deconv_column == 'xi_x_um_v2':
                 df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_2d_v2']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_2d_v2'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_2d_v2']].sort_values('chi2distance_deconvmethod_2d_v2',ascending=False)
+            if xi_um_deconv_column == 'xi_um_v3':
+                df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_1d_v3']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_1d_v3'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_1d_v3']].sort_values('chi2distance_deconvmethod_1d_v3',ascending=False)
+            if xi_um_deconv_column == 'xi_x_um_v3':
+                df_deconvmethod_results_min = pd.merge(df_deconvmethod_results,df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance_deconvmethod_2d_v3']].min(), on=['timestamp_pulse_id','chi2distance_deconvmethod_2d_v3'])[['separation_um','imageid','xi_um_guess',xi_um_deconv_column,'chi2distance_deconvmethod_2d_v3']].sort_values('chi2distance_deconvmethod_2d_v3',ascending=False)
             y = [gaussian(x=x, amp=1, cen=0, sigma=df_deconvmethod_results_min[df_deconvmethod_results_min["separation_um"]==x][xi_um_deconv_column].max()) for x in x]
         
             xx = np.arange(0.0, 2000, 10)
@@ -4016,8 +4035,8 @@ def plot_CDCs(
 
             x = df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))]['separation_um'].unique()
             # y = [df0[(df0["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset)) & (df0["separation_um"]==x)][gamma_fit_column].max() for x in x]
-            df_fitting_results_min = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min())[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance_fitting',gamma_fit_column]].sort_values('chi2distance_fitting',ascending=False)
-            y = [df_fitting_results_min[(df_fitting_results_min["separation_um"]==x)][gamma_fit_column].max() for x in x]
+            df_fitting_v2_results_min = pd.merge(df_fitting_v2_results,df_fitting_v2_results[(df_fitting_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_dataset))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min())[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance_fitting',gamma_fit_column]].sort_values('chi2distance_fitting',ascending=False)
+            y = [df_fitting_v2_results_min[(df_fitting_v2_results_min["separation_um"]==x)][gamma_fit_column].max() for x in x]
         
             xx = np.arange(0.0, 2000, 10)
             gamma_fit_max = y
@@ -4095,10 +4114,10 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
                     timestamp_pulse_ids.extend(hdf5_file["Timing/time stamp/fl2user1"][:][:,2])
 
             # create plot for the determined timestamps:
-            df_fitting_results_min = pd.merge(df_fitting_results,df_fitting_results[(df_fitting_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min()).sort_values('chi2distance_fitting',ascending=False)
-            plt.scatter(df_fitting_results_min['I_Airy2_fit'] , \
-                df_fitting_results_min[xi_um_fit_column], \
-                    c=df_fitting_results_min['separation_um'],\
+            df_fitting_v2_results_min = pd.merge(df_fitting_v2_results,df_fitting_v2_results[(df_fitting_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min()).sort_values('chi2distance_fitting',ascending=False)
+            plt.scatter(df_fitting_v2_results_min['I_Airy2_fit'] , \
+                df_fitting_v2_results_min[xi_um_fit_column], \
+                    c=df_fitting_v2_results_min['separation_um'],\
                         marker='x', s=2)
             plt.xlabel(r"$I_2$")
             plt.ylabel(xi_um_fit_label)
@@ -4366,11 +4385,13 @@ parameter_tabs = widgets.Tab()
 parameter_tabs.children = parameter_tabs_children
 parameter_tabs.set_title(0, 'Fitting_v2')
 parameter_tabs.set_title(1, 'Fitting_v1')
-parameter_tabs.set_title(2, 'Deconvolution_1d_v3')
-parameter_tabs.set_title(3, 'Deconvolution_2d_v3')
-parameter_tabs.set_title(4, 'Deconvolution_1d_v2')
-parameter_tabs.set_title(5, 'Deconvolution_2d_v2')
-parameter_tabs.set_title(6, 'Deconvolution_2d_v1')
+parameter_tabs.set_title(2, 'Deconv_1d_v3')
+parameter_tabs.set_title(3, 'Deconv_2d_v3')
+parameter_tabs.set_title(4, 'Deconv_1d_v2')
+parameter_tabs.set_title(5, 'Deconv_2d_v2')
+parameter_tabs.set_title(6, 'Deconv_2d_v1')
+
+
 
 
 plot_fitting_v1_interactive_output = interactive_output(
@@ -4423,10 +4444,10 @@ plot_fitting_v1_interactive_output = interactive_output(
     },
 )
 
-plot_fitting_interactive_output = interactive_output(
-    plot_fitting,
+plot_fitting_v2_interactive_output = interactive_output(
+    plot_fitting_v2,
     {
-        "plotprofile_active": do_fitting_widget,
+        "do_plot_fitting_v2": do_plot_fitting_v2_widget,
         "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
         "crop_px" : crop_px_widget,
         # "hdf5_file_path": dph_settings_bgsubtracted_widget,
@@ -4721,7 +4742,7 @@ measurements_selection_widget.observe(measurements_selection_widget_changed, nam
 def imageid_widget_changed(change):    
     
     if imageid_widget.value is not None and imageid_widget.options is not None:
-    # if do_fitting_widget.value == True:
+    # if do_plot_fitting_v2_widget.value == True:
     
         imageid_index_widget.value = np.where(np.array(imageid_widget.options) == imageid_widget.value)[0][0]
 
@@ -4733,10 +4754,10 @@ def imageid_widget_changed(change):
             do_plot_fitting_v1_widget_was_active = True
             do_plot_fitting_v1_widget.value = False
 
-        do_fitting_widget_was_active = False
-        if do_fitting_widget.value == True:
-            do_fitting_widget_was_active = True
-            do_fitting_widget.value = False
+        do_plot_fitting_v2_widget_was_active = False
+        if do_plot_fitting_v2_widget.value == True:
+            do_plot_fitting_v2_widget_was_active = True
+            do_plot_fitting_v2_widget.value = False
 
         do_plot_deconvmethod_2d_v1_widget_was_active = False
         if do_plot_deconvmethod_2d_v1_widget.value == True:
@@ -5046,8 +5067,8 @@ def imageid_widget_changed(change):
         if do_plot_fitting_v1_widget_was_active == True:
             do_plot_fitting_v1_widget.value = True
 
-        if do_fitting_widget_was_active == True:
-            do_fitting_widget.value = True
+        if do_plot_fitting_v2_widget_was_active == True:
+            do_plot_fitting_v2_widget.value = True
 
         if do_plot_deconvmethod_1d_v2_widget_was_active == True:
             do_plot_deconvmethod_1d_v2_widget.value = True
@@ -5220,7 +5241,7 @@ save_measurement_default_to_csv_widget = widgets.ToggleButton(
 def save_measurement_default_to_csv(change):
     if save_measurement_default_to_csv_widget.value == True:
 
-        df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_measurement_default.csv')
+        df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_v2_measurement_default.csv')
         df_fitting_measurement_default.to_csv(df_measurement_default_file)
 
         df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_v1_measurement_default.csv')
@@ -5258,7 +5279,7 @@ def load_measurement_default_from_csv(change):
     global df_deconvmethod_v3_measurement_default
     
     if load_measurement_default_from_csv_widget.value == True:
-        df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_measurement_default.csv')
+        df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_v2_measurement_default.csv')
     if os.path.isfile(df_measurement_default_file):
         df_fitting_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
@@ -5458,7 +5479,7 @@ display(
 output_tabs_right_ratio_widget = widgets.IntSlider(value=35, description='right box width / %')
 
 
-children_left = [plot_fitting_interactive_output,
+children_left = [plot_fitting_v2_interactive_output,
                  plot_fitting_v1_interactive_output,
                  plot_deconvmethod_1d_v3_interactive_output,
                  plot_deconvmethod_2d_v3_interactive_output,
@@ -5488,12 +5509,12 @@ tabs_left = widgets.Tab(layout=widgets.Layout(height='1000px', width=str(100-out
 tabs_left.children = children_left
 tabs_left.set_title(0, 'Fitting_v2')
 tabs_left.set_title(1, 'Fitting_v1')
-tabs_left.set_title(2, 'Deconvolution 1d_v3')
-tabs_left.set_title(3, 'Deconvolution 2d_v3')
-tabs_left.set_title(4, 'Deconvolution 1d_v2')
-tabs_left.set_title(5, 'Deconvolution 2d_v2')
-tabs_left.set_title(6, 'Deconvolution Steps')
-tabs_left.set_title(7, 'Deconvolution 2d_v1')
+tabs_left.set_title(2, 'Deconv_1d_v3')
+tabs_left.set_title(3, 'Deconv_2d_v3')
+tabs_left.set_title(4, 'Deconv_1d_v2')
+tabs_left.set_title(5, 'Deconv_2d_v2')
+tabs_left.set_title(6, 'Deconv Steps')
+tabs_left.set_title(7, 'Deconv_2d_v1')
 tabs_left.set_title(8, 'CDCs')
 tabs_left.set_title(9, 'plot_xi_um_fit_vs_I_Airy2_fit')
 tabs_left.set_title(10, 'list_results')
@@ -5501,7 +5522,7 @@ tabs_left.set_title(10, 'list_results')
 
 column0 = widgets.VBox(
     [
-        HBox([do_fitting_widget,xi_um_fit_at_center_text_widget]),
+        HBox([do_plot_fitting_v2_widget,xi_um_fit_v2_widget]),
         HBox([do_plot_fitting_v1_widget,xi_um_fit_v1_widget]),        
         HBox([do_plot_deconvmethod_1d_v2_widget,deconvmethod_1d_v2_result_widget]),
         HBox([do_plot_deconvmethod_2d_v2_widget,deconvmethod_2d_v2_result_widget]),
@@ -5516,7 +5537,7 @@ column0 = widgets.VBox(
 column6 = widgets.VBox(
     [        
         xi_um_fit_v1_widget, 
-        xi_um_fit_at_center_text_widget,
+        xi_um_fit_v2_widget,
         deconvmethod_1d_v2_result_widget, 
         deconvmethod_2d_v2_result_widget,
         deconvmethod_2d_v1_result_widget
