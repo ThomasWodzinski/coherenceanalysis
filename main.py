@@ -2482,6 +2482,7 @@ def plot_fitting_v2(
                 r"$\gamma=%.2f$" % (gamma_fit,),
                 r"$\gamma_c=%.2f$" % (gamma_fit_v2,),
                 r"$\xi=%.2fum$" % (xi_um_fit,),
+                r"$\xi_c=%.2fum$" % (xi_um_fit_v2,),
             )
         )
         ax00.set_title(textstr, fontsize=10)
