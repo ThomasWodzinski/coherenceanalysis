@@ -660,7 +660,7 @@ df_deconvmethod_v3_measurement_default = df_deconvmethod_v3_measurement_default.
 
 # store also 'measurement' into df_fits to be able to cross-correlate!
 
-df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_measurement_default.csv')
+df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_v2_measurement_default.csv')
 if os.path.isfile(df_measurement_default_file):
     df_fitting_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
@@ -5240,7 +5240,7 @@ save_measurement_default_to_csv_widget = widgets.ToggleButton(
 def save_measurement_default_to_csv(change):
     if save_measurement_default_to_csv_widget.value == True:
 
-        df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_measurement_default.csv')
+        df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_v2_measurement_default.csv')
         df_fitting_measurement_default.to_csv(df_measurement_default_file)
 
         df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_v1_measurement_default.csv')
@@ -5278,7 +5278,7 @@ def load_measurement_default_from_csv(change):
     global df_deconvmethod_v3_measurement_default
     
     if load_measurement_default_from_csv_widget.value == True:
-        df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_measurement_default.csv')
+        df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_v2_measurement_default.csv')
     if os.path.isfile(df_measurement_default_file):
         df_fitting_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
