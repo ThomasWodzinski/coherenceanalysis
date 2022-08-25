@@ -12,5 +12,5 @@ pinholes at FLASH2**
 
 
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ThomasWodzinski/coherence-analysis/blob/master/coherence-analysis.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ThomasWodzinski/coherenceanalysis/blob/master/coherenceanalysis.ipynb)
 

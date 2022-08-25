@@ -8,5 +8,5 @@ with open("main.py") as fpin:
 text = text1 + '\n'
 text += text2
 
-with open("coherence-analysis.py", "w") as fpout:
+with open("coherenceanalysis.py", "w") as fpout:
     fpout.write(text)
