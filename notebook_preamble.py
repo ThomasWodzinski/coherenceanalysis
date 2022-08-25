@@ -6,7 +6,7 @@ import os.path
 
 # ! git clone --branch develop https://github.com/ThomasWodzinski/coherenceanalysis.git
 ! git clone https://github.com/ThomasWodzinski/coherenceanalysis.git
-%cd coherence-analysis/
+%cd coherenceanalysis/
 
 ## Define paths
 # use data stored in own google drive location
