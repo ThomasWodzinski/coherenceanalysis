@@ -3,8 +3,8 @@
 
 from pathlib import Path  # see https://docs.python.org/3/library/pathlib.html#basic-use
 
-# ! git clone --branch develop https://github.com/ThomasWodzinski/coherence-analysis.git
-! git clone https://github.com/ThomasWodzinski/coherence-analysis.git
+# ! git clone --branch develop https://github.com/ThomasWodzinski/coherenceanalysis.git
+! git clone https://github.com/ThomasWodzinski/coherenceanalysis.git
 %cd coherence-analysis/
 
 ## Define paths
@@ -13,23 +13,11 @@ from google.colab import drive
 
 drive.mount('/content/gdrive', force_remount=True)
 
-# Prerequiste: shared folder 'coherence' has to be added as a shortcut to own Google Drive
+# Prerequiste: request access to shared folder 'coherenceanalysis' and add as a shortcut to own Google Drive
+coherenceanalysis_folder_url = 'https://drive.google.com/drive/folders/1-s3HWOnOqqi_Z5OYDH2k3n_GIKJFvY47?usp=sharing'
 
-# Directory containing the data:
-data_dir = Path('/content/gdrive/MyDrive/coherence/data/')
-# Directory containing the useful hdf5 files (cleaned)
-useful_dir = Path('/content/gdrive/MyDrive/coherence/data/useful/')
-# Directory containing the background-subtracted hdf5 files
-bgsubtracted_dir = Path('/content/gdrive/MyDrive/coherence/data/bgsubtracted/')
-# Directory for temporary files:
-scratch_dir = Path('/content/gdrive/MyDrive/coherence/data/scratch_cc/')
-# Directory for local temporary files:
-local_scratch_dir = Path("/content/coherence-analysis/scratch/")
-import os
-if os.path.isdir(local_scratch_dir) == False:
-    if os.path.isdir(local_scratch_dir.parent.absolute()) == False:
-        os.mkdir(local_scratch_dir.parent.absolute())    
-    os.mkdir(local_scratch_dir)
-#prebgsubtracted_dir
-#bgsubtracted_dir = Path.joinpath('/content/gdrive/MyDrive/PhD/coherence/data/scratch_cc/','bgsubtracted')
-
+if os.path.isdir('/content/gdrive/MyDrive/coherenceanalysis/data') == True:
+    ! ln -s /content/gdrive/MyDrive/coherenceanalysis/data/useful ./data/useful
+    ! ln -s /content/gdrive/MyDrive/coherenceanalysis/data/bgsubtracted ./data/bgsubtracted
+else:    
+    print('Please request access to the data folder located in Google Drive.')

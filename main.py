@@ -5,20 +5,18 @@ from pathlib import Path  # see https://docs.python.org/3/library/pathlib.html#b
 
 ## Define paths
 # Directory containing the data:
-data_dir = Path("g:/My Drive/PhD/coherence/data/")
+data_dir = Path('./data/')
 # Directory containing the useful hdf5 files (cleaned)
-useful_dir = Path("g:/My Drive/PhD/coherence/data/useful/")
+useful_dir = Path('./data/useful/')
 # Directory containing the background-subtracted hdf5 files
-bgsubtracted_dir = Path("g:/My Drive/PhD/coherence/data/bgsubtracted/")
-# Directory for temporary files:
-scratch_dir = Path("g:/My Drive/PhD/coherence/data/scratch_cc/")
+bgsubtracted_dir = Path('./data/bgsubtracted/')
 # Directory for local temporary files:
-local_scratch_dir = Path("c:/temp/coherence-analysis_scratch/")
+local_scratch_dir = Path('./scratch/')
 if os.path.isdir(local_scratch_dir) == False:
     if os.path.isdir(local_scratch_dir.parent.absolute()) == False:
         os.mkdir(local_scratch_dir.parent.absolute())    
     os.mkdir(local_scratch_dir)
-
+results_dir = Path('./results/')
 # prebgsubtracted_dir
 # bgsubtracted_dir = Path.joinpath('/content/gdrive/MyDrive/PhD/coherence/data/scratch_cc/','bgsubtracted')
 
