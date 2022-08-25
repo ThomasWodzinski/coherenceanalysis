@@ -1,4 +1,4 @@
-# coherence-analysis
+# coherenceanalysis
 
 This repository aims at facilitating an analysis of coherence measurements at synchrotron and free-electron laser facilities.
 
