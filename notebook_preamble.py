@@ -15,21 +15,8 @@ drive.mount('/content/gdrive', force_remount=True)
 
 # Prerequiste: shared folder 'coherence' has to be added as a shortcut to own Google Drive
 
-# Directory containing the data:
-data_dir = Path('/content/gdrive/MyDrive/coherence/data/')
-# Directory containing the useful hdf5 files (cleaned)
-useful_dir = Path('/content/gdrive/MyDrive/coherence/data/useful/')
-# Directory containing the background-subtracted hdf5 files
-bgsubtracted_dir = Path('/content/gdrive/MyDrive/coherence/data/bgsubtracted/')
-# Directory for temporary files:
-scratch_dir = Path('/content/gdrive/MyDrive/coherence/data/scratch_cc/')
-# Directory for local temporary files:
-local_scratch_dir = Path("/content/coherence-analysis/scratch/")
-import os
-if os.path.isdir(local_scratch_dir) == False:
-    if os.path.isdir(local_scratch_dir.parent.absolute()) == False:
-        os.mkdir(local_scratch_dir.parent.absolute())    
-    os.mkdir(local_scratch_dir)
-#prebgsubtracted_dir
-#bgsubtracted_dir = Path.joinpath('/content/gdrive/MyDrive/PhD/coherence/data/scratch_cc/','bgsubtracted')
-
+if os.path.isdir('/content/gdrive/MyDrive/coherence/data') == True:
+    ! ln -s /content/gdrive/MyDrive/coherence/data/useful ./data/useful
+    ! ln -s /content/gdrive/MyDrive/coherence/data/bgsubtracted ./data/bgsubtracted
+else:    
+    print('Please request access to the data folder located in Google Drive by contacting thomas.wodzinski@gmail.com')
