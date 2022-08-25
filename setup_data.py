@@ -20,7 +20,7 @@ bgsubtracted_folder_url = 'https://drive.google.com/drive/folders/1h4M1rGUTMaq9X
 
 from pathlib import Path
 
-if source == 'Google Drive':
+if source == 'Google Drive for Desktop':
     data_dir_source = Path('g:/My Drive/coherenceanalysis/data/')
 
 if source == 'local':
