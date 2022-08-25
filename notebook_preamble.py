@@ -2,6 +2,7 @@
 # for colab notebook
 
 from pathlib import Path  # see https://docs.python.org/3/library/pathlib.html#basic-use
+import os.path
 
 # ! git clone --branch develop https://github.com/ThomasWodzinski/coherenceanalysis.git
 ! git clone https://github.com/ThomasWodzinski/coherenceanalysis.git

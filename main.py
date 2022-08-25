@@ -2,6 +2,7 @@
 # run current file in interactive window to see the frontend
 
 from pathlib import Path  # see https://docs.python.org/3/library/pathlib.html#basic-use
+import os.path
 
 ## Define paths
 # Directory containing the data:
@@ -96,7 +97,7 @@ import scipy.optimize as optimize
 
 from IPython.display import display, clear_output
 
-import os.path
+
 
 
 from coherencefinder.deconvolution_module import calc_sigma_F_gamma_um, deconvmethod, deconvmethod_v1, normalize, chi2_distance
