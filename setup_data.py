@@ -11,16 +11,17 @@ source = pyip.inputMenu(['Google Drive for Desktop', 'local'], numbered=True)
 print(source)
 download_and_extract_useful_data = False
 download_and_extract_bgsubtracted_data = False
-useful_url = 'https://drive.google.com/drive/folders/1IS_ZeCzTBXbNlO8BqcNlQpaBBQKdIiBw?usp=sharing'
-bgsubtracted_url = 'https://drive.google.com/drive/folders/1h4M1rGUTMaq9XTlqQlz7DqyFCsoLqFoM?usp=sharing'
+# if necessary, request access to coherenceanalysis_folder_url and download the following two folders locally:
+coherenceanalysis_folder_url = 'https://drive.google.com/drive/folders/1-s3HWOnOqqi_Z5OYDH2k3n_GIKJFvY47?usp=sharing'
+useful_folder_url = 'https://drive.google.com/drive/folders/1IS_ZeCzTBXbNlO8BqcNlQpaBBQKdIiBw?usp=sharing'
+bgsubtracted_folder_url = 'https://drive.google.com/drive/folders/1h4M1rGUTMaq9XTlqQlz7DqyFCsoLqFoM?usp=sharing'
 
 # create prompt here
 
 from pathlib import Path
 
 if source == 'Google Drive':
-    data_dir_source = Path('g:/My Drive/PhD/coherence/data/')
-    # todo: move coherence path to g:/My Drive/ so that when giving access it's the same structure
+    data_dir_source = Path('g:/My Drive/coherenceanalysis/data/')
 
 if source == 'local':
     downloads_dir = Path.joinpath(Path.home(), 'Downloads')
