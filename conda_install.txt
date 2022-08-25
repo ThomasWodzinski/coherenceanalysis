@@ -3,3 +3,4 @@ conda install -c conda-forge lmfit
 conda install -c conda-forge wget
 conda install -c conda-forge opencv
 conda update --all
+pip install pyinputplus
