@@ -659,23 +659,23 @@ df_deconvmethod_v3_measurement_default = df_deconvmethod_v3_measurement_default.
 
 # store also 'measurement' into df_fits to be able to cross-correlate!
 
-df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_v2_measurement_default.csv')
+df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v2_measurement_default.csv')
 if os.path.isfile(df_measurement_default_file):
     df_fitting_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_v1_measurement_default.csv')
+df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v1_measurement_default.csv')
 if os.path.isfile(df_measurement_default_file):
     df_fitting_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-df_measurement_default_file = Path.joinpath(data_dir, 'df_deconvmethod_v1_measurement_default.csv')
+df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v1_measurement_default.csv')
 if os.path.isfile(df_measurement_default_file):
     df_deconvmethod_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-df_measurement_default_file = Path.joinpath(data_dir, 'df_deconvmethod_v2_measurement_default.csv')
+df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v2_measurement_default.csv')
 if os.path.isfile(df_measurement_default_file):
     df_deconvmethod_v2_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-df_measurement_default_file = Path.joinpath(data_dir, 'df_deconvmethod_v3_measurement_default.csv')
+df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v3_measurement_default.csv')
 if os.path.isfile(df_measurement_default_file):
     df_deconvmethod_v3_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
@@ -762,7 +762,7 @@ load_from_df_widget = widgets.Checkbox(value=False, description="load_from_df", 
 
 
 
-df_fits_csv_files = sorted(list(data_dir.glob("df_fits*.csv")), reverse=True)
+df_fits_csv_files = sorted(list(results_dir.glob("df_fits*.csv")), reverse=True)
 df_fits_csv_files_widget_layout = widgets.Layout(width="50%")
 df_fits_csv_files_widget = widgets.Dropdown(
     options=df_fits_csv_files,
@@ -781,7 +781,7 @@ scan_for_df_fits_csv_files_widget = widgets.ToggleButton(
 )
 
 def update_df_fits_csv_files_widget(change):
-    df_fits_csv_files = sorted(list(data_dir.glob("df_fits*.csv")), reverse=True)
+    df_fits_csv_files = sorted(list(results_dir.glob("df_fits*.csv")), reverse=True)
     df_fits_csv_files_widget.options=df_fits_csv_files
     scan_for_df_fits_csv_files_widget.value = False
 scan_for_df_fits_csv_files_widget.observe(update_df_fits_csv_files_widget)
@@ -815,21 +815,21 @@ def update_load_csv_to_df_widget(change):
     df0 = pd.merge(df_temp, df_fits, on="timestamp_pulse_id", how="outer")
 
     datestring = os.path.splitext(os.path.basename(df_fits_csv_files_widget.value))[0].split('df_fits_')[1]
-    df_fitting_v1_results_file = Path.joinpath(data_dir,str('df_fitting_v1_results_'+datestring+'.csv'))
+    df_fitting_v1_results_file = Path.joinpath(results_dir,str('df_fitting_v1_results_'+datestring+'.csv'))
     df_fitting_v1_results = pd.read_csv(df_fitting_v1_results_file, index_col=0)
-    df_fitting_v2_results_file = Path.joinpath(data_dir,str('df_fitting_v2_results_'+datestring+'.csv'))
+    df_fitting_v2_results_file = Path.joinpath(results_dir,str('df_fitting_v2_results_'+datestring+'.csv'))
     df_fitting_v2_results = pd.read_csv(df_fitting_v2_results_file, index_col=0)
-    # df_deconvmethod_1d_v1_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_v1_results_'+datestring+'.csv'))
+    # df_deconvmethod_1d_v1_results_file = Path.joinpath(results_dir,str('df_deconvmethod_1d_v1_results_'+datestring+'.csv'))
     # df_deconvmethod_1d_v1_results = pd.read_csv(df_deconvmethod_1d_v1_results_file, index_col=0)
-    df_deconvmethod_2d_v1_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_v1_results_'+datestring+'.csv'))
+    df_deconvmethod_2d_v1_results_file = Path.joinpath(results_dir,str('df_deconvmethod_2d_v1_results_'+datestring+'.csv'))
     df_deconvmethod_2d_v1_results = pd.read_csv(df_deconvmethod_2d_v1_results_file, index_col=0)
-    df_deconvmethod_1d_v2_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_v2_results_'+datestring+'.csv'))
+    df_deconvmethod_1d_v2_results_file = Path.joinpath(results_dir,str('df_deconvmethod_1d_v2_results_'+datestring+'.csv'))
     df_deconvmethod_1d_v2_results = pd.read_csv(df_deconvmethod_1d_v2_results_file, index_col=0)
-    df_deconvmethod_2d_v2_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_v2_results_'+datestring+'.csv'))
+    df_deconvmethod_2d_v2_results_file = Path.joinpath(results_dir,str('df_deconvmethod_2d_v2_results_'+datestring+'.csv'))
     df_deconvmethod_2d_v2_results = pd.read_csv(df_deconvmethod_2d_v2_results_file, index_col=0)
-    df_deconvmethod_1d_v3_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_v3_results_'+datestring+'.csv'))
+    df_deconvmethod_1d_v3_results_file = Path.joinpath(results_dir,str('df_deconvmethod_1d_v3_results_'+datestring+'.csv'))
     df_deconvmethod_1d_v3_results = pd.read_csv(df_deconvmethod_1d_v3_results_file, index_col=0)
-    df_deconvmethod_2d_v3_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_v3_results_'+datestring+'.csv'))
+    df_deconvmethod_2d_v3_results_file = Path.joinpath(results_dir,str('df_deconvmethod_2d_v3_results_'+datestring+'.csv'))
     df_deconvmethod_2d_v3_results = pd.read_csv(df_deconvmethod_2d_v3_results_file, index_col=0)
 
     load_csv_to_df_widget.value = False
@@ -853,21 +853,21 @@ def update_df_fits_csv_save_widget(change):
         df_fits.to_csv(df_fits_csv_file)
 
         datestring = os.path.splitext(os.path.basename(df_fits_csv_files_widget.value))[0].split('df_fits_')[1]
-        df_fitting_v1_results_file = Path.joinpath(data_dir,str('df_fitting_v1_results_'+datestring+'.csv'))
+        df_fitting_v1_results_file = Path.joinpath(results_dir,str('df_fitting_v1_results_'+datestring+'.csv'))
         df_fitting_v1_results.to_csv(df_fitting_v1_results_file)
-        df_fitting_v2_results_file = Path.joinpath(data_dir,str('df_fitting_v2_results_'+datestring+'.csv'))
+        df_fitting_v2_results_file = Path.joinpath(results_dir,str('df_fitting_v2_results_'+datestring+'.csv'))
         df_fitting_v2_results.to_csv(df_fitting_v2_results_file)
-        # df_deconvmethod_1d_v1_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_v1_results_'+datestring+'.csv'))
+        # df_deconvmethod_1d_v1_results_file = Path.joinpath(results_dir,str('df_deconvmethod_1d_v1_results_'+datestring+'.csv'))
         # df_deconvmethod_1d_v1_results.to_csv(df_deconvmethod_1d_v1_results_file)
-        df_deconvmethod_2d_v1_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_v1_results_'+datestring+'.csv'))
+        df_deconvmethod_2d_v1_results_file = Path.joinpath(results_dir,str('df_deconvmethod_2d_v1_results_'+datestring+'.csv'))
         df_deconvmethod_2d_v1_results.to_csv(df_deconvmethod_2d_v1_results_file)
-        df_deconvmethod_1d_v2_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_v2_results_'+datestring+'.csv'))
+        df_deconvmethod_1d_v2_results_file = Path.joinpath(results_dir,str('df_deconvmethod_1d_v2_results_'+datestring+'.csv'))
         df_deconvmethod_1d_v2_results.to_csv(df_deconvmethod_1d_v2_results_file)
-        df_deconvmethod_2d_v2_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_v2_results_'+datestring+'.csv'))
+        df_deconvmethod_2d_v2_results_file = Path.joinpath(results_dir,str('df_deconvmethod_2d_v2_results_'+datestring+'.csv'))
         df_deconvmethod_2d_v2_results.to_csv(df_deconvmethod_2d_v2_results_file)
-        df_deconvmethod_1d_v3_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_v3_results_'+datestring+'.csv'))
+        df_deconvmethod_1d_v3_results_file = Path.joinpath(results_dir,str('df_deconvmethod_1d_v3_results_'+datestring+'.csv'))
         df_deconvmethod_1d_v3_results.to_csv(df_deconvmethod_1d_v3_results_file)
-        df_deconvmethod_2d_v3_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_v3_results_'+datestring+'.csv'))
+        df_deconvmethod_2d_v3_results_file = Path.joinpath(results_dir,str('df_deconvmethod_2d_v3_results_'+datestring+'.csv'))
         df_deconvmethod_2d_v3_results.to_csv(df_deconvmethod_2d_v3_results_file)
 
         df_fits_csv_save_widget.value = False
@@ -885,28 +885,28 @@ create_new_csv_file_widget = widgets.ToggleButton(
 )
 
 def create_new_csv_file(change):
-    df_fits_csv_file = Path.joinpath(data_dir,str('df_fits_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_fits_csv_file = Path.joinpath(results_dir,str('df_fits_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
     df_fits = df0[['timestamp_pulse_id'] + list(set(fits_header_list) - set(['chi2distance_fitting', 'chi2distance_deconvmethod_1d', 'chi2distance_deconvmethod_2d']))]
     df_fits.to_csv(df_fits_csv_file)
-    df_fits_csv_files = sorted(list(data_dir.glob("df_fits*.csv")), reverse=True)
+    df_fits_csv_files = sorted(list(results_dir.glob("df_fits*.csv")), reverse=True)
     df_fits_csv_files_widget.options=df_fits_csv_files
     df_fits_csv_files_widget.value = df_fits_csv_file
 
-    df_fitting_v1_results_file = Path.joinpath(data_dir,str('df_fitting_v1_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_fitting_v1_results_file = Path.joinpath(results_dir,str('df_fitting_v1_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
     df_fitting_v1_results.to_csv(df_fitting_v1_results_file)
-    df_fitting_v2_results_file = Path.joinpath(data_dir,str('df_fitting_v2_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_fitting_v2_results_file = Path.joinpath(results_dir,str('df_fitting_v2_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
     df_fitting_v2_results.to_csv(df_fitting_v2_results_file)
-    # df_deconvmethod_1d_v1_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_v1_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    # df_deconvmethod_1d_v1_results_file = Path.joinpath(results_dir,str('df_deconvmethod_1d_v1_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
     # df_deconvmethod_1d_v1_results.to_csv(df_deconvmethod_1d_v1_results_file)
-    df_deconvmethod_2d_v1_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_v1_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_deconvmethod_2d_v1_results_file = Path.joinpath(results_dir,str('df_deconvmethod_2d_v1_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
     df_deconvmethod_2d_v1_results.to_csv(df_deconvmethod_2d_v1_results_file)
-    df_deconvmethod_1d_v2_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_v2_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_deconvmethod_1d_v2_results_file = Path.joinpath(results_dir,str('df_deconvmethod_1d_v2_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
     df_deconvmethod_1d_v2_results.to_csv(df_deconvmethod_1d_v2_results_file)
-    df_deconvmethod_2d_v2_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_v2_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_deconvmethod_2d_v2_results_file = Path.joinpath(results_dir,str('df_deconvmethod_2d_v2_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
     df_deconvmethod_2d_v2_results.to_csv(df_deconvmethod_2d_v2_results_file)
-    df_deconvmethod_1d_v3_results_file = Path.joinpath(data_dir,str('df_deconvmethod_1d_v3_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_deconvmethod_1d_v3_results_file = Path.joinpath(results_dir,str('df_deconvmethod_1d_v3_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
     df_deconvmethod_1d_v3_results.to_csv(df_deconvmethod_1d_v3_results_file)
-    df_deconvmethod_2d_v3_results_file = Path.joinpath(data_dir,str('df_deconvmethod_2d_v3_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
+    df_deconvmethod_2d_v3_results_file = Path.joinpath(results_dir,str('df_deconvmethod_2d_v3_results_'+datetime.now().strftime("%Y-%m-%d--%Hh%M")+'.csv'))
     df_deconvmethod_2d_v3_results.to_csv(df_deconvmethod_2d_v3_results_file)
 
     create_new_csv_file_widget.value = False
@@ -5240,19 +5240,19 @@ save_measurement_default_to_csv_widget = widgets.ToggleButton(
 def save_measurement_default_to_csv(change):
     if save_measurement_default_to_csv_widget.value == True:
 
-        df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_v2_measurement_default.csv')
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v2_measurement_default.csv')
         df_fitting_measurement_default.to_csv(df_measurement_default_file)
 
-        df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_v1_measurement_default.csv')
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v1_measurement_default.csv')
         df_fitting_v1_measurement_default.to_csv(df_measurement_default_file)
 
-        df_measurement_default_file = Path.joinpath(data_dir, 'df_deconvmethod_v1_measurement_default.csv')
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v1_measurement_default.csv')
         df_deconvmethod_v1_measurement_default.to_csv(df_measurement_default_file)
 
-        df_measurement_default_file = Path.joinpath(data_dir, 'df_deconvmethod_v2_measurement_default.csv')
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v2_measurement_default.csv')
         df_deconvmethod_v2_measurement_default.to_csv(df_measurement_default_file)
 
-        df_measurement_default_file = Path.joinpath(data_dir, 'df_deconvmethod_v3_measurement_default.csv')
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v3_measurement_default.csv')
         df_deconvmethod_v3_measurement_default.to_csv(df_measurement_default_file)
 
         save_measurement_default_to_csv_widget.value = False
@@ -5278,23 +5278,23 @@ def load_measurement_default_from_csv(change):
     global df_deconvmethod_v3_measurement_default
     
     if load_measurement_default_from_csv_widget.value == True:
-        df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_v2_measurement_default.csv')
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v2_measurement_default.csv')
     if os.path.isfile(df_measurement_default_file):
         df_fitting_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-    df_measurement_default_file = Path.joinpath(data_dir, 'df_fitting_v1_measurement_default.csv')
+    df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v1_measurement_default.csv')
     if os.path.isfile(df_measurement_default_file):
         df_fitting_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-    df_measurement_default_file = Path.joinpath(data_dir, 'df_deconvmethod_v1_measurement_default.csv')
+    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v1_measurement_default.csv')
     if os.path.isfile(df_measurement_default_file):
         df_deconvmethod_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-    df_measurement_default_file = Path.joinpath(data_dir, 'df_deconvmethod_v2_measurement_default.csv')
+    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v2_measurement_default.csv')
     if os.path.isfile(df_measurement_default_file):
         df_deconvmethod_v2_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-    df_measurement_default_file = Path.joinpath(data_dir, 'df_deconvmethod_v3_measurement_default.csv')
+    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v3_measurement_default.csv')
     if os.path.isfile(df_measurement_default_file):
         df_deconvmethod_v3_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
