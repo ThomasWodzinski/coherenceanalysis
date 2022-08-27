@@ -12,11 +12,11 @@ useful_dir = Path('./data/useful/')
 # Directory containing the background-subtracted hdf5 files
 bgsubtracted_dir = Path('./data/bgsubtracted/')
 # Directory for local temporary files:
-local_scratch_dir = Path('./scratch/')
-if os.path.isdir(local_scratch_dir) == False:
-    if os.path.isdir(local_scratch_dir.parent.absolute()) == False:
-        os.mkdir(local_scratch_dir.parent.absolute())    
-    os.mkdir(local_scratch_dir)
+scratch_dir = Path('./scratch/')
+if os.path.isdir(scratch_dir) == False:
+    if os.path.isdir(scratch_dir.parent.absolute()) == False:
+        os.mkdir(scratch_dir.parent.absolute())    
+    os.mkdir(scratch_dir)
 results_dir = Path('./results/')
 # prebgsubtracted_dir
 # bgsubtracted_dir = Path.joinpath('/content/gdrive/MyDrive/PhD/coherence/data/scratch_cc/','bgsubtracted')
@@ -2679,7 +2679,7 @@ def plot_deconvmethod(
         
         sigma_y_F_gamma_um_guess = calc_sigma_F_gamma_um(xi_um_guess, n, dX_1, setting_wavelength_nm, False)
         # create_steps_figures = True
-        savefigure_dir = local_scratch_dir
+        savefigure_dir = scratch_dir
 
 
         end = datetime.now()
