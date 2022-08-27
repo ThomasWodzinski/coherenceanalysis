@@ -330,7 +330,7 @@ measurements_selection_widget = widgets.SelectMultiple(
 """# Load dataframes from csv"""
 
 # dataframe of extracted from all available useful hdf5 files
-df_all = pd.read_csv(Path.joinpath(scratch_dir, "df_all.csv"), index_col=0)
+df_all = pd.read_csv(Path.joinpath(data_dir, "df_all.csv"), index_col=0)
 # maybe rename to df_hdf5_files? and then use df instead of df0?
 df_all["imageid"] = df_all.index
 
@@ -591,7 +591,7 @@ initiate_df_fits = True
     # df_fits = df0[['timestamp_pulse_id'] + fits_header_list]
 
 # load saved df_fits from csv
-df_fits_csv_files = sorted(list(data_dir.glob("df_fits*.csv")), reverse=True) # newest on top
+df_fits_csv_files = sorted(list(results_dir.glob("df_fits*.csv")), reverse=True) # newest on top
 df_fits_csv_file = df_fits_csv_files[0] # use the newest
 df_fits = pd.read_csv(df_fits_csv_file, index_col=0)
 df_fits_clean = df_fits[df_fits["pixis_rotation"].notna()].drop_duplicates()
