@@ -1445,35 +1445,6 @@ def plot_fitting_v1(
         xi_um_fit_v1_widget.value = r"%.2fum" % (xi_um_fit)
 
         if save_to_df == True:
-            # fitting results
-            if load_from_df_widget.value == True: # store fine-tuned individual results
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit'] = xi_um_fit  # add this first to the df_fits dataframe
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit'] = wavelength_nm_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector'] = d_um_at_detector
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit'] = I_Airy1_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_fit'] = I_Airy2_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_fit'] = w1_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_fit'] = w2_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_fit'] = shiftx_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] = x1_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_fit'] = x2_um_fit
-
-
-            if load_from_df_widget.value == False: # store results from measurement default parameters
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_measurement_default_result'] = gamma_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit_measurement_default_result'] = xi_um_fit  # add this first to the df_fits dataframe
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit_measurement_default_result'] = wavelength_nm_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector_measurement_default_result'] = d_um_at_detector
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit_measurement_default_result'] = I_Airy1_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_fit_measurement_default_result'] = I_Airy2_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_fit_measurement_default_result'] = w1_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_fit_measurement_default_result'] = w2_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_fit_measurement_default_result'] = shiftx_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit_measurement_default_result'] = x1_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_fit_measurement_default_result'] = x2_um_fit
-            
-
             # guess parameters - fitting
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'pixis_profile_avg_width' ] = pixis_profile_avg_width
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um' ] = shiftx_um
@@ -2129,42 +2100,6 @@ def plot_fitting_v2(
         xi_um_fit_v2_widget.value = r"%.2fum" % (xi_um_fit_v2)
 
         if save_to_df == True:
-            # fitting results
-            if load_from_df_widget.value == True: # store fine-tuned individual results
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit'] = gamma_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_v2'] = gamma_fit_v2
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit'] = xi_um_fit  # add this first to the df_fits dataframe
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit_v2'] = xi_um_fit_v2  # add this first to the df_fits dataframe
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit'] = wavelength_nm_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector'] = d_um_at_detector
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit'] = I_Airy1_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_fit'] = I_Airy2_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_fit'] = w1_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_fit'] = w2_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_fit'] = shiftx_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit'] = x1_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_fit'] = x2_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_fit'] = mod_sigma_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_fit'] = mod_shiftx_um_fit
-
-            if load_from_df_widget.value == False: # store results from measurement default parameters
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_measurement_default_result'] = gamma_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_fit_v2_measurement_default_result'] = gamma_fit_v2
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit_measurement_default_result'] = xi_um_fit  # add this first to the df_fits dataframe
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_fit_v2_measurement_default_result'] = xi_um_fit_v2  # add this first to the df_fits dataframe
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_fit_measurement_default_result'] = wavelength_nm_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_at_detector_measurement_default_result'] = d_um_at_detector
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_fit_measurement_default_result'] = I_Airy1_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_fit_measurement_default_result'] = I_Airy2_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_fit_measurement_default_result'] = w1_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_fit_measurement_default_result'] = w2_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_fit_measurement_default_result'] = shiftx_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_fit_measurement_default_result'] = x1_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_fit_measurement_default_result'] = x2_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_fit_measurement_default_result'] = mod_sigma_um_fit
-                df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_fit_measurement_default_result'] = mod_shiftx_um_fit
-            
-
             # guess parameters - fitting
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'pixis_profile_avg_width' ] = pixis_profile_avg_width
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um' ] = shiftx_um
@@ -2742,20 +2677,6 @@ def plot_deconvmethod(
         # str(round(xi_x_um, 2)) + ', ' + str(round(xi_y_um, 2))
 
         if save_to_df == True:
-            if load_from_df_widget.value == True: # store fine-tuned individual results
-                if scan_x == True:
-                    df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_x_um'] = xi_x_um
-                    df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_y_um'] = xi_y_um
-                else:
-                    df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um'] = xi_x_um
-            
-            if load_from_df_widget.value == False: # store results from measurement default parameters
-                if scan_x == True:
-                    df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_x_um_measurement_default_result'] = xi_x_um
-                    df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_y_um_measurement_default_result'] = xi_y_um
-                else:
-                    df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_measurement_default_result'] = xi_x_um
-
             # guess parameters - deconvmethod
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'pixis_profile_avg_width' ] = pixis_profile_avg_width
             df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_guess' ] = xi_um_guess
