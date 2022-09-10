@@ -207,6 +207,19 @@ mpl.rcParams.update(rcparams_without_latex)
 
 # %%
 
+# move this to a common module:
+def get_sep_and_orient(pinholes):
+        pinholes = pinholes[0:2]
+        choices = {'1a': (50, 'vertical'), '1b': (707, 'vertical'),'1c': (50, 'horizontal'), '1d': (707, 'horizontal'),
+                   '2a': (107, 'vertical'), '2b': (890, 'vertical'), '2c': (107, 'horizontal'), '2d': (890, 'horizontal'),
+                   '3a': (215, 'vertical'), '3b': (1047, 'vertical'), '3c': (215, 'horizontal'), '3d': (1047, 'horizontal'),
+                   '4a': (322, 'vertical'), '4b': (1335, 'vertical'), '4c': (322, 'horizontal'), '4d': (1335, 'horizontal'),
+                   '5a': (445, 'vertical'), '5b': (1570, 'vertical'), '5c': (445, 'horizontal'), '5d': (1570, 'horizontal')}
+        (sep, orient) = choices.get(pinholes,(np.nan,'bg'))
+        return sep, orient
+
+
+
 """# Load dph settings and combinations"""
 
 datasets_py_file = str(Path.joinpath(data_dir, "datasets.py"))
@@ -338,6 +351,7 @@ df_all["imageid"] = df_all.index
 
 # del df_settings
 
+dph_settings_keys = []
 hdf5_file_name = []
 hdf5_file_name_background = []
 setting_wavelength_nm = []
@@ -349,6 +363,7 @@ pinholes = []
 background = []
 
 for idx in range(len(dph_settings.keys())):
+    dph_settings_keys.append(list(dph_settings.keys())[idx])
     hdf5_file_name.append(dph_settings[list(dph_settings.keys())[idx]][2])
     hdf5_file_name_background.append(dph_settings[list(dph_settings.keys())[idx]][0])
     setting_wavelength_nm.append(float(list(dph_settings.keys())[idx].split()[1][:-2]))
@@ -361,6 +376,7 @@ for idx in range(len(dph_settings.keys())):
 
 df_settings = pd.DataFrame(
     {
+        "dph_settings": dph_settings_keys,
         "hdf5_file_name": hdf5_file_name,
         "hdf5_file_name_background": hdf5_file_name_background,
         "setting_wavelength_nm": setting_wavelength_nm,
@@ -372,6 +388,11 @@ df_settings = pd.DataFrame(
         "background": background,
     }
 )
+
+# dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]
+df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]
+
+
 # df_settings
 
 # merge dataframe of hdf5files with dataframe of settings
@@ -1349,12 +1370,12 @@ def plot_fitting_v1(
                 np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ][0]
 
-        pinholes = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
-        separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
-        orientation = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["orientation"].iloc[0]
-        setting_wavelength_nm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["setting_wavelength_nm"].iloc[0]
-        pinholes_bg_avg_sx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sx_um"].iloc[0]
-        pinholes_bg_avg_sy_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sy_um"].iloc[0]
+        pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
+        separation_um = get_sep_and_orient(pinholes)[0]
+        orientation = get_sep_and_orient(pinholes)[1]
+        setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
+        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["energy hall"].iloc[0]
+        
         # pixis_profile_avg_width = 200  # read from df0 instead!
 
         # fittingprogress_widget.value = 2
@@ -1494,56 +1515,6 @@ def plot_fitting_v1(
 
         if save_to_df == True:
             # guess parameters - fitting
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'pixis_profile_avg_width' ] = pixis_profile_avg_width
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um' ] = shiftx_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_range_0' ] = shiftx_um_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_range_1' ] = shiftx_um_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_do_fit' ] = shiftx_um_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm' ] = wavelength_nm
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_range_0' ] = wavelength_nm_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_range_1' ] = wavelength_nm_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_do_fit' ] = wavelength_nm_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm' ] = z_mm
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_range_0' ] = z_mm_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_range_1' ] = z_mm_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_do_fit' ] = z_mm_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um' ] = d_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_range_0' ] = d_um_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_range_1' ] = d_um_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_do_fit' ] = d_um_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma' ] = gamma
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_range_0' ] = gamma_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_range_1' ] = gamma_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_do_fit' ] = gamma_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um' ] = w1_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_range_0' ] = w1_um_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_range_1' ] = w1_um_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_do_fit' ] = w1_um_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um' ] = w2_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_range_0' ] = w2_um_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_range_1' ] = w2_um_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_do_fit' ] = w2_um_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1' ] = I_Airy1
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_range_0' ] = I_Airy1_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_range_1' ] = I_Airy1_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_do_fit' ] = I_Airy1_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2' ] = I_Airy2
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_range_0' ] = I_Airy2_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_range_1' ] = I_Airy2_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_do_fit' ] = I_Airy2_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um' ] = x1_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_range_0' ] = x1_um_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_range_1' ] = x1_um_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_do_fit' ] = x1_um_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um' ] = x2_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_range_0' ] = x2_um_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_range_1' ] = x2_um_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_do_fit' ] = x2_um_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor'	] = normfactor
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_range_0' ] = normfactor_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_range_1' ] = normfactor_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_do_fit' ] = normfactor_do_fit
-
 
             measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]
             df_fitting_v1_results = df_fitting_v1_results.append(
@@ -1989,13 +1960,11 @@ def plot_fitting_v2(
                 np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ][0]
 
-        pinholes = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
-        separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
-        orientation = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["orientation"].iloc[0]
-        setting_wavelength_nm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["setting_wavelength_nm"].iloc[0]
-        pinholes_bg_avg_sx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sx_um"].iloc[0]
-        pinholes_bg_avg_sy_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sy_um"].iloc[0]
-        # pixis_profile_avg_width = 200  # read from df0 instead!
+        pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
+        separation_um = get_sep_and_orient(pinholes)[0]
+        orientation = get_sep_and_orient(pinholes)[1]
+        setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
+        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["energy hall"].iloc[0]
 
         # fittingprogress_widget.value = 2
         #     hdf5_file_name_image = hdf5_file_name_image_widget.value
@@ -2149,64 +2118,6 @@ def plot_fitting_v2(
 
         if save_to_df == True:
             # guess parameters - fitting
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'pixis_profile_avg_width' ] = pixis_profile_avg_width
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um' ] = shiftx_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_range_0' ] = shiftx_um_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_range_1' ] = shiftx_um_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'shiftx_um_do_fit' ] = shiftx_um_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm' ] = wavelength_nm
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_range_0' ] = wavelength_nm_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_range_1' ] = wavelength_nm_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'wavelength_nm_do_fit' ] = wavelength_nm_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm' ] = z_mm
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_range_0' ] = z_mm_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_range_1' ] = z_mm_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'z_mm_do_fit' ] = z_mm_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um' ] = d_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_range_0' ] = d_um_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_range_1' ] = d_um_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'd_um_do_fit' ] = d_um_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma' ] = gamma
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_range_0' ] = gamma_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_range_1' ] = gamma_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'gamma_do_fit' ] = gamma_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um' ] = w1_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_range_0' ] = w1_um_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_range_1' ] = w1_um_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w1_um_do_fit' ] = w1_um_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um' ] = w2_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_range_0' ] = w2_um_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_range_1' ] = w2_um_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'w2_um_do_fit' ] = w2_um_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1' ] = I_Airy1
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_range_0' ] = I_Airy1_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_range_1' ] = I_Airy1_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy1_do_fit' ] = I_Airy1_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2' ] = I_Airy2
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_range_0' ] = I_Airy2_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_range_1' ] = I_Airy2_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'I_Airy2_do_fit' ] = I_Airy2_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um' ] = x1_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_range_0' ] = x1_um_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_range_1' ] = x1_um_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x1_um_do_fit' ] = x1_um_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um' ] = x2_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_range_0' ] = x2_um_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_range_1' ] = x2_um_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'x2_um_do_fit' ] = x2_um_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor'	] = normfactor
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_range_0' ] = normfactor_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_range_1' ] = normfactor_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'normfactor_do_fit' ] = normfactor_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um' ] = mod_sigma_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_range_0'	] = mod_sigma_um_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_range_1'	] = mod_sigma_um_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_sigma_um_do_fit' ] = mod_sigma_um_do_fit
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um' ] = mod_shiftx_um
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_range_0' ] = mod_shiftx_um_range[0]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_range_1' ] = mod_shiftx_um_range[1]
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'mod_shiftx_um_do_fit' ] = mod_shiftx_um_do_fit
-
             measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]
             df_fitting_v2_results = df_fitting_v2_results.append(
                     {
@@ -2623,13 +2534,11 @@ def plot_deconvmethod(
         time_taken = end - start
         statustext_widget.value = 'Loading from HDF5: ' + str(time_taken)    
 
-        pinholes = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
-        separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
-        orientation = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["orientation"].iloc[0]
-        setting_wavelength_nm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["setting_wavelength_nm"].iloc[0]
-        pinholes_bg_avg_sx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sx_um"].iloc[0]
-        pinholes_bg_avg_sy_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sy_um"].iloc[0]
-        # pixis_avg_width = 200  # read from df0 instead!
+        pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
+        separation_um = get_sep_and_orient(pinholes)[0]
+        orientation = get_sep_and_orient(pinholes)[1]
+        setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
+        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["energy hall"].iloc[0]
 
         pixis_profile_avg = pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:]
 
@@ -2725,13 +2634,6 @@ def plot_deconvmethod(
         # str(round(xi_x_um, 2)) + ', ' + str(round(xi_y_um, 2))
 
         if save_to_df == True:
-            # guess parameters - deconvmethod
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'pixis_profile_avg_width' ] = pixis_profile_avg_width
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xi_um_guess' ] = xi_um_guess
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'xatol' ] = xatol
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'sigma_x_F_gamma_um_multiplier' ] = sigma_x_F_gamma_um_multiplier
-            df0.loc[(df0['timestamp_pulse_id'] == timestamp_pulse_id), 'crop_px' ] = crop_px
-
             measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]
 
             if scan_x == True:
@@ -3124,13 +3026,11 @@ def plot_deconvmethod_2d_v1(
                 np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ][0]
 
-        pinholes = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
-        separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
-        orientation = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["orientation"].iloc[0]
-        setting_wavelength_nm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["setting_wavelength_nm"].iloc[0]
-        pinholes_bg_avg_sx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sx_um"].iloc[0]
-        pinholes_bg_avg_sy_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sy_um"].iloc[0]
-        # pixis_avg_width = 200  # read from df0 instead!
+        pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
+        separation_um = get_sep_and_orient(pinholes)[0]
+        orientation = get_sep_and_orient(pinholes)[1]
+        setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
+        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["energy hall"].iloc[0]
 
         pixis_profile_avg = pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:]
 
@@ -4775,15 +4675,16 @@ def imageid_widget_changed(change):
             ][2]
             pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
                 np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ][
-                0
-            ]  # needed for what?
-            setting_wavelength_nm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["setting_wavelength_nm"].iloc[0]
+            ][0]  # needed for what?
+            
             pinholes_bg_avg_sx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sx_um"].iloc[0]
             pinholes_bg_avg_sy_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sy_um"].iloc[0]
-            ph = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
-            separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
-            orientation = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["orientation"].iloc[0]
+            
+            ph = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
+            separation_um = get_sep_and_orient(pinholes)[0]
+            orientation = get_sep_and_orient(pinholes)[1]
+            setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
+            energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["energy hall"].iloc[0]
 
             if orientation == "horizontal":
                 beamsize_text_widget.value = r"%.2fum" % (pinholes_bg_avg_sx_um,)
@@ -5562,6 +5463,7 @@ run_over_all_datasets_widget.observe(update_run_over_all_datasets_widget, names=
 # getting all parameters from the file
 
 
+
 with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
     imageids = hdf5_file["/bgsubtracted/imageid"][:]
 
@@ -5582,16 +5484,13 @@ with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
             np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
         ][0]
 
-    pinholes = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes"].iloc[0]
-    separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
-    orientation = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["orientation"].iloc[0]
-    setting_wavelength_nm = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["setting_wavelength_nm"].iloc[0]
-    energy_hall_uJ = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["energy hall"].iloc[0]
-    _lambda_nm_fit = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["setting_wavelength_nm"].iloc[
-        0
-    ]  # is this stored in df0? get it from profile_fitting?
-
-    hdf5_file_name_image = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["hdf5_file_name"].iloc[0]
+    pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
+    separation_um = get_sep_and_orient(pinholes)[0]
+    orientation = get_sep_and_orient(pinholes)[1]
+    setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
+    energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["energy hall"].iloc[0]
+    
+    hdf5_file_name_image = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["hdf5_file_name"].iloc[0]
 
     beamposition_horizontal_interval = 1000  # random number, store in hdf5?
 
