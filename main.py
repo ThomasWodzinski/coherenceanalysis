@@ -2696,11 +2696,11 @@ def plot_deconvmethod(
                             'imageid' : imageid,
                             'separation_um' : separation_um,
                             # deconvolution parameters
-                            'balance' : balance,
                             'pixis_profile_avg_width' : pixis_profile_avg_width,
+                            'crop_px' : crop_px,
+                            'balance' : balance,
                             'xi_um_guess' : xi_um_guess,
                             'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
-                            'crop_px' : crop_px,
                             'xatol' : xatol,
                             # deconvolution results
                             'xi_x_um_v2' : xi_x_um,
@@ -2718,11 +2718,11 @@ def plot_deconvmethod(
                             'imageid' : imageid,
                             'separation_um' : separation_um,
                             # deconvolution parameters
-                            'snr_db' : snr_db,
                             'pixis_profile_avg_width' : pixis_profile_avg_width,
+                            'crop_px' : crop_px,
+                            'snr_db' : snr_db,
                             'xi_um_guess' : xi_um_guess,
                             'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
-                            'crop_px' : crop_px,
                             'xatol' : xatol,
                             # deconvolution results
                             'xi_x_um_v3' : xi_x_um,
@@ -2741,11 +2741,11 @@ def plot_deconvmethod(
                             'imageid' : imageid,
                             'separation_um' : separation_um,
                             # deconvolution parameters
-                            'balance' : balance,
                             'pixis_profile_avg_width' : pixis_profile_avg_width,
+                            'crop_px' : crop_px,
+                            'balance' : balance,
                             'xi_um_guess' : xi_um_guess,
                             'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
-                            'crop_px' : crop_px,
                             # deconvolution results
                             # 'sigma_F_gamma_um_opt' : sigma_F_gamma_um_opt, not calculated?
                             'xi_um_v2' : xi_x_um,
@@ -2762,11 +2762,11 @@ def plot_deconvmethod(
                             'imageid' : imageid,
                             'separation_um' : separation_um,
                             # deconvolution parameters
-                            'snr_db' : snr_db,
                             'pixis_profile_avg_width' : pixis_profile_avg_width,
+                            'crop_px' : crop_px,
+                            'snr_db' : snr_db,
                             'xi_um_guess' : xi_um_guess,
                             'sigma_x_F_gamma_um_multiplier' : sigma_x_F_gamma_um_multiplier,
-                            'crop_px' : crop_px,
                             # deconvolution results
                             # 'sigma_F_gamma_um_opt' : sigma_F_gamma_um_opt, not calculated?
                             'xi_um_v3' : xi_x_um,
