@@ -541,7 +541,7 @@ fits_header_list7_v1 = [
     'crop_px',
     'sigma_x_F_gamma_um_min', 
     'sigma_x_F_gamma_um_max',
-    'sigma_x_F_gamma_um_stepsize'
+    'sigma_x_F_gamma_um_stepsize',
     'sigma_y_F_gamma_um_min', 
     'sigma_y_F_gamma_um_max', 
     'sigma_y_F_gamma_um_stepsize'
@@ -619,13 +619,19 @@ df_fitting_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
 df_fitting_v1_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
                                     'measurement' : measurement_arr})
 
-df_deconvmethod_v1_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
+df_deconvmethod_2d_v1_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
                                     'measurement' : measurement_arr})
 
-df_deconvmethod_v2_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
+df_deconvmethod_1d_v2_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
                                     'measurement' : measurement_arr})
 
-df_deconvmethod_v3_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
+df_deconvmethod_2d_v2_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
+                                    'measurement' : measurement_arr})
+
+df_deconvmethod_1d_v3_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
+                                    'measurement' : measurement_arr})
+
+df_deconvmethod_2d_v3_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
                                     'measurement' : measurement_arr})
 
 fitting_measurement_default_headers = []
@@ -636,24 +642,34 @@ fitting_v1_measurement_default_headers = []
 for header in fits_header_list4_v1:
     fitting_v1_measurement_default_headers.append(header + '_measurement_default')
 
-deconvmethod_v1_measurement_default_headers = []
+deconvmethod_2d_v1_measurement_default_headers = []
 for header in fits_header_list7_v1:
-    deconvmethod_v1_measurement_default_headers.append(header + '_measurement_default')
+    deconvmethod_2d_v1_measurement_default_headers.append(header + '_measurement_default')
 
-deconvmethod_v2_measurement_default_headers = []
+deconvmethod_1d_v2_measurement_default_headers = []
 for header in fits_header_list7:
-    deconvmethod_v2_measurement_default_headers.append(header + '_measurement_default')
+    deconvmethod_1d_v2_measurement_default_headers.append(header + '_measurement_default')
 
-deconvmethod_v3_measurement_default_headers = []
+deconvmethod_2d_v2_measurement_default_headers = []
 for header in fits_header_list7:
-    deconvmethod_v3_measurement_default_headers.append(header + '_measurement_default')
+    deconvmethod_2d_v2_measurement_default_headers.append(header + '_measurement_default')
+
+deconvmethod_1d_v3_measurement_default_headers = []
+for header in fits_header_list7:
+    deconvmethod_1d_v3_measurement_default_headers.append(header + '_measurement_default')
+
+deconvmethod_2d_v3_measurement_default_headers = []
+for header in fits_header_list7:
+    deconvmethod_2d_v3_measurement_default_headers.append(header + '_measurement_default')
 
 
 df_fitting_measurement_default = df_fitting_measurement_default.reindex(columns = df_fitting_measurement_default.columns.tolist() + list(set(fitting_measurement_default_headers) - set(df_fitting_measurement_default.columns.tolist())) )
 df_fitting_v1_measurement_default = df_fitting_v1_measurement_default.reindex(columns = df_fitting_v1_measurement_default.columns.tolist() + list(set(fitting_v1_measurement_default_headers) - set(df_fitting_v1_measurement_default.columns.tolist())) )
-df_deconvmethod_v1_measurement_default = df_deconvmethod_v1_measurement_default.reindex(columns = df_deconvmethod_v1_measurement_default.columns.tolist() + list(set(deconvmethod_v1_measurement_default_headers) - set(df_deconvmethod_v1_measurement_default.columns.tolist())) )
-df_deconvmethod_v2_measurement_default = df_deconvmethod_v2_measurement_default.reindex(columns = df_deconvmethod_v2_measurement_default.columns.tolist() + list(set(deconvmethod_v2_measurement_default_headers) - set(df_deconvmethod_v2_measurement_default.columns.tolist())) )
-df_deconvmethod_v3_measurement_default = df_deconvmethod_v3_measurement_default.reindex(columns = df_deconvmethod_v3_measurement_default.columns.tolist() + list(set(deconvmethod_v3_measurement_default_headers) - set(df_deconvmethod_v3_measurement_default.columns.tolist())) )
+df_deconvmethod_2d_v1_measurement_default = df_deconvmethod_2d_v1_measurement_default.reindex(columns = df_deconvmethod_2d_v1_measurement_default.columns.tolist() + list(set(deconvmethod_2d_v1_measurement_default_headers) - set(df_deconvmethod_2d_v1_measurement_default.columns.tolist())) )
+df_deconvmethod_1d_v2_measurement_default = df_deconvmethod_1d_v2_measurement_default.reindex(columns = df_deconvmethod_1d_v2_measurement_default.columns.tolist() + list(set(deconvmethod_1d_v2_measurement_default_headers) - set(df_deconvmethod_1d_v2_measurement_default.columns.tolist())) )
+df_deconvmethod_2d_v2_measurement_default = df_deconvmethod_2d_v2_measurement_default.reindex(columns = df_deconvmethod_2d_v2_measurement_default.columns.tolist() + list(set(deconvmethod_2d_v2_measurement_default_headers) - set(df_deconvmethod_2d_v2_measurement_default.columns.tolist())) )
+df_deconvmethod_1d_v3_measurement_default = df_deconvmethod_1d_v3_measurement_default.reindex(columns = df_deconvmethod_1d_v3_measurement_default.columns.tolist() + list(set(deconvmethod_1d_v3_measurement_default_headers) - set(df_deconvmethod_1d_v3_measurement_default.columns.tolist())) )
+df_deconvmethod_2d_v3_measurement_default = df_deconvmethod_2d_v3_measurement_default.reindex(columns = df_deconvmethod_2d_v3_measurement_default.columns.tolist() + list(set(deconvmethod_2d_v3_measurement_default_headers) - set(df_deconvmethod_2d_v3_measurement_default.columns.tolist())) )
 
 
 
@@ -667,17 +683,25 @@ df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v1_measurem
 if os.path.isfile(df_measurement_default_file):
     df_fitting_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v1_measurement_default.csv')
+df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v1_measurement_default.csv')
 if os.path.isfile(df_measurement_default_file):
-    df_deconvmethod_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+    df_deconvmethod_2d_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v2_measurement_default.csv')
+df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_1d_v2_measurement_default.csv')
 if os.path.isfile(df_measurement_default_file):
-    df_deconvmethod_v2_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+    df_deconvmethod_1d_v2_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v3_measurement_default.csv')
+df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v2_measurement_default.csv')
 if os.path.isfile(df_measurement_default_file):
-    df_deconvmethod_v3_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+    df_deconvmethod_2d_v2_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+
+df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_1d_v3_measurement_default.csv')
+if os.path.isfile(df_measurement_default_file):
+    df_deconvmethod_1d_v3_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+
+df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v3_measurement_default.csv')
+if os.path.isfile(df_measurement_default_file):
+    df_deconvmethod_2d_v3_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
 
 
@@ -1133,47 +1157,47 @@ mod_shiftx_um_value_widget = widgets.Text(value="", description="",layout=value_
 
 
 # deconvolution_2d_v1 parameter widgets
-crop_px_2d_v1_widget = widgets.FloatText(value=200, description='crop_px (2dv1)')
-pixis_profile_avg_width_2d_v1_widget = widgets.FloatText(value=200, description='profile width / px (2dv1)')
+crop_px_2d_v1_widget = widgets.FloatText(description='crop_px (2dv1)')
+pixis_profile_avg_width_2d_v1_widget = widgets.FloatText(description='profile width / px (2dv1)')
 
-sigma_x_F_gamma_um_min_2d_v1_widget = widgets.FloatText(value=7, description='sigma_x_F_gamma_um_min (2dv1)')
-sigma_x_F_gamma_um_max_2d_v1_widget = widgets.FloatText(value=40, description='sigma_x_F_gamma_um_max (2dv1)')
-sigma_x_F_gamma_um_stepsize_2d_v1_widget = widgets.FloatText(value=1, description='sigma_x_F_gamma_um_stepsize (2dv1)')
-sigma_y_F_gamma_um_min_2d_v1_widget = widgets.FloatText(value=7, description='sigma_y_F_gamma_um_min (2dv1)')
-sigma_y_F_gamma_um_max_2d_v1_widget = widgets.FloatText(value=40, description='sigma_y_F_gamma_um_max (2dv1)')
-sigma_y_F_gamma_um_stepsize_2d_v1_widget = widgets.FloatText(value=1, description='sigma_y_F_gamma_um_stepsize (2dv1)')
+sigma_x_F_gamma_um_min_2d_v1_widget = widgets.FloatText(description='sigma_x_F_gamma_um_min (2dv1)')
+sigma_x_F_gamma_um_max_2d_v1_widget = widgets.FloatText(description='sigma_x_F_gamma_um_max (2dv1)')
+sigma_x_F_gamma_um_stepsize_2d_v1_widget = widgets.FloatText(description='sigma_x_F_gamma_um_stepsize (2dv1)')
+sigma_y_F_gamma_um_min_2d_v1_widget = widgets.FloatText(description='sigma_y_F_gamma_um_min (2dv1)')
+sigma_y_F_gamma_um_max_2d_v1_widget = widgets.FloatText(description='sigma_y_F_gamma_um_max (2dv1)')
+sigma_y_F_gamma_um_stepsize_2d_v1_widget = widgets.FloatText(description='sigma_y_F_gamma_um_stepsize (2dv1)')
 
 # deconvolution 1d v2 parameter widgets
-crop_px_1d_v2_widget = widgets.FloatText(value=200, description='crop_px (1dv2)')
-pixis_profile_avg_width_1d_v1_widget = widgets.FloatText(value=200, description='profile width / px (1dv2)')
-balance_1d_v2_widget = widgets.FloatText(value=1, description='balance (1dv2)')
-xi_um_guess_1d_v2_widget = widgets.FloatText(value=900, description='xi_um_guess (1dv2)')
-xatol_1d_v2_widget = widgets.FloatText(value=5, description='xatol (1dv2')
-sigma_x_F_gamma_um_multiplier_1d_v2_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget (1dv2)')
+crop_px_1d_v2_widget = widgets.FloatText(description='crop_px (1dv2)')
+pixis_profile_avg_width_1d_v2_widget = widgets.FloatText(description='profile width / px (1dv2)')
+balance_1d_v2_widget = widgets.FloatText(description='balance (1dv2)')
+xi_um_guess_1d_v2_widget = widgets.FloatText(description='xi_um_guess (1dv2)')
+xatol_1d_v2_widget = widgets.FloatText(description='xatol (1dv2')
+sigma_x_F_gamma_um_multiplier_1d_v2_widget = widgets.FloatText(description='sigma_x_F_gamma_um_multiplier_widget (1dv2)')
 
 # deconvolution 2d v2 parameter widgets
-crop_px_2d_v2_widget = widgets.FloatText(value=200, description='crop_px (2dv2)')
-pixis_profile_avg_width_2d_v1_widget = widgets.FloatText(value=200, description='profile width / px (2dv2)')
-balance_2d_v2_widget = widgets.FloatText(value=1, description='balance (2dv2)')
-xi_um_guess_2d_v2_widget = widgets.FloatText(value=900, description='xi_um_guess (2dv2)')
-xatol_2d_v2_widget = widgets.FloatText(value=5, description='xatol (2dv2')
-sigma_x_F_gamma_um_multiplier_2d_v2_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget (2dv2)')
+crop_px_2d_v2_widget = widgets.FloatText(description='crop_px (2dv2)')
+pixis_profile_avg_width_2d_v2_widget = widgets.FloatText(description='profile width / px (2dv2)')
+balance_2d_v2_widget = widgets.FloatText(description='balance (2dv2)')
+xi_um_guess_2d_v2_widget = widgets.FloatText(description='xi_um_guess (2dv2)')
+xatol_2d_v2_widget = widgets.FloatText(description='xatol (2dv2')
+sigma_x_F_gamma_um_multiplier_2d_v2_widget = widgets.FloatText(description='sigma_x_F_gamma_um_multiplier_widget (2dv2)')
 
 # deconvolution 1d v3 parameter widgets
-crop_px_1d_v3_widget = widgets.FloatText(value=200, description='crop_px (1dv3)')
-pixis_profile_avg_width_1d_v3_widget = widgets.FloatText(value=200, description='profile width / px (1dv3)')
-snr_db_1d_v3_widget = widgets.FloatText(value=26.8, description='snr_db (1dv3)', step=0.1)
-xi_um_guess_1d_v3_widget = widgets.FloatText(value=900, description='xi_um_guess (1dv3)')
-xatol_1d_v3_widget = widgets.FloatText(value=5, description='xatol (1dv3)')
-sigma_x_F_gamma_um_multiplier_1d_v3_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget (1dv3)')
+crop_px_1d_v3_widget = widgets.FloatText(description='crop_px (1dv3)')
+pixis_profile_avg_width_1d_v3_widget = widgets.FloatText(description='profile width / px (1dv3)')
+snr_db_1d_v3_widget = widgets.FloatText(description='snr_db (1dv3)', step=0.1)
+xi_um_guess_1d_v3_widget = widgets.FloatText(description='xi_um_guess (1dv3)')
+xatol_1d_v3_widget = widgets.FloatText(description='xatol (1dv3)')
+sigma_x_F_gamma_um_multiplier_1d_v3_widget = widgets.FloatText(description='sigma_x_F_gamma_um_multiplier_widget (1dv3)')
 
 # deconvolution 2d v3 parameter widgets
-crop_px_2d_v3_widget = widgets.FloatText(value=200, description='crop_px (2dv3)')
-pixis_profile_avg_width_2d_v3_widget = widgets.FloatText(value=200, description='profile width / px (2dv3)')
-snr_db_2d_v3_widget = widgets.FloatText(value=26.8, description='snr_db (2dv3)', step=0.1)
-xi_um_guess_2d_v3_widget = widgets.FloatText(value=900, description='xi_um_guess (2dv3)')
-xatol_2d_v3_widget = widgets.FloatText(value=5, description='xatol (2dv3)')
-sigma_x_F_gamma_um_multiplier_2d_v3_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget (2dv3)')
+crop_px_2d_v3_widget = widgets.FloatText(description='crop_px (2dv3)')
+pixis_profile_avg_width_2d_v3_widget = widgets.FloatText(description='profile width / px (2dv3)')
+snr_db_2d_v3_widget = widgets.FloatText(description='snr_db (2dv3)', step=0.1)
+xi_um_guess_2d_v3_widget = widgets.FloatText(description='xi_um_guess (2dv3)')
+xatol_2d_v3_widget = widgets.FloatText(description='xatol (2dv3)')
+sigma_x_F_gamma_um_multiplier_2d_v3_widget = widgets.FloatText(description='sigma_x_F_gamma_um_multiplier_widget (2dv3)')
 
 
 # plot result widgets
@@ -3515,11 +3539,11 @@ def plot_fitting_vs_deconvolution(
             if use_measurement_default_result == True:
                 if xi_um_deconv_column == 'xi_x_um_v1':
                     # deconvolution 2d v1 defaults:
-                    balance_measurement_default = df_deconvmethod_v1_measurement_default[df_deconvmethod_v1_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
-                    xi_um_guess_measurement_default = df_deconvmethod_v1_measurement_default[df_deconvmethod_v1_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
-                    xatol_measurement_default = df_deconvmethod_v1_measurement_default[df_deconvmethod_v1_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
-                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_v1_measurement_default[df_deconvmethod_v1_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
-                    crop_px_measurement_default = df_deconvmethod_v1_measurement_default[df_deconvmethod_v1_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+                    balance_measurement_default = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
+                    xi_um_guess_measurement_default = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+                    xatol_measurement_default = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+                    crop_px_measurement_default = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
                     df_deconvmethod_result = df_deconvmethod_2d_v1_results[(df_deconvmethod_2d_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_2d_v1_results['balance'] == balance_measurement_default) & \
                         (df_deconvmethod_2d_v1_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
@@ -3528,11 +3552,11 @@ def plot_fitting_vs_deconvolution(
                         (df_deconvmethod_2d_v1_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um_v1','chi2distance_deconvmethod_2d_v1']].sort_values('chi2distance_deconvmethod_2d_v1',ascending=False)               
                 if xi_um_deconv_column == 'xi_um_v2':
                     # deconvolution 2d v2 defaults:
-                    balance_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
-                    xi_um_guess_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
-                    xatol_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
-                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
-                    crop_px_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0] 
+                    balance_measurement_default = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
+                    xi_um_guess_measurement_default = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+                    xatol_measurement_default = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+                    crop_px_measurement_default = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0] 
                     df_deconvmethod_result = df_deconvmethod_1d_v2_results[(df_deconvmethod_1d_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_1d_v2_results['balance'] == balance_measurement_default) & \
                         (df_deconvmethod_1d_v2_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
@@ -3540,11 +3564,11 @@ def plot_fitting_vs_deconvolution(
                         (df_deconvmethod_1d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','balance','xi_um_guess','xi_um_v2','chi2distance_deconvmethod_1d_v2']].sort_values('chi2distance_deconvmethod_1d_v2',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um_v2':
                     # deconvolution 2d v2 defaults:
-                    balance_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
-                    xi_um_guess_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
-                    xatol_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
-                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
-                    crop_px_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+                    balance_measurement_default = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
+                    xi_um_guess_measurement_default = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+                    xatol_measurement_default = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+                    crop_px_measurement_default = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
                     df_deconvmethod_result = df_deconvmethod_2d_v2_results[(df_deconvmethod_2d_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_2d_v2_results['balance'] == balance_measurement_default) & \
                         (df_deconvmethod_2d_v2_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
@@ -3553,11 +3577,11 @@ def plot_fitting_vs_deconvolution(
                         (df_deconvmethod_2d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','balance','xi_um_guess','xi_x_um_v2','chi2distance_deconvmethod_2d_v2']].sort_values('chi2distance_deconvmethod_2d_v2',ascending=False)               
                 if xi_um_deconv_column == 'xi_um_v3':
                     # deconvolution v3 defaults:
-                    snr_db_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
-                    xi_um_guess_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
-                    xatol_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
-                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
-                    crop_px_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0] 
+                    snr_db_measurement_default = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
+                    xi_um_guess_measurement_default = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+                    xatol_measurement_default = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+                    crop_px_measurement_default = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0] 
                     df_deconvmethod_result = df_deconvmethod_1d_v3_results[(df_deconvmethod_1d_v3_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_1d_v3_results['snr_db'] == snr_db_measurement_default) & \
                         (df_deconvmethod_1d_v3_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
@@ -3565,11 +3589,11 @@ def plot_fitting_vs_deconvolution(
                         (df_deconvmethod_1d_v3_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','snr_db','xi_um_guess','xi_um_v3','chi2distance_deconvmethod_1d_v3']].sort_values('chi2distance_deconvmethod_1d_v3',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um_v3':
                     # deconvolution v3 defaults:
-                    snr_db_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
-                    xi_um_guess_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
-                    xatol_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
-                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
-                    crop_px_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+                    snr_db_measurement_default = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
+                    xi_um_guess_measurement_default = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+                    xatol_measurement_default = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+                    crop_px_measurement_default = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
                     df_deconvmethod_result = df_deconvmethod_2d_v3_results[(df_deconvmethod_2d_v3_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_2d_v3_results['snr_db'] == snr_db_measurement_default) & \
                         (df_deconvmethod_2d_v3_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
@@ -3724,11 +3748,11 @@ def list_results(
             if use_measurement_default_result == True:
                 if xi_um_deconv_column == 'xi_x_um_v1':
                     # deconvolution 2d v1 defaults:
-                    balance_measurement_default = df_deconvmethod_v1_measurement_default[df_deconvmethod_v1_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
-                    xi_um_guess_measurement_default = df_deconvmethod_v1_measurement_default[df_deconvmethod_v1_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
-                    xatol_measurement_default = df_deconvmethod_v1_measurement_default[df_deconvmethod_v1_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
-                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_v1_measurement_default[df_deconvmethod_v1_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
-                    crop_px_measurement_default = df_deconvmethod_v1_measurement_default[df_deconvmethod_v1_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+                    balance_measurement_default = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
+                    xi_um_guess_measurement_default = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+                    xatol_measurement_default = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+                    crop_px_measurement_default = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
                     df_deconvmethod_result = df_deconvmethod_2d_v1_results[(df_deconvmethod_2d_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_2d_v1_results['balance'] == balance_measurement_default) & \
                         (df_deconvmethod_2d_v1_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
@@ -3737,11 +3761,11 @@ def list_results(
                         (df_deconvmethod_2d_v1_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','xi_um_guess','xi_x_um_v1','chi2distance_deconvmethod_2d_v1']].sort_values('chi2distance_deconvmethod_2d_v1',ascending=False)               
                 if xi_um_deconv_column == 'xi_um_v2':
                     # deconvolution 2d v2 defaults:
-                    balance_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
-                    xi_um_guess_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
-                    xatol_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
-                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
-                    crop_px_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0] 
+                    balance_measurement_default = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
+                    xi_um_guess_measurement_default = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+                    xatol_measurement_default = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+                    crop_px_measurement_default = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0] 
                     df_deconvmethod_result = df_deconvmethod_1d_v2_results[(df_deconvmethod_1d_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_1d_v2_results['balance'] == balance_measurement_default) & \
                         (df_deconvmethod_1d_v2_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
@@ -3749,11 +3773,11 @@ def list_results(
                         (df_deconvmethod_1d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','balance','xi_um_guess','xi_um_v2','chi2distance_deconvmethod_1d_v2']].sort_values('chi2distance_deconvmethod_1d_v2',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um_v2':
                     # deconvolution 2d v2 defaults:
-                    balance_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
-                    xi_um_guess_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
-                    xatol_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
-                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
-                    crop_px_measurement_default = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+                    balance_measurement_default = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
+                    xi_um_guess_measurement_default = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+                    xatol_measurement_default = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+                    crop_px_measurement_default = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
                     df_deconvmethod_result = df_deconvmethod_2d_v2_results[(df_deconvmethod_2d_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_2d_v2_results['balance'] == balance_measurement_default) & \
                         (df_deconvmethod_2d_v2_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
@@ -3762,11 +3786,11 @@ def list_results(
                         (df_deconvmethod_2d_v2_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','balance','xi_um_guess','xi_x_um_v2','chi2distance_deconvmethod_2d_v2']].sort_values('chi2distance_deconvmethod_2d_v2',ascending=False)               
                 if xi_um_deconv_column == 'xi_um_v3':
                     # deconvolution v3 defaults:
-                    snr_db_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
-                    xi_um_guess_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
-                    xatol_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
-                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
-                    crop_px_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0] 
+                    snr_db_measurement_default = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
+                    xi_um_guess_measurement_default = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+                    xatol_measurement_default = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+                    crop_px_measurement_default = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0] 
                     df_deconvmethod_result = df_deconvmethod_1d_v3_results[(df_deconvmethod_1d_v3_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_1d_v3_results['snr_db'] == snr_db_measurement_default) & \
                         (df_deconvmethod_1d_v3_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
@@ -3774,11 +3798,11 @@ def list_results(
                         (df_deconvmethod_1d_v3_results['crop_px'] == crop_px_measurement_default)][['separation_um','imageid','timestamp_pulse_id','snr_db','xi_um_guess','xi_um_v3','chi2distance_deconvmethod_1d_v3']].sort_values('chi2distance_deconvmethod_1d_v3',ascending=False)
                 if xi_um_deconv_column == 'xi_x_um_v3':
                     # deconvolution v3 defaults:
-                    snr_db_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
-                    xi_um_guess_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
-                    xatol_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
-                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
-                    crop_px_measurement_default = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+                    snr_db_measurement_default = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
+                    xi_um_guess_measurement_default = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+                    xatol_measurement_default = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+                    sigma_x_F_gamma_um_multiplier_measurement_default = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+                    crop_px_measurement_default = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
                     df_deconvmethod_result = df_deconvmethod_2d_v3_results[(df_deconvmethod_2d_v3_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_deconvmethod_2d_v3_results['snr_db'] == snr_db_measurement_default) & \
                         (df_deconvmethod_2d_v3_results['xi_um_guess'] == xi_um_guess_measurement_default) & \
@@ -4086,45 +4110,55 @@ def plot_xi_um_fit_vs_I_Airy2_fit(
 
 column1a_v2 = widgets.VBox(
     [
-        balance_v2_widget,
-        xi_um_guess_v2_widget,
-        sigma_x_F_gamma_um_multiplier_v2_widget,      
+        crop_px_1d_v2_widget,
+        pixis_profile_avg_width_1d_v2_widget,
+        balance_1d_v2_widget,
+        xi_um_guess_1d_v2_widget,
+        sigma_x_F_gamma_um_multiplier_1d_v2_widget,      
     ]
 )
 column1b_v2 = widgets.VBox(
     [
-        balance_v2_widget,
-        xi_um_guess_v2_widget,
-        xatol_v2_widget,
-        sigma_x_F_gamma_um_multiplier_v2_widget,      
+        crop_px_2d_v2_widget,
+        pixis_profile_avg_width_2d_v2_widget,
+        balance_2d_v2_widget,
+        xi_um_guess_2d_v2_widget,
+        sigma_x_F_gamma_um_multiplier_2d_v2_widget,
+        xatol_2d_v2_widget,
     ]
 )
 
 column1a_v3 = widgets.VBox(
     [
-        snr_db_v3_widget,
-        xi_um_guess_v3_widget,
-        sigma_x_F_gamma_um_multiplier_v3_widget,      
+        crop_px_1d_v3_widget,
+        pixis_profile_avg_width_1d_v3_widget,
+        snr_db_1d_v3_widget,
+        xi_um_guess_1d_v3_widget,
+        sigma_x_F_gamma_um_multiplier_1d_v3_widget,      
     ]
 )
 column1b_v3 = widgets.VBox(
     [
-        snr_db_v3_widget,
-        xi_um_guess_v3_widget,
-        xatol_v3_widget,
-        sigma_x_F_gamma_um_multiplier_v3_widget,      
+        crop_px_2d_v3_widget,
+        pixis_profile_avg_width_2d_v3_widget,
+        snr_db_2d_v3_widget,
+        xi_um_guess_2d_v3_widget,
+        sigma_x_F_gamma_um_multiplier_2d_v3_widget,
+        xatol_2d_v3_widget,
     ]
 )
 
 # for v1:
 column1c = widgets.VBox(
     [
-        sigma_x_F_gamma_um_min_widget,
-        sigma_x_F_gamma_um_max_widget,
-        sigma_x_F_gamma_um_stepsize_widget,        
-        sigma_y_F_gamma_um_min_widget,
-        sigma_y_F_gamma_um_max_widget,
-        sigma_y_F_gamma_um_stepsize_widget,        
+        crop_px_2d_v1_widget,
+        pixis_profile_avg_width_2d_v1_widget,
+        sigma_x_F_gamma_um_min_2d_v1_widget,
+        sigma_x_F_gamma_um_max_2d_v1_widget,
+        sigma_x_F_gamma_um_stepsize_2d_v1_widget,        
+        sigma_y_F_gamma_um_min_2d_v1_widget,
+        sigma_y_F_gamma_um_max_2d_v1_widget,
+        sigma_y_F_gamma_um_stepsize_2d_v1_widget,        
     ]
 )
 
@@ -4448,12 +4482,12 @@ plot_deconvmethod_1d_v2_interactive_output = interactive_output(
     plot_deconvmethod_1d_v2,
     {
         "do_plot_deconvmethod_1d_v2": do_plot_deconvmethod_1d_v2_widget,
-        "balance" : balance_v2_widget,
-        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
-        "xi_um_guess" : xi_um_guess_v2_widget,
-        "xatol" : xatol_v2_widget,
-        "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_v2_widget,
-        "crop_px" : crop_px_widget,
+        "balance" : balance_1d_v2_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_1d_v2_widget,
+        "xi_um_guess" : xi_um_guess_1d_v2_widget,
+        "xatol" : xatol_1d_v2_widget,
+        "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_1d_v2_widget,
+        "crop_px" : crop_px_1d_v2_widget,
         # "hdf5_file_path": dph_settings_bgsubtracted_widget,
         # "imageid": imageid_widget,
         "save_to_df": save_to_df_widget,
@@ -4466,12 +4500,12 @@ plot_deconvmethod_2d_v2_interactive_output = interactive_output(
     plot_deconvmethod_2d_v2,
     {
         "do_plot_deconvmethod_2d_v2": do_plot_deconvmethod_2d_v2_widget,
-        "balance" : balance_v2_widget,
-        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
-        "xi_um_guess" : xi_um_guess_v2_widget,
-        "xatol" : xatol_v2_widget,
-        "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_v2_widget,
-        "crop_px" : crop_px_widget,
+        "balance" : balance_2d_v2_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_2d_v2_widget,
+        "xi_um_guess" : xi_um_guess_2d_v2_widget,
+        "xatol" : xatol_2d_v2_widget,
+        "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_2d_v2_widget,
+        "crop_px" : crop_px_2d_v2_widget,
         # "hdf5_file_path": dph_settings_bgsubtracted_widget,
         # "imageid": imageid_widget,
         "save_to_df": save_to_df_widget,
@@ -4484,12 +4518,12 @@ plot_deconvmethod_1d_v3_interactive_output = interactive_output(
     plot_deconvmethod_1d_v3,
     {
         "do_plot_deconvmethod_1d_v3": do_plot_deconvmethod_1d_v3_widget,
-        "snr_db" : snr_db_v3_widget,
-        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
-        "xi_um_guess" : xi_um_guess_v3_widget,
-        "xatol" : xatol_v3_widget,
-        "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_v3_widget,
-        "crop_px" : crop_px_widget,
+        "snr_db" : snr_db_1d_v3_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_1d_v3_widget,
+        "xi_um_guess" : xi_um_guess_1d_v3_widget,
+        "xatol" : xatol_1d_v3_widget,
+        "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_1d_v3_widget,
+        "crop_px" : crop_px_1d_v3_widget,
         # "hdf5_file_path": dph_settings_bgsubtracted_widget,
         # "imageid": imageid_widget,
         "save_to_df": save_to_df_widget,
@@ -4502,12 +4536,12 @@ plot_deconvmethod_2d_v3_interactive_output = interactive_output(
     plot_deconvmethod_2d_v3,
     {
         "do_plot_deconvmethod_2d_v3": do_plot_deconvmethod_2d_v3_widget,
-        "snr_db" : snr_db_v3_widget,
-        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
-        "xi_um_guess" : xi_um_guess_v3_widget,
-        "xatol" : xatol_v3_widget,
-        "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_v3_widget,
-        "crop_px" : crop_px_widget,
+        "snr_db" : snr_db_2d_v3_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_2d_v3_widget,
+        "xi_um_guess" : xi_um_guess_2d_v3_widget,
+        "xatol" : xatol_2d_v3_widget,
+        "sigma_x_F_gamma_um_multiplier" : sigma_x_F_gamma_um_multiplier_2d_v3_widget,
+        "crop_px" : crop_px_2d_v3_widget,
         # "hdf5_file_path": dph_settings_bgsubtracted_widget,
         # "imageid": imageid_widget,
         "save_to_df": save_to_df_widget,
@@ -4530,14 +4564,14 @@ plot_deconvmethod_2d_v1_interactive_output = interactive_output(
     plot_deconvmethod_2d_v1,
     {
         "do_plot_deconvmethod_2d_v1": do_plot_deconvmethod_2d_v1_widget,
-        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
-        "crop_px" : crop_px_widget,
-        "sigma_x_F_gamma_um_min" : sigma_x_F_gamma_um_min_widget, 
-        "sigma_x_F_gamma_um_max" : sigma_x_F_gamma_um_max_widget, 
-        "sigma_x_F_gamma_um_stepsize" : sigma_x_F_gamma_um_stepsize_widget, 
-        "sigma_y_F_gamma_um_min" : sigma_y_F_gamma_um_min_widget, 
-        "sigma_y_F_gamma_um_max" : sigma_y_F_gamma_um_max_widget, 
-        "sigma_y_F_gamma_um_stepsize" : sigma_y_F_gamma_um_stepsize_widget, 
+        "pixis_profile_avg_width" : pixis_profile_avg_width_2d_v1_widget,
+        "crop_px" : crop_px_2d_v1_widget,
+        "sigma_x_F_gamma_um_min" : sigma_x_F_gamma_um_min_2d_v1_widget, 
+        "sigma_x_F_gamma_um_max" : sigma_x_F_gamma_um_max_2d_v1_widget, 
+        "sigma_x_F_gamma_um_stepsize" : sigma_x_F_gamma_um_stepsize_2d_v1_widget, 
+        "sigma_y_F_gamma_um_min" : sigma_y_F_gamma_um_min_2d_v1_widget, 
+        "sigma_y_F_gamma_um_max" : sigma_y_F_gamma_um_max_2d_v1_widget, 
+        "sigma_y_F_gamma_um_stepsize" : sigma_y_F_gamma_um_stepsize_2d_v1_widget, 
         "save_to_df": save_to_df_widget,
     },
 )
@@ -4891,6 +4925,27 @@ def imageid_widget_changed(change):
             # guess parameter - df_deconvmethod_2d_v1
             df_deconvmethod_2d_v1_best = df_deconvmethod_2d_v1_results[df_deconvmethod_2d_v1_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_deconvmethod_2d_v1',ascending=True)
 
+            pixis_profile_avg_width_2d_v1_best = df_deconvmethod_2d_v1_best['pixis_profile_avg_width'].iloc[0]
+            crop_px_2d_v1_best = df_deconvmethod_2d_v1_best['crop_px'].iloc[0] 
+
+            sigma_x_F_gamma_um_min_2d_v1_best = df_deconvmethod_2d_v1_best['sigma_x_F_gamma_um_min'].iloc[0]
+            sigma_x_F_gamma_um_max_2d_v1_best = df_deconvmethod_2d_v1_best['sigma_x_F_gamma_um_max'].iloc[0]
+            sigma_x_F_gamma_um_stepsize_2d_v1_best = df_deconvmethod_2d_v1_best['sigma_x_F_gamma_um_stepsize'].iloc[0]
+            sigma_y_F_gamma_um_min_2d_v1_best = df_deconvmethod_2d_v1_best['sigma_y_F_gamma_um_min'].iloc[0]
+            sigma_y_F_gamma_um_max_2d_v1_best = df_deconvmethod_2d_v1_best['sigma_y_F_gamma_um_max'].iloc[0]
+            sigma_y_F_gamma_um_stepsize_2d_v1_best = df_deconvmethod_2d_v1_best['sigma_y_F_gamma_um_stepsize'].iloc[0]
+
+            if np.isnan(xi_um_guess_1d_v2_best) == False:               
+                pixis_profile_avg_width_2d_v1_widget.value = pixis_profile_avg_width_2d_v1_best
+                crop_px_2d_v1_widget.value = crop_px_2d_v1_best
+
+                sigma_x_F_gamma_um_min_2d_v1_widget.value = sigma_x_F_gamma_um_min_2d_v1_best
+                sigma_x_F_gamma_um_max_2d_v1_widget.value = sigma_x_F_gamma_um_max_2d_v1_best
+                sigma_x_F_gamma_um_stepsize_2d_v1_widget.value = sigma_x_F_gamma_um_stepsize_2d_v1_best
+                sigma_y_F_gamma_um_min_2d_v1_widget.value = sigma_y_F_gamma_um_min_2d_v1_best
+                sigma_y_F_gamma_um_max_2d_v1_widget.value = sigma_y_F_gamma_um_max_2d_v1_best
+                sigma_y_F_gamma_um_stepsize_2d_v1_widget.value = sigma_y_F_gamma_um_stepsize_2d_v1_best
+
 
             # guess parameter - df_deconvmethod_1d_v2
             df_deconvmethod_1d_v2_best = df_deconvmethod_1d_v2_results[df_deconvmethod_1d_v2_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_deconvmethod_1d_v2',ascending=True)
@@ -4903,13 +4958,13 @@ def imageid_widget_changed(change):
             xatol_1d_v2_best = df_deconvmethod_1d_v2_best['xatol'].iloc[0]
 
             if np.isnan(xi_um_guess_1d_v2_best) == False:               
-                pixis_profile_avg_width_widget.value = pixis_profile_avg_width_1d_v2_best
-                crop_px_widget.value = crop_px_1d_v2_best
+                pixis_profile_avg_width_1d_v2_widget.value = pixis_profile_avg_width_1d_v2_best
+                crop_px_1d_v2_widget.value = crop_px_1d_v2_best
 
-                balance_v2_widget.value = balance_1d_v2_best
-                xi_um_guess_v2_widget.value = xi_um_guess_1d_v2_best
-                sigma_x_F_gamma_um_multiplier_v2_widget.value = sigma_x_F_gamma_um_multiplier_1d_v2_best
-                xatol_v2_widget.value = xatol_1d_v2_best
+                balance_1d_v2_widget.value = balance_1d_v2_best
+                xi_um_guess_1d_v2_widget.value = xi_um_guess_1d_v2_best
+                sigma_x_F_gamma_um_multiplier_1d_v2_widget.value = sigma_x_F_gamma_um_multiplier_1d_v2_best
+                xatol_1d_v2_widget.value = xatol_1d_v2_best
 
             # guess parameter - df_deconvmethod_2d_v2
             df_deconvmethod_2d_v2_best = df_deconvmethod_2d_v2_results[df_deconvmethod_2d_v2_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_deconvmethod_2d_v2',ascending=True)
@@ -4920,6 +4975,15 @@ def imageid_widget_changed(change):
             xi_um_guess_2d_v2_best = df_deconvmethod_2d_v2_best['xi_um_guess'].iloc[0]
             sigma_x_F_gamma_um_multiplier_2d_v2_best = df_deconvmethod_2d_v2_best['sigma_x_F_gamma_um_multiplier'].iloc[0]
             xatol_2d_v2_best = df_deconvmethod_2d_v2_best['xatol'].iloc[0]
+
+            if np.isnan(xi_um_guess_2d_v2_best) == False:               
+                pixis_profile_avg_width_2d_v2_widget.value = pixis_profile_avg_width_2d_v2_best
+                crop_px_2d_v2_widget.value = crop_px_2d_v2_best
+
+                balance_2d_v2_widget.value = balance_2d_v2_best
+                xi_um_guess_2d_v2_widget.value = xi_um_guess_2d_v2_best
+                sigma_x_F_gamma_um_multiplier_2d_v2_widget.value = sigma_x_F_gamma_um_multiplier_2d_v2_best
+                xatol_2d_v2_widget.value = xatol_2d_v2_best
 
             # guess parameter - df_deconvmethod_1d_v3
             df_deconvmethod_1d_v3_best = df_deconvmethod_1d_v3_results[df_deconvmethod_1d_v3_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_deconvmethod_1d_v3',ascending=True)
@@ -4932,13 +4996,13 @@ def imageid_widget_changed(change):
             xatol_1d_v3_best = df_deconvmethod_1d_v3_best['xatol'].iloc[0]
 
             if np.isnan(xi_um_guess_1d_v3_best) == False:
-                pixis_profile_avg_width_widget.value = pixis_profile_avg_width_1d_v3_best
-                crop_px_widget.value = crop_px_1d_v3_best
+                pixis_profile_avg_width_1d_v3_widget.value = pixis_profile_avg_width_1d_v3_best
+                crop_px_1d_v3_widget.value = crop_px_1d_v3_best
 
-                snr_db_v3_widget.value = snr_db_1d_v3_best # 26.8 # to do
-                xi_um_guess_v3_widget.value = xi_um_guess_1d_v3_best
-                sigma_x_F_gamma_um_multiplier_v3_widget.value = sigma_x_F_gamma_um_multiplier_1d_v3_best
-                xatol_v3_widget.value = xatol_1d_v3_best
+                snr_db_1d_v3_widget.value = snr_db_1d_v3_best # 26.8 # to do
+                xi_um_guess_1d_v3_widget.value = xi_um_guess_1d_v3_best
+                sigma_x_F_gamma_um_multiplier_1d_v3_widget.value = sigma_x_F_gamma_um_multiplier_1d_v3_best
+                xatol_1d_v3_widget.value = xatol_1d_v3_best
 
             # guess parameter - df_deconvmethod_2d_v3
             df_deconvmethod_2d_v3_best = df_deconvmethod_2d_v3_results[df_deconvmethod_2d_v3_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_deconvmethod_2d_v3',ascending=True)
@@ -4949,6 +5013,15 @@ def imageid_widget_changed(change):
             xi_um_guess_2d_v3_best = df_deconvmethod_2d_v3_best['xi_um_guess'].iloc[0]
             sigma_x_F_gamma_um_multiplier_2d_v3_best = df_deconvmethod_2d_v3_best['sigma_x_F_gamma_um_multiplier'].iloc[0]
             xatol_2d_v3_best = df_deconvmethod_2d_v3_best['xatol'].iloc[0]
+
+            if np.isnan(xi_um_guess_2d_v3_best) == False:
+                pixis_profile_avg_width_2d_v3_widget.value = pixis_profile_avg_width_2d_v3_best
+                crop_px_2d_v3_widget.value = crop_px_2d_v3_best
+
+                snr_db_2d_v3_widget.value = snr_db_2d_v3_best # 26.8 # to do
+                xi_um_guess_2d_v3_widget.value = xi_um_guess_2d_v3_best
+                sigma_x_F_gamma_um_multiplier_2d_v3_widget.value = sigma_x_F_gamma_um_multiplier_2d_v3_best
+                xatol_2d_v3_widget.value = xatol_2d_v3_best
             
                 
 
@@ -5035,23 +5108,56 @@ def imageid_widget_changed(change):
             # mod_shiftx_um_do_fit_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_shiftx_um_do_fit_measurement_default'].iloc[0]
 
        
-        if load_from_df_widget.value == False or np.isnan(xi_um_guess) == True:
-            # set general default values
-            pixis_profile_avg_width_widget.value = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['pixis_profile_avg_width_measurement_default'].iloc[0]
-            crop_px_widget.value = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+        if load_from_df_widget.value == False or np.isnan(sigma_x_F_gamma_um_min_2d_v1_best) == True: 
+            pixis_profile_avg_width_2d_v1_widget.value = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['pixis_profile_avg_width_measurement_default'].iloc[0]
+            crop_px_2d_v1_widget.value = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
 
-            # Set default values for Deconvmethod v2
-            statustext_widget.value = 'Set default values for Deconvmethod v2...'
-            balance_v2_widget.value = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
-            xi_um_guess_v2_widget.value = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
-            xatol_v2_widget.value = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
-            sigma_x_F_gamma_um_multiplier_v2_widget.value = df_deconvmethod_v2_measurement_default[df_deconvmethod_v2_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
-            
-            # Set default values for Deconvmethod v3
-            snr_db_v3_widget.value = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
-            xi_um_guess_v3_widget.value = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
-            xatol_v3_widget.value = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
-            sigma_x_F_gamma_um_multiplier_v3_widget.value = df_deconvmethod_v3_measurement_default[df_deconvmethod_v3_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+            sigma_x_F_gamma_um_min_2d_v1_widget.value = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_min_measurement_default'].iloc[0]
+            sigma_x_F_gamma_um_max_2d_v1_widget.value = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_max_measurement_default'].iloc[0]
+            sigma_x_F_gamma_um_stepsize_2d_v1_widget.value = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_stepsize_measurement_default'].iloc[0]
+            sigma_y_F_gamma_um_min_2d_v1_widget.value = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['sigma_y_F_gamma_um_min_measurement_default'].iloc[0]
+            sigma_y_F_gamma_um_max_2d_v1_widget.value = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['sigma_y_F_gamma_um_max_measurement_default'].iloc[0]
+            sigma_y_F_gamma_um_stepsize_2d_v1_widget.value = df_deconvmethod_2d_v1_measurement_default[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement]['sigma_y_F_gamma_um_stepsize_measurement_default'].iloc[0]
+        
+        if load_from_df_widget.value == False or np.isnan(xi_um_guess_1d_v2_best) == True:           
+            # Load default values for Deconvmethod 1d v2
+            pixis_profile_avg_width_1d_v2_widget.value = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['pixis_profile_avg_width_measurement_default'].iloc[0]
+            crop_px_1d_v2_widget.value = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+
+            balance_1d_v2_widget.value = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
+            xi_um_guess_1d_v2_widget.value = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+            xatol_1d_v2_widget.value = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+            sigma_x_F_gamma_um_multiplier_1d_v2_widget.value = df_deconvmethod_1d_v2_measurement_default[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+
+        if load_from_df_widget.value == False or np.isnan(xi_um_guess_2d_v2_best) == True:    
+            # Load default values for Deconvmethod 2d v2
+            pixis_profile_avg_width_2d_v2_widget.value = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['pixis_profile_avg_width_measurement_default'].iloc[0]
+            crop_px_2d_v2_widget.value = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+
+            balance_2d_v2_widget.value = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['balance_measurement_default'].iloc[0]
+            xi_um_guess_2d_v2_widget.value = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+            xatol_2d_v2_widget.value = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+            sigma_x_F_gamma_um_multiplier_2d_v2_widget.value = df_deconvmethod_2d_v2_measurement_default[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+
+        if load_from_df_widget.value == False or np.isnan(xi_um_guess_1d_v3_best) == True:
+            # Load default values for Deconvmethod 1d v3
+            pixis_profile_avg_width_1d_v3_widget.value = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['pixis_profile_avg_width_measurement_default'].iloc[0]
+            crop_px_1d_v3_widget.value = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+
+            snr_db_1d_v3_widget.value = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
+            xi_um_guess_1d_v3_widget.value = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+            xatol_1d_v3_widget.value = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+            sigma_x_F_gamma_um_multiplier_1d_v3_widget.value = df_deconvmethod_1d_v3_measurement_default[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
+
+        if load_from_df_widget.value == False or np.isnan(xi_um_guess_2d_v3_best) == True:
+            # Load default values for Deconvmethod 2d v3
+            pixis_profile_avg_width_2d_v3_widget.value = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['pixis_profile_avg_width_measurement_default'].iloc[0]
+            crop_px_2d_v3_widget.value = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+
+            snr_db_2d_v3_widget.value = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['snr_db_measurement_default'].iloc[0]
+            xi_um_guess_2d_v3_widget.value = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['xi_um_guess_measurement_default'].iloc[0]
+            xatol_2d_v3_widget.value = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['xatol_measurement_default'].iloc[0]
+            sigma_x_F_gamma_um_multiplier_2d_v3_widget.value = df_deconvmethod_2d_v3_measurement_default[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement]['sigma_x_F_gamma_um_multiplier_measurement_default'].iloc[0]
             
 
         if do_plot_fitting_v1_widget_was_active == True:
@@ -5186,31 +5292,47 @@ def set_measurement_default(change):
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'normfactor_range_0_measurement_default'] = normfactor_range_widget.value[0]
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'normfactor_range_1_measurement_default'] = normfactor_range_widget.value[1]
 
-        # Set default values for Deconvmethod v1
-        df_deconvmethod_v1_measurement_default.loc[df_deconvmethod_v1_measurement_default['measurement']==measurement, 'pixis_profile_avg_width_measurement_default'] = pixis_profile_avg_width_widget.value
-        df_deconvmethod_v1_measurement_default.loc[df_deconvmethod_v1_measurement_default['measurement']==measurement, 'crop_px_measurement_default'] = crop_px_widget.value
-        df_deconvmethod_v1_measurement_default.loc[df_deconvmethod_v1_measurement_default['measurement']==measurement, 'sigma_x_F_gamma_um_min_measurement_default'] = sigma_x_F_gamma_um_min_widget.value
-        df_deconvmethod_v1_measurement_default.loc[df_deconvmethod_v1_measurement_default['measurement']==measurement, 'sigma_x_F_gamma_um_max_measurement_default'] = sigma_x_F_gamma_um_max_widget.value
-        df_deconvmethod_v1_measurement_default.loc[df_deconvmethod_v1_measurement_default['measurement']==measurement, 'sigma_x_F_gamma_um_stepsize_measurement_default'] = sigma_x_F_gamma_um_stepsize_widget.value
-        df_deconvmethod_v1_measurement_default.loc[df_deconvmethod_v1_measurement_default['measurement']==measurement, 'sigma_y_F_gamma_um_min_measurement_default'] = sigma_y_F_gamma_um_min_widget.value
-        df_deconvmethod_v1_measurement_default.loc[df_deconvmethod_v1_measurement_default['measurement']==measurement, 'sigma_y_F_gamma_um_max_measurement_default'] = sigma_y_F_gamma_um_max_widget.value
-        df_deconvmethod_v1_measurement_default.loc[df_deconvmethod_v1_measurement_default['measurement']==measurement, 'sigma_y_F_gamma_um_stepsize_measurement_default'] = sigma_y_F_gamma_um_stepsize_widget.value
+        # Set default values for Deconvmethod 2d v1
+        df_deconvmethod_2d_v1_measurement_default.loc[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement, 'pixis_profile_avg_width_measurement_default'] = pixis_profile_avg_width_2d_v1_widget.value
+        df_deconvmethod_2d_v1_measurement_default.loc[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement, 'crop_px_measurement_default'] = crop_px_2d_v1_widget.value
+        df_deconvmethod_2d_v1_measurement_default.loc[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement, 'sigma_x_F_gamma_um_min_measurement_default'] = sigma_x_F_gamma_um_min_2d_v1_widget.value
+        df_deconvmethod_2d_v1_measurement_default.loc[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement, 'sigma_x_F_gamma_um_max_measurement_default'] = sigma_x_F_gamma_um_max_2d_v1_widget.value
+        df_deconvmethod_2d_v1_measurement_default.loc[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement, 'sigma_x_F_gamma_um_stepsize_measurement_default'] = sigma_x_F_gamma_um_stepsize_2d_v1_widget.value
+        df_deconvmethod_2d_v1_measurement_default.loc[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement, 'sigma_y_F_gamma_um_min_measurement_default'] = sigma_y_F_gamma_um_min_2d_v1_widget.value
+        df_deconvmethod_2d_v1_measurement_default.loc[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement, 'sigma_y_F_gamma_um_max_measurement_default'] = sigma_y_F_gamma_um_max_2d_v1_widget.value
+        df_deconvmethod_2d_v1_measurement_default.loc[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement, 'sigma_y_F_gamma_um_stepsize_measurement_default'] = sigma_y_F_gamma_um_stepsize_2d_v1_widget.value
 
-        # Set default values for Deconvmethod v2
-        df_deconvmethod_v2_measurement_default.loc[df_deconvmethod_v2_measurement_default['measurement']==measurement, 'balance_measurement_default'] = balance_v2_widget.value
-        df_deconvmethod_v2_measurement_default.loc[df_deconvmethod_v2_measurement_default['measurement']==measurement, 'pixis_profile_avg_width_measurement_default'] = pixis_profile_avg_width_widget.value
-        df_deconvmethod_v2_measurement_default.loc[df_deconvmethod_v2_measurement_default['measurement']==measurement, 'crop_px_measurement_default'] = crop_px_widget.value
-        df_deconvmethod_v2_measurement_default.loc[df_deconvmethod_v2_measurement_default['measurement']==measurement, 'xi_um_guess_measurement_default'] = xi_um_guess_v2_widget.value
-        df_deconvmethod_v2_measurement_default.loc[df_deconvmethod_v2_measurement_default['measurement']==measurement, 'sigma_x_F_gamma_um_multiplier_measurement_default'] = sigma_x_F_gamma_um_multiplier_v2_widget.value
-        df_deconvmethod_v2_measurement_default.loc[df_deconvmethod_v2_measurement_default['measurement']==measurement, 'xatol_measurement_default'] = xatol_v2_widget.value
+        # Set default values for Deconvmethod 1d v2
+        df_deconvmethod_1d_v2_measurement_default.loc[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement, 'balance_measurement_default'] = balance_1d_v2_widget.value
+        df_deconvmethod_1d_v2_measurement_default.loc[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement, 'pixis_profile_avg_width_measurement_default'] = pixis_profile_avg_width_1d_v2_widget.value
+        df_deconvmethod_1d_v2_measurement_default.loc[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement, 'crop_px_measurement_default'] = crop_px_1d_v2_widget.value
+        df_deconvmethod_1d_v2_measurement_default.loc[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement, 'xi_um_guess_measurement_default'] = xi_um_guess_1d_v2_widget.value
+        df_deconvmethod_1d_v2_measurement_default.loc[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement, 'sigma_x_F_gamma_um_multiplier_measurement_default'] = sigma_x_F_gamma_um_multiplier_1d_v2_widget.value
+        df_deconvmethod_1d_v2_measurement_default.loc[df_deconvmethod_1d_v2_measurement_default['measurement']==measurement, 'xatol_measurement_default'] = xatol_1d_v2_widget.value
+        
+        # Set default values for Deconvmethod 2d v2
+        df_deconvmethod_2d_v2_measurement_default.loc[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement, 'balance_measurement_default'] = balance_2d_v2_widget.value
+        df_deconvmethod_2d_v2_measurement_default.loc[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement, 'pixis_profile_avg_width_measurement_default'] = pixis_profile_avg_width_2d_v2_widget.value
+        df_deconvmethod_2d_v2_measurement_default.loc[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement, 'crop_px_measurement_default'] = crop_px_2d_v2_widget.value
+        df_deconvmethod_2d_v2_measurement_default.loc[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement, 'xi_um_guess_measurement_default'] = xi_um_guess_2d_v2_widget.value
+        df_deconvmethod_2d_v2_measurement_default.loc[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement, 'sigma_x_F_gamma_um_multiplier_measurement_default'] = sigma_x_F_gamma_um_multiplier_2d_v2_widget.value
+        df_deconvmethod_2d_v2_measurement_default.loc[df_deconvmethod_2d_v2_measurement_default['measurement']==measurement, 'xatol_measurement_default'] = xatol_2d_v2_widget.value
 
-        # Set default values for Deconvmethod v3
-        df_deconvmethod_v3_measurement_default.loc[df_deconvmethod_v3_measurement_default['measurement']==measurement, 'snr_db_measurement_default'] = snr_db_v3_widget.value
-        df_deconvmethod_v3_measurement_default.loc[df_deconvmethod_v3_measurement_default['measurement']==measurement, 'pixis_profile_avg_width_measurement_default'] = pixis_profile_avg_width_widget.value
-        df_deconvmethod_v3_measurement_default.loc[df_deconvmethod_v3_measurement_default['measurement']==measurement, 'crop_px_measurement_default'] = crop_px_widget.value
-        df_deconvmethod_v3_measurement_default.loc[df_deconvmethod_v3_measurement_default['measurement']==measurement, 'xi_um_guess_measurement_default'] = xi_um_guess_v3_widget.value
-        df_deconvmethod_v3_measurement_default.loc[df_deconvmethod_v3_measurement_default['measurement']==measurement, 'sigma_x_F_gamma_um_multiplier_measurement_default'] = sigma_x_F_gamma_um_multiplier_v3_widget.value
-        df_deconvmethod_v3_measurement_default.loc[df_deconvmethod_v3_measurement_default['measurement']==measurement, 'xatol_measurement_default'] = xatol_v3_widget.value
+        # Set default values for Deconvmethod 1d v3
+        df_deconvmethod_1d_v3_measurement_default.loc[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement, 'snr_db_measurement_default'] = snr_db_1d_v3_widget.value
+        df_deconvmethod_1d_v3_measurement_default.loc[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement, 'pixis_profile_avg_width_measurement_default'] = pixis_profile_avg_width_1d_v3_widget.value
+        df_deconvmethod_1d_v3_measurement_default.loc[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement, 'crop_px_measurement_default'] = crop_px_1d_v3_widget.value
+        df_deconvmethod_1d_v3_measurement_default.loc[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement, 'xi_um_guess_measurement_default'] = xi_um_guess_1d_v3_widget.value
+        df_deconvmethod_1d_v3_measurement_default.loc[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement, 'sigma_x_F_gamma_um_multiplier_measurement_default'] = sigma_x_F_gamma_um_multiplier_1d_v3_widget.value
+        df_deconvmethod_1d_v3_measurement_default.loc[df_deconvmethod_1d_v3_measurement_default['measurement']==measurement, 'xatol_measurement_default'] = xatol_1d_v3_widget.value
+
+        # Set default values for Deconvmethod 2d v3
+        df_deconvmethod_2d_v3_measurement_default.loc[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement, 'snr_db_measurement_default'] = snr_db_2d_v3_widget.value
+        df_deconvmethod_2d_v3_measurement_default.loc[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement, 'pixis_profile_avg_width_measurement_default'] = pixis_profile_avg_width_2d_v3_widget.value
+        df_deconvmethod_2d_v3_measurement_default.loc[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement, 'crop_px_measurement_default'] = crop_px_2d_v3_widget.value
+        df_deconvmethod_2d_v3_measurement_default.loc[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement, 'xi_um_guess_measurement_default'] = xi_um_guess_2d_v3_widget.value
+        df_deconvmethod_2d_v3_measurement_default.loc[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement, 'sigma_x_F_gamma_um_multiplier_measurement_default'] = sigma_x_F_gamma_um_multiplier_2d_v3_widget.value
+        df_deconvmethod_2d_v3_measurement_default.loc[df_deconvmethod_2d_v3_measurement_default['measurement']==measurement, 'xatol_measurement_default'] = xatol_2d_v3_widget.value
 
 
         set_measurement_default_widget.value = False
@@ -5237,14 +5359,20 @@ def save_measurement_default_to_csv(change):
         df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v1_measurement_default.csv')
         df_fitting_v1_measurement_default.to_csv(df_measurement_default_file)
 
-        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v1_measurement_default.csv')
-        df_deconvmethod_v1_measurement_default.to_csv(df_measurement_default_file)
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v1_measurement_default.csv')
+        df_deconvmethod_2d_v1_measurement_default.to_csv(df_measurement_default_file)
 
-        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v2_measurement_default.csv')
-        df_deconvmethod_v2_measurement_default.to_csv(df_measurement_default_file)
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_1d_v2_measurement_default.csv')
+        df_deconvmethod_1d_v2_measurement_default.to_csv(df_measurement_default_file)
+        
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v2_measurement_default.csv')
+        df_deconvmethod_2d_v2_measurement_default.to_csv(df_measurement_default_file)
 
-        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v3_measurement_default.csv')
-        df_deconvmethod_v3_measurement_default.to_csv(df_measurement_default_file)
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_1d_v3_measurement_default.csv')
+        df_deconvmethod_2d_v3_measurement_default.to_csv(df_measurement_default_file)
+        
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_1d_v3_measurement_default.csv')
+        df_deconvmethod_2d_v3_measurement_default.to_csv(df_measurement_default_file)
 
         save_measurement_default_to_csv_widget.value = False
 
@@ -5264,9 +5392,11 @@ load_measurement_default_from_csv_widget = widgets.ToggleButton(
 def load_measurement_default_from_csv(change):
     global df_fitting_measurement_default
     global df_fitting_v1_measurement_default
-    global df_deconvmethod_v1_measurement_default
-    global df_deconvmethod_v2_measurement_default
-    global df_deconvmethod_v3_measurement_default
+    global df_deconvmethod_2d_v1_measurement_default
+    global df_deconvmethod_1d_v2_measurement_default
+    global df_deconvmethod_2d_v2_measurement_default
+    global df_deconvmethod_1d_v3_measurement_default
+    global df_deconvmethod_2d_v3_measurement_default
     
     if load_measurement_default_from_csv_widget.value == True:
         df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v2_measurement_default.csv')
@@ -5277,17 +5407,25 @@ def load_measurement_default_from_csv(change):
     if os.path.isfile(df_measurement_default_file):
         df_fitting_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v1_measurement_default.csv')
+    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v1_measurement_default.csv')
     if os.path.isfile(df_measurement_default_file):
-        df_deconvmethod_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+        df_deconvmethod_2d_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v2_measurement_default.csv')
+    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_1d_v2_measurement_default.csv')
     if os.path.isfile(df_measurement_default_file):
-        df_deconvmethod_v2_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+        df_deconvmethod_1d_v2_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+    
+    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v2_measurement_default.csv')
+    if os.path.isfile(df_measurement_default_file):
+        df_deconvmethod_2d_v2_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_v3_measurement_default.csv')
+    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_1d_v3_measurement_default.csv')
     if os.path.isfile(df_measurement_default_file):
-        df_deconvmethod_v3_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+        df_deconvmethod_1d_v3_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+    
+    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v3_measurement_default.csv')
+    if os.path.isfile(df_measurement_default_file):
+        df_deconvmethod_2d_v3_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
 
     load_measurement_default_from_csv_widget.value = False
