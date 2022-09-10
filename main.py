@@ -1132,25 +1132,49 @@ mod_sigma_um_value_widget = widgets.Text(value="", description="",layout=value_w
 mod_shiftx_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
 
 
-# deconvolution_v1 parameter widgets
-sigma_x_F_gamma_um_min_widget = widgets.FloatText(value=7, description='sigma_x_F_gamma_um_min')
-sigma_x_F_gamma_um_max_widget = widgets.FloatText(value=40, description='sigma_x_F_gamma_um_max')
-sigma_x_F_gamma_um_stepsize_widget = widgets.FloatText(value=1, description='sigma_x_F_gamma_um_stepsize')
-sigma_y_F_gamma_um_min_widget = widgets.FloatText(value=7, description='sigma_y_F_gamma_um_min')
-sigma_y_F_gamma_um_max_widget = widgets.FloatText(value=40, description='sigma_y_F_gamma_um_max')
-sigma_y_F_gamma_um_stepsize_widget = widgets.FloatText(value=1, description='sigma_y_F_gamma_um_stepsize')
+# deconvolution_2d_v1 parameter widgets
+crop_px_2d_v1_widget = widgets.FloatText(value=200, description='crop_px (2dv1)')
+pixis_profile_avg_width_2d_v1_widget = widgets.FloatText(value=200, description='profile width / px (2dv1)')
 
-# deconvolution v2 parameter widgets
-balance_v2_widget = widgets.FloatText(value=1, description='balance (v2)')
-xi_um_guess_v2_widget = widgets.FloatText(value=900, description='xi_um_guess (v2)')
-xatol_v2_widget = widgets.FloatText(value=5, description='xatol (v2')
-sigma_x_F_gamma_um_multiplier_v2_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget (v2)')
+sigma_x_F_gamma_um_min_2d_v1_widget = widgets.FloatText(value=7, description='sigma_x_F_gamma_um_min (2dv1)')
+sigma_x_F_gamma_um_max_2d_v1_widget = widgets.FloatText(value=40, description='sigma_x_F_gamma_um_max (2dv1)')
+sigma_x_F_gamma_um_stepsize_2d_v1_widget = widgets.FloatText(value=1, description='sigma_x_F_gamma_um_stepsize (2dv1)')
+sigma_y_F_gamma_um_min_2d_v1_widget = widgets.FloatText(value=7, description='sigma_y_F_gamma_um_min (2dv1)')
+sigma_y_F_gamma_um_max_2d_v1_widget = widgets.FloatText(value=40, description='sigma_y_F_gamma_um_max (2dv1)')
+sigma_y_F_gamma_um_stepsize_2d_v1_widget = widgets.FloatText(value=1, description='sigma_y_F_gamma_um_stepsize (2dv1)')
 
-# deconvolution v3 parameter widgets
-snr_db_v3_widget = widgets.FloatText(value=26.8, description='snr_db (v3)', step=0.1)
-xi_um_guess_v3_widget = widgets.FloatText(value=900, description='xi_um_guess (v3)')
-xatol_v3_widget = widgets.FloatText(value=5, description='xatol (v3)')
-sigma_x_F_gamma_um_multiplier_v3_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget (v3)')
+# deconvolution 1d v2 parameter widgets
+crop_px_1d_v2_widget = widgets.FloatText(value=200, description='crop_px (1dv2)')
+pixis_profile_avg_width_1d_v1_widget = widgets.FloatText(value=200, description='profile width / px (1dv2)')
+balance_1d_v2_widget = widgets.FloatText(value=1, description='balance (1dv2)')
+xi_um_guess_1d_v2_widget = widgets.FloatText(value=900, description='xi_um_guess (1dv2)')
+xatol_1d_v2_widget = widgets.FloatText(value=5, description='xatol (1dv2')
+sigma_x_F_gamma_um_multiplier_1d_v2_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget (1dv2)')
+
+# deconvolution 2d v2 parameter widgets
+crop_px_2d_v2_widget = widgets.FloatText(value=200, description='crop_px (2dv2)')
+pixis_profile_avg_width_2d_v1_widget = widgets.FloatText(value=200, description='profile width / px (2dv2)')
+balance_2d_v2_widget = widgets.FloatText(value=1, description='balance (2dv2)')
+xi_um_guess_2d_v2_widget = widgets.FloatText(value=900, description='xi_um_guess (2dv2)')
+xatol_2d_v2_widget = widgets.FloatText(value=5, description='xatol (2dv2')
+sigma_x_F_gamma_um_multiplier_2d_v2_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget (2dv2)')
+
+# deconvolution 1d v3 parameter widgets
+crop_px_1d_v3_widget = widgets.FloatText(value=200, description='crop_px (1dv3)')
+pixis_profile_avg_width_1d_v3_widget = widgets.FloatText(value=200, description='profile width / px (1dv3)')
+snr_db_1d_v3_widget = widgets.FloatText(value=26.8, description='snr_db (1dv3)', step=0.1)
+xi_um_guess_1d_v3_widget = widgets.FloatText(value=900, description='xi_um_guess (1dv3)')
+xatol_1d_v3_widget = widgets.FloatText(value=5, description='xatol (1dv3)')
+sigma_x_F_gamma_um_multiplier_1d_v3_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget (1dv3)')
+
+# deconvolution 2d v3 parameter widgets
+crop_px_2d_v3_widget = widgets.FloatText(value=200, description='crop_px (2dv3)')
+pixis_profile_avg_width_2d_v3_widget = widgets.FloatText(value=200, description='profile width / px (2dv3)')
+snr_db_2d_v3_widget = widgets.FloatText(value=26.8, description='snr_db (2dv3)', step=0.1)
+xi_um_guess_2d_v3_widget = widgets.FloatText(value=900, description='xi_um_guess (2dv3)')
+xatol_2d_v3_widget = widgets.FloatText(value=5, description='xatol (2dv3)')
+sigma_x_F_gamma_um_multiplier_2d_v3_widget = widgets.FloatText(value=1.5, description='sigma_x_F_gamma_um_multiplier_widget (2dv3)')
+
 
 # plot result widgets
 do_plot_fitting_vs_deconvolution_widget = widgets.Checkbox(value=False, description="do fitting vs deconv plot")
