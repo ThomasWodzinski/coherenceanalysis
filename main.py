@@ -4754,72 +4754,69 @@ def imageid_widget_changed(change):
 
         if load_from_df_widget.value == True:
 
-            df_fitting_v2_best = df_fitting_v2_results[df_fitting_v2_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_fitting',ascending=True)
+            
+
+            pixis_profile_avg_width = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pixis_profile_avg_width"].iloc[0]
 
             # guess parameter - fitting
-            shiftx_um = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um"].iloc[0]        
-            shiftx_um_range_0 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um_range_0"].iloc[0]
-            shiftx_um_range_1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um_range_1"].iloc[0]
-            shiftx_um_do_fit = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["shiftx_um_do_fit"].iloc[0]
-            wavelength_nm = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["wavelength_nm"].iloc[0]
-            wavelength_nm_range_0 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["wavelength_nm_range_0"].iloc[0]
-            wavelength_nm_range_1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["wavelength_nm_range_1"].iloc[0]
-            wavelength_nm_do_fit = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["wavelength_nm_do_fit"].iloc[0]
-            z_mm = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["z_mm"].iloc[0]
-            z_mm_range_0 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["z_mm_range_0"].iloc[0]
-            z_mm_range_1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["z_mm_range_1"].iloc[0]
-            z_mm_do_fit = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["z_mm_do_fit"].iloc[0]
-            d_um = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["d_um"].iloc[0]
-            d_um_range_0 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["d_um_range_0"].iloc[0]
-            d_um_range_1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["d_um_range_1"].iloc[0]
-            d_um_do_fit = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["d_um_do_fit"].iloc[0]
-            gamma = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["gamma"].iloc[0]
-            gamma_range_0 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["gamma_range_0"].iloc[0]
-            gamma_range_1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["gamma_range_1"].iloc[0]
-            gamma_do_fit = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["gamma_do_fit"].iloc[0]
-            w1_um = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["w1_um"].iloc[0]
-            w1_um_range_0 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["w1_um_range_0"].iloc[0]
-            w1_um_range_1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["w1_um_range_1"].iloc[0]
-            w1_um_do_fit = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["w1_um_do_fit"].iloc[0]
-            w2_um = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["w2_um"].iloc[0]
-            w2_um_range_0 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["w2_um_range_0"].iloc[0]
-            w2_um_range_1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["w2_um_range_1"].iloc[0]
-            w2_um_do_fit = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["w2_um_do_fit"].iloc[0]
-            I_Airy1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy1"].iloc[0]
-            I_Airy1_range_0 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy1_range_0"].iloc[0]
-            I_Airy1_range_1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy1_range_1"].iloc[0]
-            I_Airy1_do_fit = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy1_do_fit"].iloc[0]
-            I_Airy2 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy2"].iloc[0]
-            I_Airy2_range_0 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy2_range_0"].iloc[0]
-            I_Airy2_range_1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy2_range_1"].iloc[0]
-            I_Airy2_do_fit = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["I_Airy2_do_fit"].iloc[0]
-            x1_um = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["x1_um"].iloc[0]
-            x1_um_range_0 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["x1_um_range_0"].iloc[0]
-            x1_um_range_1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["x1_um_range_1"].iloc[0]
-            x1_um_do_fit = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["x1_um_do_fit"].iloc[0]
-            x2_um = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["x2_um"].iloc[0]
-            x2_um_range_0 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["x2_um_range_0"].iloc[0]
-            x2_um_range_1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["x2_um_range_1"].iloc[0]
-            x2_um_do_fit = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["x2_um_do_fit"].iloc[0]
-            normfactor = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["normfactor"].iloc[0]
-            normfactor_range_0 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["normfactor_range_0"].iloc[0]
-            normfactor_range_1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["normfactor_range_1"].iloc[0]
-            normfactor_do_fit = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["normfactor_do_fit"].iloc[0]
-            mod_sigma_um = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["mod_sigma_um"].iloc[0]
-            mod_sigma_um_range_0 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["mod_sigma_um_range_0"].iloc[0]
-            mod_sigma_um_range_1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["mod_sigma_um_range_1"].iloc[0]
-            mod_sigma_um_do_fit = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["mod_sigma_um_do_fit"].iloc[0]
-            mod_shiftx_um = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["mod_shiftx_um"].iloc[0]
-            mod_shiftx_um_range_0 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["mod_shiftx_um_range_0"].iloc[0]
-            mod_shiftx_um_range_1 = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["mod_shiftx_um_range_1"].iloc[0]
-            mod_shiftx_um_do_fit = df_fitting_v2_best[df_fitting_v2_best["timestamp_pulse_id"] == timestamp_pulse_id]["mod_shiftx_um_do_fit"].iloc[0]
+            df_fitting_v2_best = df_fitting_v2_results[df_fitting_v2_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_fitting',ascending=True)
 
-            # guess parameter - deconvmethod
-            pixis_profile_avg_width = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pixis_profile_avg_width"].iloc[0]
-            xi_um_guess = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["xi_um_guess"].iloc[0]
-            xatol = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["xatol"].iloc[0]
-            sigma_x_F_gamma_um_multiplier = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["sigma_x_F_gamma_um_multiplier"].iloc[0]
-            crop_px = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["crop_px"].iloc[0]
+            shiftx_um = df_fitting_v2_best["shiftx_um"].iloc[0]        
+            shiftx_um_range_0 = df_fitting_v2_best["shiftx_um_range_0"].iloc[0]
+            shiftx_um_range_1 = df_fitting_v2_best["shiftx_um_range_1"].iloc[0]
+            shiftx_um_do_fit = df_fitting_v2_best["shiftx_um_do_fit"].iloc[0]
+            wavelength_nm = df_fitting_v2_best["wavelength_nm"].iloc[0]
+            wavelength_nm_range_0 = df_fitting_v2_best["wavelength_nm_range_0"].iloc[0]
+            wavelength_nm_range_1 = df_fitting_v2_best["wavelength_nm_range_1"].iloc[0]
+            wavelength_nm_do_fit = df_fitting_v2_best["wavelength_nm_do_fit"].iloc[0]
+            z_mm = df_fitting_v2_best["z_mm"].iloc[0]
+            z_mm_range_0 = df_fitting_v2_best["z_mm_range_0"].iloc[0]
+            z_mm_range_1 = df_fitting_v2_best["z_mm_range_1"].iloc[0]
+            z_mm_do_fit = df_fitting_v2_best["z_mm_do_fit"].iloc[0]
+            d_um = df_fitting_v2_best["d_um"].iloc[0]
+            d_um_range_0 = df_fitting_v2_best["d_um_range_0"].iloc[0]
+            d_um_range_1 = df_fitting_v2_best["d_um_range_1"].iloc[0]
+            d_um_do_fit = df_fitting_v2_best["d_um_do_fit"].iloc[0]
+            gamma = df_fitting_v2_best["gamma"].iloc[0]
+            gamma_range_0 = df_fitting_v2_best["gamma_range_0"].iloc[0]
+            gamma_range_1 = df_fitting_v2_best["gamma_range_1"].iloc[0]
+            gamma_do_fit = df_fitting_v2_best["gamma_do_fit"].iloc[0]
+            w1_um = df_fitting_v2_best["w1_um"].iloc[0]
+            w1_um_range_0 = df_fitting_v2_best["w1_um_range_0"].iloc[0]
+            w1_um_range_1 = df_fitting_v2_best["w1_um_range_1"].iloc[0]
+            w1_um_do_fit = df_fitting_v2_best["w1_um_do_fit"].iloc[0]
+            w2_um = df_fitting_v2_best["w2_um"].iloc[0]
+            w2_um_range_0 = df_fitting_v2_best["w2_um_range_0"].iloc[0]
+            w2_um_range_1 = df_fitting_v2_best["w2_um_range_1"].iloc[0]
+            w2_um_do_fit = df_fitting_v2_best["w2_um_do_fit"].iloc[0]
+            I_Airy1 = df_fitting_v2_best["I_Airy1"].iloc[0]
+            I_Airy1_range_0 = df_fitting_v2_best["I_Airy1_range_0"].iloc[0]
+            I_Airy1_range_1 = df_fitting_v2_best["I_Airy1_range_1"].iloc[0]
+            I_Airy1_do_fit = df_fitting_v2_best["I_Airy1_do_fit"].iloc[0]
+            I_Airy2 = df_fitting_v2_best["I_Airy2"].iloc[0]
+            I_Airy2_range_0 = df_fitting_v2_best["I_Airy2_range_0"].iloc[0]
+            I_Airy2_range_1 = df_fitting_v2_best["I_Airy2_range_1"].iloc[0]
+            I_Airy2_do_fit = df_fitting_v2_best["I_Airy2_do_fit"].iloc[0]
+            x1_um = df_fitting_v2_best["x1_um"].iloc[0]
+            x1_um_range_0 = df_fitting_v2_best["x1_um_range_0"].iloc[0]
+            x1_um_range_1 = df_fitting_v2_best["x1_um_range_1"].iloc[0]
+            x1_um_do_fit = df_fitting_v2_best["x1_um_do_fit"].iloc[0]
+            x2_um = df_fitting_v2_best["x2_um"].iloc[0]
+            x2_um_range_0 = df_fitting_v2_best["x2_um_range_0"].iloc[0]
+            x2_um_range_1 = df_fitting_v2_best["x2_um_range_1"].iloc[0]
+            x2_um_do_fit = df_fitting_v2_best["x2_um_do_fit"].iloc[0]
+            normfactor = df_fitting_v2_best["normfactor"].iloc[0]
+            normfactor_range_0 = df_fitting_v2_best["normfactor_range_0"].iloc[0]
+            normfactor_range_1 = df_fitting_v2_best["normfactor_range_1"].iloc[0]
+            normfactor_do_fit = df_fitting_v2_best["normfactor_do_fit"].iloc[0]
+            mod_sigma_um = df_fitting_v2_best["mod_sigma_um"].iloc[0]
+            mod_sigma_um_range_0 = df_fitting_v2_best["mod_sigma_um_range_0"].iloc[0]
+            mod_sigma_um_range_1 = df_fitting_v2_best["mod_sigma_um_range_1"].iloc[0]
+            mod_sigma_um_do_fit = df_fitting_v2_best["mod_sigma_um_do_fit"].iloc[0]
+            mod_shiftx_um = df_fitting_v2_best["mod_shiftx_um"].iloc[0]
+            mod_shiftx_um_range_0 = df_fitting_v2_best["mod_shiftx_um_range_0"].iloc[0]
+            mod_shiftx_um_range_1 = df_fitting_v2_best["mod_shiftx_um_range_1"].iloc[0]
+            mod_shiftx_um_do_fit = df_fitting_v2_best["mod_shiftx_um_do_fit"].iloc[0]
 
             if np.isnan(shiftx_um) == False:
 
@@ -4867,21 +4864,68 @@ def imageid_widget_changed(change):
                 mod_shiftx_um_range_widget.value = [mod_shiftx_um_range_0, mod_shiftx_um_range_1]
                 mod_shiftx_um_do_fit_widget.value = bool(mod_shiftx_um_do_fit)
 
-            if np.isnan(xi_um_guess) == False:               
-                pixis_profile_avg_width_widget.value = pixis_profile_avg_width
-                crop_px_widget.value = crop_px
+            # guess parameter - df_deconvmethod_2d_v1
+            df_deconvmethod_2d_v1_best = df_deconvmethod_2d_v1_results[df_deconvmethod_2d_v1_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_deconvmethod_2d_v1',ascending=True)
 
-                # deconvmethod v2 widgets
-                balance_v2_widget.value = 1 # to do
-                xi_um_guess_v2_widget.value = xi_um_guess
-                xatol_v2_widget.value = xatol
-                sigma_x_F_gamma_um_multiplier_v2_widget.value = sigma_x_F_gamma_um_multiplier
 
-                 # deconvmethod v3 widgets - to do!!!!!
-                snr_db_v3_widget.value = 26.8 # to do
-                xi_um_guess_v3_widget.value = xi_um_guess
-                xatol_v3_widget.value = xatol
-                sigma_x_F_gamma_um_multiplier_v3_widget.value = sigma_x_F_gamma_um_multiplier
+            # guess parameter - df_deconvmethod_1d_v2
+            df_deconvmethod_1d_v2_best = df_deconvmethod_1d_v2_results[df_deconvmethod_1d_v2_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_deconvmethod_1d_v2',ascending=True)
+
+            pixis_profile_avg_width_1d_v2_best = df_deconvmethod_1d_v2_best['pixis_profile_avg_width'].iloc[0]
+            crop_px_1d_v2_best = df_deconvmethod_1d_v2_best['crop_px'].iloc[0]         
+            balance_1d_v2_best = df_deconvmethod_1d_v2_best['balance'].iloc[0]
+            xi_um_guess_1d_v2_best = df_deconvmethod_1d_v2_best['xi_um_guess'].iloc[0]
+            sigma_x_F_gamma_um_multiplier_1d_v2_best = df_deconvmethod_1d_v2_best['sigma_x_F_gamma_um_multiplier'].iloc[0]
+            xatol_1d_v2_best = df_deconvmethod_1d_v2_best['xatol'].iloc[0]
+
+            if np.isnan(xi_um_guess_1d_v2_best) == False:               
+                pixis_profile_avg_width_widget.value = pixis_profile_avg_width_1d_v2_best
+                crop_px_widget.value = crop_px_1d_v2_best
+
+                balance_v2_widget.value = balance_1d_v2_best
+                xi_um_guess_v2_widget.value = xi_um_guess_1d_v2_best
+                sigma_x_F_gamma_um_multiplier_v2_widget.value = sigma_x_F_gamma_um_multiplier_1d_v2_best
+                xatol_v2_widget.value = xatol_1d_v2_best
+
+            # guess parameter - df_deconvmethod_2d_v2
+            df_deconvmethod_2d_v2_best = df_deconvmethod_2d_v2_results[df_deconvmethod_2d_v2_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_deconvmethod_2d_v2',ascending=True)
+
+            pixis_profile_avg_width_2d_v2_best = df_deconvmethod_2d_v2_best['pixis_profile_avg_width'].iloc[0]
+            crop_px_2d_v2_best = df_deconvmethod_2d_v2_best['crop_px'].iloc[0]        
+            balance_2d_v2_best = df_deconvmethod_2d_v2_best['balance'].iloc[0]
+            xi_um_guess_2d_v2_best = df_deconvmethod_2d_v2_best['xi_um_guess'].iloc[0]
+            sigma_x_F_gamma_um_multiplier_2d_v2_best = df_deconvmethod_2d_v2_best['sigma_x_F_gamma_um_multiplier'].iloc[0]
+            xatol_2d_v2_best = df_deconvmethod_2d_v2_best['xatol'].iloc[0]
+
+            # guess parameter - df_deconvmethod_1d_v3
+            df_deconvmethod_1d_v3_best = df_deconvmethod_1d_v3_results[df_deconvmethod_1d_v3_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_deconvmethod_1d_v3',ascending=True)
+
+            pixis_profile_avg_width_1d_v3_best = df_deconvmethod_1d_v3_best['pixis_profile_avg_width'].iloc[0]
+            crop_px_1d_v3_best = df_deconvmethod_1d_v3_best['crop_px'].iloc[0]        
+            snr_db_1d_v3_best = df_deconvmethod_1d_v3_best['snr_db'].iloc[0]
+            xi_um_guess_1d_v3_best = df_deconvmethod_1d_v3_best['xi_um_guess'].iloc[0]
+            sigma_x_F_gamma_um_multiplier_1d_v3_best = df_deconvmethod_1d_v3_best['sigma_x_F_gamma_um_multiplier'].iloc[0]
+            xatol_1d_v3_best = df_deconvmethod_1d_v3_best['xatol'].iloc[0]
+
+            if np.isnan(xi_um_guess_1d_v3_best) == False:
+                pixis_profile_avg_width_widget.value = pixis_profile_avg_width_1d_v3_best
+                crop_px_widget.value = crop_px_1d_v3_best
+
+                snr_db_v3_widget.value = snr_db_1d_v3_best # 26.8 # to do
+                xi_um_guess_v3_widget.value = xi_um_guess_1d_v3_best
+                sigma_x_F_gamma_um_multiplier_v3_widget.value = sigma_x_F_gamma_um_multiplier_1d_v3_best
+                xatol_v3_widget.value = xatol_1d_v3_best
+
+            # guess parameter - df_deconvmethod_2d_v3
+            df_deconvmethod_2d_v3_best = df_deconvmethod_2d_v3_results[df_deconvmethod_2d_v3_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_deconvmethod_2d_v3',ascending=True)
+
+            pixis_profile_avg_width_2d_v3_best = df_deconvmethod_2d_v3_best['pixis_profile_avg_width'].iloc[0]
+            crop_px_2d_v3_best = df_deconvmethod_2d_v3_best['crop_px'].iloc[0]        
+            snr_db_2d_v3_best = df_deconvmethod_2d_v3_best['snr_db'].iloc[0]
+            xi_um_guess_2d_v3_best = df_deconvmethod_2d_v3_best['xi_um_guess'].iloc[0]
+            sigma_x_F_gamma_um_multiplier_2d_v3_best = df_deconvmethod_2d_v3_best['sigma_x_F_gamma_um_multiplier'].iloc[0]
+            xatol_2d_v3_best = df_deconvmethod_2d_v3_best['xatol'].iloc[0]
+            
                 
 
         measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]        
