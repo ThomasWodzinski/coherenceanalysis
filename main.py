@@ -4682,19 +4682,17 @@ def imageid_widget_changed(change):
                 np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
             ][0]  # needed for what?
             
-            pinholes_bg_avg_sx_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sx_um"].iloc[0]
-            pinholes_bg_avg_sy_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pinholes_bg_avg_sy_um"].iloc[0]
+            sigma_B_um = df_beamsize[df_beamsize['measurement'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["sigma_B_um"].iloc[0]
+            sigma_B_err_um = df_beamsize[df_beamsize['measurement'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["sigma_B_err_um"].iloc[0]
+            beamsize_text_widget.value = r"(%.2f +/- %.2f) um" % (sigma_B_um, sigma_B_err_um)
             
-            ph = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
+            pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
             separation_um = get_sep_and_orient(pinholes)[0]
             orientation = get_sep_and_orient(pinholes)[1]
             setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
-            energy_hall_uJ = setting_energy_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
+            setting_energy_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
 
-            if orientation == "horizontal":
-                beamsize_text_widget.value = r"%.2fum" % (pinholes_bg_avg_sx_um,)
-            if orientation == "vertical":
-                beamsize_text_widget.value = r"%.2fum" % (pinholes_bg_avg_sy_um,)
+            
 
             pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
                     np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
