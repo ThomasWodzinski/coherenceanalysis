@@ -4947,7 +4947,7 @@ def imageid_widget_changed(change):
             
 
             wavelength_nm_widget.value = setting_wavelength_nm
-            wavelength_nm_range_widget.value = value = [wavelength_nm_widget.value - 0.1, wavelength_nm_widget.value + 0.1]
+            wavelength_nm_range_widget.value = [wavelength_nm_widget.value - 0.1, wavelength_nm_widget.value + 0.1]
             d_um_widget.value = separation_um
             x1_um_widget.value = -d_um_widget.value * 10 / 2
             x2_um_widget.value = d_um_widget.value * 10 / 2
