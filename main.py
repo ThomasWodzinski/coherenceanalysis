@@ -4684,7 +4684,7 @@ def imageid_widget_changed(change):
             separation_um = get_sep_and_orient(pinholes)[0]
             orientation = get_sep_and_orient(pinholes)[1]
             setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
-            energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["energy hall"].iloc[0]
+            energy_hall_uJ = setting_energy_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
 
             if orientation == "horizontal":
                 beamsize_text_widget.value = r"%.2fum" % (pinholes_bg_avg_sx_um,)
@@ -5488,7 +5488,7 @@ with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
     separation_um = get_sep_and_orient(pinholes)[0]
     orientation = get_sep_and_orient(pinholes)[1]
     setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
-    energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["energy hall"].iloc[0]
+    setting_energy_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
     
     hdf5_file_name_image = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["hdf5_file_name"].iloc[0]
 
