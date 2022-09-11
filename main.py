@@ -738,6 +738,11 @@ df_deconvmethod_1d_v3_results = pd.DataFrame(columns=['measurement','timestamp_p
 df_deconvmethod_2d_v3_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + fits_header_list7 + fits_header_list9_v3)
 
 
+# load previously determined beamsizes
+df_beamsize_file = Path.joinpath(data_dir, 'df_beamsize.csv')
+if os.path.isfile(df_beamsize_file):
+    df_beamsize = pd.read_csv(df_beamsize_file,index_col=0)
+
 # %%
 # creating frontend
 
