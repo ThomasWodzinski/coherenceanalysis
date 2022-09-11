@@ -2786,11 +2786,10 @@ def plot_deconvmethod(
                 textstr = " ".join(
                     (
                         "ph-" + pinholes + ".id" + str(int(imageid)),
-                        r"$\lambda=%.2f$nm" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['wavelength_nm_fit'],),
+                        r"$\lambda=%.2f$nm" % (setting_wavelength_nm,),
                         orientation,
                         "\n",
                         "$d$=" + str(int(separation_um)) + "um",
-                        r"$\gamma=%.2f$" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['gamma_fit'],),
                         r"$\xi_x=%.2fum$" % (xi_x_um,),
                     )
                 )
@@ -3373,11 +3372,10 @@ def plot_deconvmethod_2d_v1(
             textstr = " ".join(
                 (
                     "ph-" + pinholes + ".id" + str(int(imageid)),
-                    r"$\lambda=%.2f$nm" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['wavelength_nm_fit'],),
+                    r"$\lambda=%.2f$nm" % (setting_wavelength_nm,),
                     orientation,
                     "\n",
                     "$d$=" + str(int(separation_um)) + "um",
-                    r"$\gamma=%.2f$" % (df0[df0['timestamp_pulse_id'] == timestamp_pulse_id]['gamma_fit'],),
                     r"$\xi_x=%.2fum$" % (xi_x_um,),
                 )
             )
