@@ -4716,10 +4716,6 @@ def imageid_widget_changed(change):
 
         if load_from_df_widget.value == True:
 
-            
-
-            pixis_profile_avg_width = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["pixis_profile_avg_width"].iloc[0]
-
             # guess parameter - fitting
             df_fitting_v2_best = df_fitting_v2_results[df_fitting_v2_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_fitting',ascending=True)
 
@@ -4952,7 +4948,7 @@ def imageid_widget_changed(change):
 
             wavelength_nm_widget.value = setting_wavelength_nm
             wavelength_nm_range_widget.value = value = [wavelength_nm_widget.value - 0.1, wavelength_nm_widget.value + 0.1]
-            d_um_widget.value = separation_um = df0[df0["timestamp_pulse_id"] == timestamp_pulse_id]["separation_um"].iloc[0]
+            d_um_widget.value = separation_um
             x1_um_widget.value = -d_um_widget.value * 10 / 2
             x2_um_widget.value = d_um_widget.value * 10 / 2
             x1_um_range_widget.value = [-d_um_widget.value * 10 / 2 - 1000, 0]
