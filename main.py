@@ -1381,8 +1381,6 @@ def plot_fitting_v1(
         setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
         energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["energy hall"].iloc[0]
         
-        # pixis_profile_avg_width = 200  # read from df0 instead!
-
         # fittingprogress_widget.value = 2
         #     hdf5_file_name_image = hdf5_file_name_image_widget.value
         #     dataset_image_args = dataset_image_args_widget.value
