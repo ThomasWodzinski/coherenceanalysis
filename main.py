@@ -4844,12 +4844,6 @@ def imageid_widget_changed(change):
                 normfactor_fitting_v1_widget.value = normfactor
                 normfactor_range_fitting_v1_widget.value = [normfactor_range_0, normfactor_range_1]
                 normfactor_do_fit_fitting_v1_widget.value = bool(normfactor_do_fit)
-                mod_sigma_um_fitting_v1_widget.value = mod_sigma_um
-                mod_sigma_um_range_fitting_v1_widget.value = [mod_sigma_um_range_0, mod_sigma_um_range_1]
-                mod_sigma_um_do_fit_fitting_v1_widget.value = bool(mod_sigma_um_do_fit)
-                mod_shiftx_um_fitting_v1_widget.value = mod_shiftx_um
-                mod_shiftx_um_range_fitting_v1_widget.value = [mod_shiftx_um_range_0, mod_shiftx_um_range_1]
-                mod_shiftx_um_do_fit_fitting_v1_widget.value = bool(mod_shiftx_um_do_fit)
             
             # guess parameter - fitting v2
             df_fitting_v2_best = df_fitting_v2_results[df_fitting_v2_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_fitting',ascending=True)
