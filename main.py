@@ -4735,11 +4735,11 @@ def imageid_widget_changed(change):
             delta_min_x_px = pixis_image_norm_min_x_px - int(np.shape(pixis_image_norm)[1]/2)
             textarea_widget.value = 'max_x_px='+str(pixis_image_norm_max_x_px)+'\n'+'min_x_px='+str(pixis_image_norm_min_x_px) +'\n' + \
                 'delta_max_x_um='+str(delta_max_x_px*13)+'\n'+'delta_min_x_um='+str(delta_min_x_px*13)
-            # if the peaks of the two airy disks are two far away from the center set the shift to 0. Choose the range of shiftx_um empirically
-            if abs(delta_max_x_um) > abs(max(shiftx_um_range_widget.value)):
-                shiftx_um_widget.value = 0
-            else:
-                shiftx_um_widget.value = delta_max_x_um
+            # # if the peaks of the two airy disks are two far away from the center set the shift to 0. Choose the range of shiftx_um empirically
+            # if abs(delta_max_x_um) > abs(max(shiftx_um_range_widget.value)):
+            #     shiftx_um_widget.value = 0
+            # else:
+            #     shiftx_um_widget.value = delta_max_x_um
 
         if load_from_df_widget.value == True:
 
@@ -5077,60 +5077,60 @@ def imageid_widget_changed(change):
                 'delta_max_x_um='+str(delta_max_x_px*13)+'\n'+'delta_min_x_um='+str(delta_min_x_px*13)
 
             # move this to something that generates the measurement_default csvs...
-            # if the peaks of the two airy disks are two far away from the center set the shift to 0. Choose the range of shiftx_um empirically
-            if abs(delta_max_x_um) > abs(max(shiftx_um_range_widget.value)):
-                shiftx_um_widget.value = 0
-            else:
-                shiftx_um_widget.value = delta_max_x_um
+            # # if the peaks of the two airy disks are two far away from the center set the shift to 0. Choose the range of shiftx_um empirically
+            # if abs(delta_max_x_um) > abs(max(shiftx_um_range_widget.value)):
+            #     shiftx_um_widget.value = 0
+            # else:
+            #     shiftx_um_widget.value = delta_max_x_um
             
 
-            wavelength_nm_widget.value = setting_wavelength_nm
-            wavelength_nm_range_widget.value = [wavelength_nm_widget.value - 0.1, wavelength_nm_widget.value + 0.1]
-            d_um_widget.value = separation_um
-            x1_um_widget.value = -d_um_widget.value * 10 / 2
-            x2_um_widget.value = d_um_widget.value * 10 / 2
-            x1_um_range_widget.value = [-d_um_widget.value * 10 / 2 - 1000, 0]
-            x2_um_range_widget.value = [0, d_um_widget.value * 10 / 2 + 1000]
+            # wavelength_nm_widget.value = setting_wavelength_nm
+            # wavelength_nm_range_widget.value = [wavelength_nm_widget.value - 0.1, wavelength_nm_widget.value + 0.1]
+            # d_um_widget.value = separation_um
+            # x1_um_widget.value = -d_um_widget.value * 10 / 2
+            # x2_um_widget.value = d_um_widget.value * 10 / 2
+            # x1_um_range_widget.value = [-d_um_widget.value * 10 / 2 - 1000, 0]
+            # x2_um_range_widget.value = [0, d_um_widget.value * 10 / 2 + 1000]
 
-            # add more default values
+            # # add more default values
 
-            # shiftx_um_widget.value = shiftx_um
-            shiftx_um_range_widget.value = [-1500, 1500]
-            shiftx_um_do_fit_widget.value = True
+            # # shiftx_um_widget.value = shiftx_um
+            # shiftx_um_range_widget.value = [-1500, 1500]
+            # shiftx_um_do_fit_widget.value = True
 
-            # wavelength_nm_widget.value = wavelength_nm
-            # wavelength_nm_range_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
-            wavelength_nm_do_fit_widget.value = True
-            z_mm_widget.value = 5781
-            z_mm_range_widget.value = [5770.0, 5790.0]
-            z_mm_do_fit_widget.value = False
-            # d_um_widget.value = d_um
-            d_um_range_widget.value = [50.0, 1337.0]
-            d_um_do_fit_widget.value = False
-            gamma_widget.value = 0.8
-            gamma_range_widget.value = [0.01, 1]
-            gamma_do_fit_widget.value = True
-            w1_um_widget.value = 11.0
-            w1_um_range_widget.value = [8.0, 15.0]
-            w1_um_do_fit_widget.value = True
-            w2_um_widget.value = 11.0
-            w2_um_range_widget.value = [8.0, 15.0]
-            w2_um_do_fit_widget.value = True
-            I_Airy1_widget.value = 1.0
-            I_Airy1_range_widget.value = [0.2, 1.5]
-            I_Airy1_do_fit_widget.value = False
-            I_Airy2_widget.value = 0.8
-            I_Airy2_range_widget.value = [0.2, 5.5]
-            I_Airy2_do_fit_widget.value = True
-            # x1_um_widget.value = x1_um
-            # x1_um_range_widget.value = [x1_um_range_0, x1_um_range_1]
-            x1_um_do_fit_widget.value = True
-            # x2_um_widget.value = x2_um
-            # x2_um_range_widget.value = [x2_um_range_0, x2_um_range_1]
-            x2_um_do_fit_widget.value = True
-            normfactor_widget.value = 1.0
-            normfactor_range_widget.value = [0.1, 1.5]
-            normfactor_do_fit_widget.value = False
+            # # wavelength_nm_widget.value = wavelength_nm
+            # # wavelength_nm_range_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
+            # wavelength_nm_do_fit_widget.value = True
+            # z_mm_widget.value = 5781
+            # z_mm_range_widget.value = [5770.0, 5790.0]
+            # z_mm_do_fit_widget.value = False
+            # # d_um_widget.value = d_um
+            # d_um_range_widget.value = [50.0, 1337.0]
+            # d_um_do_fit_widget.value = False
+            # gamma_widget.value = 0.8
+            # gamma_range_widget.value = [0.01, 1]
+            # gamma_do_fit_widget.value = True
+            # w1_um_widget.value = 11.0
+            # w1_um_range_widget.value = [8.0, 15.0]
+            # w1_um_do_fit_widget.value = True
+            # w2_um_widget.value = 11.0
+            # w2_um_range_widget.value = [8.0, 15.0]
+            # w2_um_do_fit_widget.value = True
+            # I_Airy1_widget.value = 1.0
+            # I_Airy1_range_widget.value = [0.2, 1.5]
+            # I_Airy1_do_fit_widget.value = False
+            # I_Airy2_widget.value = 0.8
+            # I_Airy2_range_widget.value = [0.2, 5.5]
+            # I_Airy2_do_fit_widget.value = True
+            # # x1_um_widget.value = x1_um
+            # # x1_um_range_widget.value = [x1_um_range_0, x1_um_range_1]
+            # x1_um_do_fit_widget.value = True
+            # # x2_um_widget.value = x2_um
+            # # x2_um_range_widget.value = [x2_um_range_0, x2_um_range_1]
+            # x2_um_do_fit_widget.value = True
+            # normfactor_widget.value = 1.0
+            # normfactor_range_widget.value = [0.1, 1.5]
+            # normfactor_do_fit_widget.value = False
 
             # load measurement defaults
 
