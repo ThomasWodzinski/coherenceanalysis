@@ -5821,8 +5821,6 @@ children_right = [
                     VBox([
                         textarea_widget, 
                         beamsize_text_widget,
-                        pixis_profile_avg_width_widget,
-                        crop_px_widget,
                         savefigure_profile_fit_widget,
                         do_textbox_widget,
                         output_tabs_right_ratio_widget
