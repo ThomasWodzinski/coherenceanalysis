@@ -656,13 +656,13 @@ df_deconvmethod_1d_v3_measurement_default = pd.DataFrame({'dataset' : dataset_ar
 df_deconvmethod_2d_v3_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
                                     'measurement' : measurement_arr})
 
-fitting_measurement_default_headers = []
-for header in fits_header_list4 + fits_header_list5:
-    fitting_measurement_default_headers.append(header + '_measurement_default')
-
 fitting_v1_measurement_default_headers = []
 for header in fits_header_list4_v1:
     fitting_v1_measurement_default_headers.append(header + '_measurement_default')
+
+fitting_v2_measurement_default_headers = []
+for header in fits_header_list4 + fits_header_list5:
+    fitting_v2_measurement_default_headers.append(header + '_measurement_default')
 
 deconvmethod_2d_v1_measurement_default_headers = []
 for header in fits_header_list7_v1:
@@ -685,8 +685,8 @@ for header in fits_header_list7:
     deconvmethod_2d_v3_measurement_default_headers.append(header + '_measurement_default')
 
 
-df_fitting_v2_measurement_default = df_fitting_v2_measurement_default.reindex(columns = df_fitting_v2_measurement_default.columns.tolist() + list(set(fitting_measurement_default_headers) - set(df_fitting_v2_measurement_default.columns.tolist())) )
 df_fitting_v1_measurement_default = df_fitting_v1_measurement_default.reindex(columns = df_fitting_v1_measurement_default.columns.tolist() + list(set(fitting_v1_measurement_default_headers) - set(df_fitting_v1_measurement_default.columns.tolist())) )
+df_fitting_v2_measurement_default = df_fitting_v2_measurement_default.reindex(columns = df_fitting_v2_measurement_default.columns.tolist() + list(set(fitting_v2_measurement_default_headers) - set(df_fitting_v2_measurement_default.columns.tolist())) )
 df_deconvmethod_2d_v1_measurement_default = df_deconvmethod_2d_v1_measurement_default.reindex(columns = df_deconvmethod_2d_v1_measurement_default.columns.tolist() + list(set(deconvmethod_2d_v1_measurement_default_headers) - set(df_deconvmethod_2d_v1_measurement_default.columns.tolist())) )
 df_deconvmethod_1d_v2_measurement_default = df_deconvmethod_1d_v2_measurement_default.reindex(columns = df_deconvmethod_1d_v2_measurement_default.columns.tolist() + list(set(deconvmethod_1d_v2_measurement_default_headers) - set(df_deconvmethod_1d_v2_measurement_default.columns.tolist())) )
 df_deconvmethod_2d_v2_measurement_default = df_deconvmethod_2d_v2_measurement_default.reindex(columns = df_deconvmethod_2d_v2_measurement_default.columns.tolist() + list(set(deconvmethod_2d_v2_measurement_default_headers) - set(df_deconvmethod_2d_v2_measurement_default.columns.tolist())) )
