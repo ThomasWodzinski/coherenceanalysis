@@ -5064,7 +5064,7 @@ def imageid_widget_changed(change):
 
         # Set default values for fitting v1
 
-        # to add
+         # todo: move this to something that generates the measurement_default csvs...
 
         if load_from_df_widget.value == False or np.isnan(shiftx_um_fitting_v1) == True:
             
@@ -5207,7 +5207,7 @@ def imageid_widget_changed(change):
             textarea_widget.value = 'max_x_px='+str(pixis_image_norm_max_x_px)+'\n'+'min_x_px='+str(pixis_image_norm_min_x_px) +'\n' + \
                 'delta_max_x_um='+str(delta_max_x_px*13)+'\n'+'delta_min_x_um='+str(delta_min_x_px*13)
 
-            # move this to something that generates the measurement_default csvs...
+            # todo: move this to something that generates the measurement_default csvs...
             # # if the peaks of the two airy disks are two far away from the center set the shift to 0. Choose the range of shiftx_um empirically
             # if abs(delta_max_x_um) > abs(max(shiftx_um_range_widget.value)):
             #     shiftx_um_widget.value = 0
