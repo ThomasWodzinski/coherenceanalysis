@@ -5137,89 +5137,146 @@ def imageid_widget_changed(change):
             pixis_profile_avg_width_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['pixis_profile_avg_width_measurement_default'].iloc[0]
             crop_px_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
 
-            shiftx_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['shiftx_um_measurement_default'].iloc[0]
+            slider_min_max_factor = 0.05
+            
             shiftx_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['shiftx_um_range_0_measurement_default'].iloc[0]
             shiftx_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['shiftx_um_range_1_measurement_default'].iloc[0]
+            shiftx_um_range_fitting_v2_widget.max = shiftx_um_range_1*(1+slider_min_max_factor)
+            shiftx_um_range_fitting_v2_widget.min = shiftx_um_range_0-shiftx_um_range_1*slider_min_max_factor
             shiftx_um_range_fitting_v2_widget.value = [shiftx_um_range_0, shiftx_um_range_1]
+            shiftx_um_fitting_v2_widget.max = shiftx_um_range_fitting_v2_widget.max
+            shiftx_um_fitting_v2_widget.min = shiftx_um_range_fitting_v2_widget.min
+            shiftx_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['shiftx_um_measurement_default'].iloc[0]
             shiftx_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['shiftx_um_do_fit_measurement_default'].iloc[0])
-
-            wavelength_nm_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['wavelength_nm_measurement_default'].iloc[0]
+          
             wavelength_nm_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['wavelength_nm_range_0_measurement_default'].iloc[0]
             wavelength_nm_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['wavelength_nm_range_1_measurement_default'].iloc[0]
+            wavelength_nm_range_fitting_v2_widget.max = wavelength_nm_range_1*(1+slider_min_max_factor)
+            wavelength_nm_range_fitting_v2_widget.min = wavelength_nm_range_0-wavelength_nm_range_1*slider_min_max_factor
             wavelength_nm_range_fitting_v2_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
+            wavelength_nm_fitting_v2_widget.max = wavelength_nm_range_fitting_v2_widget.max
+            wavelength_nm_fitting_v2_widget.min = wavelength_nm_range_fitting_v2_widget.min
+            wavelength_nm_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['wavelength_nm_measurement_default'].iloc[0]
             wavelength_nm_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['wavelength_nm_do_fit_measurement_default'].iloc[0])
 
-            z_mm_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['z_mm_measurement_default'].iloc[0]
             z_mm_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['z_mm_range_0_measurement_default'].iloc[0]
-            z_mm_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['z_mm_range_1_measurement_default'].iloc[0]
+            z_mm_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['z_mm_range_1_measurement_default'].iloc[0]            
+            z_mm_range_fitting_v2_widget.max = z_mm_range_1*(1+slider_min_max_factor)
+            z_mm_range_fitting_v2_widget.min = z_mm_range_0-z_mm_range_1*slider_min_max_factor
             z_mm_range_fitting_v2_widget.value = [z_mm_range_0, z_mm_range_1]
+            z_mm_fitting_v2_widget.max = z_mm_range_fitting_v2_widget.max
+            z_mm_fitting_v2_widget.min = z_mm_range_fitting_v2_widget.min
+            z_mm_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['z_mm_measurement_default'].iloc[0]
             z_mm_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['z_mm_do_fit_measurement_default'].iloc[0])
 
-            d_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['d_um_measurement_default'].iloc[0]
             d_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['d_um_range_0_measurement_default'].iloc[0]
             d_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['d_um_range_1_measurement_default'].iloc[0]
+            d_um_range_fitting_v2_widget.max = d_um_range_1*(1+slider_min_max_factor)
+            d_um_range_fitting_v2_widget.min = d_um_range_0-d_um_range_1*slider_min_max_factor
             d_um_range_fitting_v2_widget.value = [d_um_range_0, d_um_range_1]
+            d_um_fitting_v2_widget.max = d_um_range_fitting_v2_widget.max
+            d_um_fitting_v2_widget.min = d_um_range_fitting_v2_widget.min
+            d_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['d_um_measurement_default'].iloc[0]
             d_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['d_um_do_fit_measurement_default'].iloc[0])
 
-            gamma_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['gamma_measurement_default'].iloc[0]
             gamma_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['gamma_range_0_measurement_default'].iloc[0]
             gamma_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['gamma_range_1_measurement_default'].iloc[0]
+            gamma_range_fitting_v2_widget.max = gamma_range_1*(1+slider_min_max_factor)
+            gamma_range_fitting_v2_widget.min = gamma_range_0-gamma_range_1*slider_min_max_factor
             gamma_range_fitting_v2_widget.value = [gamma_range_0, gamma_range_1]
+            gamma_fitting_v2_widget.max = gamma_range_fitting_v2_widget.max
+            gamma_fitting_v2_widget.min = gamma_range_fitting_v2_widget.min
             gamma_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['gamma_do_fit_measurement_default'].iloc[0])
+            gamma_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['gamma_measurement_default'].iloc[0]
 
-            w1_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w1_um_measurement_default'].iloc[0]
             w1_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w1_um_range_0_measurement_default'].iloc[0]
             w1_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w1_um_range_1_measurement_default'].iloc[0]
+            w1_um_range_fitting_v2_widget.max = w1_um_range_1*(1+slider_min_max_factor)
+            w1_um_range_fitting_v2_widget.min = w1_um_range_0-w1_um_range_1*slider_min_max_factor
             w1_um_range_fitting_v2_widget.value = [w1_um_range_0, w1_um_range_1]
+            w1_um_fitting_v2_widget.max = w1_um_range_fitting_v2_widget.max
+            w1_um_fitting_v2_widget.min = w1_um_range_fitting_v2_widget.min
+            w1_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w1_um_measurement_default'].iloc[0]
             w1_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w1_um_do_fit_measurement_default'].iloc[0])
 
-            w2_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w2_um_measurement_default'].iloc[0]
             w2_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w2_um_range_0_measurement_default'].iloc[0]
             w2_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w2_um_range_1_measurement_default'].iloc[0]
+            w2_um_range_fitting_v2_widget.max = w2_um_range_1*(1+slider_min_max_factor)
+            w2_um_range_fitting_v2_widget.min = w2_um_range_0-w2_um_range_1*slider_min_max_factor
             w2_um_range_fitting_v2_widget.value = [w2_um_range_0, w2_um_range_1]
+            w2_um_fitting_v2_widget.max = w2_um_range_fitting_v2_widget.max
+            w2_um_fitting_v2_widget.min = w2_um_range_fitting_v2_widget.min
+            w2_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w2_um_measurement_default'].iloc[0]
             w2_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w2_um_do_fit_measurement_default'].iloc[0])
 
-            I_Airy1_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy1_measurement_default'].iloc[0]
             I_Airy1_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy1_range_0_measurement_default'].iloc[0]
             I_Airy1_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy1_range_1_measurement_default'].iloc[0]
+            I_Airy1_range_fitting_v2_widget.max = I_Airy1_range_1*(1+slider_min_max_factor)
+            I_Airy1_range_fitting_v2_widget.min = I_Airy1_range_0-I_Airy1_range_1*slider_min_max_factor
             I_Airy1_range_fitting_v2_widget.value = [I_Airy1_range_0, I_Airy1_range_1]
+            I_Airy1_fitting_v2_widget.max = I_Airy1_range_fitting_v2_widget.max
+            I_Airy1_fitting_v2_widget.min = I_Airy1_range_fitting_v2_widget.min
+            I_Airy1_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy1_measurement_default'].iloc[0]
             I_Airy1_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy1_do_fit_measurement_default'].iloc[0])
 
-            I_Airy2_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy2_measurement_default'].iloc[0]
             I_Airy2_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy2_range_0_measurement_default'].iloc[0]
             I_Airy2_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy2_range_1_measurement_default'].iloc[0]
+            I_Airy2_range_fitting_v2_widget.max = I_Airy2_range_1*(1+slider_min_max_factor)
+            I_Airy2_range_fitting_v2_widget.min = I_Airy2_range_0-I_Airy2_range_1*slider_min_max_factor
             I_Airy2_range_fitting_v2_widget.value = [I_Airy2_range_0, I_Airy2_range_1]
+            I_Airy2_fitting_v2_widget.max = I_Airy2_range_fitting_v2_widget.max
+            I_Airy2_fitting_v2_widget.min = I_Airy2_range_fitting_v2_widget.min
+            I_Airy2_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy2_measurement_default'].iloc[0]
             I_Airy2_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy2_do_fit_measurement_default'].iloc[0])
 
-            x1_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x1_um_measurement_default'].iloc[0]
             x1_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x1_um_range_0_measurement_default'].iloc[0]
             x1_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x1_um_range_1_measurement_default'].iloc[0]
+            x1_um_range_fitting_v2_widget.max = x1_um_range_1*(1+slider_min_max_factor)
+            x1_um_range_fitting_v2_widget.min = x1_um_range_0-x1_um_range_1*slider_min_max_factor
             x1_um_range_fitting_v2_widget.value = [x1_um_range_0, x1_um_range_1]
+            x1_um_fitting_v2_widget.max = x1_um_range_fitting_v2_widget.max
+            x1_um_fitting_v2_widget.min = x1_um_range_fitting_v2_widget.min
+            x1_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x1_um_measurement_default'].iloc[0]
             x1_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x1_um_do_fit_measurement_default'].iloc[0])
 
-            x2_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x2_um_measurement_default'].iloc[0]
             x2_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x2_um_range_0_measurement_default'].iloc[0]
             x2_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x2_um_range_1_measurement_default'].iloc[0]
+            x2_um_range_fitting_v2_widget.max = x2_um_range_1*(1+slider_min_max_factor)
+            x2_um_range_fitting_v2_widget.min = x2_um_range_0-x2_um_range_1*slider_min_max_factor
             x2_um_range_fitting_v2_widget.value = [x2_um_range_0, x2_um_range_1]
+            x2_um_fitting_v2_widget.max = x2_um_range_fitting_v2_widget.max
+            x2_um_fitting_v2_widget.min = x2_um_range_fitting_v2_widget.min
+            x2_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x2_um_measurement_default'].iloc[0]
             x2_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x2_um_do_fit_measurement_default'].iloc[0])
 
-            normfactor_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['normfactor_measurement_default'].iloc[0]
             normfactor_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['normfactor_range_0_measurement_default'].iloc[0]
             normfactor_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['normfactor_range_1_measurement_default'].iloc[0]
+            normfactor_range_fitting_v2_widget.max = normfactor_range_1*(1+slider_min_max_factor)
+            normfactor_range_fitting_v2_widget.min = normfactor_range_0-normfactor_range_1*slider_min_max_factor
             normfactor_range_fitting_v2_widget.value = [normfactor_range_0, normfactor_range_1]
+            normfactor_fitting_v2_widget.max = normfactor_range_fitting_v2_widget.max
+            normfactor_fitting_v2_widget.min = normfactor_range_fitting_v2_widget.min
+            normfactor_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['normfactor_measurement_default'].iloc[0]
             normfactor_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['normfactor_do_fit_measurement_default'].iloc[0])
 
-            # --> add all the others and distinguish between old a new versions!
-            mod_sigma_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_sigma_um_measurement_default'].iloc[0]
             mod_sigma_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_sigma_um_range_0_measurement_default'].iloc[0]
             mod_sigma_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_sigma_um_range_1_measurement_default'].iloc[0]
+            mod_sigma_um_range_fitting_v2_widget.max = mod_sigma_um_range_1*(1+slider_min_max_factor)
+            mod_sigma_um_range_fitting_v2_widget.min = mod_sigma_um_range_0-mod_sigma_um_range_1*slider_min_max_factor
             mod_sigma_um_range_fitting_v2_widget.value = [mod_sigma_um_range_0, mod_sigma_um_range_1]
+            mod_sigma_um_fitting_v2_widget.max = mod_sigma_um_range_fitting_v2_widget.max
+            mod_sigma_um_fitting_v2_widget.min = mod_sigma_um_range_fitting_v2_widget.min
+            mod_sigma_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_sigma_um_measurement_default'].iloc[0]
             mod_sigma_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_sigma_um_do_fit_measurement_default'].iloc[0])
 
-            mod_shiftx_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
             mod_shiftx_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_shiftx_um_range_0_measurement_default'].iloc[0]
             mod_shiftx_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_shiftx_um_range_1_measurement_default'].iloc[0]
+            mod_shiftx_um_range_fitting_v2_widget.max = mod_shiftx_um_range_1*(1+slider_min_max_factor)
+            mod_shiftx_um_range_fitting_v2_widget.min = mod_shiftx_um_range_0-mod_shiftx_um_range_1*slider_min_max_factor
             mod_shiftx_um_range_fitting_v2_widget.value = [mod_shiftx_um_range_0, mod_shiftx_um_range_1]
+            mod_shiftx_um_fitting_v2_widget.max = mod_shiftx_um_range_fitting_v2_widget.max
+            mod_shiftx_um_fitting_v2_widget.min = mod_shiftx_um_range_fitting_v2_widget.min
+            mod_shiftx_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
             mod_shiftx_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_shiftx_um_do_fit_measurement_default'].iloc[0])
 
        
