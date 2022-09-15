@@ -4283,8 +4283,12 @@ fitting_v1_columns = widgets.HBox([
                                 fitting_v1_result_tab
                                 ])
 
-parameter_tabs_children = [ fitting_columns,
-                                fitting_v1_columns,
+parameter_tabs_children = [ widgets.VBox([fitting_columns,
+                                          crop_px_fitting_v2_widget,
+                                          pixis_profile_avg_width_fitting_v2_widget]),
+                            widgets.VBox([fitting_v1_columns,
+                                          crop_px_fitting_v1_widget,
+                                          pixis_profile_avg_width_fitting_v1_widget]),
                                 column1a_v3,
                                 column1b_v3,
                                 column1a_v2,
@@ -5134,8 +5138,8 @@ def imageid_widget_changed(change):
 
             # load measurement defaults
 
-            pixis_profile_avg_width_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['pixis_profile_avg_width_measurement_default'].iloc[0]
             crop_px_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+            pixis_profile_avg_width_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['pixis_profile_avg_width_measurement_default'].iloc[0]
 
             slider_min_max_factor = 0.05
             
