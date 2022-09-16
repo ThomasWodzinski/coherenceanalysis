@@ -5516,33 +5516,43 @@ def set_measurement_default(change):
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'z_mm_measurement_default'] = z_mm_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'z_mm_range_0_measurement_default'] = z_mm_range_fitting_v1_widget.value[0]
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'z_mm_range_1_measurement_default'] = z_mm_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'z_mm_do_fit_measurement_default'] = z_mm_do_fit_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'd_um_measurement_default'] = d_um_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'd_um_range_0_measurement_default'] = d_um_range_fitting_v1_widget.value[0]
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'd_um_range_1_measurement_default'] = d_um_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'd_um_do_fit_measurement_default'] = d_um_do_fit_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'gamma_measurement_default'] = gamma_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'gamma_range_0_measurement_default'] = gamma_range_fitting_v1_widget.value[0]
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'gamma_range_1_measurement_default'] = gamma_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'gamma_do_fit_measurement_default'] = gamma_do_fit_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w1_um_measurement_default'] = w1_um_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w1_um_range_0_measurement_default'] = w1_um_range_fitting_v1_widget.value[0]
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w1_um_range_1_measurement_default'] = w1_um_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w1_um_do_fit_measurement_default'] = w1_um_do_fit_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w2_um_measurement_default'] = w2_um_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w2_um_range_0_measurement_default'] = w2_um_range_fitting_v1_widget.value[0]
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w2_um_range_1_measurement_default'] = w2_um_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w2_um_do_fit_measurement_default'] = w2_um_do_fit_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy1_measurement_default'] = I_Airy1_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy1_range_0_measurement_default'] = I_Airy1_range_fitting_v1_widget.value[0]
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy1_range_1_measurement_default'] = I_Airy1_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy1_do_fit_measurement_default'] = I_Airy1_do_fit_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy2_measurement_default'] = I_Airy2_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy2_range_0_measurement_default'] = I_Airy2_range_fitting_v1_widget.value[0]
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy2_range_1_measurement_default'] = I_Airy2_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy2_do_fit_measurement_default'] = I_Airy2_do_fit_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x1_um_measurement_default'] = x1_um_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x1_um_range_0_measurement_default'] = x1_um_range_fitting_v1_widget.value[0]
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x1_um_range_1_measurement_default'] = x1_um_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x1_um_do_fit_measurement_default'] = x1_um_do_fit_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x2_um_measurement_default'] = x2_um_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x2_um_range_0_measurement_default'] = x2_um_range_fitting_v1_widget.value[0]
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x2_um_range_1_measurement_default'] = x2_um_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x2_um_do_fit_measurement_default'] = x2_um_do_fit_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'normfactor_measurement_default'] = normfactor_fitting_v1_widget.value
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'normfactor_range_0_measurement_default'] = normfactor_range_fitting_v1_widget.value[0]
         df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'normfactor_range_1_measurement_default'] = normfactor_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'normfactor_do_fit_measurement_default'] = normfactor_do_fit_fitting_v1_widget.value
 
         
         # Set default values for Fitting v2
@@ -5559,33 +5569,43 @@ def set_measurement_default(change):
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'z_mm_measurement_default'] = z_mm_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'z_mm_range_0_measurement_default'] = z_mm_range_fitting_v2_widget.value[0]
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'z_mm_range_1_measurement_default'] = z_mm_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'z_mm_do_fit_measurement_default'] = z_mm_do_fit_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'd_um_measurement_default'] = d_um_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'd_um_range_0_measurement_default'] = d_um_range_fitting_v2_widget.value[0]
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'd_um_range_1_measurement_default'] = d_um_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'd_um_do_fit_measurement_default'] = d_um_do_fit_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'gamma_measurement_default'] = gamma_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'gamma_range_0_measurement_default'] = gamma_range_fitting_v2_widget.value[0]
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'gamma_range_1_measurement_default'] = gamma_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'gamma_do_fit_measurement_default'] = gamma_do_fit_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w1_um_measurement_default'] = w1_um_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w1_um_range_0_measurement_default'] = w1_um_range_fitting_v2_widget.value[0]
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w1_um_range_1_measurement_default'] = w1_um_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w1_um_do_fit_measurement_default'] = w1_um_do_fit_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w2_um_measurement_default'] = w2_um_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w2_um_range_0_measurement_default'] = w2_um_range_fitting_v2_widget.value[0]
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w2_um_range_1_measurement_default'] = w2_um_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w2_um_do_fit_measurement_default'] = w2_um_do_fit_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy1_measurement_default'] = I_Airy1_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy1_range_0_measurement_default'] = I_Airy1_range_fitting_v2_widget.value[0]
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy1_range_1_measurement_default'] = I_Airy1_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy1_do_fit_measurement_default'] = I_Airy1_do_fit_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy2_measurement_default'] = I_Airy2_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy2_range_0_measurement_default'] = I_Airy2_range_fitting_v2_widget.value[0]
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy2_range_1_measurement_default'] = I_Airy2_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy2_do_fit_measurement_default'] = I_Airy2_do_fit_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x1_um_measurement_default'] = x1_um_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x1_um_range_0_measurement_default'] = x1_um_range_fitting_v2_widget.value[0]
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x1_um_range_1_measurement_default'] = x1_um_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x1_um_do_fit_measurement_default'] = x1_um_do_fit_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x2_um_measurement_default'] = x2_um_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x2_um_range_0_measurement_default'] = x2_um_range_fitting_v2_widget.value[0]
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x2_um_range_1_measurement_default'] = x2_um_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x2_um_do_fit_measurement_default'] = x2_um_do_fit_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'normfactor_measurement_default'] = normfactor_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'normfactor_range_0_measurement_default'] = normfactor_range_fitting_v2_widget.value[0]
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'normfactor_range_1_measurement_default'] = normfactor_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'normfactor_do_fit_measurement_default'] = normfactor_do_fit_fitting_v2_widget.value
 
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'mod_sigma_um_measurement_default'] = mod_sigma_um_fitting_v2_widget.value
         df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'mod_sigma_um_range_0_measurement_default'] = mod_sigma_um_range_fitting_v2_widget.value[0]
