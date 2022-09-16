@@ -5499,6 +5499,14 @@ set_measurement_default_widget = widgets.ToggleButton(
 )
 
 def set_measurement_default(change):
+    global df_fitting_v1_measurement_default
+    global df_fitting_v2_measurement_default
+    global df_deconvmethod_2d_v1_measurement_default
+    global df_deconvmethod_1d_v2_measurement_default
+    global df_deconvmethod_2d_v2_measurement_default
+    global df_deconvmethod_1d_v3_measurement_default
+    global df_deconvmethod_2d_v3_measurement_default
+
     if set_measurement_default_widget.value == True:
         measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]
         
@@ -5675,6 +5683,13 @@ save_measurement_default_to_csv_widget = widgets.ToggleButton(
 )
 
 def save_measurement_default_to_csv(change):
+    global df_fitting_v1_measurement_default
+    global df_fitting_v2_measurement_default
+    global df_deconvmethod_2d_v1_measurement_default
+    global df_deconvmethod_1d_v2_measurement_default
+    global df_deconvmethod_2d_v2_measurement_default
+    global df_deconvmethod_1d_v3_measurement_default
+    global df_deconvmethod_2d_v3_measurement_default
     if save_measurement_default_to_csv_widget.value == True:
 
         df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v2_measurement_default.csv')
