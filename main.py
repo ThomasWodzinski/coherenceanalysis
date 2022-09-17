@@ -5808,7 +5808,7 @@ def save_measurement_default_to_csv(change):
     if save_measurement_default_to_csv_widget.value == True:
 
         df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v2_measurement_default.csv')
-        df_fitting_v2_measurement_default.to_csv(df_measurement_default_file)
+        df_fitting_v2_measurement_default.to_csv(df_measurement_default_file, columns=['dataset','measurement']+fitting_v2_measurement_default_headers)
 
         df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v1_measurement_default.csv')
         df_fitting_v1_measurement_default.to_csv(df_measurement_default_file)
