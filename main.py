@@ -5215,13 +5215,6 @@ def imageid_widget_changed(change):
                 textarea_widget.value = 'max_x_px='+str(pixis_image_norm_max_x_px)+'\n'+'min_x_px='+str(pixis_image_norm_min_x_px) +'\n' + \
                     'delta_max_x_um='+str(delta_max_x_px*13)+'\n'+'delta_min_x_um='+str(delta_min_x_px*13)
 
-                # todo: move this to something that generates the measurement_default csvs...
-                # # if the peaks of the two airy disks are two far away from the center set the shift to 0. Choose the range of shiftx_um empirically
-                # if abs(delta_max_x_um) > abs(max(shiftx_um_range_widget.value)):
-                #     shiftx_um_fitting_v2_widget.value = 0
-                # else:
-                #     shiftx_um_fitting_v2_widget.value = delta_max_x_um
-                
 
                 crop_px_fitting_v2_widget.value = 50
                 pixis_profile_avg_width_fitting_v2_widget.value = 200
@@ -5235,7 +5228,11 @@ def imageid_widget_changed(change):
                 shiftx_um_range_fitting_v2_widget.value = [shiftx_um_range_0, shiftx_um_range_1]
                 shiftx_um_fitting_v2_widget.max = shiftx_um_range_fitting_v2_widget.max
                 shiftx_um_fitting_v2_widget.min = shiftx_um_range_fitting_v2_widget.min
-                shiftx_um_fitting_v2_widget.value = 0
+                # if the peaks of the two airy disks are too far away from the center set the shift to 0. Choose the range of shiftx_um empirically
+                if abs(delta_max_x_um) > abs(max(shiftx_um_range_fitting_v2_widget.value)):
+                    shiftx_um_fitting_v2_widget.value = 0
+                else:
+                    shiftx_um_fitting_v2_widget.value = delta_max_x_um
                 shiftx_um_do_fit_fitting_v2_widget.value = True
             
                 wavelength_nm_range_0 = setting_wavelength_nm - 0.1
