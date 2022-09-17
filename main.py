@@ -1199,6 +1199,7 @@ normfactor_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=Fa
 mod_sigma_um_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
 mod_shiftx_um_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
 
+fitting_v2_auto_parameter_widget = widgets.Checkbox(value=False, description="auto parameter (fitting v2)", indent=False, layout=do_fit_widget_layout)
 
 value_widget_layout = widgets.Layout(width="80px")
 shiftx_um_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
@@ -4288,6 +4289,7 @@ fitting_v1_columns = widgets.HBox([
                                 ])
 
 parameter_tabs_children = [ widgets.VBox([fitting_columns,
+                                          fitting_v2_auto_parameter_widget,
                                           crop_px_fitting_v2_widget,
                                           pixis_profile_avg_width_fitting_v2_widget]),
                             widgets.VBox([fitting_v1_columns,
@@ -5199,7 +5201,9 @@ def imageid_widget_changed(change):
 
         # Set default values for fitting v2
         if load_from_df_widget.value == False or np.isnan(shiftx_um_fitting_v2) == True:
-            # load default values instead and inform that there are no saved values!
+            
+            if fitting_v2_auto_parameter_widget.value == True:
+
             # determine how far the maximum of the image is shifted from the center
             pixis_image_norm_max_x_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[1][0]
             pixis_image_norm_max_y_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[0][0]
@@ -5219,55 +5223,162 @@ def imageid_widget_changed(change):
             #     shiftx_um_fitting_v2_widget.value = delta_max_x_um
             
 
-            # wavelength_nm_fitting_v2_widget.value = setting_wavelength_nm
-            # wavelength_nm_range_fitting_v2_widget.value = [wavelength_nm_fitting_v2_widget.value - 0.1, wavelength_nm_fitting_v2_widget.value + 0.1]
-            # d_um_fitting_v2_widget.value = separation_um
-            # x1_um_fitting_v2_widget.value = -d_um_fitting_v2_widget.value * 10 / 2
-            # x2_um_fitting_v2_widget.value = d_um_fitting_v2_widget.value * 10 / 2
-            # x1_um_range_fitting_v2_widget.value = [-d_um_fitting_v2_widget.value * 10 / 2 - 1000, 0]
-            # x2_um_range_fitting_v2_widget.value = [0, d_um_fitting_v2_widget.value * 10 / 2 + 1000]
+                crop_px_fitting_v2_widget.value = 50
+                pixis_profile_avg_width_fitting_v2_widget.value = 200
 
-            # # add more default values
+                slider_min_max_factor = 0.05
+                
+                shiftx_um_range_0 = -1500
+                shiftx_um_range_1 = 1500
+                shiftx_um_range_fitting_v2_widget.max = shiftx_um_range_1*(1+slider_min_max_factor)
+                shiftx_um_range_fitting_v2_widget.min = shiftx_um_range_0-shiftx_um_range_1*slider_min_max_factor
+                shiftx_um_range_fitting_v2_widget.value = [shiftx_um_range_0, shiftx_um_range_1]
+                shiftx_um_fitting_v2_widget.max = shiftx_um_range_fitting_v2_widget.max
+                shiftx_um_fitting_v2_widget.min = shiftx_um_range_fitting_v2_widget.min
+                shiftx_um_fitting_v2_widget.value = 0
+                shiftx_um_do_fit_fitting_v2_widget.value = True
+            
+                wavelength_nm_range_0 = setting_wavelength_nm - 0.1
+                wavelength_nm_range_1 = setting_wavelength_nm + 0.1
+                wavelength_nm_range_fitting_v2_widget.max = wavelength_nm_range_1*(1+slider_min_max_factor)
+                wavelength_nm_range_fitting_v2_widget.min = wavelength_nm_range_0-wavelength_nm_range_1*slider_min_max_factor
+                wavelength_nm_range_fitting_v2_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
+                wavelength_nm_fitting_v2_widget.max = wavelength_nm_range_fitting_v2_widget.max
+                wavelength_nm_fitting_v2_widget.min = wavelength_nm_range_fitting_v2_widget.min
+                wavelength_nm_fitting_v2_widget.value = setting_wavelength_nm
+                wavelength_nm_do_fit_fitting_v2_widget.value = True
 
-            # # shiftx_um_fitting_v2_widget.value = shiftx_um
-            # shiftx_um_range_fitting_v2_widget.value = [-1500, 1500]
-            # shiftx_um_do_fit_fitting_v2_widget.value = True
+                z_mm_range_0 = 5770.0
+                z_mm_range_1 = 5790.0
+                z_mm_range_fitting_v2_widget.max = z_mm_range_1*(1+slider_min_max_factor)
+                z_mm_range_fitting_v2_widget.min = z_mm_range_0-z_mm_range_1*slider_min_max_factor
+                z_mm_range_fitting_v2_widget.value = [z_mm_range_0, z_mm_range_1]
+                z_mm_fitting_v2_widget.max = z_mm_range_fitting_v2_widget.max
+                z_mm_fitting_v2_widget.min = z_mm_range_fitting_v2_widget.min
+                z_mm_fitting_v2_widget.value = 5781.0
+                z_mm_do_fit_fitting_v2_widget.value = False
 
-            # # wavelength_nm_fitting_v2_widget.value = wavelength_nm
-            # # wavelength_nm_range_fitting_v2_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
-            # wavelength_nm_do_fit_fitting_v2_widget.value = True
-            # z_mm_fitting_v2_widget.value = 5781
-            # z_mm_range_fitting_v2_widget.value = [5770.0, 5790.0]
-            # z_mm_do_fit_fitting_v2_widget.value = False
-            # # d_um_fitting_v2_widget.value = d_um
-            # d_um_range_fitting_v2_widget.value = [50.0, 1337.0]
-            # d_um_do_fit_fitting_v2_widget.value = False
-            # gamma_fitting_v2_widget.value = 0.8
-            # gamma_range_fitting_v2_widget.value = [0.01, 1]
-            # gamma_do_fit_fitting_v2_widget.value = True
-            # w1_um_fitting_v2_widget.value = 11.0
-            # w1_um_range_fitting_v2_widget.value = [8.0, 15.0]
-            # w1_um_do_fit_fitting_v2_widget.value = True
-            # w2_um_fitting_v2_widget.value = 11.0
-            # w2_um_range_fitting_v2_widget.value = [8.0, 15.0]
-            # w2_um_do_fit_fitting_v2_widget.value = True
-            # I_Airy1_fitting_v2_widget.value = 1.0
-            # I_Airy1_range_fitting_v2_widget.value = [0.2, 1.5]
-            # I_Airy1_do_fit_fitting_v2_widget.value = False
-            # I_Airy2_fitting_v2_widget.value = 0.8
-            # I_Airy2_range_fitting_v2_widget.value = [0.2, 5.5]
-            # I_Airy2_do_fit_fitting_v2_widget.value = True
-            # # x1_um_fitting_v2_widget.value = x1_um
-            # # x1_um_range_fitting_v2_widget.value = [x1_um_range_0, x1_um_range_1]
-            # x1_um_do_fit_fitting_v2_widget.value = True
-            # # x2_um_fitting_v2_widget.value = x2_um
-            # # x2_um_range_fitting_v2_widget.value = [x2_um_range_0, x2_um_range_1]
-            # x2_um_do_fit_fitting_v2_widget.value = True
-            # normfactor_fitting_v2_widget.value = 1.0
-            # normfactor_range_fitting_v2_widget.value = [0.1, 1.5]
-            # normfactor_do_fit_fitting_v2_widget.value = False
+                d_um_range_0 = 50.0
+                d_um_range_1 = 1337.0
+                d_um_range_fitting_v2_widget.max = d_um_range_1*(1+slider_min_max_factor)
+                d_um_range_fitting_v2_widget.min = d_um_range_0-d_um_range_1*slider_min_max_factor
+                d_um_range_fitting_v2_widget.value = [d_um_range_0, d_um_range_1]
+                d_um_fitting_v2_widget.max = d_um_range_fitting_v2_widget.max
+                d_um_fitting_v2_widget.min = d_um_range_fitting_v2_widget.min
+                d_um_fitting_v2_widget.value = separation_um
+                d_um_do_fit_fitting_v2_widget.value = False
 
-            # load measurement defaults
+                gamma_range_0 = 0.01
+                gamma_range_1 = 1.0
+                gamma_range_fitting_v2_widget.max = gamma_range_1*(1+slider_min_max_factor)
+                gamma_range_fitting_v2_widget.min = 0
+                gamma_range_fitting_v2_widget.value = [gamma_range_0, gamma_range_1]
+                gamma_fitting_v2_widget.max = gamma_range_fitting_v2_widget.max
+                gamma_fitting_v2_widget.min = gamma_range_fitting_v2_widget.min
+                gamma_fitting_v2_widget.value = 0.8
+                gamma_do_fit_fitting_v2_widget.value = True
+
+                w1_um_range_0 = 8.0
+                w1_um_range_1 = 15.0
+                w1_um_range_fitting_v2_widget.max = w1_um_range_1*(1+slider_min_max_factor)
+                w1_um_range_fitting_v2_widget.min = w1_um_range_0-w1_um_range_1*slider_min_max_factor
+                w1_um_range_fitting_v2_widget.value = [w1_um_range_0, w1_um_range_1]
+                w1_um_fitting_v2_widget.max = w1_um_range_fitting_v2_widget.max
+                w1_um_fitting_v2_widget.min = w1_um_range_fitting_v2_widget.min
+                w1_um_fitting_v2_widget.value = 11.0
+                w1_um_do_fit_fitting_v2_widget.value = True
+
+                w2_um_range_0 = 8.0
+                w2_um_range_1 = 15.0
+                w2_um_range_fitting_v2_widget.max = w2_um_range_1*(1+slider_min_max_factor)
+                w2_um_range_fitting_v2_widget.min = w2_um_range_0-w2_um_range_1*slider_min_max_factor
+                w2_um_range_fitting_v2_widget.value = [w2_um_range_0, w2_um_range_1]
+                w2_um_fitting_v2_widget.max = w2_um_range_fitting_v2_widget.max
+                w2_um_fitting_v2_widget.min = w2_um_range_fitting_v2_widget.min
+                w2_um_fitting_v2_widget.value = 11.0
+                w2_um_do_fit_fitting_v2_widget.value = True
+
+                I_Airy1_range_0 = 0.2
+                I_Airy1_range_1 = 1.5
+                I_Airy1_range_fitting_v2_widget.max = I_Airy1_range_1*(1+slider_min_max_factor)
+                I_Airy1_range_fitting_v2_widget.min = I_Airy1_range_0-I_Airy1_range_1*slider_min_max_factor
+                I_Airy1_range_fitting_v2_widget.value = [I_Airy1_range_0, I_Airy1_range_1]
+                I_Airy1_fitting_v2_widget.max = I_Airy1_range_fitting_v2_widget.max
+                I_Airy1_fitting_v2_widget.min = I_Airy1_range_fitting_v2_widget.min
+                I_Airy1_fitting_v2_widget.value = 1.0
+                I_Airy1_do_fit_fitting_v2_widget.value = False
+
+                I_Airy2_range_0 = 0.2
+                I_Airy2_range_1 = 1.5
+                I_Airy2_range_fitting_v2_widget.max = I_Airy2_range_1*(1+slider_min_max_factor)
+                I_Airy2_range_fitting_v2_widget.min = I_Airy2_range_0-I_Airy2_range_1*slider_min_max_factor
+                I_Airy2_range_fitting_v2_widget.value = [I_Airy2_range_0, I_Airy2_range_1]
+                I_Airy2_fitting_v2_widget.max = I_Airy2_range_fitting_v2_widget.max
+                I_Airy2_fitting_v2_widget.min = I_Airy2_range_fitting_v2_widget.min
+                I_Airy2_fitting_v2_widget.value = 0.8
+                I_Airy2_do_fit_fitting_v2_widget.value = True
+
+                x1_um_range_0 = -separation_um * 10 / 2 - 1000
+                x1_um_range_1 = 0
+                x1_um_range_fitting_v2_widget.max = (x1_um_range_1-x1_um_range_0)*(1+slider_min_max_factor)
+                x1_um_range_fitting_v2_widget.min = x1_um_range_0-(x1_um_range_1-x1_um_range_0)*slider_min_max_factor
+                x1_um_range_fitting_v2_widget.value = [x1_um_range_0, x1_um_range_1]
+                x1_um_fitting_v2_widget.max = x1_um_range_fitting_v2_widget.max
+                x1_um_fitting_v2_widget.min = x1_um_range_fitting_v2_widget.min
+                x1_um_fitting_v2_widget.value = -separation_um * 10 / 2
+                x1_um_do_fit_fitting_v2_widget.value = True
+
+                x2_um_range_0 = 0
+                x2_um_range_1 = separation_um * 10 / 2 + 1000
+                x2_um_range_fitting_v2_widget.max = (x2_um_range_1-x2_um_range_0)*(1+slider_min_max_factor)
+                x2_um_range_fitting_v2_widget.min = x2_um_range_0-(x2_um_range_1-x2_um_range_0)*slider_min_max_factor
+                x2_um_range_fitting_v2_widget.value = [x2_um_range_0, x2_um_range_1]
+                x2_um_fitting_v2_widget.max = x2_um_range_fitting_v2_widget.max
+                x2_um_fitting_v2_widget.min = x2_um_range_fitting_v2_widget.min
+                x2_um_fitting_v2_widget.value = separation_um * 10 / 2
+                x2_um_do_fit_fitting_v2_widget.value = True
+
+                statustext_widget.value = 'normfactor start'
+
+                normfactor_range_0 = 0.5
+                normfactor_range_1 = 1.5
+                normfactor_range_fitting_v2_widget.min = 0
+                normfactor_range_fitting_v2_widget.max = normfactor_range_1*(1+slider_min_max_factor)
+                normfactor_range_fitting_v2_widget.value = [normfactor_range_0, normfactor_range_1]
+                normfactor_fitting_v2_widget.min = normfactor_range_fitting_v2_widget.min
+                normfactor_fitting_v2_widget.max = normfactor_range_fitting_v2_widget.max
+                normfactor_fitting_v2_widget.value = 1.0
+                normfactor_do_fit_fitting_v2_widget.value = False
+
+                statustext_widget.value = 'normfactor end'
+
+                mod_sigma_um_range_0 = 1500
+                mod_sigma_um_range_1 = 100000
+                mod_sigma_um_range_fitting_v2_widget.max = mod_sigma_um_range_1*(1+slider_min_max_factor)
+                mod_sigma_um_range_fitting_v2_widget.min = 0
+                mod_sigma_um_range_fitting_v2_widget.value = [mod_sigma_um_range_0, mod_sigma_um_range_1]
+                mod_sigma_um_fitting_v2_widget.max = mod_sigma_um_range_fitting_v2_widget.max
+                mod_sigma_um_fitting_v2_widget.min = mod_sigma_um_range_fitting_v2_widget.min
+                mod_sigma_um_fitting_v2_widget.value = 3000
+                mod_sigma_um_do_fit_fitting_v2_widget.value = True
+
+                mod_shiftx_um_range_0 = -10000
+                mod_shiftx_um_range_1 = 10000
+                mod_shiftx_um_range_fitting_v2_widget.max = mod_shiftx_um_range_1*(1+slider_min_max_factor)
+                mod_shiftx_um_range_fitting_v2_widget.min = mod_shiftx_um_range_0-mod_shiftx_um_range_1*(1+slider_min_max_factor)
+                mod_shiftx_um_range_fitting_v2_widget.value = [mod_shiftx_um_range_0, mod_shiftx_um_range_1]
+                mod_shiftx_um_fitting_v2_widget.max = mod_shiftx_um_range_fitting_v2_widget.max
+                mod_shiftx_um_fitting_v2_widget.min = mod_shiftx_um_range_fitting_v2_widget.min
+                mod_shiftx_um_fitting_v2_widget.value = 3000.0
+                mod_shiftx_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_shiftx_um_do_fit_measurement_default'].iloc[0])
+
+                statustext_widget.value = 'end auto parameter fitting v2'
+
+
+
+            # load measurement defaults only if entries exist
+            shiftx_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['shiftx_um_range_0_measurement_default'].iloc[0]
+            if np.isnan(shiftx_um_range_0) == False:
 
             crop_px_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
             pixis_profile_avg_width_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['pixis_profile_avg_width_measurement_default'].iloc[0]
