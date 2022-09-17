@@ -5338,8 +5338,6 @@ def imageid_widget_changed(change):
                 x2_um_fitting_v2_widget.value = separation_um * 10 / 2
                 x2_um_do_fit_fitting_v2_widget.value = True
 
-                statustext_widget.value = 'normfactor start'
-
                 normfactor_range_0 = 0.5
                 normfactor_range_1 = 1.5
                 normfactor_range_fitting_v2_widget.min = 0
@@ -5349,8 +5347,6 @@ def imageid_widget_changed(change):
                 normfactor_fitting_v2_widget.max = normfactor_range_fitting_v2_widget.max
                 normfactor_fitting_v2_widget.value = 1.0
                 normfactor_do_fit_fitting_v2_widget.value = False
-
-                statustext_widget.value = 'normfactor end'
 
                 mod_sigma_um_range_0 = 1500
                 mod_sigma_um_range_1 = 100000
@@ -5371,10 +5367,6 @@ def imageid_widget_changed(change):
                 mod_shiftx_um_fitting_v2_widget.min = mod_shiftx_um_range_fitting_v2_widget.min
                 mod_shiftx_um_fitting_v2_widget.value = 3000.0
                 mod_shiftx_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_shiftx_um_do_fit_measurement_default'].iloc[0])
-
-                statustext_widget.value = 'end auto parameter fitting v2'
-
-
 
             # load measurement defaults only if entries exist
             shiftx_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['shiftx_um_range_0_measurement_default'].iloc[0]
