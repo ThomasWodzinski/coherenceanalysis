@@ -693,6 +693,9 @@ df_deconvmethod_2d_v2_measurement_default = df_deconvmethod_2d_v2_measurement_de
 df_deconvmethod_1d_v3_measurement_default = df_deconvmethod_1d_v3_measurement_default.reindex(columns = df_deconvmethod_1d_v3_measurement_default.columns.tolist() + list(set(deconvmethod_1d_v3_measurement_default_headers) - set(df_deconvmethod_1d_v3_measurement_default.columns.tolist())) )
 df_deconvmethod_2d_v3_measurement_default = df_deconvmethod_2d_v3_measurement_default.reindex(columns = df_deconvmethod_2d_v3_measurement_default.columns.tolist() + list(set(deconvmethod_2d_v3_measurement_default_headers) - set(df_deconvmethod_2d_v3_measurement_default.columns.tolist())) )
 
+# create empyt csv, will cause errors since there are no values
+# df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v2_measurement_default.csv')
+# df_fitting_v2_measurement_default.to_csv(df_measurement_default_file, columns=['dataset','measurement']+fitting_v2_measurement_default_headers)
 
 
 # store also 'measurement' into df_fits to be able to cross-correlate!
