@@ -1,4 +1,4 @@
-,dataset,measurement,,pixis_profile_avg_width_measurement_default,crop_px_measurement_default,sigma_x_F_gamma_um_min_measurement_default,sigma_x_F_gamma_um_max_measurement_default,sigma_x_F_gamma_um_stepsize_measurement_default,sigma_y_F_gamma_um_min_measurement_default,sigma_y_F_gamma_um_max_measurement_default,sigma_y_F_gamma_um_stepsize_measurement_default
+,dataset,measurement,Unnamed: 3,pixis_profile_avg_width_measurement_default,crop_px_measurement_default,sigma_x_F_gamma_um_min_measurement_default,sigma_x_F_gamma_um_max_measurement_default,sigma_x_F_gamma_um_stepsize_measurement_default,sigma_y_F_gamma_um_min_measurement_default,sigma_y_F_gamma_um_max_measurement_default,sigma_y_F_gamma_um_stepsize_measurement_default
 0,8nm vertical S,2017-11-27T1529 8.0nm 45uJ 12Und. KOAS=PMMA 0215um (3a#1) ap5=7.0 ap7=50.0 (bg3cd) ap5=7.0 ap7=50.0,,200,50,7,40,1,7,40,1
 1,8nm vertical S,2017-11-27T1529 8.0nm 45uJ 12Und. KOAS=PMMA 0322um (4a) ap5=7.0 ap7=50.0 (bg3cd) ap5=7.0 ap7=50.0,,200,50,7,40,1,7,40,1
 2,8nm vertical S,2017-11-27T1529 8.0nm 45uJ 12Und. KOAS=PMMA 0445um (5a) ap5=7.0 ap7=50.0 (bg5ab) ap5=7.0 ap7=50.0,,200,50,7,40,1,7,40,1
