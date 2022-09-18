@@ -5525,7 +5525,7 @@ def imageid_widget_changed(change):
                 mod_shiftx_um_fitting_v2_widget.max = mod_shiftx_um_range_fitting_v2_widget.max
                 mod_shiftx_um_fitting_v2_widget.min = mod_shiftx_um_range_fitting_v2_widget.min
                 mod_shiftx_um_fitting_v2_widget.value = 3000.0
-                mod_shiftx_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_shiftx_um_do_fit_measurement_default'].iloc[0])
+                mod_shiftx_um_do_fit_fitting_v2_widget.value = True
 
             # load measurement defaults only if entries exist
             shiftx_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['shiftx_um_range_0_measurement_default'].iloc[0]
