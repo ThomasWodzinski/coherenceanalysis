@@ -503,6 +503,10 @@ fits_header_list4_v1 = []
 for header in fits_header_list4:
     fits_header_list4_v1.append(header + '_v1')
 
+fits_header_list4_v2 = []
+for header in fits_header_list4:
+    fits_header_list4_v2.append(header + '_v2')
+
 # fitting parameter of version 2
 fits_header_list5 = [
     'mod_sigma_um',
@@ -514,6 +518,10 @@ fits_header_list5 = [
     'mod_shiftx_um_range_1',
     'mod_shiftx_um_do_fit'
 ]
+
+fits_header_list5_v2 = []
+for header in fits_header_list5:
+    fits_header_list5_v2.append(header + '_v2')
 
 # fitting results
 fits_header_list6a = [
@@ -634,10 +642,11 @@ for dataset in list(datasets):
 
 
 
-df_fitting_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
-                                    'measurement' : measurement_arr})
 
 df_fitting_v1_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
+                                    'measurement' : measurement_arr})
+
+df_fitting_v2_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
                                     'measurement' : measurement_arr})
 
 df_deconvmethod_2d_v1_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
@@ -655,13 +664,13 @@ df_deconvmethod_1d_v3_measurement_default = pd.DataFrame({'dataset' : dataset_ar
 df_deconvmethod_2d_v3_measurement_default = pd.DataFrame({'dataset' : dataset_arr,
                                     'measurement' : measurement_arr})
 
-fitting_measurement_default_headers = []
-for header in fits_header_list4 + fits_header_list5:
-    fitting_measurement_default_headers.append(header + '_measurement_default')
-
 fitting_v1_measurement_default_headers = []
-for header in fits_header_list4_v1:
+for header in fits_header_list4:
     fitting_v1_measurement_default_headers.append(header + '_measurement_default')
+
+fitting_v2_measurement_default_headers = []
+for header in fits_header_list4 + fits_header_list5:
+    fitting_v2_measurement_default_headers.append(header + '_measurement_default')
 
 deconvmethod_2d_v1_measurement_default_headers = []
 for header in fits_header_list7_v1:
@@ -684,25 +693,29 @@ for header in fits_header_list7:
     deconvmethod_2d_v3_measurement_default_headers.append(header + '_measurement_default')
 
 
-df_fitting_measurement_default = df_fitting_measurement_default.reindex(columns = df_fitting_measurement_default.columns.tolist() + list(set(fitting_measurement_default_headers) - set(df_fitting_measurement_default.columns.tolist())) )
 df_fitting_v1_measurement_default = df_fitting_v1_measurement_default.reindex(columns = df_fitting_v1_measurement_default.columns.tolist() + list(set(fitting_v1_measurement_default_headers) - set(df_fitting_v1_measurement_default.columns.tolist())) )
+df_fitting_v2_measurement_default = df_fitting_v2_measurement_default.reindex(columns = df_fitting_v2_measurement_default.columns.tolist() + list(set(fitting_v2_measurement_default_headers) - set(df_fitting_v2_measurement_default.columns.tolist())) )
 df_deconvmethod_2d_v1_measurement_default = df_deconvmethod_2d_v1_measurement_default.reindex(columns = df_deconvmethod_2d_v1_measurement_default.columns.tolist() + list(set(deconvmethod_2d_v1_measurement_default_headers) - set(df_deconvmethod_2d_v1_measurement_default.columns.tolist())) )
 df_deconvmethod_1d_v2_measurement_default = df_deconvmethod_1d_v2_measurement_default.reindex(columns = df_deconvmethod_1d_v2_measurement_default.columns.tolist() + list(set(deconvmethod_1d_v2_measurement_default_headers) - set(df_deconvmethod_1d_v2_measurement_default.columns.tolist())) )
 df_deconvmethod_2d_v2_measurement_default = df_deconvmethod_2d_v2_measurement_default.reindex(columns = df_deconvmethod_2d_v2_measurement_default.columns.tolist() + list(set(deconvmethod_2d_v2_measurement_default_headers) - set(df_deconvmethod_2d_v2_measurement_default.columns.tolist())) )
 df_deconvmethod_1d_v3_measurement_default = df_deconvmethod_1d_v3_measurement_default.reindex(columns = df_deconvmethod_1d_v3_measurement_default.columns.tolist() + list(set(deconvmethod_1d_v3_measurement_default_headers) - set(df_deconvmethod_1d_v3_measurement_default.columns.tolist())) )
 df_deconvmethod_2d_v3_measurement_default = df_deconvmethod_2d_v3_measurement_default.reindex(columns = df_deconvmethod_2d_v3_measurement_default.columns.tolist() + list(set(deconvmethod_2d_v3_measurement_default_headers) - set(df_deconvmethod_2d_v3_measurement_default.columns.tolist())) )
 
+# create empyt csv, will cause errors since there are no values
+# df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v2_measurement_default.csv')
+# df_fitting_v2_measurement_default.to_csv(df_measurement_default_file, columns=['dataset','measurement']+fitting_v2_measurement_default_headers)
 
 
 # store also 'measurement' into df_fits to be able to cross-correlate!
 
-df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v2_measurement_default.csv')
-if os.path.isfile(df_measurement_default_file):
-    df_fitting_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
 df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v1_measurement_default.csv')
 if os.path.isfile(df_measurement_default_file):
     df_fitting_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+
+df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v2_measurement_default.csv')
+if os.path.isfile(df_measurement_default_file):
+    df_fitting_v2_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
 df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v1_measurement_default.csv')
 if os.path.isfile(df_measurement_default_file):
@@ -1084,102 +1097,135 @@ deconvmethod_2d_v3_result_widget = widgets.Text(
     value="", placeholder="(xi_x_um, xi_y_um) (v3)", description='2D-Deconvolution v3 (ξˣ, ξʸ) / μm', disabled=False, layout=widgets.Layout(width='auto')
 )
 
-# general parameter widgets
+# fitting v1 parameter widgets
 
-crop_px_widget = widgets.FloatText(value=200, description='crop_px')
-pixis_profile_avg_width_widget = widgets.FloatText(value=200, description='profile width / px')
+crop_px_fitting_v1_widget = widgets.FloatText(description='crop_px (v1)')
+pixis_profile_avg_width_fitting_v1_widget = widgets.FloatText(description='profile width / px (v1)')
 
-# fitting parameter widgets
+shiftx_um_fitting_v1_widget = widgets.FloatSlider(description="shiftx_um (v1)") # min=-n / 2 * 13, max=n / 2 * 13, value=477, step=1, 
+wavelength_nm_fitting_v1_widget = widgets.FloatSlider(description="wavelength_nm (v1)")
+z_mm_fitting_v1_widget = widgets.FloatSlider(description="z_mm (v1)") # min=5000.0, max=6000.0, value=5781.0
+d_um_fitting_v1_widget = widgets.FloatSlider(description="d_um (v1)") # min=107, max=1337, value=215.0, 
+gamma_fitting_v1_widget = widgets.FloatSlider(description="gamma (v1)") # min=0, max=2.0, value=0.8, 
+w1_um_fitting_v1_widget = widgets.FloatSlider(description="w1_um (v1)") # min=8, max=16, value=11.00, 
+w2_um_fitting_v1_widget = widgets.FloatSlider(description="w2_um (v1)") # min=8, max=16, value=11.00, 
+I_Airy1_fitting_v1_widget = widgets.FloatSlider(description="I_Airy1 (v1)") # min=0, max=10, value=1.0, 
+I_Airy2_fitting_v1_widget = widgets.FloatSlider(description="I_Airy2 (v1)") # min=0, max=10, value=0.8, 
+x1_um_fitting_v1_widget = widgets.FloatSlider(description="x1_um") # min=-n * 13 / 2 - 5000, max=0, value=-d_um_widget.value * 10 / 2, step=0.1
+x2_um_fitting_v1_widget = widgets.FloatSlider(description="x2_um") # min=0, max=2 * n * 13 + 5000, value=d_um_widget.value * 10 / 2, step=0.1
+normfactor_fitting_v1_widget = widgets.FloatSlider(description="normfactor (v1)", readout_format=".2f") # min=0.00, max=10, value=1.0, step=0.1, 
 
-shiftx_um_widget = widgets.FloatSlider(min=-n / 2 * 13, max=n / 2 * 13, value=477, step=1, description="shiftx_um")
-# wavelength_nm_widget = widgets.FloatSlider(value=_lambda_widget.value, description='wavelength_nm')
-wavelength_nm_widget = widgets.FloatSlider(value=8.0, description="wavelength_nm")
-z_mm_widget = widgets.FloatSlider(min=5000.0, max=6000.0, value=5781.0, description="z_mm")
-# d_um_widget = widgets.FloatSlider(min=107, max= 1337, value=d_um_widget.value, description='d_um')
-d_um_widget = widgets.FloatSlider(min=107, max=1337, value=215.0, description="d_um")
-gamma_widget = widgets.FloatSlider(min=0, max=2.0, value=0.8, description="gamma")
-w1_um_widget = widgets.FloatSlider(min=8, max=16, value=11.00, description="w1_um")
-w2_um_widget = widgets.FloatSlider(min=8, max=16, value=11.00, description="w2_um")
-I_Airy1_widget = widgets.FloatSlider(min=0, max=10, value=1.0, description="I_Airy1")
-I_Airy2_widget = widgets.FloatSlider(min=0, max=10, value=0.8, description="I_Airy2")
-x1_um_widget = widgets.FloatSlider(
-    min=-n * 13 / 2 - 5000, max=0, value=-d_um_widget.value * 10 / 2, step=0.1, description="x1_um"
-)
-x2_um_widget = widgets.FloatSlider(
-    min=0, max=2 * n * 13 + 5000, value=d_um_widget.value * 10 / 2, step=0.1, description="x2_um"
-)
-normfactor_widget = widgets.FloatSlider(
-    min=0.00, max=10, value=1.0, step=0.1, description="normfactor", readout_format=".2f"
-)
-mod_sigma_um_widget = widgets.FloatSlider(
-    min=0, max=100000, value=3000, step=100, description="mod_sigma_um", readout_format=".2f"
-)
-mod_shiftx_um_widget = widgets.FloatSlider(min=-30000, max=30000, value=3000, step=1, description="mod_shiftx_um")
-
-
-shiftx_um_range_widget = widgets.FloatRangeSlider(
-    min=-n / 2 * 13, max=n / 2 * 13, value=[-1500, 1500], step=1, description="shiftx_um"
-)
-wavelength_nm_range_widget = widgets.FloatRangeSlider(
-    min=7,
-    max=19,
-    value=[wavelength_nm_widget.value - 0.1, wavelength_nm_widget.value + 0.1],
-    description="wavelength_nm",
-)
-z_mm_range_widget = widgets.FloatRangeSlider(min=5000.0, max=6000.0, value=[5770.0, 5790], description="z_mm")
-d_um_range_widget = widgets.FloatRangeSlider(min=50, max=1337, value=[50.0, 1337.0], description="d_um")
-gamma_range_widget = widgets.FloatRangeSlider(min=0, max=2.0, value=[0.01, 1.0], description="gamma")
-w1_um_range_widget = widgets.FloatRangeSlider(min=5, max=20, value=[8, 15], description="w1_um")
-w2_um_range_widget = widgets.FloatRangeSlider(min=5, max=20, value=[8, 15], description="w2_um")
-I_Airy1_range_widget = widgets.FloatRangeSlider(min=0, max=10, value=[0.2, 1.5], description="I_Airy1")
-I_Airy2_range_widget = widgets.FloatRangeSlider(min=0, max=10, value=[0.2, 5.5], description="I_Airy2")
-x1_um_range_widget = widgets.FloatRangeSlider(
-    min=-n * 13, max=0, value=[-d_um_widget.value * 10 / 2 - 1000, 0], step=0.1, description="x1_um"
-)
-x2_um_range_widget = widgets.FloatRangeSlider(
-    min=0, max=n * 13, value=[0, d_um_widget.value * 10 / 2 + 1000], step=0.1, description="x2_um"
-)
-normfactor_range_widget = widgets.FloatRangeSlider(
-    min=0, max=10, value=[0.5, 1.5], step=0.01, description="normfactor", readout_format=".2f"
-)
-mod_sigma_um_range_widget = widgets.FloatRangeSlider(
-    min=0, max=100000, value=[1500.0, 100000.0], step=100, description="mod_sigma_um", readout_format=".2f"
-)
-mod_shiftx_um_range_widget = widgets.FloatRangeSlider(
-    min=-30000, max=30000, value=[-10000, 10000], step=100, description="mod_shiftx_um"
-)
+shiftx_um_range_fitting_v1_widget = widgets.FloatRangeSlider(description="shiftx_um range (v1)") # min=-n / 2 * 13, max=n / 2 * 13, value=[-1500, 1500], step=1, 
+wavelength_nm_range_fitting_v1_widget = widgets.FloatRangeSlider(description="wavelength_nm range (v1)") # min=7, max=19, value=[wavelength_nm_widget.value - 0.1, wavelength_nm_widget.value + 0.1], 
+z_mm_range_fitting_v1_widget = widgets.FloatRangeSlider(description="z_mm range (v1)") # min=5000.0, max=6000.0, value=[5770.0, 5790], 
+d_um_range_fitting_v1_widget = widgets.FloatRangeSlider(description="d_um range (v1)") # min=50, max=1337, value=[50.0, 1337.0], 
+gamma_range_fitting_v1_widget = widgets.FloatRangeSlider(description="gamma range (v1)") # min=0, max=2.0, value=[0.01, 1.0], 
+w1_um_range_fitting_v1_widget = widgets.FloatRangeSlider(description="w1_um range (v1)") # min=5, max=20, value=[8, 15], 
+w2_um_range_fitting_v1_widget = widgets.FloatRangeSlider(description="w2_um range (v1)") # min=5, max=20, value=[8, 15], 
+I_Airy1_range_fitting_v1_widget = widgets.FloatRangeSlider(description="I_Airy1 range (v1)") # min=0, max=10, value=[0.2, 1.5], 
+I_Airy2_range_fitting_v1_widget = widgets.FloatRangeSlider(description="I_Airy2 range (v1)") # min=0, max=10, value=[0.2, 5.5], 
+x1_um_range_fitting_v1_widget = widgets.FloatRangeSlider(description="x1_um range (v1)") # min=-n * 13, max=0, value=[-d_um_widget.value * 10 / 2 - 1000, 0], step=0.1, 
+x2_um_range_fitting_v1_widget = widgets.FloatRangeSlider(description="x2_um range (v1)") # min=0, max=n * 13, value=[0, d_um_widget.value * 10 / 2 + 1000], step=0.1, 
+normfactor_range_fitting_v1_widget = widgets.FloatRangeSlider(description="normfactor range (v1)", readout_format=".2f") # min=0, max=10, value=[0.5, 1.5], step=0.01, 
 
 do_fit_widget_layout = widgets.Layout(width="auto")
-shiftx_um_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
-wavelength_nm_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
-z_mm_do_fit_widget = widgets.Checkbox(value=False, description="", indent=False, layout=do_fit_widget_layout)
-d_um_do_fit_widget = widgets.Checkbox(value=False, description="", indent=False, layout=do_fit_widget_layout)
-gamma_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
-w1_um_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
-w2_um_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
-I_Airy1_do_fit_widget = widgets.Checkbox(value=False, description="", indent=False, layout=do_fit_widget_layout)
-I_Airy2_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
-x1_um_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
-x2_um_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
-normfactor_do_fit_widget = widgets.Checkbox(value=False, description="", indent=False, layout=do_fit_widget_layout)
-mod_sigma_um_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
-mod_shiftx_um_do_fit_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+shiftx_um_do_fit_fitting_v1_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+wavelength_nm_do_fit_fitting_v1_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+z_mm_do_fit_fitting_v1_widget = widgets.Checkbox(value=False, description="", indent=False, layout=do_fit_widget_layout)
+d_um_do_fit_fitting_v1_widget = widgets.Checkbox(value=False, description="", indent=False, layout=do_fit_widget_layout)
+gamma_do_fit_fitting_v1_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+w1_um_do_fit_fitting_v1_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+w2_um_do_fit_fitting_v1_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+I_Airy1_do_fit_fitting_v1_widget = widgets.Checkbox(value=False, description="", indent=False, layout=do_fit_widget_layout)
+I_Airy2_do_fit_fitting_v1_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+x1_um_do_fit_fitting_v1_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+x2_um_do_fit_fitting_v1_widget = widgets.Checkbox(value=True, description="", indent=False, layout=do_fit_widget_layout)
+normfactor_do_fit_fitting_v1_widget = widgets.Checkbox(value=False, description="", indent=False, layout=do_fit_widget_layout)
+
+fitting_v1_auto_parameter_widget = widgets.Checkbox(value=False, description="auto parameter (fitting v1)", indent=False, layout=do_fit_widget_layout)
 
 value_widget_layout = widgets.Layout(width="80px")
-shiftx_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
-wavelength_nm_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
-z_mm_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
-d_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
-gamma_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
-w1_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
-w2_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
-I_Airy1_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
-I_Airy2_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
-x1_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
-x2_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
-normfactor_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
-mod_sigma_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
-mod_shiftx_um_value_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+shiftx_um_value_fitting_v1_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+wavelength_nm_value_fitting_v1_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+z_mm_value_fitting_v1_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+d_um_value_fitting_v1_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+gamma_value_fitting_v1_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+w1_um_value_fitting_v1_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+w2_um_value_fitting_v1_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+I_Airy1_value_fitting_v1_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+I_Airy2_value_fitting_v1_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+x1_um_value_fitting_v1_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+x2_um_value_fitting_v1_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+normfactor_value_fitting_v1_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+
+# fitting v2 parameter widgets
+
+crop_px_fitting_v2_widget = widgets.FloatText(description='crop_px (v2)')
+pixis_profile_avg_width_fitting_v2_widget = widgets.FloatText(description='profile width / px (v2)')
+
+shiftx_um_fitting_v2_widget = widgets.FloatSlider(description="shiftx_um (v2)") # min=-n / 2 * 13, max=n / 2 * 13, value=477, step=1, 
+wavelength_nm_fitting_v2_widget = widgets.FloatSlider(description="wavelength_nm (v2)")
+z_mm_fitting_v2_widget = widgets.FloatSlider(description="z_mm (v2)") # min=5000.0, max=6000.0, value=5781.0
+d_um_fitting_v2_widget = widgets.FloatSlider(description="d_um (v2)") # min=107, max=1337, value=215.0, 
+gamma_fitting_v2_widget = widgets.FloatSlider(description="gamma (v2)") # min=0, max=2.0, value=0.8, 
+w1_um_fitting_v2_widget = widgets.FloatSlider(description="w1_um (v2)") # min=8, max=16, value=11.00, 
+w2_um_fitting_v2_widget = widgets.FloatSlider(description="w2_um (v2)") # min=8, max=16, value=11.00, 
+I_Airy1_fitting_v2_widget = widgets.FloatSlider(description="I_Airy1 (v2)") # min=0, max=10, value=1.0, 
+I_Airy2_fitting_v2_widget = widgets.FloatSlider(description="I_Airy2 (v2)") # min=0, max=10, value=0.8, 
+x1_um_fitting_v2_widget = widgets.FloatSlider(description="x1_um") # min=-n * 13 / 2 - 5000, max=0, value=-d_um_widget.value * 10 / 2, step=0.1
+x2_um_fitting_v2_widget = widgets.FloatSlider(description="x2_um") # min=0, max=2 * n * 13 + 5000, value=d_um_widget.value * 10 / 2, step=0.1
+normfactor_fitting_v2_widget = widgets.FloatSlider(description="normfactor (v2)", readout_format=".2f") # min=0.00, max=10, value=1.0, step=0.1, 
+mod_sigma_um_fitting_v2_widget = widgets.FloatSlider(description="mod_sigma_um (v2)", readout_format=".2f") # min=0, max=100000, value=3000, step=100, 
+mod_shiftx_um_fitting_v2_widget = widgets.FloatSlider(description="mod_shiftx_um (v2)") # min=-30000, max=30000, value=3000, step=1, 
+
+shiftx_um_range_fitting_v2_widget = widgets.FloatRangeSlider(description="shiftx_um range (v2)") # min=-n / 2 * 13, max=n / 2 * 13, value=[-1500, 1500], step=1, 
+wavelength_nm_range_fitting_v2_widget = widgets.FloatRangeSlider(description="wavelength_nm range (v2)") # min=7, max=19, value=[wavelength_nm_widget.value - 0.1, wavelength_nm_widget.value + 0.1], 
+z_mm_range_fitting_v2_widget = widgets.FloatRangeSlider(description="z_mm range (v2)") # min=5000.0, max=6000.0, value=[5770.0, 5790], 
+d_um_range_fitting_v2_widget = widgets.FloatRangeSlider(description="d_um range (v2)") # min=50, max=1337, value=[50.0, 1337.0], 
+gamma_range_fitting_v2_widget = widgets.FloatRangeSlider(description="gamma range (v2)") # min=0, max=2.0, value=[0.01, 1.0], 
+w1_um_range_fitting_v2_widget = widgets.FloatRangeSlider(description="w1_um range (v2)") # min=5, max=20, value=[8, 15], 
+w2_um_range_fitting_v2_widget = widgets.FloatRangeSlider(description="w2_um range (v2)") # min=5, max=20, value=[8, 15], 
+I_Airy1_range_fitting_v2_widget = widgets.FloatRangeSlider(description="I_Airy1 range (v2)") # min=0, max=10, value=[0.2, 1.5], 
+I_Airy2_range_fitting_v2_widget = widgets.FloatRangeSlider(description="I_Airy2 range (v2)") # min=0, max=10, value=[0.2, 5.5], 
+x1_um_range_fitting_v2_widget = widgets.FloatRangeSlider(description="x1_um range (v2)") # min=-n * 13, max=0, value=[-d_um_widget.value * 10 / 2 - 1000, 0], step=0.1, 
+x2_um_range_fitting_v2_widget = widgets.FloatRangeSlider(description="x2_um range (v2)") # min=0, max=n * 13, value=[0, d_um_widget.value * 10 / 2 + 1000], step=0.1, 
+normfactor_range_fitting_v2_widget = widgets.FloatRangeSlider(description="normfactor range (v2)", readout_format=".2f") # min=0, max=10, value=[0.5, 1.5], step=0.01, 
+mod_sigma_um_range_fitting_v2_widget = widgets.FloatRangeSlider(description="mod_sigma_um range (v2)", readout_format=".2f") # min=0, max=100000, value=[1500.0, 100000.0], step=100, 
+mod_shiftx_um_range_fitting_v2_widget = widgets.FloatRangeSlider(description="mod_shiftx_um range (v2)") # min=-30000, max=30000, value=[-10000, 10000], step=100,
+
+do_fit_widget_layout = widgets.Layout(width="auto")
+shiftx_um_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
+wavelength_nm_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
+z_mm_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
+d_um_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
+gamma_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
+w1_um_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
+w2_um_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
+I_Airy1_do_fit_fitting_v2_widget = widgets.Checkbox( description="", indent=False, layout=do_fit_widget_layout)
+I_Airy2_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
+x1_um_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
+x2_um_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
+normfactor_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
+mod_sigma_um_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
+mod_shiftx_um_do_fit_fitting_v2_widget = widgets.Checkbox(description="", indent=False, layout=do_fit_widget_layout)
+
+fitting_v2_auto_parameter_widget = widgets.Checkbox(value=False, description="auto parameter (fitting v2)", indent=False, layout=do_fit_widget_layout)
+
+value_widget_layout = widgets.Layout(width="80px")
+shiftx_um_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+wavelength_nm_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+z_mm_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+d_um_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+gamma_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+w1_um_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+w2_um_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+I_Airy1_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+I_Airy2_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+x1_um_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+x2_um_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+normfactor_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+mod_sigma_um_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
+mod_shiftx_um_value_fitting_v2_widget = widgets.Text(value="", description="",layout=value_widget_layout)
 
 
 # deconvolution_2d_v1 parameter widgets
@@ -1379,7 +1425,7 @@ def plot_fitting_v1(
         separation_um = get_sep_and_orient(pinholes)[0]
         orientation = get_sep_and_orient(pinholes)[1]
         setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
-        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["energy hall"].iloc[0]
+        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
         
         # fittingprogress_widget.value = 2
         #     hdf5_file_name_image = hdf5_file_name_image_widget.value
@@ -1489,18 +1535,18 @@ def plot_fitting_v1(
         # #Bayesian info crit
         # print result.bic
 
-        shiftx_um_value_widget.value = r"%.2f" % (shiftx_um_fit)
-        wavelength_nm_value_widget.value = r"%.2f" % (wavelength_nm_fit)
-        z_mm_value_widget.value = r"%.2f" % (z_mm_fit)
-        d_um_value_widget.value = r"%.2f" % (d_um_fit)
-        gamma_value_widget.value = r"%.2f" % (gamma_fit)
-        w1_um_value_widget.value = r"%.2f" % (w1_um_fit)
-        w2_um_value_widget.value = r"%.2f" % (w2_um_fit)
-        I_Airy1_value_widget.value = r"%.2f" % (I_Airy1_fit)
-        I_Airy2_value_widget.value = r"%.2f" % (I_Airy2_fit)
-        x1_um_value_widget.value = r"%.2f" % (x1_um_fit)
-        x2_um_value_widget.value = r"%.2f" % (x2_um_fit)
-        normfactor_value_widget.value = r"%.2f" % (normfactor_fit)
+        shiftx_um_value_fitting_v1_widget.value = r"%.2f" % (shiftx_um_fit)
+        wavelength_nm_value_fitting_v1_widget.value = r"%.2f" % (wavelength_nm_fit)
+        z_mm_value_fitting_v1_widget.value = r"%.2f" % (z_mm_fit)
+        d_um_value_fitting_v1_widget.value = r"%.2f" % (d_um_fit)
+        gamma_value_fitting_v1_widget.value = r"%.2f" % (gamma_fit)
+        w1_um_value_fitting_v1_widget.value = r"%.2f" % (w1_um_fit)
+        w2_um_value_fitting_v1_widget.value = r"%.2f" % (w2_um_fit)
+        I_Airy1_value_fitting_v1_widget.value = r"%.2f" % (I_Airy1_fit)
+        I_Airy2_value_fitting_v1_widget.value = r"%.2f" % (I_Airy2_fit)
+        x1_um_value_fitting_v1_widget.value = r"%.2f" % (x1_um_fit)
+        x2_um_value_fitting_v1_widget.value = r"%.2f" % (x2_um_fit)
+        normfactor_value_fitting_v1_widget.value = r"%.2f" % (normfactor_fit)
 
         # calculate gamma_fit at the center between the two airy disks
         
@@ -1967,7 +2013,7 @@ def plot_fitting_v2(
         separation_um = get_sep_and_orient(pinholes)[0]
         orientation = get_sep_and_orient(pinholes)[1]
         setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
-        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["energy hall"].iloc[0]
+        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
 
         # fittingprogress_widget.value = 2
         #     hdf5_file_name_image = hdf5_file_name_image_widget.value
@@ -2085,20 +2131,20 @@ def plot_fitting_v2(
         # #Bayesian info crit
         # print result.bic
 
-        shiftx_um_value_widget.value = r"%.2f" % (shiftx_um_fit)
-        wavelength_nm_value_widget.value = r"%.2f" % (wavelength_nm_fit)
-        z_mm_value_widget.value = r"%.2f" % (z_mm_fit)
-        d_um_value_widget.value = r"%.2f" % (d_um_fit)
-        gamma_value_widget.value = r"%.2f" % (gamma_fit)
-        w1_um_value_widget.value = r"%.2f" % (w1_um_fit)
-        w2_um_value_widget.value = r"%.2f" % (w2_um_fit)
-        I_Airy1_value_widget.value = r"%.2f" % (I_Airy1_fit)
-        I_Airy2_value_widget.value = r"%.2f" % (I_Airy2_fit)
-        x1_um_value_widget.value = r"%.2f" % (x1_um_fit)
-        x2_um_value_widget.value = r"%.2f" % (x2_um_fit)
-        normfactor_value_widget.value = r"%.2f" % (normfactor_fit)
-        mod_sigma_um_value_widget.value = r"%.2f" % (mod_sigma_um_fit)
-        mod_shiftx_um_value_widget.value = r"%.2f" % (mod_shiftx_um_fit)
+        shiftx_um_value_fitting_v2_widget.value = r"%.2f" % (shiftx_um_fit)
+        wavelength_nm_value_fitting_v2_widget.value = r"%.2f" % (wavelength_nm_fit)
+        z_mm_value_fitting_v2_widget.value = r"%.2f" % (z_mm_fit)
+        d_um_value_fitting_v2_widget.value = r"%.2f" % (d_um_fit)
+        gamma_value_fitting_v2_widget.value = r"%.2f" % (gamma_fit)
+        w1_um_value_fitting_v2_widget.value = r"%.2f" % (w1_um_fit)
+        w2_um_value_fitting_v2_widget.value = r"%.2f" % (w2_um_fit)
+        I_Airy1_value_fitting_v2_widget.value = r"%.2f" % (I_Airy1_fit)
+        I_Airy2_value_fitting_v2_widget.value = r"%.2f" % (I_Airy2_fit)
+        x1_um_value_fitting_v2_widget.value = r"%.2f" % (x1_um_fit)
+        x2_um_value_fitting_v2_widget.value = r"%.2f" % (x2_um_fit)
+        normfactor_value_fitting_v2_widget.value = r"%.2f" % (normfactor_fit)
+        mod_sigma_um_value_fitting_v2_widget.value = r"%.2f" % (mod_sigma_um_fit)
+        mod_shiftx_um_value_fitting_v2_widget.value = r"%.2f" % (mod_shiftx_um_fit)
 
         # calculate gamma_fit at the center between the two airy disks
         gamma_fit_v2 = gaussian(0,1,mod_shiftx_um_fit,mod_sigma_um_fit)*gamma_fit
@@ -2541,7 +2587,7 @@ def plot_deconvmethod(
         separation_um = get_sep_and_orient(pinholes)[0]
         orientation = get_sep_and_orient(pinholes)[1]
         setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
-        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["energy hall"].iloc[0]
+        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
 
         pixis_profile_avg = pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:]
 
@@ -3032,7 +3078,7 @@ def plot_deconvmethod_2d_v1(
         separation_um = get_sep_and_orient(pinholes)[0]
         orientation = get_sep_and_orient(pinholes)[1]
         setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
-        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["energy hall"].iloc[0]
+        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
 
         pixis_profile_avg = pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:]
 
@@ -3507,8 +3553,8 @@ def plot_fitting_vs_deconvolution(
                     df_fitting_result = df_fitting_v1_results[(df_fitting_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))][['separation_um','imageid','timestamp_pulse_id',xi_um_fit_column,'chi2distance_fitting_v1']].sort_values('chi2distance_fitting_v1',ascending=False)        
                 if (xi_um_fit_column == 'xi_um_fit_v2') or (xi_um_fit_column == 'xi_um_fit'):
                     # fitting v2 defaults:
-                    mod_sigma_um_measurement_default = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_sigma_um_measurement_default'].iloc[0]
-                    mod_shiftx_um_measurement_default = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
+                    mod_sigma_um_measurement_default = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_sigma_um_measurement_default'].iloc[0]
+                    mod_shiftx_um_measurement_default = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
                     df_fitting_result = df_fitting_v2_results[(df_fitting_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_fitting_v2_results['mod_sigma_um'] == mod_sigma_um_measurement_default) & \
                         (df_fitting_v2_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)][['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
@@ -3716,8 +3762,8 @@ def list_results(
                     df_fitting_result = df_fitting_v1_results[(df_fitting_v1_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement))][['separation_um','imageid','timestamp_pulse_id',xi_um_fit_column,'chi2distance_fitting_v1']].sort_values('chi2distance_fitting_v1',ascending=False)        
                 if (xi_um_fit_column == 'xi_um_fit_v2') or (xi_um_fit_column == 'xi_um_fit'):
                     # fitting v2 defaults:
-                    mod_sigma_um_measurement_default = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_sigma_um_measurement_default'].iloc[0]
-                    mod_shiftx_um_measurement_default = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
+                    mod_sigma_um_measurement_default = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_sigma_um_measurement_default'].iloc[0]
+                    mod_shiftx_um_measurement_default = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
                     df_fitting_result = df_fitting_v2_results[(df_fitting_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids_measurement)) & \
                         (df_fitting_v2_results['mod_sigma_um'] == mod_sigma_um_measurement_default) & \
                         (df_fitting_v2_results['mod_shiftx_um'] == mod_shiftx_um_measurement_default)][['separation_um','imageid','timestamp_pulse_id','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit',xi_um_fit_column,'chi2distance_fitting']].sort_values('chi2distance_fitting',ascending=False)
@@ -4065,148 +4111,148 @@ column1c = widgets.VBox(
 
 column2a = widgets.VBox(
     [
-        shiftx_um_widget,
-        wavelength_nm_widget,
-        z_mm_widget,
-        d_um_widget,
-        gamma_widget,
-        w1_um_widget,
-        w2_um_widget,
-        I_Airy1_widget,
-        I_Airy2_widget,
-        x1_um_widget,
-        x2_um_widget,
-        normfactor_widget,
+        shiftx_um_fitting_v1_widget,
+        wavelength_nm_fitting_v1_widget,
+        z_mm_fitting_v1_widget,
+        d_um_fitting_v1_widget,
+        gamma_fitting_v1_widget,
+        w1_um_fitting_v1_widget,
+        w2_um_fitting_v1_widget,
+        I_Airy1_fitting_v1_widget,
+        I_Airy2_fitting_v1_widget,
+        x1_um_fitting_v1_widget,
+        x2_um_fitting_v1_widget,
+        normfactor_fitting_v1_widget,
 
     ]
 )
 
 column2b = widgets.VBox(
     [
-        shiftx_um_widget,
-        wavelength_nm_widget,
-        z_mm_widget,
-        d_um_widget,
-        gamma_widget,
-        w1_um_widget,
-        w2_um_widget,
-        I_Airy1_widget,
-        I_Airy2_widget,
-        x1_um_widget,
-        x2_um_widget,
-        normfactor_widget,
-        mod_sigma_um_widget,
-        mod_shiftx_um_widget
+        shiftx_um_fitting_v2_widget,
+        wavelength_nm_fitting_v2_widget,
+        z_mm_fitting_v2_widget,
+        d_um_fitting_v2_widget,
+        gamma_fitting_v2_widget,
+        w1_um_fitting_v2_widget,
+        w2_um_fitting_v2_widget,
+        I_Airy1_fitting_v2_widget,
+        I_Airy2_fitting_v2_widget,
+        x1_um_fitting_v2_widget,
+        x2_um_fitting_v2_widget,
+        normfactor_fitting_v2_widget,
+        mod_sigma_um_fitting_v2_widget,
+        mod_shiftx_um_fitting_v2_widget
     ]
 )
 
 
 column3a = widgets.VBox(
     [
-        shiftx_um_value_widget,
-        wavelength_nm_value_widget,
-        z_mm_value_widget,
-        d_um_value_widget,
-        gamma_value_widget,
-        w1_um_value_widget,
-        w2_um_value_widget,
-        I_Airy1_value_widget,
-        I_Airy2_value_widget,
-        x1_um_value_widget,
-        x2_um_value_widget,
-        normfactor_value_widget,
+        shiftx_um_value_fitting_v1_widget,
+        wavelength_nm_value_fitting_v1_widget,
+        z_mm_value_fitting_v1_widget,
+        d_um_value_fitting_v1_widget,
+        gamma_value_fitting_v1_widget,
+        w1_um_value_fitting_v1_widget,
+        w2_um_value_fitting_v1_widget,
+        I_Airy1_value_fitting_v1_widget,
+        I_Airy2_value_fitting_v1_widget,
+        x1_um_value_fitting_v1_widget,
+        x2_um_value_fitting_v1_widget,
+        normfactor_value_fitting_v1_widget,
     ]
 )
 
 column3b = widgets.VBox(
     [
-        shiftx_um_value_widget,
-        wavelength_nm_value_widget,
-        z_mm_value_widget,
-        d_um_value_widget,
-        gamma_value_widget,
-        w1_um_value_widget,
-        w2_um_value_widget,
-        I_Airy1_value_widget,
-        I_Airy2_value_widget,
-        x1_um_value_widget,
-        x2_um_value_widget,
-        normfactor_value_widget,
-        mod_sigma_um_value_widget,
-        mod_shiftx_um_value_widget
+        shiftx_um_value_fitting_v2_widget,
+        wavelength_nm_value_fitting_v2_widget,
+        z_mm_value_fitting_v2_widget,
+        d_um_value_fitting_v2_widget,
+        gamma_value_fitting_v2_widget,
+        w1_um_value_fitting_v2_widget,
+        w2_um_value_fitting_v2_widget,
+        I_Airy1_value_fitting_v2_widget,
+        I_Airy2_value_fitting_v2_widget,
+        x1_um_value_fitting_v2_widget,
+        x2_um_value_fitting_v2_widget,
+        normfactor_value_fitting_v2_widget,
+        mod_sigma_um_value_fitting_v2_widget,
+        mod_shiftx_um_value_fitting_v2_widget
     ]
 )
 
 
 column4a = widgets.VBox(
     [
-        shiftx_um_do_fit_widget,
-        wavelength_nm_do_fit_widget,
-        z_mm_do_fit_widget,
-        d_um_do_fit_widget,
-        gamma_do_fit_widget,
-        w1_um_do_fit_widget,
-        w2_um_do_fit_widget,
-        I_Airy1_do_fit_widget,
-        I_Airy2_do_fit_widget,
-        x1_um_do_fit_widget,
-        x2_um_do_fit_widget,
-        normfactor_do_fit_widget,
+        shiftx_um_do_fit_fitting_v1_widget,
+        wavelength_nm_do_fit_fitting_v1_widget,
+        z_mm_do_fit_fitting_v1_widget,
+        d_um_do_fit_fitting_v1_widget,
+        gamma_do_fit_fitting_v1_widget,
+        w1_um_do_fit_fitting_v1_widget,
+        w2_um_do_fit_fitting_v1_widget,
+        I_Airy1_do_fit_fitting_v1_widget,
+        I_Airy2_do_fit_fitting_v1_widget,
+        x1_um_do_fit_fitting_v1_widget,
+        x2_um_do_fit_fitting_v1_widget,
+        normfactor_do_fit_fitting_v1_widget,
     ]
 )
 
 column4b = widgets.VBox(
     [
-        shiftx_um_do_fit_widget,
-        wavelength_nm_do_fit_widget,
-        z_mm_do_fit_widget,
-        d_um_do_fit_widget,
-        gamma_do_fit_widget,
-        w1_um_do_fit_widget,
-        w2_um_do_fit_widget,
-        I_Airy1_do_fit_widget,
-        I_Airy2_do_fit_widget,
-        x1_um_do_fit_widget,
-        x2_um_do_fit_widget,
-        normfactor_do_fit_widget,
-        mod_sigma_um_do_fit_widget,
-        mod_shiftx_um_do_fit_widget
+        shiftx_um_do_fit_fitting_v2_widget,
+        wavelength_nm_do_fit_fitting_v2_widget,
+        z_mm_do_fit_fitting_v2_widget,
+        d_um_do_fit_fitting_v2_widget,
+        gamma_do_fit_fitting_v2_widget,
+        w1_um_do_fit_fitting_v2_widget,
+        w2_um_do_fit_fitting_v2_widget,
+        I_Airy1_do_fit_fitting_v2_widget,
+        I_Airy2_do_fit_fitting_v2_widget,
+        x1_um_do_fit_fitting_v2_widget,
+        x2_um_do_fit_fitting_v2_widget,
+        normfactor_do_fit_fitting_v2_widget,
+        mod_sigma_um_do_fit_fitting_v2_widget,
+        mod_shiftx_um_do_fit_fitting_v2_widget
     ]
 )
 
 column5a = widgets.VBox(
     [
-        shiftx_um_range_widget,
-        wavelength_nm_range_widget,
-        z_mm_range_widget,
-        d_um_range_widget,
-        gamma_range_widget,
-        w1_um_range_widget,
-        w2_um_range_widget,
-        I_Airy1_range_widget,
-        I_Airy2_range_widget,
-        x1_um_range_widget,
-        x2_um_range_widget,
-        normfactor_range_widget,
+        shiftx_um_range_fitting_v1_widget,
+        wavelength_nm_range_fitting_v1_widget,
+        z_mm_range_fitting_v1_widget,
+        d_um_range_fitting_v1_widget,
+        gamma_range_fitting_v1_widget,
+        w1_um_range_fitting_v1_widget,
+        w2_um_range_fitting_v1_widget,
+        I_Airy1_range_fitting_v1_widget,
+        I_Airy2_range_fitting_v1_widget,
+        x1_um_range_fitting_v1_widget,
+        x2_um_range_fitting_v1_widget,
+        normfactor_range_fitting_v1_widget,
     ]
 )
 
 column5b = widgets.VBox(
     [
-        shiftx_um_range_widget,
-        wavelength_nm_range_widget,
-        z_mm_range_widget,
-        d_um_range_widget,
-        gamma_range_widget,
-        w1_um_range_widget,
-        w2_um_range_widget,
-        I_Airy1_range_widget,
-        I_Airy2_range_widget,
-        x1_um_range_widget,
-        x2_um_range_widget,
-        normfactor_range_widget,
-        mod_sigma_um_range_widget,
-        mod_shiftx_um_range_widget
+        shiftx_um_range_fitting_v2_widget,
+        wavelength_nm_range_fitting_v2_widget,
+        z_mm_range_fitting_v2_widget,
+        d_um_range_fitting_v2_widget,
+        gamma_range_fitting_v2_widget,
+        w1_um_range_fitting_v2_widget,
+        w2_um_range_fitting_v2_widget,
+        I_Airy1_range_fitting_v2_widget,
+        I_Airy2_range_fitting_v2_widget,
+        x1_um_range_fitting_v2_widget,
+        x2_um_range_fitting_v2_widget,
+        normfactor_range_fitting_v2_widget,
+        mod_sigma_um_range_fitting_v2_widget,
+        mod_shiftx_um_range_fitting_v2_widget
     ]
 )
 
@@ -4252,8 +4298,14 @@ fitting_v1_columns = widgets.HBox([
                                 fitting_v1_result_tab
                                 ])
 
-parameter_tabs_children = [ fitting_columns,
-                                fitting_v1_columns,
+parameter_tabs_children = [ widgets.VBox([fitting_columns,
+                                          fitting_v2_auto_parameter_widget,
+                                          crop_px_fitting_v2_widget,
+                                          pixis_profile_avg_width_fitting_v2_widget]),
+                            widgets.VBox([fitting_v1_columns,
+                                          fitting_v1_auto_parameter_widget,
+                                          crop_px_fitting_v1_widget,
+                                          pixis_profile_avg_width_fitting_v1_widget]),
                                 column1a_v3,
                                 column1b_v3,
                                 column1a_v2,
@@ -4277,49 +4329,49 @@ plot_fitting_v1_interactive_output = interactive_output(
     plot_fitting_v1,
     {
         "do_plot_fitting_v1": do_plot_fitting_v1_widget,
-        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
-        "crop_px" : crop_px_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_fitting_v1_widget,
+        "crop_px" : crop_px_fitting_v1_widget,
         # "hdf5_file_path": dph_settings_bgsubtracted_widget,
         # "imageid": imageid_widget,
         "savefigure": savefigure_profile_fit_widget,
         "save_to_df": save_to_df_widget,
         "do_textbox": do_textbox_widget,
-        "shiftx_um": shiftx_um_widget,
-        "shiftx_um_range": shiftx_um_range_widget,
-        "shiftx_um_do_fit": shiftx_um_do_fit_widget,
-        "wavelength_nm": wavelength_nm_widget,
-        "wavelength_nm_range": wavelength_nm_range_widget,
-        "wavelength_nm_do_fit": wavelength_nm_do_fit_widget,
-        "z_mm": z_mm_widget,
-        "z_mm_range": z_mm_range_widget,
-        "z_mm_do_fit": z_mm_do_fit_widget,
-        "d_um": d_um_widget,
-        "d_um_range": d_um_range_widget,
-        "d_um_do_fit": d_um_do_fit_widget,
-        "gamma": gamma_widget,
-        "gamma_range": gamma_range_widget,
-        "gamma_do_fit": gamma_do_fit_widget,
-        "w1_um": w1_um_widget,
-        "w1_um_range": w1_um_range_widget,
-        "w1_um_do_fit": w1_um_do_fit_widget,
-        "w2_um": w2_um_widget,
-        "w2_um_range": w2_um_range_widget,
-        "w2_um_do_fit": w2_um_do_fit_widget,
-        "I_Airy1": I_Airy1_widget,
-        "I_Airy1_range": I_Airy1_range_widget,
-        "I_Airy1_do_fit": I_Airy1_do_fit_widget,
-        "I_Airy2": I_Airy2_widget,
-        "I_Airy2_range": I_Airy2_range_widget,
-        "I_Airy2_do_fit": I_Airy2_do_fit_widget,
-        "x1_um": x1_um_widget,
-        "x1_um_range": x1_um_range_widget,
-        "x1_um_do_fit": x1_um_do_fit_widget,
-        "x2_um": x2_um_widget,
-        "x2_um_range": x2_um_range_widget,
-        "x2_um_do_fit": x2_um_do_fit_widget,
-        "normfactor": normfactor_widget,
-        "normfactor_range": normfactor_range_widget,
-        "normfactor_do_fit": normfactor_do_fit_widget,
+        "shiftx_um": shiftx_um_fitting_v1_widget,
+        "shiftx_um_range": shiftx_um_range_fitting_v1_widget,
+        "shiftx_um_do_fit": shiftx_um_do_fit_fitting_v1_widget,
+        "wavelength_nm": wavelength_nm_fitting_v1_widget,
+        "wavelength_nm_range": wavelength_nm_range_fitting_v1_widget,
+        "wavelength_nm_do_fit": wavelength_nm_do_fit_fitting_v1_widget,
+        "z_mm": z_mm_fitting_v1_widget,
+        "z_mm_range": z_mm_range_fitting_v1_widget,
+        "z_mm_do_fit": z_mm_do_fit_fitting_v1_widget,
+        "d_um": d_um_fitting_v1_widget,
+        "d_um_range": d_um_range_fitting_v1_widget,
+        "d_um_do_fit": d_um_do_fit_fitting_v1_widget,
+        "gamma": gamma_fitting_v1_widget,
+        "gamma_range": gamma_range_fitting_v1_widget,
+        "gamma_do_fit": gamma_do_fit_fitting_v1_widget,
+        "w1_um": w1_um_fitting_v1_widget,
+        "w1_um_range": w1_um_range_fitting_v1_widget,
+        "w1_um_do_fit": w1_um_do_fit_fitting_v1_widget,
+        "w2_um": w2_um_fitting_v1_widget,
+        "w2_um_range": w2_um_range_fitting_v1_widget,
+        "w2_um_do_fit": w2_um_do_fit_fitting_v1_widget,
+        "I_Airy1": I_Airy1_fitting_v1_widget,
+        "I_Airy1_range": I_Airy1_range_fitting_v1_widget,
+        "I_Airy1_do_fit": I_Airy1_do_fit_fitting_v1_widget,
+        "I_Airy2": I_Airy2_fitting_v1_widget,
+        "I_Airy2_range": I_Airy2_range_fitting_v1_widget,
+        "I_Airy2_do_fit": I_Airy2_do_fit_fitting_v1_widget,
+        "x1_um": x1_um_fitting_v1_widget,
+        "x1_um_range": x1_um_range_fitting_v1_widget,
+        "x1_um_do_fit": x1_um_do_fit_fitting_v1_widget,
+        "x2_um": x2_um_fitting_v1_widget,
+        "x2_um_range": x2_um_range_fitting_v1_widget,
+        "x2_um_do_fit": x2_um_do_fit_fitting_v1_widget,
+        "normfactor": normfactor_fitting_v1_widget,
+        "normfactor_range": normfactor_range_fitting_v1_widget,
+        "normfactor_do_fit": normfactor_do_fit_fitting_v1_widget,
     },
 )
 
@@ -4327,55 +4379,55 @@ plot_fitting_v2_interactive_output = interactive_output(
     plot_fitting_v2,
     {
         "do_plot_fitting_v2": do_plot_fitting_v2_widget,
-        "pixis_profile_avg_width" : pixis_profile_avg_width_widget,
-        "crop_px" : crop_px_widget,
+        "pixis_profile_avg_width" : pixis_profile_avg_width_fitting_v2_widget,
+        "crop_px" : crop_px_fitting_v2_widget,
         # "hdf5_file_path": dph_settings_bgsubtracted_widget,
         # "imageid": imageid_widget,
         "savefigure": savefigure_profile_fit_widget,
         "save_to_df": save_to_df_widget,
         "do_textbox": do_textbox_widget,
-        "shiftx_um": shiftx_um_widget,
-        "shiftx_um_range": shiftx_um_range_widget,
-        "shiftx_um_do_fit": shiftx_um_do_fit_widget,
-        "wavelength_nm": wavelength_nm_widget,
-        "wavelength_nm_range": wavelength_nm_range_widget,
-        "wavelength_nm_do_fit": wavelength_nm_do_fit_widget,
-        "z_mm": z_mm_widget,
-        "z_mm_range": z_mm_range_widget,
-        "z_mm_do_fit": z_mm_do_fit_widget,
-        "d_um": d_um_widget,
-        "d_um_range": d_um_range_widget,
-        "d_um_do_fit": d_um_do_fit_widget,
-        "gamma": gamma_widget,
-        "gamma_range": gamma_range_widget,
-        "gamma_do_fit": gamma_do_fit_widget,
-        "w1_um": w1_um_widget,
-        "w1_um_range": w1_um_range_widget,
-        "w1_um_do_fit": w1_um_do_fit_widget,
-        "w2_um": w2_um_widget,
-        "w2_um_range": w2_um_range_widget,
-        "w2_um_do_fit": w2_um_do_fit_widget,
-        "I_Airy1": I_Airy1_widget,
-        "I_Airy1_range": I_Airy1_range_widget,
-        "I_Airy1_do_fit": I_Airy1_do_fit_widget,
-        "I_Airy2": I_Airy2_widget,
-        "I_Airy2_range": I_Airy2_range_widget,
-        "I_Airy2_do_fit": I_Airy2_do_fit_widget,
-        "x1_um": x1_um_widget,
-        "x1_um_range": x1_um_range_widget,
-        "x1_um_do_fit": x1_um_do_fit_widget,
-        "x2_um": x2_um_widget,
-        "x2_um_range": x2_um_range_widget,
-        "x2_um_do_fit": x2_um_do_fit_widget,
-        "normfactor": normfactor_widget,
-        "normfactor_range": normfactor_range_widget,
-        "normfactor_do_fit": normfactor_do_fit_widget,
-        "mod_sigma_um": mod_sigma_um_widget,
-        "mod_sigma_um_range": mod_sigma_um_range_widget,
-        "mod_sigma_um_do_fit": mod_sigma_um_do_fit_widget,
-        "mod_shiftx_um": mod_shiftx_um_widget,
-        "mod_shiftx_um_range": mod_shiftx_um_range_widget,
-        "mod_shiftx_um_do_fit": mod_shiftx_um_do_fit_widget,
+        "shiftx_um": shiftx_um_fitting_v2_widget,
+        "shiftx_um_range": shiftx_um_range_fitting_v2_widget,
+        "shiftx_um_do_fit": shiftx_um_do_fit_fitting_v2_widget,
+        "wavelength_nm": wavelength_nm_fitting_v2_widget,
+        "wavelength_nm_range": wavelength_nm_range_fitting_v2_widget,
+        "wavelength_nm_do_fit": wavelength_nm_do_fit_fitting_v2_widget,
+        "z_mm": z_mm_fitting_v2_widget,
+        "z_mm_range": z_mm_range_fitting_v2_widget,
+        "z_mm_do_fit": z_mm_do_fit_fitting_v2_widget,
+        "d_um": d_um_fitting_v2_widget,
+        "d_um_range": d_um_range_fitting_v2_widget,
+        "d_um_do_fit": d_um_do_fit_fitting_v2_widget,
+        "gamma": gamma_fitting_v2_widget,
+        "gamma_range": gamma_range_fitting_v2_widget,
+        "gamma_do_fit": gamma_do_fit_fitting_v2_widget,
+        "w1_um": w1_um_fitting_v2_widget,
+        "w1_um_range": w1_um_range_fitting_v2_widget,
+        "w1_um_do_fit": w1_um_do_fit_fitting_v2_widget,
+        "w2_um": w2_um_fitting_v2_widget,
+        "w2_um_range": w2_um_range_fitting_v2_widget,
+        "w2_um_do_fit": w2_um_do_fit_fitting_v2_widget,
+        "I_Airy1": I_Airy1_fitting_v2_widget,
+        "I_Airy1_range": I_Airy1_range_fitting_v2_widget,
+        "I_Airy1_do_fit": I_Airy1_do_fit_fitting_v2_widget,
+        "I_Airy2": I_Airy2_fitting_v2_widget,
+        "I_Airy2_range": I_Airy2_range_fitting_v2_widget,
+        "I_Airy2_do_fit": I_Airy2_do_fit_fitting_v2_widget,
+        "x1_um": x1_um_fitting_v2_widget,
+        "x1_um_range": x1_um_range_fitting_v2_widget,
+        "x1_um_do_fit": x1_um_do_fit_fitting_v2_widget,
+        "x2_um": x2_um_fitting_v2_widget,
+        "x2_um_range": x2_um_range_fitting_v2_widget,
+        "x2_um_do_fit": x2_um_do_fit_fitting_v2_widget,
+        "normfactor": normfactor_fitting_v2_widget,
+        "normfactor_range": normfactor_range_fitting_v2_widget,
+        "normfactor_do_fit": normfactor_do_fit_fitting_v2_widget,
+        "mod_sigma_um": mod_sigma_um_fitting_v2_widget,
+        "mod_sigma_um_range": mod_sigma_um_range_fitting_v2_widget,
+        "mod_sigma_um_do_fit": mod_sigma_um_do_fit_fitting_v2_widget,
+        "mod_shiftx_um": mod_shiftx_um_fitting_v2_widget,
+        "mod_shiftx_um_range": mod_shiftx_um_range_fitting_v2_widget,
+        "mod_shiftx_um_do_fit": mod_shiftx_um_do_fit_fitting_v2_widget,
     },
 )
 
@@ -4704,15 +4756,117 @@ def imageid_widget_changed(change):
             delta_min_x_px = pixis_image_norm_min_x_px - int(np.shape(pixis_image_norm)[1]/2)
             textarea_widget.value = 'max_x_px='+str(pixis_image_norm_max_x_px)+'\n'+'min_x_px='+str(pixis_image_norm_min_x_px) +'\n' + \
                 'delta_max_x_um='+str(delta_max_x_px*13)+'\n'+'delta_min_x_um='+str(delta_min_x_px*13)
-            # if the peaks of the two airy disks are two far away from the center set the shift to 0. Choose the range of shiftx_um empirically
-            if abs(delta_max_x_um) > abs(max(shiftx_um_range_widget.value)):
-                shiftx_um_widget.value = 0
-            else:
-                shiftx_um_widget.value = delta_max_x_um
+            # # if the peaks of the two airy disks are two far away from the center set the shift to 0. Choose the range of shiftx_um empirically
+            # if abs(delta_max_x_um) > abs(max(shiftx_um_range_widget.value)):
+            #     shiftx_um_widget.value = 0
+            # else:
+            #     shiftx_um_widget.value = delta_max_x_um
 
         if load_from_df_widget.value == True:
 
-            # guess parameter - fitting
+            # guess parameter - fitting v1
+            df_fitting_v1_best = df_fitting_v1_results[df_fitting_v1_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_fitting',ascending=True)
+
+            shiftx_um = df_fitting_v1_best["shiftx_um"].iloc[0]        
+            shiftx_um_range_0 = df_fitting_v1_best["shiftx_um_range_0"].iloc[0]
+            shiftx_um_range_1 = df_fitting_v1_best["shiftx_um_range_1"].iloc[0]
+            shiftx_um_do_fit = df_fitting_v1_best["shiftx_um_do_fit"].iloc[0]
+            wavelength_nm = df_fitting_v1_best["wavelength_nm"].iloc[0]
+            wavelength_nm_range_0 = df_fitting_v1_best["wavelength_nm_range_0"].iloc[0]
+            wavelength_nm_range_1 = df_fitting_v1_best["wavelength_nm_range_1"].iloc[0]
+            wavelength_nm_do_fit = df_fitting_v1_best["wavelength_nm_do_fit"].iloc[0]
+            z_mm = df_fitting_v1_best["z_mm"].iloc[0]
+            z_mm_range_0 = df_fitting_v1_best["z_mm_range_0"].iloc[0]
+            z_mm_range_1 = df_fitting_v1_best["z_mm_range_1"].iloc[0]
+            z_mm_do_fit = df_fitting_v1_best["z_mm_do_fit"].iloc[0]
+            d_um = df_fitting_v1_best["d_um"].iloc[0]
+            d_um_range_0 = df_fitting_v1_best["d_um_range_0"].iloc[0]
+            d_um_range_1 = df_fitting_v1_best["d_um_range_1"].iloc[0]
+            d_um_do_fit = df_fitting_v1_best["d_um_do_fit"].iloc[0]
+            gamma = df_fitting_v1_best["gamma"].iloc[0]
+            gamma_range_0 = df_fitting_v1_best["gamma_range_0"].iloc[0]
+            gamma_range_1 = df_fitting_v1_best["gamma_range_1"].iloc[0]
+            gamma_do_fit = df_fitting_v1_best["gamma_do_fit"].iloc[0]
+            w1_um = df_fitting_v1_best["w1_um"].iloc[0]
+            w1_um_range_0 = df_fitting_v1_best["w1_um_range_0"].iloc[0]
+            w1_um_range_1 = df_fitting_v1_best["w1_um_range_1"].iloc[0]
+            w1_um_do_fit = df_fitting_v1_best["w1_um_do_fit"].iloc[0]
+            w2_um = df_fitting_v1_best["w2_um"].iloc[0]
+            w2_um_range_0 = df_fitting_v1_best["w2_um_range_0"].iloc[0]
+            w2_um_range_1 = df_fitting_v1_best["w2_um_range_1"].iloc[0]
+            w2_um_do_fit = df_fitting_v1_best["w2_um_do_fit"].iloc[0]
+            I_Airy1 = df_fitting_v1_best["I_Airy1"].iloc[0]
+            I_Airy1_range_0 = df_fitting_v1_best["I_Airy1_range_0"].iloc[0]
+            I_Airy1_range_1 = df_fitting_v1_best["I_Airy1_range_1"].iloc[0]
+            I_Airy1_do_fit = df_fitting_v1_best["I_Airy1_do_fit"].iloc[0]
+            I_Airy2 = df_fitting_v1_best["I_Airy2"].iloc[0]
+            I_Airy2_range_0 = df_fitting_v1_best["I_Airy2_range_0"].iloc[0]
+            I_Airy2_range_1 = df_fitting_v1_best["I_Airy2_range_1"].iloc[0]
+            I_Airy2_do_fit = df_fitting_v1_best["I_Airy2_do_fit"].iloc[0]
+            x1_um = df_fitting_v1_best["x1_um"].iloc[0]
+            x1_um_range_0 = df_fitting_v1_best["x1_um_range_0"].iloc[0]
+            x1_um_range_1 = df_fitting_v1_best["x1_um_range_1"].iloc[0]
+            x1_um_do_fit = df_fitting_v1_best["x1_um_do_fit"].iloc[0]
+            x2_um = df_fitting_v1_best["x2_um"].iloc[0]
+            x2_um_range_0 = df_fitting_v1_best["x2_um_range_0"].iloc[0]
+            x2_um_range_1 = df_fitting_v1_best["x2_um_range_1"].iloc[0]
+            x2_um_do_fit = df_fitting_v1_best["x2_um_do_fit"].iloc[0]
+            normfactor = df_fitting_v1_best["normfactor"].iloc[0]
+            normfactor_range_0 = df_fitting_v1_best["normfactor_range_0"].iloc[0]
+            normfactor_range_1 = df_fitting_v1_best["normfactor_range_1"].iloc[0]
+            normfactor_do_fit = df_fitting_v1_best["normfactor_do_fit"].iloc[0]
+            mod_sigma_um = df_fitting_v1_best["mod_sigma_um"].iloc[0]
+            mod_sigma_um_range_0 = df_fitting_v1_best["mod_sigma_um_range_0"].iloc[0]
+            mod_sigma_um_range_1 = df_fitting_v1_best["mod_sigma_um_range_1"].iloc[0]
+            mod_sigma_um_do_fit = df_fitting_v1_best["mod_sigma_um_do_fit"].iloc[0]
+            mod_shiftx_um = df_fitting_v1_best["mod_shiftx_um"].iloc[0]
+            mod_shiftx_um_range_0 = df_fitting_v1_best["mod_shiftx_um_range_0"].iloc[0]
+            mod_shiftx_um_range_1 = df_fitting_v1_best["mod_shiftx_um_range_1"].iloc[0]
+            mod_shiftx_um_do_fit = df_fitting_v1_best["mod_shiftx_um_do_fit"].iloc[0]
+
+            shiftx_um_fitting_v1 = shiftx_um
+
+            if np.isnan(shiftx_um_fitting_v1) == False:
+
+                # fitting widgets
+                shiftx_um_fitting_v1_widget.value = shiftx_um
+                shiftx_um_range_fitting_v1_widget.value = [shiftx_um_range_0, shiftx_um_range_1]
+                shiftx_um_do_fit_fitting_v1_widget.value = bool(shiftx_um_do_fit)
+                wavelength_nm_fitting_v1_widget.value = wavelength_nm
+                wavelength_nm_range_fitting_v1_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
+                wavelength_nm_do_fit_fitting_v1_widget.value = bool(wavelength_nm_do_fit)
+                z_mm_fitting_v1_widget.value = z_mm
+                z_mm_range_fitting_v1_widget.value = [z_mm_range_0, z_mm_range_1]
+                z_mm_do_fit_fitting_v1_widget.value = bool(z_mm_do_fit)
+                d_um_fitting_v1_widget.value = d_um
+                d_um_range_fitting_v1_widget.value = [d_um_range_0, d_um_range_1]
+                d_um_do_fit_fitting_v1_widget.value = bool(d_um_do_fit)
+                gamma_fitting_v1_widget.value = gamma
+                gamma_range_fitting_v1_widget.value = [gamma_range_0, gamma_range_1]
+                gamma_do_fit_fitting_v1_widget.value = bool(gamma_do_fit)
+                w1_um_fitting_v1_widget.value = w1_um
+                w1_um_range_fitting_v1_widget.value = [w1_um_range_0, w1_um_range_1]
+                w1_um_do_fit_fitting_v1_widget.value = bool(w1_um_do_fit)
+                w2_um_fitting_v1_widget.value = w2_um
+                w2_um_range_fitting_v1_widget.value = [w2_um_range_0, w2_um_range_1]
+                w2_um_do_fit_fitting_v1_widget.value = bool(w2_um_do_fit)
+                I_Airy1_fitting_v1_widget.value = I_Airy1
+                I_Airy1_range_fitting_v1_widget.value = [I_Airy1_range_0, I_Airy1_range_1]
+                I_Airy1_do_fit_fitting_v1_widget.value = bool(I_Airy1_do_fit)
+                I_Airy2_fitting_v1_widget.value = I_Airy2
+                I_Airy2_range_fitting_v1_widget.value = [I_Airy2_range_0, I_Airy2_range_1]
+                I_Airy2_do_fit_fitting_v1_widget.value = bool(I_Airy2_do_fit)
+                x1_um_fitting_v1_widget.value = x1_um
+                x1_um_range_fitting_v1_widget.value = [x1_um_range_0, x1_um_range_1]
+                x1_um_do_fit_fitting_v1_widget.value = bool(x1_um_do_fit)
+                x2_um_fitting_v1_widget.value = x2_um
+                x2_um_range_fitting_v1_widget.value = [x2_um_range_0, x2_um_range_1]
+                x2_um_do_fit_fitting_v1_widget.value = bool(x2_um_do_fit)
+                normfactor_fitting_v1_widget.value = normfactor
+                normfactor_range_fitting_v1_widget.value = [normfactor_range_0, normfactor_range_1]
+                normfactor_do_fit_fitting_v1_widget.value = bool(normfactor_do_fit)
+            
+            # guess parameter - fitting v2
             df_fitting_v2_best = df_fitting_v2_results[df_fitting_v2_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_fitting',ascending=True)
 
             shiftx_um = df_fitting_v2_best["shiftx_um"].iloc[0]        
@@ -4772,51 +4926,53 @@ def imageid_widget_changed(change):
             mod_shiftx_um_range_1 = df_fitting_v2_best["mod_shiftx_um_range_1"].iloc[0]
             mod_shiftx_um_do_fit = df_fitting_v2_best["mod_shiftx_um_do_fit"].iloc[0]
 
-            if np.isnan(shiftx_um) == False:
+            shiftx_um_fitting_v2 = shiftx_um
+
+            if np.isnan(shiftx_um_fitting_v2) == False:
 
                 # fitting widgets
-                shiftx_um_widget.value = shiftx_um
-                shiftx_um_range_widget.value = [shiftx_um_range_0, shiftx_um_range_1]
-                shiftx_um_do_fit_widget.value = bool(shiftx_um_do_fit)
-                wavelength_nm_widget.value = wavelength_nm
-                wavelength_nm_range_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
-                wavelength_nm_do_fit_widget.value = bool(wavelength_nm_do_fit)
-                z_mm_widget.value = z_mm
-                z_mm_range_widget.value = [z_mm_range_0, z_mm_range_1]
-                z_mm_do_fit_widget.value = bool(z_mm_do_fit)
-                d_um_widget.value = d_um
-                d_um_range_widget.value = [d_um_range_0, d_um_range_1]
-                d_um_do_fit_widget.value = bool(d_um_do_fit)
-                gamma_widget.value = gamma
-                gamma_range_widget.value = [gamma_range_0, gamma_range_1]
-                gamma_do_fit_widget.value = bool(gamma_do_fit)
-                w1_um_widget.value = w1_um
-                w1_um_range_widget.value = [w1_um_range_0, w1_um_range_1]
-                w1_um_do_fit_widget.value = bool(w1_um_do_fit)
-                w2_um_widget.value = w2_um
-                w2_um_range_widget.value = [w2_um_range_0, w2_um_range_1]
-                w2_um_do_fit_widget.value = bool(w2_um_do_fit)
-                I_Airy1_widget.value = I_Airy1
-                I_Airy1_range_widget.value = [I_Airy1_range_0, I_Airy1_range_1]
-                I_Airy1_do_fit_widget.value = bool(I_Airy1_do_fit)
-                I_Airy2_widget.value = I_Airy2
-                I_Airy2_range_widget.value = [I_Airy2_range_0, I_Airy2_range_1]
-                I_Airy2_do_fit_widget.value = bool(I_Airy2_do_fit)
-                x1_um_widget.value = x1_um
-                x1_um_range_widget.value = [x1_um_range_0, x1_um_range_1]
-                x1_um_do_fit_widget.value = bool(x1_um_do_fit)
-                x2_um_widget.value = x2_um
-                x2_um_range_widget.value = [x2_um_range_0, x2_um_range_1]
-                x2_um_do_fit_widget.value = bool(x2_um_do_fit)
-                normfactor_widget.value = normfactor
-                normfactor_range_widget.value = [normfactor_range_0, normfactor_range_1]
-                normfactor_do_fit_widget.value = bool(normfactor_do_fit)
-                mod_sigma_um_widget.value = mod_sigma_um
-                mod_sigma_um_range_widget.value = [mod_sigma_um_range_0, mod_sigma_um_range_1]
-                mod_sigma_um_do_fit_widget.value = bool(mod_sigma_um_do_fit)
-                mod_shiftx_um_widget.value = mod_shiftx_um
-                mod_shiftx_um_range_widget.value = [mod_shiftx_um_range_0, mod_shiftx_um_range_1]
-                mod_shiftx_um_do_fit_widget.value = bool(mod_shiftx_um_do_fit)
+                shiftx_um_fitting_v2_widget.value = shiftx_um
+                shiftx_um_range_fitting_v2_widget.value = [shiftx_um_range_0, shiftx_um_range_1]
+                shiftx_um_do_fit_fitting_v2_widget.value = bool(shiftx_um_do_fit)
+                wavelength_nm_fitting_v2_widget.value = wavelength_nm
+                wavelength_nm_range_fitting_v2_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
+                wavelength_nm_do_fit_fitting_v2_widget.value = bool(wavelength_nm_do_fit)
+                z_mm_fitting_v2_widget.value = z_mm
+                z_mm_range_fitting_v2_widget.value = [z_mm_range_0, z_mm_range_1]
+                z_mm_do_fit_fitting_v2_widget.value = bool(z_mm_do_fit)
+                d_um_fitting_v2_widget.value = d_um
+                d_um_range_fitting_v2_widget.value = [d_um_range_0, d_um_range_1]
+                d_um_do_fit_fitting_v2_widget.value = bool(d_um_do_fit)
+                gamma_fitting_v2_widget.value = gamma
+                gamma_range_fitting_v2_widget.value = [gamma_range_0, gamma_range_1]
+                gamma_do_fit_fitting_v2_widget.value = bool(gamma_do_fit)
+                w1_um_fitting_v2_widget.value = w1_um
+                w1_um_range_fitting_v2_widget.value = [w1_um_range_0, w1_um_range_1]
+                w1_um_do_fit_fitting_v2_widget.value = bool(w1_um_do_fit)
+                w2_um_fitting_v2_widget.value = w2_um
+                w2_um_range_fitting_v2_widget.value = [w2_um_range_0, w2_um_range_1]
+                w2_um_do_fit_fitting_v2_widget.value = bool(w2_um_do_fit)
+                I_Airy1_fitting_v2_widget.value = I_Airy1
+                I_Airy1_range_fitting_v2_widget.value = [I_Airy1_range_0, I_Airy1_range_1]
+                I_Airy1_do_fit_fitting_v2_widget.value = bool(I_Airy1_do_fit)
+                I_Airy2_fitting_v2_widget.value = I_Airy2
+                I_Airy2_range_fitting_v2_widget.value = [I_Airy2_range_0, I_Airy2_range_1]
+                I_Airy2_do_fit_fitting_v2_widget.value = bool(I_Airy2_do_fit)
+                x1_um_fitting_v2_widget.value = x1_um
+                x1_um_range_fitting_v2_widget.value = [x1_um_range_0, x1_um_range_1]
+                x1_um_do_fit_fitting_v2_widget.value = bool(x1_um_do_fit)
+                x2_um_fitting_v2_widget.value = x2_um
+                x2_um_range_fitting_v2_widget.value = [x2_um_range_0, x2_um_range_1]
+                x2_um_do_fit_fitting_v2_widget.value = bool(x2_um_do_fit)
+                normfactor_fitting_v2_widget.value = normfactor
+                normfactor_range_fitting_v2_widget.value = [normfactor_range_0, normfactor_range_1]
+                normfactor_do_fit_fitting_v2_widget.value = bool(normfactor_do_fit)
+                mod_sigma_um_fitting_v2_widget.value = mod_sigma_um
+                mod_sigma_um_range_fitting_v2_widget.value = [mod_sigma_um_range_0, mod_sigma_um_range_1]
+                mod_sigma_um_do_fit_fitting_v2_widget.value = bool(mod_sigma_um_do_fit)
+                mod_shiftx_um_fitting_v2_widget.value = mod_shiftx_um
+                mod_shiftx_um_range_fitting_v2_widget.value = [mod_shiftx_um_range_0, mod_shiftx_um_range_1]
+                mod_shiftx_um_do_fit_fitting_v2_widget.value = bool(mod_shiftx_um_do_fit)
 
             # guess parameter - df_deconvmethod_2d_v1
             df_deconvmethod_2d_v1_best = df_deconvmethod_2d_v1_results[df_deconvmethod_2d_v1_results["timestamp_pulse_id"] == timestamp_pulse_id].sort_values('chi2distance_deconvmethod_2d_v1',ascending=True)
@@ -4921,87 +5077,602 @@ def imageid_widget_changed(change):
             
                 
 
-        measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]        
-        # Set default values for fitting
-        if load_from_df_widget.value == False or np.isnan(shiftx_um) == True:
-            # load default values instead and inform that there are no saved values!
-            # determine how far the maximum of the image is shifted from the center
-            pixis_image_norm_max_x_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[1][0]
-            pixis_image_norm_max_y_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[0][0]
-            pixis_image_norm_min_x_px = np.where(pixis_image_norm==np.min(pixis_image_norm))[1][0]
-            pixis_image_norm_min_y_px = np.where(pixis_image_norm==np.min(pixis_image_norm))[0][0]
-            delta_max_x_px = pixis_image_norm_max_x_px - int(np.shape(pixis_image_norm)[1]/2)
-            delta_max_x_um = delta_max_x_px*13
-            delta_min_x_px = pixis_image_norm_min_x_px - int(np.shape(pixis_image_norm)[1]/2)
-            textarea_widget.value = 'max_x_px='+str(pixis_image_norm_max_x_px)+'\n'+'min_x_px='+str(pixis_image_norm_min_x_px) +'\n' + \
-                'delta_max_x_um='+str(delta_max_x_px*13)+'\n'+'delta_min_x_um='+str(delta_min_x_px*13)
-            # if the peaks of the two airy disks are two far away from the center set the shift to 0. Choose the range of shiftx_um empirically
-            if abs(delta_max_x_um) > abs(max(shiftx_um_range_widget.value)):
-                shiftx_um_widget.value = 0
-            else:
-                shiftx_um_widget.value = delta_max_x_um
+        measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]
+
+        # Set default values for fitting v1
+
+        if load_from_df_widget.value == False or np.isnan(shiftx_um_fitting_v1) == True:
+
+            if fitting_v1_auto_parameter_widget.value == True:
+
+                statustext_widget.value = 'if fitting_v1_auto_parameter_widget.value == True:'
+
+                # determine how far the maximum of the image is shifted from the center
+                pixis_image_norm_max_x_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[1][0]
+                pixis_image_norm_max_y_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[0][0]
+                pixis_image_norm_min_x_px = np.where(pixis_image_norm==np.min(pixis_image_norm))[1][0]
+                pixis_image_norm_min_y_px = np.where(pixis_image_norm==np.min(pixis_image_norm))[0][0]
+                delta_max_x_px = pixis_image_norm_max_x_px - int(np.shape(pixis_image_norm)[1]/2)
+                delta_max_x_um = delta_max_x_px*13
+                delta_min_x_px = pixis_image_norm_min_x_px - int(np.shape(pixis_image_norm)[1]/2)
+                textarea_widget.value = 'max_x_px='+str(pixis_image_norm_max_x_px)+'\n'+'min_x_px='+str(pixis_image_norm_min_x_px) +'\n' + \
+                    'delta_max_x_um='+str(delta_max_x_px*13)+'\n'+'delta_min_x_um='+str(delta_min_x_px*13)
+
+
+                crop_px_fitting_v1_widget.value = 50
+                pixis_profile_avg_width_fitting_v1_widget.value = 200
+
+                slider_min_max_factor = 0.05
+                
+                shiftx_um_range_0 = -1500
+                shiftx_um_range_1 = 1500
+                shiftx_um_range_fitting_v1_widget.max = shiftx_um_range_1*(1+slider_min_max_factor)
+                shiftx_um_range_fitting_v1_widget.min = shiftx_um_range_0-shiftx_um_range_1*slider_min_max_factor
+                shiftx_um_range_fitting_v1_widget.value = [shiftx_um_range_0, shiftx_um_range_1]
+                shiftx_um_fitting_v1_widget.max = shiftx_um_range_fitting_v1_widget.max
+                shiftx_um_fitting_v1_widget.min = shiftx_um_range_fitting_v1_widget.min
+                # if the peaks of the two airy disks are too far away from the center set the shift to 0. Choose the range of shiftx_um empirically
+                if abs(delta_max_x_um) > abs(max(shiftx_um_range_fitting_v1_widget.value)):
+                    shiftx_um_fitting_v1_widget.value = 0
+                else:
+                    shiftx_um_fitting_v1_widget.value = delta_max_x_um
+                shiftx_um_do_fit_fitting_v1_widget.value = True
             
+                wavelength_nm_range_0 = setting_wavelength_nm - 0.1
+                wavelength_nm_range_1 = setting_wavelength_nm + 0.1
+                wavelength_nm_range_fitting_v1_widget.max = wavelength_nm_range_1*(1+slider_min_max_factor)
+                wavelength_nm_range_fitting_v1_widget.min = wavelength_nm_range_0-wavelength_nm_range_1*slider_min_max_factor
+                wavelength_nm_range_fitting_v1_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
+                wavelength_nm_fitting_v1_widget.max = wavelength_nm_range_fitting_v1_widget.max
+                wavelength_nm_fitting_v1_widget.min = wavelength_nm_range_fitting_v1_widget.min
+                wavelength_nm_fitting_v1_widget.value = setting_wavelength_nm
+                wavelength_nm_do_fit_fitting_v1_widget.value = True
 
-            wavelength_nm_widget.value = setting_wavelength_nm
-            wavelength_nm_range_widget.value = [wavelength_nm_widget.value - 0.1, wavelength_nm_widget.value + 0.1]
-            d_um_widget.value = separation_um
-            x1_um_widget.value = -d_um_widget.value * 10 / 2
-            x2_um_widget.value = d_um_widget.value * 10 / 2
-            x1_um_range_widget.value = [-d_um_widget.value * 10 / 2 - 1000, 0]
-            x2_um_range_widget.value = [0, d_um_widget.value * 10 / 2 + 1000]
+                z_mm_range_0 = 5770.0
+                z_mm_range_1 = 5790.0
+                z_mm_range_fitting_v1_widget.max = z_mm_range_1*(1+slider_min_max_factor)
+                z_mm_range_fitting_v1_widget.min = z_mm_range_0-z_mm_range_1*slider_min_max_factor
+                z_mm_range_fitting_v1_widget.value = [z_mm_range_0, z_mm_range_1]
+                z_mm_fitting_v1_widget.max = z_mm_range_fitting_v1_widget.max
+                z_mm_fitting_v1_widget.min = z_mm_range_fitting_v1_widget.min
+                z_mm_fitting_v1_widget.value = 5781.0
+                z_mm_do_fit_fitting_v1_widget.value = False
 
-            # add more default values
+                d_um_range_0 = 50.0
+                d_um_range_1 = 1337.0
+                d_um_range_fitting_v1_widget.max = d_um_range_1*(1+slider_min_max_factor)
+                d_um_range_fitting_v1_widget.min = d_um_range_0-d_um_range_1*slider_min_max_factor
+                d_um_range_fitting_v1_widget.value = [d_um_range_0, d_um_range_1]
+                d_um_fitting_v1_widget.max = d_um_range_fitting_v1_widget.max
+                d_um_fitting_v1_widget.min = d_um_range_fitting_v1_widget.min
+                d_um_fitting_v1_widget.value = separation_um
+                d_um_do_fit_fitting_v1_widget.value = False
 
-            # shiftx_um_widget.value = shiftx_um
-            shiftx_um_range_widget.value = [-1500, 1500]
-            shiftx_um_do_fit_widget.value = True
+                gamma_range_0 = 0.01
+                gamma_range_1 = 1.0
+                gamma_range_fitting_v1_widget.max = gamma_range_1*(1+slider_min_max_factor)
+                gamma_range_fitting_v1_widget.min = 0
+                gamma_range_fitting_v1_widget.value = [gamma_range_0, gamma_range_1]
+                gamma_fitting_v1_widget.max = gamma_range_fitting_v1_widget.max
+                gamma_fitting_v1_widget.min = gamma_range_fitting_v1_widget.min
+                gamma_fitting_v1_widget.value = 0.8
+                gamma_do_fit_fitting_v1_widget.value = True
 
-            # wavelength_nm_widget.value = wavelength_nm
-            # wavelength_nm_range_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
-            wavelength_nm_do_fit_widget.value = True
-            z_mm_widget.value = 5781
-            z_mm_range_widget.value = [5770.0, 5790.0]
-            z_mm_do_fit_widget.value = False
-            # d_um_widget.value = d_um
-            d_um_range_widget.value = [50.0, 1337.0]
-            d_um_do_fit_widget.value = False
-            gamma_widget.value = 0.8
-            gamma_range_widget.value = [0.01, 1]
-            gamma_do_fit_widget.value = True
-            w1_um_widget.value = 11.0
-            w1_um_range_widget.value = [8.0, 15.0]
-            w1_um_do_fit_widget.value = True
-            w2_um_widget.value = 11.0
-            w2_um_range_widget.value = [8.0, 15.0]
-            w2_um_do_fit_widget.value = True
-            I_Airy1_widget.value = 1.0
-            I_Airy1_range_widget.value = [0.2, 1.5]
-            I_Airy1_do_fit_widget.value = False
-            I_Airy2_widget.value = 0.8
-            I_Airy2_range_widget.value = [0.2, 5.5]
-            I_Airy2_do_fit_widget.value = True
-            # x1_um_widget.value = x1_um
-            # x1_um_range_widget.value = [x1_um_range_0, x1_um_range_1]
-            x1_um_do_fit_widget.value = True
-            # x2_um_widget.value = x2_um
-            # x2_um_range_widget.value = [x2_um_range_0, x2_um_range_1]
-            x2_um_do_fit_widget.value = True
-            normfactor_widget.value = 1.0
-            normfactor_range_widget.value = [0.1, 1.5]
-            normfactor_do_fit_widget.value = False
+                w1_um_range_0 = 8.0
+                w1_um_range_1 = 15.0
+                w1_um_range_fitting_v1_widget.max = w1_um_range_1*(1+slider_min_max_factor)
+                w1_um_range_fitting_v1_widget.min = w1_um_range_0-w1_um_range_1*slider_min_max_factor
+                w1_um_range_fitting_v1_widget.value = [w1_um_range_0, w1_um_range_1]
+                w1_um_fitting_v1_widget.max = w1_um_range_fitting_v1_widget.max
+                w1_um_fitting_v1_widget.min = w1_um_range_fitting_v1_widget.min
+                w1_um_fitting_v1_widget.value = 11.0
+                w1_um_do_fit_fitting_v1_widget.value = True
 
-            # load measurement defaults
-            # --> add all the others and distinguish between old a new versions!
-            mod_sigma_um_widget.value = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_sigma_um_measurement_default'].iloc[0]
-            mod_sigma_um_range_0 = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_sigma_um_range_0_measurement_default'].iloc[0]
-            mod_sigma_um_range_1 = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_sigma_um_range_1_measurement_default'].iloc[0]
-            mod_sigma_um_range_widget.value = [mod_sigma_um_range_0, mod_sigma_um_range_1]
-            # mod_sigma_um_do_fit_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_sigma_um_do_fit_measurement_default'].iloc[0] # boolean leads to a problem in the exported csv when importing back!
-            mod_shiftx_um_widget.value = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
-            mod_shiftx_um_range_0 = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_shiftx_um_range_0_measurement_default'].iloc[0]
-            mod_shiftx_um_range_1 = df_fitting_measurement_default[df_fitting_measurement_default['measurement']==measurement]['mod_shiftx_um_range_1_measurement_default'].iloc[0]
-            mod_shiftx_um_range_widget.value = [mod_shiftx_um_range_0, mod_shiftx_um_range_1]
-            # mod_shiftx_um_do_fit_widget.value = df_measurement_default[df_measurement_default['measurement']==measurement]['mod_shiftx_um_do_fit_measurement_default'].iloc[0]
+                w2_um_range_0 = 8.0
+                w2_um_range_1 = 15.0
+                w2_um_range_fitting_v1_widget.max = w2_um_range_1*(1+slider_min_max_factor)
+                w2_um_range_fitting_v1_widget.min = w2_um_range_0-w2_um_range_1*slider_min_max_factor
+                w2_um_range_fitting_v1_widget.value = [w2_um_range_0, w2_um_range_1]
+                w2_um_fitting_v1_widget.max = w2_um_range_fitting_v1_widget.max
+                w2_um_fitting_v1_widget.min = w2_um_range_fitting_v1_widget.min
+                w2_um_fitting_v1_widget.value = 11.0
+                w2_um_do_fit_fitting_v1_widget.value = True
+
+                I_Airy1_range_0 = 0.2
+                I_Airy1_range_1 = 1.5
+                I_Airy1_range_fitting_v1_widget.max = I_Airy1_range_1*(1+slider_min_max_factor)
+                I_Airy1_range_fitting_v1_widget.min = I_Airy1_range_0-I_Airy1_range_1*slider_min_max_factor
+                I_Airy1_range_fitting_v1_widget.value = [I_Airy1_range_0, I_Airy1_range_1]
+                I_Airy1_fitting_v1_widget.max = I_Airy1_range_fitting_v1_widget.max
+                I_Airy1_fitting_v1_widget.min = I_Airy1_range_fitting_v1_widget.min
+                I_Airy1_fitting_v1_widget.value = 1.0
+                I_Airy1_do_fit_fitting_v1_widget.value = False
+
+                I_Airy2_range_0 = 0.2
+                I_Airy2_range_1 = 1.5
+                I_Airy2_range_fitting_v1_widget.max = I_Airy2_range_1*(1+slider_min_max_factor)
+                I_Airy2_range_fitting_v1_widget.min = I_Airy2_range_0-I_Airy2_range_1*slider_min_max_factor
+                I_Airy2_range_fitting_v1_widget.value = [I_Airy2_range_0, I_Airy2_range_1]
+                I_Airy2_fitting_v1_widget.max = I_Airy2_range_fitting_v1_widget.max
+                I_Airy2_fitting_v1_widget.min = I_Airy2_range_fitting_v1_widget.min
+                I_Airy2_fitting_v1_widget.value = 0.8
+                I_Airy2_do_fit_fitting_v1_widget.value = True
+
+                x1_um_range_0 = -separation_um * 10 / 2 - 1000
+                x1_um_range_1 = 0
+                x1_um_range_fitting_v1_widget.max = (x1_um_range_1-x1_um_range_0)*(1+slider_min_max_factor)
+                x1_um_range_fitting_v1_widget.min = x1_um_range_0-(x1_um_range_1-x1_um_range_0)*slider_min_max_factor
+                x1_um_range_fitting_v1_widget.value = [x1_um_range_0, x1_um_range_1]
+                x1_um_fitting_v1_widget.max = x1_um_range_fitting_v1_widget.max
+                x1_um_fitting_v1_widget.min = x1_um_range_fitting_v1_widget.min
+                x1_um_fitting_v1_widget.value = -separation_um * 10 / 2
+                x1_um_do_fit_fitting_v1_widget.value = True
+
+                x2_um_range_0 = 0
+                x2_um_range_1 = separation_um * 10 / 2 + 1000
+                x2_um_range_fitting_v1_widget.max = (x2_um_range_1-x2_um_range_0)*(1+slider_min_max_factor)
+                x2_um_range_fitting_v1_widget.min = x2_um_range_0-(x2_um_range_1-x2_um_range_0)*slider_min_max_factor
+                x2_um_range_fitting_v1_widget.value = [x2_um_range_0, x2_um_range_1]
+                x2_um_fitting_v1_widget.max = x2_um_range_fitting_v1_widget.max
+                x2_um_fitting_v1_widget.min = x2_um_range_fitting_v1_widget.min
+                x2_um_fitting_v1_widget.value = separation_um * 10 / 2
+                x2_um_do_fit_fitting_v1_widget.value = True
+
+                normfactor_range_0 = 0.5
+                normfactor_range_1 = 1.5
+                normfactor_range_fitting_v1_widget.min = 0
+                normfactor_range_fitting_v1_widget.max = normfactor_range_1*(1+slider_min_max_factor)
+                normfactor_range_fitting_v1_widget.value = [normfactor_range_0, normfactor_range_1]
+                normfactor_fitting_v1_widget.min = normfactor_range_fitting_v1_widget.min
+                normfactor_fitting_v1_widget.max = normfactor_range_fitting_v1_widget.max
+                normfactor_fitting_v1_widget.value = 1.0
+                normfactor_do_fit_fitting_v1_widget.value = False
+
+                statustext_widget.value = 'end: if fitting_v1_auto_parameter_widget.value == True'
+
+            # load measurement defaults only if entries exist
+            shiftx_um_range_0 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['shiftx_um_range_0_measurement_default'].iloc[0]
+            if fitting_v1_auto_parameter_widget.value == False and np.isnan(shiftx_um_range_0) == False:
+
+                crop_px_fitting_v1_widget.value = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+                pixis_profile_avg_width_fitting_v1_widget.value = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['pixis_profile_avg_width_measurement_default'].iloc[0]
+
+                slider_min_max_factor = 0.05
+                
+                shiftx_um_range_0 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['shiftx_um_range_0_measurement_default'].iloc[0]
+                shiftx_um_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['shiftx_um_range_1_measurement_default'].iloc[0]
+                shiftx_um_range_fitting_v1_widget.max = shiftx_um_range_1*(1+slider_min_max_factor)
+                shiftx_um_range_fitting_v1_widget.min = shiftx_um_range_0-shiftx_um_range_1*slider_min_max_factor
+                shiftx_um_range_fitting_v1_widget.value = [shiftx_um_range_0, shiftx_um_range_1]
+                shiftx_um_fitting_v1_widget.max = shiftx_um_range_fitting_v1_widget.max
+                shiftx_um_fitting_v1_widget.min = shiftx_um_range_fitting_v1_widget.min
+                shiftx_um_fitting_v1_widget.value = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['shiftx_um_measurement_default'].iloc[0]
+                shiftx_um_do_fit_fitting_v1_widget.value = bool(df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['shiftx_um_do_fit_measurement_default'].iloc[0])
+            
+                wavelength_nm_range_0 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['wavelength_nm_range_0_measurement_default'].iloc[0]
+                wavelength_nm_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['wavelength_nm_range_1_measurement_default'].iloc[0]
+                wavelength_nm_range_fitting_v1_widget.max = wavelength_nm_range_1*(1+slider_min_max_factor)
+                wavelength_nm_range_fitting_v1_widget.min = wavelength_nm_range_0-wavelength_nm_range_1*slider_min_max_factor
+                wavelength_nm_range_fitting_v1_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
+                wavelength_nm_fitting_v1_widget.max = wavelength_nm_range_fitting_v1_widget.max
+                wavelength_nm_fitting_v1_widget.min = wavelength_nm_range_fitting_v1_widget.min
+                wavelength_nm_fitting_v1_widget.value = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['wavelength_nm_measurement_default'].iloc[0]
+                wavelength_nm_do_fit_fitting_v1_widget.value = bool(df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['wavelength_nm_do_fit_measurement_default'].iloc[0])
+
+                z_mm_range_0 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['z_mm_range_0_measurement_default'].iloc[0]
+                z_mm_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['z_mm_range_1_measurement_default'].iloc[0]            
+                z_mm_range_fitting_v1_widget.max = z_mm_range_1*(1+slider_min_max_factor)
+                z_mm_range_fitting_v1_widget.min = z_mm_range_0-z_mm_range_1*slider_min_max_factor
+                z_mm_range_fitting_v1_widget.value = [z_mm_range_0, z_mm_range_1]
+                z_mm_fitting_v1_widget.max = z_mm_range_fitting_v1_widget.max
+                z_mm_fitting_v1_widget.min = z_mm_range_fitting_v1_widget.min
+                z_mm_fitting_v1_widget.value = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['z_mm_measurement_default'].iloc[0]
+                z_mm_do_fit_fitting_v1_widget.value = bool(df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['z_mm_do_fit_measurement_default'].iloc[0])
+
+                d_um_range_0 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['d_um_range_0_measurement_default'].iloc[0]
+                d_um_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['d_um_range_1_measurement_default'].iloc[0]
+                d_um_range_fitting_v1_widget.max = d_um_range_1*(1+slider_min_max_factor)
+                d_um_range_fitting_v1_widget.min = d_um_range_0-d_um_range_1*slider_min_max_factor
+                d_um_range_fitting_v1_widget.value = [d_um_range_0, d_um_range_1]
+                d_um_fitting_v1_widget.max = d_um_range_fitting_v1_widget.max
+                d_um_fitting_v1_widget.min = d_um_range_fitting_v1_widget.min
+                d_um_fitting_v1_widget.value = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['d_um_measurement_default'].iloc[0]
+                d_um_do_fit_fitting_v1_widget.value = bool(df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['d_um_do_fit_measurement_default'].iloc[0])
+
+                gamma_range_0 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['gamma_range_0_measurement_default'].iloc[0]
+                gamma_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['gamma_range_1_measurement_default'].iloc[0]
+                gamma_range_fitting_v1_widget.max = gamma_range_1*(1+slider_min_max_factor)
+                gamma_range_fitting_v1_widget.min = gamma_range_0-gamma_range_1*slider_min_max_factor
+                gamma_range_fitting_v1_widget.value = [gamma_range_0, gamma_range_1]
+                gamma_fitting_v1_widget.max = gamma_range_fitting_v1_widget.max
+                gamma_fitting_v1_widget.min = gamma_range_fitting_v1_widget.min
+                gamma_do_fit_fitting_v1_widget.value = bool(df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['gamma_do_fit_measurement_default'].iloc[0])
+                gamma_fitting_v1_widget.value = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['gamma_measurement_default'].iloc[0]
+
+                w1_um_range_0 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['w1_um_range_0_measurement_default'].iloc[0]
+                w1_um_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['w1_um_range_1_measurement_default'].iloc[0]
+                w1_um_range_fitting_v1_widget.max = w1_um_range_1*(1+slider_min_max_factor)
+                w1_um_range_fitting_v1_widget.min = w1_um_range_0-w1_um_range_1*slider_min_max_factor
+                w1_um_range_fitting_v1_widget.value = [w1_um_range_0, w1_um_range_1]
+                w1_um_fitting_v1_widget.max = w1_um_range_fitting_v1_widget.max
+                w1_um_fitting_v1_widget.min = w1_um_range_fitting_v1_widget.min
+                w1_um_fitting_v1_widget.value = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['w1_um_measurement_default'].iloc[0]
+                w1_um_do_fit_fitting_v1_widget.value = bool(df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['w1_um_do_fit_measurement_default'].iloc[0])
+
+                w2_um_range_0 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['w2_um_range_0_measurement_default'].iloc[0]
+                w2_um_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['w2_um_range_1_measurement_default'].iloc[0]
+                w2_um_range_fitting_v1_widget.max = w2_um_range_1*(1+slider_min_max_factor)
+                w2_um_range_fitting_v1_widget.min = w2_um_range_0-w2_um_range_1*slider_min_max_factor
+                w2_um_range_fitting_v1_widget.value = [w2_um_range_0, w2_um_range_1]
+                w2_um_fitting_v1_widget.max = w2_um_range_fitting_v1_widget.max
+                w2_um_fitting_v1_widget.min = w2_um_range_fitting_v1_widget.min
+                w2_um_fitting_v1_widget.value = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['w2_um_measurement_default'].iloc[0]
+                w2_um_do_fit_fitting_v1_widget.value = bool(df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['w2_um_do_fit_measurement_default'].iloc[0])
+
+                I_Airy1_range_0 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['I_Airy1_range_0_measurement_default'].iloc[0]
+                I_Airy1_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['I_Airy1_range_1_measurement_default'].iloc[0]
+                I_Airy1_range_fitting_v1_widget.max = I_Airy1_range_1*(1+slider_min_max_factor)
+                I_Airy1_range_fitting_v1_widget.min = I_Airy1_range_0-I_Airy1_range_1*slider_min_max_factor
+                I_Airy1_range_fitting_v1_widget.value = [I_Airy1_range_0, I_Airy1_range_1]
+                I_Airy1_fitting_v1_widget.max = I_Airy1_range_fitting_v1_widget.max
+                I_Airy1_fitting_v1_widget.min = I_Airy1_range_fitting_v1_widget.min
+                I_Airy1_fitting_v1_widget.value = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['I_Airy1_measurement_default'].iloc[0]
+                I_Airy1_do_fit_fitting_v1_widget.value = bool(df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['I_Airy1_do_fit_measurement_default'].iloc[0])
+
+                I_Airy2_range_0 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['I_Airy2_range_0_measurement_default'].iloc[0]
+                I_Airy2_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['I_Airy2_range_1_measurement_default'].iloc[0]
+                I_Airy2_range_fitting_v1_widget.max = I_Airy2_range_1*(1+slider_min_max_factor)
+                I_Airy2_range_fitting_v1_widget.min = I_Airy2_range_0-I_Airy2_range_1*slider_min_max_factor
+                I_Airy2_range_fitting_v1_widget.value = [I_Airy2_range_0, I_Airy2_range_1]
+                I_Airy2_fitting_v1_widget.max = I_Airy2_range_fitting_v1_widget.max
+                I_Airy2_fitting_v1_widget.min = I_Airy2_range_fitting_v1_widget.min
+                I_Airy2_fitting_v1_widget.value = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['I_Airy2_measurement_default'].iloc[0]
+                I_Airy2_do_fit_fitting_v1_widget.value = bool(df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['I_Airy2_do_fit_measurement_default'].iloc[0])
+
+                x1_um_range_0 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['x1_um_range_0_measurement_default'].iloc[0]
+                x1_um_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['x1_um_range_1_measurement_default'].iloc[0]
+                x1_um_range_fitting_v1_widget.max = x1_um_range_1*(1+slider_min_max_factor)
+                x1_um_range_fitting_v1_widget.min = x1_um_range_0-x1_um_range_1*slider_min_max_factor
+                x1_um_range_fitting_v1_widget.value = [x1_um_range_0, x1_um_range_1]
+                x1_um_fitting_v1_widget.max = x1_um_range_fitting_v1_widget.max
+                x1_um_fitting_v1_widget.min = x1_um_range_fitting_v1_widget.min
+                x1_um_fitting_v1_widget.value = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['x1_um_measurement_default'].iloc[0]
+                x1_um_do_fit_fitting_v1_widget.value = bool(df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['x1_um_do_fit_measurement_default'].iloc[0])
+
+                x2_um_range_0 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['x2_um_range_0_measurement_default'].iloc[0]
+                x2_um_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['x2_um_range_1_measurement_default'].iloc[0]
+                x2_um_range_fitting_v1_widget.max = x2_um_range_1*(1+slider_min_max_factor)
+                x2_um_range_fitting_v1_widget.min = x2_um_range_0-x2_um_range_1*slider_min_max_factor
+                x2_um_range_fitting_v1_widget.value = [x2_um_range_0, x2_um_range_1]
+                x2_um_fitting_v1_widget.max = x2_um_range_fitting_v1_widget.max
+                x2_um_fitting_v1_widget.min = x2_um_range_fitting_v1_widget.min
+                x2_um_fitting_v1_widget.value = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['x2_um_measurement_default'].iloc[0]
+                x2_um_do_fit_fitting_v1_widget.value = bool(df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['x2_um_do_fit_measurement_default'].iloc[0])
+
+                normfactor_range_0 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['normfactor_range_0_measurement_default'].iloc[0]
+                normfactor_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['normfactor_range_1_measurement_default'].iloc[0]
+                normfactor_range_fitting_v1_widget.max = normfactor_range_1*(1+slider_min_max_factor)
+                normfactor_range_fitting_v1_widget.min = normfactor_range_0-normfactor_range_1*slider_min_max_factor
+                normfactor_range_fitting_v1_widget.value = [normfactor_range_0, normfactor_range_1]
+                normfactor_fitting_v1_widget.max = normfactor_range_fitting_v1_widget.max
+                normfactor_fitting_v1_widget.min = normfactor_range_fitting_v1_widget.min
+                normfactor_fitting_v1_widget.value = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['normfactor_measurement_default'].iloc[0]
+                normfactor_do_fit_fitting_v1_widget.value = bool(df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['normfactor_do_fit_measurement_default'].iloc[0])
+
+        # Set default values for fitting v2
+        if load_from_df_widget.value == False or np.isnan(shiftx_um_fitting_v2) == True:
+            
+            if fitting_v2_auto_parameter_widget.value == True:
+
+                # determine how far the maximum of the image is shifted from the center
+                pixis_image_norm_max_x_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[1][0]
+                pixis_image_norm_max_y_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[0][0]
+                pixis_image_norm_min_x_px = np.where(pixis_image_norm==np.min(pixis_image_norm))[1][0]
+                pixis_image_norm_min_y_px = np.where(pixis_image_norm==np.min(pixis_image_norm))[0][0]
+                delta_max_x_px = pixis_image_norm_max_x_px - int(np.shape(pixis_image_norm)[1]/2)
+                delta_max_x_um = delta_max_x_px*13
+                delta_min_x_px = pixis_image_norm_min_x_px - int(np.shape(pixis_image_norm)[1]/2)
+                textarea_widget.value = 'max_x_px='+str(pixis_image_norm_max_x_px)+'\n'+'min_x_px='+str(pixis_image_norm_min_x_px) +'\n' + \
+                    'delta_max_x_um='+str(delta_max_x_px*13)+'\n'+'delta_min_x_um='+str(delta_min_x_px*13)
+
+
+                crop_px_fitting_v2_widget.value = 50
+                pixis_profile_avg_width_fitting_v2_widget.value = 200
+
+                slider_min_max_factor = 0.05
+                
+                shiftx_um_range_0 = -1500
+                shiftx_um_range_1 = 1500
+                shiftx_um_range_fitting_v2_widget.max = shiftx_um_range_1*(1+slider_min_max_factor)
+                shiftx_um_range_fitting_v2_widget.min = shiftx_um_range_0-shiftx_um_range_1*slider_min_max_factor
+                shiftx_um_range_fitting_v2_widget.value = [shiftx_um_range_0, shiftx_um_range_1]
+                shiftx_um_fitting_v2_widget.max = shiftx_um_range_fitting_v2_widget.max
+                shiftx_um_fitting_v2_widget.min = shiftx_um_range_fitting_v2_widget.min
+                # if the peaks of the two airy disks are too far away from the center set the shift to 0. Choose the range of shiftx_um empirically
+                if abs(delta_max_x_um) > abs(max(shiftx_um_range_fitting_v2_widget.value)):
+                    shiftx_um_fitting_v2_widget.value = 0
+                else:
+                    shiftx_um_fitting_v2_widget.value = delta_max_x_um
+                shiftx_um_do_fit_fitting_v2_widget.value = True
+            
+                wavelength_nm_range_0 = setting_wavelength_nm - 0.1
+                wavelength_nm_range_1 = setting_wavelength_nm + 0.1
+                wavelength_nm_range_fitting_v2_widget.max = wavelength_nm_range_1*(1+slider_min_max_factor)
+                wavelength_nm_range_fitting_v2_widget.min = wavelength_nm_range_0-wavelength_nm_range_1*slider_min_max_factor
+                wavelength_nm_range_fitting_v2_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
+                wavelength_nm_fitting_v2_widget.max = wavelength_nm_range_fitting_v2_widget.max
+                wavelength_nm_fitting_v2_widget.min = wavelength_nm_range_fitting_v2_widget.min
+                wavelength_nm_fitting_v2_widget.value = setting_wavelength_nm
+                wavelength_nm_do_fit_fitting_v2_widget.value = True
+
+                z_mm_range_0 = 5770.0
+                z_mm_range_1 = 5790.0
+                z_mm_range_fitting_v2_widget.max = z_mm_range_1*(1+slider_min_max_factor)
+                z_mm_range_fitting_v2_widget.min = z_mm_range_0-z_mm_range_1*slider_min_max_factor
+                z_mm_range_fitting_v2_widget.value = [z_mm_range_0, z_mm_range_1]
+                z_mm_fitting_v2_widget.max = z_mm_range_fitting_v2_widget.max
+                z_mm_fitting_v2_widget.min = z_mm_range_fitting_v2_widget.min
+                z_mm_fitting_v2_widget.value = 5781.0
+                z_mm_do_fit_fitting_v2_widget.value = False
+
+                d_um_range_0 = 50.0
+                d_um_range_1 = 1337.0
+                d_um_range_fitting_v2_widget.max = d_um_range_1*(1+slider_min_max_factor)
+                d_um_range_fitting_v2_widget.min = d_um_range_0-d_um_range_1*slider_min_max_factor
+                d_um_range_fitting_v2_widget.value = [d_um_range_0, d_um_range_1]
+                d_um_fitting_v2_widget.max = d_um_range_fitting_v2_widget.max
+                d_um_fitting_v2_widget.min = d_um_range_fitting_v2_widget.min
+                d_um_fitting_v2_widget.value = separation_um
+                d_um_do_fit_fitting_v2_widget.value = False
+
+                gamma_range_0 = 0.01
+                gamma_range_1 = 1.0
+                gamma_range_fitting_v2_widget.max = gamma_range_1*(1+slider_min_max_factor)
+                gamma_range_fitting_v2_widget.min = 0
+                gamma_range_fitting_v2_widget.value = [gamma_range_0, gamma_range_1]
+                gamma_fitting_v2_widget.max = gamma_range_fitting_v2_widget.max
+                gamma_fitting_v2_widget.min = gamma_range_fitting_v2_widget.min
+                gamma_fitting_v2_widget.value = 0.8
+                gamma_do_fit_fitting_v2_widget.value = True
+
+                w1_um_range_0 = 8.0
+                w1_um_range_1 = 15.0
+                w1_um_range_fitting_v2_widget.max = w1_um_range_1*(1+slider_min_max_factor)
+                w1_um_range_fitting_v2_widget.min = w1_um_range_0-w1_um_range_1*slider_min_max_factor
+                w1_um_range_fitting_v2_widget.value = [w1_um_range_0, w1_um_range_1]
+                w1_um_fitting_v2_widget.max = w1_um_range_fitting_v2_widget.max
+                w1_um_fitting_v2_widget.min = w1_um_range_fitting_v2_widget.min
+                w1_um_fitting_v2_widget.value = 11.0
+                w1_um_do_fit_fitting_v2_widget.value = True
+
+                w2_um_range_0 = 8.0
+                w2_um_range_1 = 15.0
+                w2_um_range_fitting_v2_widget.max = w2_um_range_1*(1+slider_min_max_factor)
+                w2_um_range_fitting_v2_widget.min = w2_um_range_0-w2_um_range_1*slider_min_max_factor
+                w2_um_range_fitting_v2_widget.value = [w2_um_range_0, w2_um_range_1]
+                w2_um_fitting_v2_widget.max = w2_um_range_fitting_v2_widget.max
+                w2_um_fitting_v2_widget.min = w2_um_range_fitting_v2_widget.min
+                w2_um_fitting_v2_widget.value = 11.0
+                w2_um_do_fit_fitting_v2_widget.value = True
+
+                I_Airy1_range_0 = 0.2
+                I_Airy1_range_1 = 1.5
+                I_Airy1_range_fitting_v2_widget.max = I_Airy1_range_1*(1+slider_min_max_factor)
+                I_Airy1_range_fitting_v2_widget.min = I_Airy1_range_0-I_Airy1_range_1*slider_min_max_factor
+                I_Airy1_range_fitting_v2_widget.value = [I_Airy1_range_0, I_Airy1_range_1]
+                I_Airy1_fitting_v2_widget.max = I_Airy1_range_fitting_v2_widget.max
+                I_Airy1_fitting_v2_widget.min = I_Airy1_range_fitting_v2_widget.min
+                I_Airy1_fitting_v2_widget.value = 1.0
+                I_Airy1_do_fit_fitting_v2_widget.value = False
+
+                I_Airy2_range_0 = 0.2
+                I_Airy2_range_1 = 1.5
+                I_Airy2_range_fitting_v2_widget.max = I_Airy2_range_1*(1+slider_min_max_factor)
+                I_Airy2_range_fitting_v2_widget.min = I_Airy2_range_0-I_Airy2_range_1*slider_min_max_factor
+                I_Airy2_range_fitting_v2_widget.value = [I_Airy2_range_0, I_Airy2_range_1]
+                I_Airy2_fitting_v2_widget.max = I_Airy2_range_fitting_v2_widget.max
+                I_Airy2_fitting_v2_widget.min = I_Airy2_range_fitting_v2_widget.min
+                I_Airy2_fitting_v2_widget.value = 0.8
+                I_Airy2_do_fit_fitting_v2_widget.value = True
+
+                x1_um_range_0 = -separation_um * 10 / 2 - 1000
+                x1_um_range_1 = 0
+                x1_um_range_fitting_v2_widget.max = (x1_um_range_1-x1_um_range_0)*(1+slider_min_max_factor)
+                x1_um_range_fitting_v2_widget.min = x1_um_range_0-(x1_um_range_1-x1_um_range_0)*slider_min_max_factor
+                x1_um_range_fitting_v2_widget.value = [x1_um_range_0, x1_um_range_1]
+                x1_um_fitting_v2_widget.max = x1_um_range_fitting_v2_widget.max
+                x1_um_fitting_v2_widget.min = x1_um_range_fitting_v2_widget.min
+                x1_um_fitting_v2_widget.value = -separation_um * 10 / 2
+                x1_um_do_fit_fitting_v2_widget.value = True
+
+                x2_um_range_0 = 0
+                x2_um_range_1 = separation_um * 10 / 2 + 1000
+                x2_um_range_fitting_v2_widget.max = (x2_um_range_1-x2_um_range_0)*(1+slider_min_max_factor)
+                x2_um_range_fitting_v2_widget.min = x2_um_range_0-(x2_um_range_1-x2_um_range_0)*slider_min_max_factor
+                x2_um_range_fitting_v2_widget.value = [x2_um_range_0, x2_um_range_1]
+                x2_um_fitting_v2_widget.max = x2_um_range_fitting_v2_widget.max
+                x2_um_fitting_v2_widget.min = x2_um_range_fitting_v2_widget.min
+                x2_um_fitting_v2_widget.value = separation_um * 10 / 2
+                x2_um_do_fit_fitting_v2_widget.value = True
+
+                normfactor_range_0 = 0.5
+                normfactor_range_1 = 1.5
+                normfactor_range_fitting_v2_widget.min = 0
+                normfactor_range_fitting_v2_widget.max = normfactor_range_1*(1+slider_min_max_factor)
+                normfactor_range_fitting_v2_widget.value = [normfactor_range_0, normfactor_range_1]
+                normfactor_fitting_v2_widget.min = normfactor_range_fitting_v2_widget.min
+                normfactor_fitting_v2_widget.max = normfactor_range_fitting_v2_widget.max
+                normfactor_fitting_v2_widget.value = 1.0
+                normfactor_do_fit_fitting_v2_widget.value = False
+
+                mod_sigma_um_range_0 = 1500
+                mod_sigma_um_range_1 = 100000
+                mod_sigma_um_range_fitting_v2_widget.max = mod_sigma_um_range_1*(1+slider_min_max_factor)
+                mod_sigma_um_range_fitting_v2_widget.min = 0
+                mod_sigma_um_range_fitting_v2_widget.value = [mod_sigma_um_range_0, mod_sigma_um_range_1]
+                mod_sigma_um_fitting_v2_widget.max = mod_sigma_um_range_fitting_v2_widget.max
+                mod_sigma_um_fitting_v2_widget.min = mod_sigma_um_range_fitting_v2_widget.min
+                mod_sigma_um_fitting_v2_widget.value = 3000
+                mod_sigma_um_do_fit_fitting_v2_widget.value = True
+
+                mod_shiftx_um_range_0 = -10000
+                mod_shiftx_um_range_1 = 10000
+                mod_shiftx_um_range_fitting_v2_widget.max = mod_shiftx_um_range_1*(1+slider_min_max_factor)
+                mod_shiftx_um_range_fitting_v2_widget.min = mod_shiftx_um_range_0-mod_shiftx_um_range_1*(1+slider_min_max_factor)
+                mod_shiftx_um_range_fitting_v2_widget.value = [mod_shiftx_um_range_0, mod_shiftx_um_range_1]
+                mod_shiftx_um_fitting_v2_widget.max = mod_shiftx_um_range_fitting_v2_widget.max
+                mod_shiftx_um_fitting_v2_widget.min = mod_shiftx_um_range_fitting_v2_widget.min
+                mod_shiftx_um_fitting_v2_widget.value = 3000.0
+                mod_shiftx_um_do_fit_fitting_v2_widget.value = True
+
+            # load measurement defaults only if entries exist
+            shiftx_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['shiftx_um_range_0_measurement_default'].iloc[0]
+            if fitting_v2_auto_parameter_widget.value == False and np.isnan(shiftx_um_range_0) == False:
+
+                crop_px_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
+                pixis_profile_avg_width_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['pixis_profile_avg_width_measurement_default'].iloc[0]
+
+                slider_min_max_factor = 0.05
+                
+                shiftx_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['shiftx_um_range_0_measurement_default'].iloc[0]
+                shiftx_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['shiftx_um_range_1_measurement_default'].iloc[0]
+                shiftx_um_range_fitting_v2_widget.max = shiftx_um_range_1*(1+slider_min_max_factor)
+                shiftx_um_range_fitting_v2_widget.min = shiftx_um_range_0-shiftx_um_range_1*slider_min_max_factor
+                shiftx_um_range_fitting_v2_widget.value = [shiftx_um_range_0, shiftx_um_range_1]
+                shiftx_um_fitting_v2_widget.max = shiftx_um_range_fitting_v2_widget.max
+                shiftx_um_fitting_v2_widget.min = shiftx_um_range_fitting_v2_widget.min
+                shiftx_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['shiftx_um_measurement_default'].iloc[0]
+                shiftx_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['shiftx_um_do_fit_measurement_default'].iloc[0])
+            
+                wavelength_nm_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['wavelength_nm_range_0_measurement_default'].iloc[0]
+                wavelength_nm_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['wavelength_nm_range_1_measurement_default'].iloc[0]
+                wavelength_nm_range_fitting_v2_widget.max = wavelength_nm_range_1*(1+slider_min_max_factor)
+                wavelength_nm_range_fitting_v2_widget.min = wavelength_nm_range_0-wavelength_nm_range_1*slider_min_max_factor
+                wavelength_nm_range_fitting_v2_widget.value = [wavelength_nm_range_0, wavelength_nm_range_1]
+                wavelength_nm_fitting_v2_widget.max = wavelength_nm_range_fitting_v2_widget.max
+                wavelength_nm_fitting_v2_widget.min = wavelength_nm_range_fitting_v2_widget.min
+                wavelength_nm_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['wavelength_nm_measurement_default'].iloc[0]
+                wavelength_nm_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['wavelength_nm_do_fit_measurement_default'].iloc[0])
+
+                z_mm_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['z_mm_range_0_measurement_default'].iloc[0]
+                z_mm_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['z_mm_range_1_measurement_default'].iloc[0]            
+                z_mm_range_fitting_v2_widget.max = z_mm_range_1*(1+slider_min_max_factor)
+                z_mm_range_fitting_v2_widget.min = z_mm_range_0-z_mm_range_1*slider_min_max_factor
+                z_mm_range_fitting_v2_widget.value = [z_mm_range_0, z_mm_range_1]
+                z_mm_fitting_v2_widget.max = z_mm_range_fitting_v2_widget.max
+                z_mm_fitting_v2_widget.min = z_mm_range_fitting_v2_widget.min
+                z_mm_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['z_mm_measurement_default'].iloc[0]
+                z_mm_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['z_mm_do_fit_measurement_default'].iloc[0])
+
+                d_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['d_um_range_0_measurement_default'].iloc[0]
+                d_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['d_um_range_1_measurement_default'].iloc[0]
+                d_um_range_fitting_v2_widget.max = d_um_range_1*(1+slider_min_max_factor)
+                d_um_range_fitting_v2_widget.min = d_um_range_0-d_um_range_1*slider_min_max_factor
+                d_um_range_fitting_v2_widget.value = [d_um_range_0, d_um_range_1]
+                d_um_fitting_v2_widget.max = d_um_range_fitting_v2_widget.max
+                d_um_fitting_v2_widget.min = d_um_range_fitting_v2_widget.min
+                d_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['d_um_measurement_default'].iloc[0]
+                d_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['d_um_do_fit_measurement_default'].iloc[0])
+
+                gamma_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['gamma_range_0_measurement_default'].iloc[0]
+                gamma_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['gamma_range_1_measurement_default'].iloc[0]
+                gamma_range_fitting_v2_widget.max = gamma_range_1*(1+slider_min_max_factor)
+                gamma_range_fitting_v2_widget.min = gamma_range_0-gamma_range_1*slider_min_max_factor
+                gamma_range_fitting_v2_widget.value = [gamma_range_0, gamma_range_1]
+                gamma_fitting_v2_widget.max = gamma_range_fitting_v2_widget.max
+                gamma_fitting_v2_widget.min = gamma_range_fitting_v2_widget.min
+                gamma_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['gamma_do_fit_measurement_default'].iloc[0])
+                gamma_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['gamma_measurement_default'].iloc[0]
+
+                w1_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w1_um_range_0_measurement_default'].iloc[0]
+                w1_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w1_um_range_1_measurement_default'].iloc[0]
+                w1_um_range_fitting_v2_widget.max = w1_um_range_1*(1+slider_min_max_factor)
+                w1_um_range_fitting_v2_widget.min = w1_um_range_0-w1_um_range_1*slider_min_max_factor
+                w1_um_range_fitting_v2_widget.value = [w1_um_range_0, w1_um_range_1]
+                w1_um_fitting_v2_widget.max = w1_um_range_fitting_v2_widget.max
+                w1_um_fitting_v2_widget.min = w1_um_range_fitting_v2_widget.min
+                w1_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w1_um_measurement_default'].iloc[0]
+                w1_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w1_um_do_fit_measurement_default'].iloc[0])
+
+                w2_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w2_um_range_0_measurement_default'].iloc[0]
+                w2_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w2_um_range_1_measurement_default'].iloc[0]
+                w2_um_range_fitting_v2_widget.max = w2_um_range_1*(1+slider_min_max_factor)
+                w2_um_range_fitting_v2_widget.min = w2_um_range_0-w2_um_range_1*slider_min_max_factor
+                w2_um_range_fitting_v2_widget.value = [w2_um_range_0, w2_um_range_1]
+                w2_um_fitting_v2_widget.max = w2_um_range_fitting_v2_widget.max
+                w2_um_fitting_v2_widget.min = w2_um_range_fitting_v2_widget.min
+                w2_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w2_um_measurement_default'].iloc[0]
+                w2_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['w2_um_do_fit_measurement_default'].iloc[0])
+
+                I_Airy1_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy1_range_0_measurement_default'].iloc[0]
+                I_Airy1_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy1_range_1_measurement_default'].iloc[0]
+                I_Airy1_range_fitting_v2_widget.max = I_Airy1_range_1*(1+slider_min_max_factor)
+                I_Airy1_range_fitting_v2_widget.min = I_Airy1_range_0-I_Airy1_range_1*slider_min_max_factor
+                I_Airy1_range_fitting_v2_widget.value = [I_Airy1_range_0, I_Airy1_range_1]
+                I_Airy1_fitting_v2_widget.max = I_Airy1_range_fitting_v2_widget.max
+                I_Airy1_fitting_v2_widget.min = I_Airy1_range_fitting_v2_widget.min
+                I_Airy1_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy1_measurement_default'].iloc[0]
+                I_Airy1_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy1_do_fit_measurement_default'].iloc[0])
+
+                I_Airy2_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy2_range_0_measurement_default'].iloc[0]
+                I_Airy2_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy2_range_1_measurement_default'].iloc[0]
+                I_Airy2_range_fitting_v2_widget.max = I_Airy2_range_1*(1+slider_min_max_factor)
+                I_Airy2_range_fitting_v2_widget.min = I_Airy2_range_0-I_Airy2_range_1*slider_min_max_factor
+                I_Airy2_range_fitting_v2_widget.value = [I_Airy2_range_0, I_Airy2_range_1]
+                I_Airy2_fitting_v2_widget.max = I_Airy2_range_fitting_v2_widget.max
+                I_Airy2_fitting_v2_widget.min = I_Airy2_range_fitting_v2_widget.min
+                I_Airy2_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy2_measurement_default'].iloc[0]
+                I_Airy2_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['I_Airy2_do_fit_measurement_default'].iloc[0])
+
+                x1_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x1_um_range_0_measurement_default'].iloc[0]
+                x1_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x1_um_range_1_measurement_default'].iloc[0]
+                x1_um_range_fitting_v2_widget.max = x1_um_range_1*(1+slider_min_max_factor)
+                x1_um_range_fitting_v2_widget.min = x1_um_range_0-x1_um_range_1*slider_min_max_factor
+                x1_um_range_fitting_v2_widget.value = [x1_um_range_0, x1_um_range_1]
+                x1_um_fitting_v2_widget.max = x1_um_range_fitting_v2_widget.max
+                x1_um_fitting_v2_widget.min = x1_um_range_fitting_v2_widget.min
+                x1_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x1_um_measurement_default'].iloc[0]
+                x1_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x1_um_do_fit_measurement_default'].iloc[0])
+
+                x2_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x2_um_range_0_measurement_default'].iloc[0]
+                x2_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x2_um_range_1_measurement_default'].iloc[0]
+                x2_um_range_fitting_v2_widget.max = x2_um_range_1*(1+slider_min_max_factor)
+                x2_um_range_fitting_v2_widget.min = x2_um_range_0-x2_um_range_1*slider_min_max_factor
+                x2_um_range_fitting_v2_widget.value = [x2_um_range_0, x2_um_range_1]
+                x2_um_fitting_v2_widget.max = x2_um_range_fitting_v2_widget.max
+                x2_um_fitting_v2_widget.min = x2_um_range_fitting_v2_widget.min
+                x2_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x2_um_measurement_default'].iloc[0]
+                x2_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['x2_um_do_fit_measurement_default'].iloc[0])
+
+                normfactor_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['normfactor_range_0_measurement_default'].iloc[0]
+                normfactor_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['normfactor_range_1_measurement_default'].iloc[0]
+                normfactor_range_fitting_v2_widget.max = normfactor_range_1*(1+slider_min_max_factor)
+                normfactor_range_fitting_v2_widget.min = normfactor_range_0-normfactor_range_1*slider_min_max_factor
+                normfactor_range_fitting_v2_widget.value = [normfactor_range_0, normfactor_range_1]
+                normfactor_fitting_v2_widget.max = normfactor_range_fitting_v2_widget.max
+                normfactor_fitting_v2_widget.min = normfactor_range_fitting_v2_widget.min
+                normfactor_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['normfactor_measurement_default'].iloc[0]
+                normfactor_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['normfactor_do_fit_measurement_default'].iloc[0])
+
+                mod_sigma_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_sigma_um_range_0_measurement_default'].iloc[0]
+                mod_sigma_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_sigma_um_range_1_measurement_default'].iloc[0]
+                mod_sigma_um_range_fitting_v2_widget.max = mod_sigma_um_range_1*(1+slider_min_max_factor)
+                mod_sigma_um_range_fitting_v2_widget.min = mod_sigma_um_range_0-mod_sigma_um_range_1*slider_min_max_factor
+                mod_sigma_um_range_fitting_v2_widget.value = [mod_sigma_um_range_0, mod_sigma_um_range_1]
+                mod_sigma_um_fitting_v2_widget.max = mod_sigma_um_range_fitting_v2_widget.max
+                mod_sigma_um_fitting_v2_widget.min = mod_sigma_um_range_fitting_v2_widget.min
+                mod_sigma_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_sigma_um_measurement_default'].iloc[0]
+                mod_sigma_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_sigma_um_do_fit_measurement_default'].iloc[0])
+
+                mod_shiftx_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_shiftx_um_range_0_measurement_default'].iloc[0]
+                mod_shiftx_um_range_1 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_shiftx_um_range_1_measurement_default'].iloc[0]
+                mod_shiftx_um_range_fitting_v2_widget.max = mod_shiftx_um_range_1*(1+slider_min_max_factor)
+                mod_shiftx_um_range_fitting_v2_widget.min = mod_shiftx_um_range_0-mod_shiftx_um_range_1*slider_min_max_factor
+                mod_shiftx_um_range_fitting_v2_widget.value = [mod_shiftx_um_range_0, mod_shiftx_um_range_1]
+                mod_shiftx_um_fitting_v2_widget.max = mod_shiftx_um_range_fitting_v2_widget.max
+                mod_shiftx_um_fitting_v2_widget.min = mod_shiftx_um_range_fitting_v2_widget.min
+                mod_shiftx_um_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_shiftx_um_measurement_default'].iloc[0]
+                mod_shiftx_um_do_fit_fitting_v2_widget.value = bool(df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['mod_shiftx_um_do_fit_measurement_default'].iloc[0])
 
        
         if load_from_df_widget.value == False or np.isnan(sigma_x_F_gamma_um_min_2d_v1_best) == True: 
@@ -5092,101 +5763,130 @@ set_measurement_default_widget = widgets.ToggleButton(
 )
 
 def set_measurement_default(change):
+    global df_fitting_v1_measurement_default
+    global df_fitting_v2_measurement_default
+    global df_deconvmethod_2d_v1_measurement_default
+    global df_deconvmethod_1d_v2_measurement_default
+    global df_deconvmethod_2d_v2_measurement_default
+    global df_deconvmethod_1d_v3_measurement_default
+    global df_deconvmethod_2d_v3_measurement_default
+
     if set_measurement_default_widget.value == True:
         measurement = os.path.splitext(os.path.basename(dph_settings_bgsubtracted_widget.value))[0]
         
-        # Set default values for Fitting
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'pixis_profile_avg_width_measurement_default'] = pixis_profile_avg_width_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'crop_px_measurement_default'] = crop_px_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'shiftx_um_measurement_default'] = shiftx_um_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'shiftx_um_range_0_measurement_default'] = shiftx_um_range_widget.value[0]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'shiftx_um_range_1_measurement_default'] = shiftx_um_range_widget.value[1]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'shiftx_um_do_fit_measurement_default'] = shiftx_um_do_fit_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'wavelength_nm_measurement_default'] = wavelength_nm_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'wavelength_nm_range_0_measurement_default'] = wavelength_nm_range_widget.value[0]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'wavelength_nm_range_1_measurement_default'] = wavelength_nm_range_widget.value[1]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'wavelength_nm_do_fit_measurement_default'] = wavelength_nm_do_fit_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'z_mm_measurement_default'] = z_mm_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'z_mm_range_0_measurement_default'] = z_mm_range_widget.value[0]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'z_mm_range_1_measurement_default'] = z_mm_range_widget.value[1]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'd_um_measurement_default'] = d_um_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'd_um_range_0_measurement_default'] = d_um_range_widget.value[0]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'd_um_range_1_measurement_default'] = d_um_range_widget.value[1]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'gamma_measurement_default'] = gamma_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'gamma_range_0_measurement_default'] = gamma_range_widget.value[0]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'gamma_range_1_measurement_default'] = gamma_range_widget.value[1]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'w1_um_measurement_default'] = w1_um_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'w1_um_range_0_measurement_default'] = w1_um_range_widget.value[0]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'w1_um_range_1_measurement_default'] = w1_um_range_widget.value[1]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'w2_um_measurement_default'] = w2_um_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'w2_um_range_0_measurement_default'] = w2_um_range_widget.value[0]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'w2_um_range_1_measurement_default'] = w2_um_range_widget.value[1]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'I_Airy1_measurement_default'] = I_Airy1_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'I_Airy1_range_0_measurement_default'] = I_Airy1_range_widget.value[0]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'I_Airy1_range_1_measurement_default'] = I_Airy1_range_widget.value[1]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'I_Airy2_measurement_default'] = I_Airy2_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'I_Airy2_range_0_measurement_default'] = I_Airy2_range_widget.value[0]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'I_Airy2_range_1_measurement_default'] = I_Airy2_range_widget.value[1]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'x1_um_measurement_default'] = x1_um_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'x1_um_range_0_measurement_default'] = x1_um_range_widget.value[0]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'x1_um_range_1_measurement_default'] = x1_um_range_widget.value[1]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'x2_um_measurement_default'] = x2_um_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'x2_um_range_0_measurement_default'] = x2_um_range_widget.value[0]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'x2_um_range_1_measurement_default'] = x2_um_range_widget.value[1]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'normfactor_measurement_default'] = normfactor_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'normfactor_range_0_measurement_default'] = normfactor_range_widget.value[0]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'normfactor_range_1_measurement_default'] = normfactor_range_widget.value[1]
-
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'mod_sigma_um_measurement_default'] = mod_sigma_um_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'mod_sigma_um_range_0_measurement_default'] = mod_sigma_um_range_widget.value[0]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'mod_sigma_um_range_1_measurement_default'] = mod_sigma_um_range_widget.value[1]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'mod_sigma_um_do_fit_measurement_default'] = mod_sigma_um_do_fit_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'mod_shiftx_um_measurement_default'] = mod_shiftx_um_widget.value
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'mod_shiftx_um_range_0_measurement_default'] = mod_shiftx_um_range_widget.value[0]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'mod_shiftx_um_range_1_measurement_default'] = mod_shiftx_um_range_widget.value[1]
-        df_fitting_measurement_default.loc[df_fitting_measurement_default['measurement']==measurement, 'mod_shiftx_um_do_fit_measurement_default'] = mod_shiftx_um_do_fit_widget.value
-
         # Set default values for Fitting_v1
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'pixis_profile_avg_width_measurement_default'] = pixis_profile_avg_width_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'crop_px_measurement_default'] = crop_px_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'shiftx_um_measurement_default'] = shiftx_um_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'shiftx_um_range_0_measurement_default'] = shiftx_um_range_widget.value[0]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'shiftx_um_range_1_measurement_default'] = shiftx_um_range_widget.value[1]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'shiftx_um_do_fit_measurement_default'] = shiftx_um_do_fit_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'wavelength_nm_measurement_default'] = wavelength_nm_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'wavelength_nm_range_0_measurement_default'] = wavelength_nm_range_widget.value[0]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'wavelength_nm_range_1_measurement_default'] = wavelength_nm_range_widget.value[1]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'wavelength_nm_do_fit_measurement_default'] = wavelength_nm_do_fit_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'z_mm_measurement_default'] = z_mm_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'z_mm_range_0_measurement_default'] = z_mm_range_widget.value[0]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'z_mm_range_1_measurement_default'] = z_mm_range_widget.value[1]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'd_um_measurement_default'] = d_um_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'd_um_range_0_measurement_default'] = d_um_range_widget.value[0]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'd_um_range_1_measurement_default'] = d_um_range_widget.value[1]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'gamma_measurement_default'] = gamma_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'gamma_range_0_measurement_default'] = gamma_range_widget.value[0]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'gamma_range_1_measurement_default'] = gamma_range_widget.value[1]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w1_um_measurement_default'] = w1_um_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w1_um_range_0_measurement_default'] = w1_um_range_widget.value[0]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w1_um_range_1_measurement_default'] = w1_um_range_widget.value[1]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w2_um_measurement_default'] = w2_um_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w2_um_range_0_measurement_default'] = w2_um_range_widget.value[0]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w2_um_range_1_measurement_default'] = w2_um_range_widget.value[1]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy1_measurement_default'] = I_Airy1_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy1_range_0_measurement_default'] = I_Airy1_range_widget.value[0]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy1_range_1_measurement_default'] = I_Airy1_range_widget.value[1]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy2_measurement_default'] = I_Airy2_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy2_range_0_measurement_default'] = I_Airy2_range_widget.value[0]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy2_range_1_measurement_default'] = I_Airy2_range_widget.value[1]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x1_um_measurement_default'] = x1_um_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x1_um_range_0_measurement_default'] = x1_um_range_widget.value[0]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x1_um_range_1_measurement_default'] = x1_um_range_widget.value[1]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x2_um_measurement_default'] = x2_um_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x2_um_range_0_measurement_default'] = x2_um_range_widget.value[0]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x2_um_range_1_measurement_default'] = x2_um_range_widget.value[1]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'normfactor_measurement_default'] = normfactor_widget.value
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'normfactor_range_0_measurement_default'] = normfactor_range_widget.value[0]
-        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'normfactor_range_1_measurement_default'] = normfactor_range_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'pixis_profile_avg_width_measurement_default'] = pixis_profile_avg_width_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'crop_px_measurement_default'] = crop_px_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'shiftx_um_measurement_default'] = shiftx_um_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'shiftx_um_range_0_measurement_default'] = shiftx_um_range_fitting_v1_widget.value[0]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'shiftx_um_range_1_measurement_default'] = shiftx_um_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'shiftx_um_do_fit_measurement_default'] = shiftx_um_do_fit_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'wavelength_nm_measurement_default'] = wavelength_nm_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'wavelength_nm_range_0_measurement_default'] = wavelength_nm_range_fitting_v1_widget.value[0]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'wavelength_nm_range_1_measurement_default'] = wavelength_nm_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'wavelength_nm_do_fit_measurement_default'] = wavelength_nm_do_fit_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'z_mm_measurement_default'] = z_mm_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'z_mm_range_0_measurement_default'] = z_mm_range_fitting_v1_widget.value[0]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'z_mm_range_1_measurement_default'] = z_mm_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'z_mm_do_fit_measurement_default'] = z_mm_do_fit_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'd_um_measurement_default'] = d_um_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'd_um_range_0_measurement_default'] = d_um_range_fitting_v1_widget.value[0]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'd_um_range_1_measurement_default'] = d_um_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'd_um_do_fit_measurement_default'] = d_um_do_fit_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'gamma_measurement_default'] = gamma_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'gamma_range_0_measurement_default'] = gamma_range_fitting_v1_widget.value[0]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'gamma_range_1_measurement_default'] = gamma_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'gamma_do_fit_measurement_default'] = gamma_do_fit_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w1_um_measurement_default'] = w1_um_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w1_um_range_0_measurement_default'] = w1_um_range_fitting_v1_widget.value[0]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w1_um_range_1_measurement_default'] = w1_um_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w1_um_do_fit_measurement_default'] = w1_um_do_fit_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w2_um_measurement_default'] = w2_um_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w2_um_range_0_measurement_default'] = w2_um_range_fitting_v1_widget.value[0]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w2_um_range_1_measurement_default'] = w2_um_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'w2_um_do_fit_measurement_default'] = w2_um_do_fit_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy1_measurement_default'] = I_Airy1_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy1_range_0_measurement_default'] = I_Airy1_range_fitting_v1_widget.value[0]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy1_range_1_measurement_default'] = I_Airy1_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy1_do_fit_measurement_default'] = I_Airy1_do_fit_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy2_measurement_default'] = I_Airy2_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy2_range_0_measurement_default'] = I_Airy2_range_fitting_v1_widget.value[0]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy2_range_1_measurement_default'] = I_Airy2_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'I_Airy2_do_fit_measurement_default'] = I_Airy2_do_fit_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x1_um_measurement_default'] = x1_um_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x1_um_range_0_measurement_default'] = x1_um_range_fitting_v1_widget.value[0]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x1_um_range_1_measurement_default'] = x1_um_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x1_um_do_fit_measurement_default'] = x1_um_do_fit_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x2_um_measurement_default'] = x2_um_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x2_um_range_0_measurement_default'] = x2_um_range_fitting_v1_widget.value[0]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x2_um_range_1_measurement_default'] = x2_um_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'x2_um_do_fit_measurement_default'] = x2_um_do_fit_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'normfactor_measurement_default'] = normfactor_fitting_v1_widget.value
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'normfactor_range_0_measurement_default'] = normfactor_range_fitting_v1_widget.value[0]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'normfactor_range_1_measurement_default'] = normfactor_range_fitting_v1_widget.value[1]
+        df_fitting_v1_measurement_default.loc[df_fitting_v1_measurement_default['measurement']==measurement, 'normfactor_do_fit_measurement_default'] = normfactor_do_fit_fitting_v1_widget.value
+
+        
+        # Set default values for Fitting v2
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'pixis_profile_avg_width_measurement_default'] = pixis_profile_avg_width_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'crop_px_measurement_default'] = crop_px_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'shiftx_um_measurement_default'] = shiftx_um_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'shiftx_um_range_0_measurement_default'] = shiftx_um_range_fitting_v2_widget.value[0]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'shiftx_um_range_1_measurement_default'] = shiftx_um_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'shiftx_um_do_fit_measurement_default'] = shiftx_um_do_fit_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'wavelength_nm_measurement_default'] = wavelength_nm_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'wavelength_nm_range_0_measurement_default'] = wavelength_nm_range_fitting_v2_widget.value[0]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'wavelength_nm_range_1_measurement_default'] = wavelength_nm_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'wavelength_nm_do_fit_measurement_default'] = wavelength_nm_do_fit_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'z_mm_measurement_default'] = z_mm_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'z_mm_range_0_measurement_default'] = z_mm_range_fitting_v2_widget.value[0]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'z_mm_range_1_measurement_default'] = z_mm_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'z_mm_do_fit_measurement_default'] = z_mm_do_fit_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'd_um_measurement_default'] = d_um_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'd_um_range_0_measurement_default'] = d_um_range_fitting_v2_widget.value[0]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'd_um_range_1_measurement_default'] = d_um_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'd_um_do_fit_measurement_default'] = d_um_do_fit_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'gamma_measurement_default'] = gamma_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'gamma_range_0_measurement_default'] = gamma_range_fitting_v2_widget.value[0]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'gamma_range_1_measurement_default'] = gamma_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'gamma_do_fit_measurement_default'] = gamma_do_fit_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w1_um_measurement_default'] = w1_um_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w1_um_range_0_measurement_default'] = w1_um_range_fitting_v2_widget.value[0]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w1_um_range_1_measurement_default'] = w1_um_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w1_um_do_fit_measurement_default'] = w1_um_do_fit_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w2_um_measurement_default'] = w2_um_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w2_um_range_0_measurement_default'] = w2_um_range_fitting_v2_widget.value[0]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w2_um_range_1_measurement_default'] = w2_um_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'w2_um_do_fit_measurement_default'] = w2_um_do_fit_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy1_measurement_default'] = I_Airy1_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy1_range_0_measurement_default'] = I_Airy1_range_fitting_v2_widget.value[0]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy1_range_1_measurement_default'] = I_Airy1_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy1_do_fit_measurement_default'] = I_Airy1_do_fit_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy2_measurement_default'] = I_Airy2_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy2_range_0_measurement_default'] = I_Airy2_range_fitting_v2_widget.value[0]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy2_range_1_measurement_default'] = I_Airy2_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'I_Airy2_do_fit_measurement_default'] = I_Airy2_do_fit_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x1_um_measurement_default'] = x1_um_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x1_um_range_0_measurement_default'] = x1_um_range_fitting_v2_widget.value[0]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x1_um_range_1_measurement_default'] = x1_um_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x1_um_do_fit_measurement_default'] = x1_um_do_fit_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x2_um_measurement_default'] = x2_um_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x2_um_range_0_measurement_default'] = x2_um_range_fitting_v2_widget.value[0]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x2_um_range_1_measurement_default'] = x2_um_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'x2_um_do_fit_measurement_default'] = x2_um_do_fit_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'normfactor_measurement_default'] = normfactor_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'normfactor_range_0_measurement_default'] = normfactor_range_fitting_v2_widget.value[0]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'normfactor_range_1_measurement_default'] = normfactor_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'normfactor_do_fit_measurement_default'] = normfactor_do_fit_fitting_v2_widget.value
+
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'mod_sigma_um_measurement_default'] = mod_sigma_um_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'mod_sigma_um_range_0_measurement_default'] = mod_sigma_um_range_fitting_v2_widget.value[0]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'mod_sigma_um_range_1_measurement_default'] = mod_sigma_um_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'mod_sigma_um_do_fit_measurement_default'] = mod_sigma_um_do_fit_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'mod_shiftx_um_measurement_default'] = mod_shiftx_um_fitting_v2_widget.value
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'mod_shiftx_um_range_0_measurement_default'] = mod_shiftx_um_range_fitting_v2_widget.value[0]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'mod_shiftx_um_range_1_measurement_default'] = mod_shiftx_um_range_fitting_v2_widget.value[1]
+        df_fitting_v2_measurement_default.loc[df_fitting_v2_measurement_default['measurement']==measurement, 'mod_shiftx_um_do_fit_measurement_default'] = mod_shiftx_um_do_fit_fitting_v2_widget.value
 
         # Set default values for Deconvmethod 2d v1
         df_deconvmethod_2d_v1_measurement_default.loc[df_deconvmethod_2d_v1_measurement_default['measurement']==measurement, 'pixis_profile_avg_width_measurement_default'] = pixis_profile_avg_width_2d_v1_widget.value
@@ -5247,28 +5947,35 @@ save_measurement_default_to_csv_widget = widgets.ToggleButton(
 )
 
 def save_measurement_default_to_csv(change):
+    global df_fitting_v1_measurement_default
+    global df_fitting_v2_measurement_default
+    global df_deconvmethod_2d_v1_measurement_default
+    global df_deconvmethod_1d_v2_measurement_default
+    global df_deconvmethod_2d_v2_measurement_default
+    global df_deconvmethod_1d_v3_measurement_default
+    global df_deconvmethod_2d_v3_measurement_default
     if save_measurement_default_to_csv_widget.value == True:
 
         df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v2_measurement_default.csv')
-        df_fitting_measurement_default.to_csv(df_measurement_default_file)
+        df_fitting_v2_measurement_default.to_csv(df_measurement_default_file, columns=['dataset','measurement']+fitting_v2_measurement_default_headers)
 
         df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v1_measurement_default.csv')
-        df_fitting_v1_measurement_default.to_csv(df_measurement_default_file)
+        df_fitting_v1_measurement_default.to_csv(df_measurement_default_file, columns=['dataset','measurement']+fitting_v1_measurement_default_headers)
 
         df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v1_measurement_default.csv')
-        df_deconvmethod_2d_v1_measurement_default.to_csv(df_measurement_default_file)
+        df_deconvmethod_2d_v1_measurement_default.to_csv(df_measurement_default_file, columns=['dataset','measurement']+deconvmethod_2d_v1_measurement_default_headers)
 
         df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_1d_v2_measurement_default.csv')
-        df_deconvmethod_1d_v2_measurement_default.to_csv(df_measurement_default_file)
+        df_deconvmethod_1d_v2_measurement_default.to_csv(df_measurement_default_file, columns=['dataset','measurement']+deconvmethod_1d_v2_measurement_default_headers)
         
         df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v2_measurement_default.csv')
-        df_deconvmethod_2d_v2_measurement_default.to_csv(df_measurement_default_file)
+        df_deconvmethod_2d_v2_measurement_default.to_csv(df_measurement_default_file, columns=['dataset','measurement']+deconvmethod_2d_v2_measurement_default_headers)
 
         df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_1d_v3_measurement_default.csv')
-        df_deconvmethod_2d_v3_measurement_default.to_csv(df_measurement_default_file)
+        df_deconvmethod_2d_v3_measurement_default.to_csv(df_measurement_default_file, columns=['dataset','measurement']+deconvmethod_1d_v3_measurement_default_headers)
         
         df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_1d_v3_measurement_default.csv')
-        df_deconvmethod_2d_v3_measurement_default.to_csv(df_measurement_default_file)
+        df_deconvmethod_2d_v3_measurement_default.to_csv(df_measurement_default_file, columns=['dataset','measurement']+deconvmethod_1d_v3_measurement_default_headers)
 
         save_measurement_default_to_csv_widget.value = False
 
@@ -5286,8 +5993,9 @@ load_measurement_default_from_csv_widget = widgets.ToggleButton(
 )
 
 def load_measurement_default_from_csv(change):
-    global df_fitting_measurement_default
+    
     global df_fitting_v1_measurement_default
+    global df_fitting_v2_measurement_default
     global df_deconvmethod_2d_v1_measurement_default
     global df_deconvmethod_1d_v2_measurement_default
     global df_deconvmethod_2d_v2_measurement_default
@@ -5295,33 +6003,34 @@ def load_measurement_default_from_csv(change):
     global df_deconvmethod_2d_v3_measurement_default
     
     if load_measurement_default_from_csv_widget.value == True:
+
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v1_measurement_default.csv')
+        if os.path.isfile(df_measurement_default_file):
+            df_fitting_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+        
         df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v2_measurement_default.csv')
-    if os.path.isfile(df_measurement_default_file):
-        df_fitting_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+        if os.path.isfile(df_measurement_default_file):
+            df_fitting_v2_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-    df_measurement_default_file = Path.joinpath(results_dir, 'df_fitting_v1_measurement_default.csv')
-    if os.path.isfile(df_measurement_default_file):
-        df_fitting_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v1_measurement_default.csv')
+        if os.path.isfile(df_measurement_default_file):
+            df_deconvmethod_2d_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v1_measurement_default.csv')
-    if os.path.isfile(df_measurement_default_file):
-        df_deconvmethod_2d_v1_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_1d_v2_measurement_default.csv')
+        if os.path.isfile(df_measurement_default_file):
+            df_deconvmethod_1d_v2_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+        
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v2_measurement_default.csv')
+        if os.path.isfile(df_measurement_default_file):
+            df_deconvmethod_2d_v2_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
-    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_1d_v2_measurement_default.csv')
-    if os.path.isfile(df_measurement_default_file):
-        df_deconvmethod_1d_v2_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
-    
-    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v2_measurement_default.csv')
-    if os.path.isfile(df_measurement_default_file):
-        df_deconvmethod_2d_v2_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
-
-    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_1d_v3_measurement_default.csv')
-    if os.path.isfile(df_measurement_default_file):
-        df_deconvmethod_1d_v3_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
-    
-    df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v3_measurement_default.csv')
-    if os.path.isfile(df_measurement_default_file):
-        df_deconvmethod_2d_v3_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_1d_v3_measurement_default.csv')
+        if os.path.isfile(df_measurement_default_file):
+            df_deconvmethod_1d_v3_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
+        
+        df_measurement_default_file = Path.joinpath(results_dir, 'df_deconvmethod_2d_v3_measurement_default.csv')
+        if os.path.isfile(df_measurement_default_file):
+            df_deconvmethod_2d_v3_measurement_default = pd.read_csv(df_measurement_default_file,index_col=0)
 
 
     load_measurement_default_from_csv_widget.value = False
@@ -5593,8 +6302,6 @@ children_right = [
                     VBox([
                         textarea_widget, 
                         beamsize_text_widget,
-                        pixis_profile_avg_width_widget,
-                        crop_px_widget,
                         savefigure_profile_fit_widget,
                         do_textbox_widget,
                         output_tabs_right_ratio_widget
