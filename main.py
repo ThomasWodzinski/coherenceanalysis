@@ -5762,6 +5762,8 @@ set_measurement_default_widget = widgets.ToggleButton(
     icon=''
 )
 
+keep_setting_measurement_default_widget = widgets.Checkbox(value=False, description='keep setting measurement default', tooltip="keep setting measurement default", disabled=False, indent = False, layout=widgets.Layout(width='auto'))
+
 def set_measurement_default(change):
     global df_fitting_v1_measurement_default
     global df_fitting_v2_measurement_default
@@ -6092,7 +6094,10 @@ def run_over_all_measurements():
     for measurement in measurements_selection_widget.value:
         if os.path.isfile(run_over_all_measurements_continue_file):
             dph_settings_bgsubtracted_widget.value = measurement
-            run_over_all_images()
+            if keep_setting_measurement_default_widget.value == True:
+                set_measurement_default_widget.value = True
+            else:
+                run_over_all_images()
             i = i+1
             run_over_all_measurements_progress_widget.value = int(i/len(measurements_selection_widget.value)*100)
             end = datetime.now()
@@ -6280,6 +6285,7 @@ children_right = [
                             HBox([
                                 load_measurement_default_from_csv_widget,
                                 set_measurement_default_widget,
+                                keep_setting_measurement_default_widget,
                                 save_measurement_default_to_csv_widget,
                                 ]),
                             HBox([
