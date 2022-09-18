@@ -5529,7 +5529,7 @@ def imageid_widget_changed(change):
 
             # load measurement defaults only if entries exist
             shiftx_um_range_0 = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['shiftx_um_range_0_measurement_default'].iloc[0]
-            if np.isnan(shiftx_um_range_0) == False:
+            if fitting_v2_auto_parameter_widget.value == False and np.isnan(shiftx_um_range_0) == False:
 
                 crop_px_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['crop_px_measurement_default'].iloc[0]
                 pixis_profile_avg_width_fitting_v2_widget.value = df_fitting_v2_measurement_default[df_fitting_v2_measurement_default['measurement']==measurement]['pixis_profile_avg_width_measurement_default'].iloc[0]
