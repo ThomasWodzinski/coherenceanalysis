@@ -665,7 +665,7 @@ df_deconvmethod_2d_v3_measurement_default = pd.DataFrame({'dataset' : dataset_ar
                                     'measurement' : measurement_arr})
 
 fitting_v1_measurement_default_headers = []
-for header in fits_header_list4_v1:
+for header in fits_header_list4:
     fitting_v1_measurement_default_headers.append(header + '_measurement_default')
 
 fitting_v2_measurement_default_headers = []
