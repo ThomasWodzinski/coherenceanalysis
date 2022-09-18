@@ -503,6 +503,10 @@ fits_header_list4_v1 = []
 for header in fits_header_list4:
     fits_header_list4_v1.append(header + '_v1')
 
+fits_header_list4_v2 = []
+for header in fits_header_list4:
+    fits_header_list4_v2.append(header + '_v2')
+
 # fitting parameter of version 2
 fits_header_list5 = [
     'mod_sigma_um',
@@ -514,6 +518,10 @@ fits_header_list5 = [
     'mod_shiftx_um_range_1',
     'mod_shiftx_um_do_fit'
 ]
+
+fits_header_list5_v2 = []
+for header in fits_header_list5:
+    fits_header_list5_v2.append(header + '_v2')
 
 # fitting results
 fits_header_list6a = [
