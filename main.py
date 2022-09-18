@@ -5261,8 +5261,6 @@ def imageid_widget_changed(change):
 
                 z_mm_range_0 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['z_mm_range_0_measurement_default'].iloc[0]
                 z_mm_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['z_mm_range_1_measurement_default'].iloc[0]            
-            z_mm_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['z_mm_range_1_measurement_default'].iloc[0]            
-                z_mm_range_1 = df_fitting_v1_measurement_default[df_fitting_v1_measurement_default['measurement']==measurement]['z_mm_range_1_measurement_default'].iloc[0]            
                 z_mm_range_fitting_v1_widget.max = z_mm_range_1*(1+slider_min_max_factor)
                 z_mm_range_fitting_v1_widget.min = z_mm_range_0-z_mm_range_1*slider_min_max_factor
                 z_mm_range_fitting_v1_widget.value = [z_mm_range_0, z_mm_range_1]
