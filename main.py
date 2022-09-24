@@ -4001,8 +4001,7 @@ def plot_CDCs(
             y_max = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma+xi_x_um_max_sigma_std) for x in xx]
             ax.fill_between(xx, y_min, y_max, facecolor='red', alpha=0.3)
             # ax.hlines(0.606, 0, np.nanmean(xi_x_um_max), linestyles = '-', color='green')
-            ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma), linestyles = '-', color='red')
-            # ax.hlines(0.606, 0, np.nanmean(sigma_B_um), linestyles = '-', color='black')
+            ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma), linestyles = '-', color='red')           
 
 
             # plot beam rms with error
@@ -4016,6 +4015,7 @@ def plot_CDCs(
             y2 = [gaussian(x=x, amp=1, cen=0, sigma=sigma_B_um-sigma_B_err_um) for x in x]
             y3 = [gaussian(x=x, amp=1, cen=0, sigma=sigma_B_um+sigma_B_err_um) for x in x]
             ax.fill_between(x, y2, y3, facecolor='black', alpha=0.3)
+            ax.hlines(0.606, 0, np.nanmean(sigma_B_um), linestyles = '-', color='black')
 
         
             ax.set_xlim(0,2000)
