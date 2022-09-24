@@ -4004,6 +4004,19 @@ def plot_CDCs(
             ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma), linestyles = '-', color='red')
             # ax.hlines(0.606, 0, np.nanmean(sigma_B_um), linestyles = '-', color='black')
 
+
+            # plot beam rms with error
+
+            sigma_B_um = df_beamsize[df_beamsize['dataset']==dataset].sigma_B_um.iloc[0]
+            sigma_B_err_um = df_beamsize[df_beamsize['dataset']==dataset].sigma_B_err_um.iloc[0]
+
+            x = np.arange(0.0, 2000, 10)
+            y_B = [gaussian(x=x, amp=1, cen=0, sigma=sigma_B_um) for x in x]
+            ax.plot(x, y_B, '-', color='black', label='Intensity')
+            y2 = [gaussian(x=x, amp=1, cen=0, sigma=sigma_B_um-sigma_B_err_um) for x in x]
+            y3 = [gaussian(x=x, amp=1, cen=0, sigma=sigma_B_um+sigma_B_err_um) for x in x]
+            ax.fill_between(x, y2, y3, facecolor='black', alpha=0.3)
+
         
             ax.set_xlim(0,2000)
             ax.set_ylim(0,1)
