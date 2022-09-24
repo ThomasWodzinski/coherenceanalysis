@@ -4019,17 +4019,35 @@ def plot_CDCs(
 
         
             ax.set_xlim(0,2000)
-            ax.set_ylim(0,1)
+            ax.set_ylim(0,1.05)
             
-            ax.set_title(dataset)
+
+                ax.set_xticklabels([0,500,1000,1500])
+
+
             
+
             
+            if j==1:
+                ax.set_yticklabels([])
+
+            if i!=3:
+                ax.set_xticklabels([])
+
+            if i == 3:
+                ax.set_xlabel('separation $ d~/~\mathrm{\mu m}$')
+
+            
+
+            
+            # j := column, i := row
             if j==0:
                 j+=1
             else:
                 j=0
                 i=i+1
 
+    plt.tight_layout()
 
 
 
