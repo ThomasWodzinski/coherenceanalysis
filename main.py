@@ -1346,6 +1346,56 @@ yaxisrange_widget = widgets.IntRangeSlider(min=0, max=4000, value=[0,2000], desc
 do_plot_CDCs_widget = widgets.Checkbox(value=False, description="do plot CDCs")
 do_plot_xi_um_fit_vs_I_Airy2_fit_widget = widgets.Checkbox(value=False, description="do plot xi_um_fit vs I_Airy2_fit")
 
+
+# load and read information out of hdf5 file
+
+def load_image_and_parameter(hdf5_file_path,imageid):
+
+    with h5py.File(hdf5_file_path, "r") as hdf5_file:
+                
+        timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
+            np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+        ][2]
+        pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
+            np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+        ][0]  # needed for what?
+        
+        sigma_B_um = df_beamsize[df_beamsize['measurement'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["sigma_B_um"].iloc[0]
+        sigma_B_err_um = df_beamsize[df_beamsize['measurement'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["sigma_B_err_um"].iloc[0]
+        beamsize_text_widget.value = r"(%.2f +/- %.2f) um" % (sigma_B_um, sigma_B_err_um)
+        
+        pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
+        separation_um = get_sep_and_orient(pinholes)[0]
+        orientation = get_sep_and_orient(pinholes)[1]
+        setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
+        setting_energy_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
+
+        pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
+                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+        ]
+
+    return (timestamp_pulse_id,
+            pixis_centery_px,
+            sigma_B_um,
+            sigma_B_err_um,
+            pinholes,
+            separation_um,
+            orientation,
+            setting_wavelength_nm,
+            setting_energy_uJ,
+            pixis_image_norm,)
+
+# (timestamp_pulse_id,
+# pixis_centery_px,
+# sigma_B_um,
+# sigma_B_err_um,
+# pinholes,
+# separation_um,
+# orientation,
+# setting_wavelength_nm,
+# setting_energy_uJ,
+# pixis_image_norm,) = load_image_and_parameter(hdf5_file_path,imageid)
+
 # define what should happen when the hdf5 file widget is changed:
 
 
@@ -1417,25 +1467,18 @@ def plot_fitting_v1(
         imageid = imageid_widget.value
         hdf5_file_path = dph_settings_bgsubtracted_widget.value
 
-        with h5py.File(hdf5_file_path, "r") as hdf5_file:
-            pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ]
-            pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ]
-            timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ][2]
-            pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ][0]
+        (timestamp_pulse_id,
+        pixis_centery_px,
+        sigma_B_um,
+        sigma_B_err_um,
+        pinholes,
+        separation_um,
+        orientation,
+        setting_wavelength_nm,
+        setting_energy_uJ,
+        pixis_image_norm,) = load_image_and_parameter(hdf5_file_path,imageid)
 
-        pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
-        separation_um = get_sep_and_orient(pinholes)[0]
-        orientation = get_sep_and_orient(pinholes)[1]
-        setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
-        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
+
         
         # fittingprogress_widget.value = 2
         #     hdf5_file_name_image = hdf5_file_name_image_widget.value
@@ -2005,25 +2048,16 @@ def plot_fitting_v2(
         imageid = imageid_widget.value
         hdf5_file_path = dph_settings_bgsubtracted_widget.value
 
-        with h5py.File(hdf5_file_path, "r") as hdf5_file:
-            pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ]
-            pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ]
-            timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ][2]
-            pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ][0]
-
-        pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
-        separation_um = get_sep_and_orient(pinholes)[0]
-        orientation = get_sep_and_orient(pinholes)[1]
-        setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
-        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
+        (timestamp_pulse_id,
+        pixis_centery_px,
+        sigma_B_um,
+        sigma_B_err_um,
+        pinholes,
+        separation_um,
+        orientation,
+        setting_wavelength_nm,
+        setting_energy_uJ,
+        pixis_image_norm,) = load_image_and_parameter(hdf5_file_path,imageid)
 
         # fittingprogress_widget.value = 2
         #     hdf5_file_name_image = hdf5_file_name_image_widget.value
@@ -2575,31 +2609,28 @@ def plot_deconvmethod(
         imageid = imageid_widget.value
         hdf5_file_path = dph_settings_bgsubtracted_widget.value
 
-        with h5py.File(hdf5_file_path, "r") as hdf5_file:
-            pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ]
-            # pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
-            #     np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            # ]
-            timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ][2]
-            pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ][0]
+        (timestamp_pulse_id,
+        pixis_centery_px,
+        sigma_B_um,
+        sigma_B_err_um,
+        pinholes,
+        separation_um,
+        orientation,
+        setting_wavelength_nm,
+        setting_energy_uJ,
+        pixis_image_norm,) = load_image_and_parameter(hdf5_file_path,imageid)
+
+        pixis_centery_px = int(pixis_centery_px)
+        pixis_profile_avg = np.average(pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:],axis=0)
+        pixis_profile_avg = pixis_profile_avg / np.max(pixis_profile_avg)
+
+
 
         end = datetime.now()
         time_taken = end - start
         statustext_widget.value = 'Loading from HDF5: ' + str(time_taken)    
 
-        pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
-        separation_um = get_sep_and_orient(pinholes)[0]
-        orientation = get_sep_and_orient(pinholes)[1]
-        setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
-        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
 
-        pixis_profile_avg = pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:]
 
         if scan_x == True:
             if wienerimplementation == 'scikit':
@@ -2614,15 +2645,13 @@ def plot_deconvmethod(
         partiallycoherent = pixis_image_norm
         z = 5781 * 1e-3
         dX_1 = 13 * 1e-6
-        profilewidth = 200  # pixis_avg_width  # defined where?
-        pixis_centery_px = int(pixis_centery_px)
+        
+        
         wavelength = setting_wavelength_nm * 1e-9
         # xi_um_guess = 475
         # guess sigma_y_F_gamma_um based on the xi_um_guess assuming to be the beams intensity rms width
 
-        pixis_profile_avg = np.average(pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:],axis=0)
-        pixis_profile_avg = pixis_profile_avg / np.max(pixis_profile_avg)
-
+        
         n = pixis_profile_avg.size  # number of sampling point  # number of pixels
         dX_1 = 13e-6
         xdata = np.linspace((-n / 2) * dX_1, (+n / 2 - 1) * dX_1, n)
@@ -3070,40 +3099,29 @@ def plot_deconvmethod_2d_v1(
         imageid = imageid_widget.value
         hdf5_file_path = dph_settings_bgsubtracted_widget.value
 
-        with h5py.File(hdf5_file_path, "r") as hdf5_file:
-            pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ]
-            # pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
-            #     np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            # ]
-            timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ][2]
-            pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ][0]
+        (timestamp_pulse_id,
+        pixis_centery_px,
+        sigma_B_um,
+        sigma_B_err_um,
+        pinholes,
+        separation_um,
+        orientation,
+        setting_wavelength_nm,
+        setting_energy_uJ,
+        pixis_image_norm,) = load_image_and_parameter(hdf5_file_path,imageid)
 
-        pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
-        separation_um = get_sep_and_orient(pinholes)[0]
-        orientation = get_sep_and_orient(pinholes)[1]
-        setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
-        energy_hall_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
-
-        pixis_profile_avg = pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:]
+        pixis_centery_px = int(pixis_centery_px)
+        pixis_profile_avg = np.average(pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:],axis=0)
+        pixis_profile_avg = pixis_profile_avg / np.max(pixis_profile_avg)
 
 
         partiallycoherent = pixis_image_norm
         z = 5781 * 1e-3
         dX_1 = 13 * 1e-6
-        profilewidth = 200  # pixis_avg_width  # defined where?
-        pixis_centery_px = int(pixis_centery_px)
         wavelength = setting_wavelength_nm * 1e-9
         # xi_um_guess = 475
         # guess sigma_y_F_gamma_um based on the xi_um_guess assuming to be the beams intensity rms width
 
-        pixis_profile_avg = np.average(pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:],axis=0)
-        pixis_profile_avg = pixis_profile_avg / np.max(pixis_profile_avg)
 
         n = pixis_profile_avg.size  # number of sampling point  # number of pixels
         dX_1 = 13e-6
@@ -4746,51 +4764,28 @@ def imageid_widget_changed(change):
             do_plot_deconvmethod_2d_v3_widget.value = False
 
 
-        hdf5_file_path = dph_settings_bgsubtracted_widget.value
-        imageid = imageid_widget.value
         shiftx_um = np.nan
         xi_um_guess = np.nan
         
-        with h5py.File(hdf5_file_path, "r") as hdf5_file:
-            
-            timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ][2]
-            pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
-                np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ][0]  # needed for what?
-            
-            sigma_B_um = df_beamsize[df_beamsize['measurement'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["sigma_B_um"].iloc[0]
-            sigma_B_err_um = df_beamsize[df_beamsize['measurement'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["sigma_B_err_um"].iloc[0]
-            beamsize_text_widget.value = r"(%.2f +/- %.2f) um" % (sigma_B_um, sigma_B_err_um)
-            
-            pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
-            separation_um = get_sep_and_orient(pinholes)[0]
-            orientation = get_sep_and_orient(pinholes)[1]
-            setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
-            setting_energy_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
 
-            
+        imageid = imageid_widget.value
+        hdf5_file_path = dph_settings_bgsubtracted_widget.value
 
-            pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
-                    np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-            ]
+        (timestamp_pulse_id,
+        pixis_centery_px,
+        sigma_B_um,
+        sigma_B_err_um,
+        pinholes,
+        separation_um,
+        orientation,
+        setting_wavelength_nm,
+        setting_energy_uJ,
+        pixis_image_norm,) = load_image_and_parameter(hdf5_file_path,imageid)
 
-            # determine how far the maximum of the image is shifted from the center
-            pixis_image_norm_max_x_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[1][0]
-            pixis_image_norm_max_y_px = np.where(pixis_image_norm==np.max(pixis_image_norm))[0][0]
-            pixis_image_norm_min_x_px = np.where(pixis_image_norm==np.min(pixis_image_norm))[1][0]
-            pixis_image_norm_min_y_px = np.where(pixis_image_norm==np.min(pixis_image_norm))[0][0]
-            delta_max_x_px = pixis_image_norm_max_x_px - int(np.shape(pixis_image_norm)[1]/2)
-            delta_max_x_um = delta_max_x_px*13
-            delta_min_x_px = pixis_image_norm_min_x_px - int(np.shape(pixis_image_norm)[1]/2)
-            textarea_widget.value = 'max_x_px='+str(pixis_image_norm_max_x_px)+'\n'+'min_x_px='+str(pixis_image_norm_min_x_px) +'\n' + \
-                'delta_max_x_um='+str(delta_max_x_px*13)+'\n'+'delta_min_x_um='+str(delta_min_x_px*13)
-            # # if the peaks of the two airy disks are two far away from the center set the shift to 0. Choose the range of shiftx_um empirically
-            # if abs(delta_max_x_um) > abs(max(shiftx_um_range_widget.value)):
-            #     shiftx_um_widget.value = 0
-            # else:
-            #     shiftx_um_widget.value = delta_max_x_um
+        pixis_profile_avg_width = pixis_profile_avg_width_fitting_v1_widget.value # repeat the calculation of pixis_profile_avg depending on which method ...!
+        pixis_centery_px = int(pixis_centery_px)
+        pixis_profile_avg = np.average(pixis_image_norm[int(pixis_centery_px-pixis_profile_avg_width/2):int(pixis_centery_px+pixis_profile_avg_width/2),:],axis=0)
+        pixis_profile_avg = pixis_profile_avg / np.max(pixis_profile_avg)
 
         if load_from_df_widget.value == True:
 
@@ -6265,35 +6260,35 @@ run_over_all_datasets_widget.observe(update_run_over_all_datasets_widget, names=
 
 
 
-with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
-    imageids = hdf5_file["/bgsubtracted/imageid"][:]
+# with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
+#     imageids = hdf5_file["/bgsubtracted/imageid"][:]
 
-    imageid = imageids[0]
+#     imageid = imageids[0]
 
-    hdf5_file_path = dph_settings_bgsubtracted_widget.value
-    with h5py.File(hdf5_file_path, "r") as hdf5_file:
-        pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
-            np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-        ]
-        pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
-            np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-        ]
-        timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
-            np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-        ][2]
-        pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
-            np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-        ][0]
+#     hdf5_file_path = dph_settings_bgsubtracted_widget.value
+#     with h5py.File(hdf5_file_path, "r") as hdf5_file:
+#         pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
+#             np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+#         ]
+#         pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
+#             np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+#         ]
+#         timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
+#             np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+#         ][2]
+#         pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
+#             np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
+#         ][0]
 
-    pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
-    separation_um = get_sep_and_orient(pinholes)[0]
-    orientation = get_sep_and_orient(pinholes)[1]
-    setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
-    setting_energy_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
+#     pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
+#     separation_um = get_sep_and_orient(pinholes)[0]
+#     orientation = get_sep_and_orient(pinholes)[1]
+#     setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
+#     setting_energy_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
     
-    hdf5_file_name_image = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["hdf5_file_name"].iloc[0]
+#     hdf5_file_name_image = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["hdf5_file_name"].iloc[0]
 
-    beamposition_horizontal_interval = 1000  # random number, store in hdf5?
+#     beamposition_horizontal_interval = 1000  # random number, store in hdf5?
 
 
 # Increase output of Jupyer Notebook Cell:
