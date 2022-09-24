@@ -1488,8 +1488,7 @@ def plot_fitting_v1(
         
 
 
-        # imageids_by_energy_hall = get_imageids_with_bgs(beamposition_horizontal_interval)
-        imageids_by_energy_hall = imageids
+
 
         # if imageid == -1:
         #     beamposx = df['beam position hall horizontal pulse resolved'].mean(axis=0)
@@ -2067,8 +2066,7 @@ def plot_fitting_v2(
         
 
 
-        # imageids_by_energy_hall = get_imageids_with_bgs(beamposition_horizontal_interval)
-        imageids_by_energy_hall = imageids
+
 
         # if imageid == -1:
         #     beamposx = df['beam position hall horizontal pulse resolved'].mean(axis=0)
