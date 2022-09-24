@@ -2665,6 +2665,7 @@ def plot_deconvmethod(
         statustext_widget.value = 'Start Deconvmethod (' + wienerimplementation +'): ' + str(time_taken) 
 
         
+        profilewidth = pixis_profile_avg_width
         # Ignoring OptimizeWarning. Supressing warning as described in https://stackoverflow.com/a/14463362:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
@@ -3140,6 +3141,8 @@ def plot_deconvmethod_2d_v1(
 
         statustext_widget.value = 'deconvmethod_2d_v1 rough scan ...'
 
+
+        profilewidth = pixis_profile_avg_width
         (
             partiallycoherent_profile, 
             fullycoherent_opt_list, 
