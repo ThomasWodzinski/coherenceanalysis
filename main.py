@@ -4033,6 +4033,12 @@ def plot_CDCs(
             setting_wavelength_nm = df_settings[df_settings['dph_settings']==measurement]['setting_wavelength_nm'].iloc[0]
             setting_undulators = df_settings[df_settings['dph_settings']==measurement]['setting_undulators'].iloc[0]
             settingtext = '$\lambda='+str(setting_wavelength_nm)+'\mathrm{nm}$\n'+str(setting_undulators)+' undulators'
+
+            if j ==0:
+
+                props = dict(boxstyle='round', facecolor='white', alpha=0.8)
+                ax.text(-500,0.5,settingtext, fontsize=14, rotation=90, ha='center', rotation_mode='anchor', bbox=props)
+
                 ax.set_xticklabels([0,500,1000,1500])
 
                 ax.set_ylabel('$\gamma(d)$')
