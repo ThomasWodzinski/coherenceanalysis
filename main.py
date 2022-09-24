@@ -4027,7 +4027,12 @@ def plot_CDCs(
                     
                 if j == 1:
                     ax.set_title('horizontally oriented double pinholes')
-
+                
+                
+            measurement = datasets[dataset][0]
+            setting_wavelength_nm = df_settings[df_settings['dph_settings']==measurement]['setting_wavelength_nm'].iloc[0]
+            setting_undulators = df_settings[df_settings['dph_settings']==measurement]['setting_undulators'].iloc[0]
+            settingtext = '$\lambda='+str(setting_wavelength_nm)+'\mathrm{nm}$\n'+str(setting_undulators)+' undulators'
                 ax.set_xticklabels([0,500,1000,1500])
 
                 ax.set_ylabel('$\gamma(d)$')
