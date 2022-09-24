@@ -6257,41 +6257,6 @@ run_over_all_datasets_widget.observe(update_run_over_all_datasets_widget, names=
 
 
 
-# getting all parameters from the file
-
-
-
-# with h5py.File(dph_settings_bgsubtracted_widget.label, "r") as hdf5_file:
-#     imageids = hdf5_file["/bgsubtracted/imageid"][:]
-
-#     imageid = imageids[0]
-
-#     hdf5_file_path = dph_settings_bgsubtracted_widget.value
-#     with h5py.File(hdf5_file_path, "r") as hdf5_file:
-#         pixis_image_norm = hdf5_file["/bgsubtracted/pixis_image_norm"][
-#             np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-#         ]
-#         pixis_profile_avg = hdf5_file["/bgsubtracted/pixis_profile_avg"][
-#             np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-#         ]
-#         timestamp_pulse_id = hdf5_file["Timing/time stamp/fl2user1"][
-#             np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-#         ][2]
-#         pixis_centery_px = hdf5_file["/bgsubtracted/pixis_centery_px"][
-#             np.where(hdf5_file["/bgsubtracted/imageid"][:] == float(imageid))[0][0]
-#         ][0]
-
-#     pinholes = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["pinholes"].iloc[0]
-#     separation_um = get_sep_and_orient(pinholes)[0]
-#     orientation = get_sep_and_orient(pinholes)[1]
-#     setting_wavelength_nm = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_wavelength_nm"].iloc[0]
-#     setting_energy_uJ = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["setting_energy_uJ"].iloc[0]
-    
-#     hdf5_file_name_image = df_settings[df_settings['dph_settings'] == dph_settings_bgsubtracted_widget.value.name.split('.h5')[0]]["hdf5_file_name"].iloc[0]
-
-#     beamposition_horizontal_interval = 1000  # random number, store in hdf5?
-
-
 # Increase output of Jupyer Notebook Cell:
 from IPython.display import Javascript
 
