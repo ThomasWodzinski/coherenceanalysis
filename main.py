@@ -4021,6 +4021,12 @@ def plot_CDCs(
             ax.set_xlim(0,2000)
             ax.set_ylim(0,1.05)
             
+            if i == 0:
+                if j == 0:
+                    ax.set_title('vertically oriented double pinholes')
+                    
+                if j == 1:
+                    ax.set_title('horizontally oriented double pinholes')
 
                 ax.set_xticklabels([0,500,1000,1500])
 
