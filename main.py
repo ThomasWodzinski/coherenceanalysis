@@ -4030,6 +4030,7 @@ def plot_CDCs(
 
                 ax.set_xticklabels([0,500,1000,1500])
 
+                ax.set_ylabel('$\gamma(d)$')
 
             
 
