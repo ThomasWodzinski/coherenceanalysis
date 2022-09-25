@@ -3856,7 +3856,7 @@ sort_imageids_by_chi2distance_widget.observe(sort_imageids_by_chi2distance_widge
 
 
 def zeta(xi,s):
-    zeta = (xi/s) / sqrt(4 + (xi/s)**2)
+    zeta = (xi/s) / np.sqrt(4 + (xi/s)**2)
     return zeta
 
 
