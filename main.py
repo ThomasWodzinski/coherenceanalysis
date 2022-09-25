@@ -3855,6 +3855,11 @@ def sort_imageids_by_chi2distance_widget_changed(change):
 sort_imageids_by_chi2distance_widget.observe(sort_imageids_by_chi2distance_widget_changed, names="value")
 
 
+def zeta(xi,s):
+    zeta = (xi/s) / sqrt(4 + (xi/s)**2)
+    return zeta
+
+
 # CDC from Deconvolution (green) and Fitting (red)
 def plot_CDCs(
     do_plot_CDCs,
