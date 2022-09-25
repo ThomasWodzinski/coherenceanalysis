@@ -3987,15 +3987,15 @@ def plot_CDCs(
             gamma_xi_x_um_max = y
             d_gamma = x
             # gamma_xi_x_um_max = gamma_xi_x_um_max[~np.isnan(gamma_xi_x_um_max)]
-            (xi_x_um_max_sigma, xi_x_um_max_sigma_std) = find_sigma(d_gamma,gamma_xi_x_um_max,0, 400, False)
+            (xi_x_um_max_sigma_deconv, xi_x_um_max_sigma_deconv_std) = find_sigma(d_gamma,gamma_xi_x_um_max,0, 400, False)
             
-            y1 = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma) for x in xx]
+            y1 = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma_deconv) for x in xx]
             ax.plot(xx, y1, '-', color='green', label='') # xi_x_um_max plot
-            y_min = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma-xi_x_um_max_sigma_std) for x in xx]
-            y_max = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma+xi_x_um_max_sigma_std) for x in xx]
+            y_min = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma_deconv-xi_x_um_max_sigma_deconv_std) for x in xx]
+            y_max = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma_deconv+xi_x_um_max_sigma_deconv_std) for x in xx]
             ax.fill_between(xx, y_min, y_max, facecolor='green', alpha=0.3)
             # ax.hlines(0.606, 0, np.nanmean(xi_x_um_max), linestyles = '-', color='green')
-            ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma), linestyles = '-', color='green', linewidth=2.5, alpha=0.5)
+            ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma_deconv), linestyles = '-', color='green', linewidth=2.5, alpha=0.5)
             # ax.hlines(0.606, 0, np.nanmean(sigma_B_um), linestyles = '-', color='black')
 
 
@@ -4010,22 +4010,22 @@ def plot_CDCs(
             gamma_fit_max = y
             d_gamma = x
                 
-            (xi_x_um_max_sigma, xi_x_um_max_sigma_std) = find_sigma(d_gamma,gamma_fit_max,0, 400, False)
+            (xi_x_um_max_sigma_fitting, xi_x_um_max_sigma_fitting_std) = find_sigma(d_gamma,gamma_fit_max,0, 400, False)
             
             
 
-            if xi_x_um_max_sigma_std is None:
-                xi_x_um_max_sigma_std = 0
-                print(xi_x_um_max_sigma)
-                print(xi_x_um_max_sigma_std)
+            if xi_x_um_max_sigma_fitting_std is None:
+                xi_x_um_max_sigma_fitting_std = 0
+                print(xi_x_um_max_sigma_fitting)
+                print(xi_x_um_max_sigma_fitting_std)
 
-            y1 = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma) for x in xx]
+            y1 = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma_fitting) for x in xx]
             ax.plot(xx, y1, '--', color=fittingcolor, label='') # xi_x_um_max plot
-            y_min = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma-xi_x_um_max_sigma_std) for x in xx]
-            y_max = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma+xi_x_um_max_sigma_std) for x in xx]
+            y_min = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma_fitting-xi_x_um_max_sigma_fitting_std) for x in xx]
+            y_max = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma_fitting+xi_x_um_max_sigma_fitting_std) for x in xx]
             ax.fill_between(xx, y_min, y_max, facecolor=fittingcolor, alpha=0.3)
             # ax.hlines(0.606, 0, np.nanmean(xi_x_um_max), linestyles = '-', color='green')
-            ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma), linestyles = '-', color=fittingcolor)           
+            ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma_fitting), linestyles = '-', color=fittingcolor)           
 
 
             # plot beam rms with error
