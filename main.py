@@ -750,6 +750,21 @@ df_deconvmethod_2d_v2_results = pd.DataFrame(columns=['measurement','timestamp_p
 df_deconvmethod_1d_v3_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + list(set(fits_header_list7) - set(['xatol'])) + fits_header_list8_v3)
 df_deconvmethod_2d_v3_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + fits_header_list7 + fits_header_list9_v3)
 
+df_CDC_results = pd.DataFrame(columns=[
+    'dataset',
+    'orientation',
+    'fittingmethod',
+    'deconvmethod',
+    'undulators',
+    'wavelength_nm',
+    'sigma_B_um', 'sigma_B_err_um', 
+    'xi_fitting_um', 'xi_fitting_std_um',  
+    'xi_deconv_um', 'xi_deconv_std_um',
+    'zeta_fitting_um', 'zeta_fitting_std_um',  
+    'zeta_deconv_um', 'zeta_deconv_std_um'
+    ] 
+    )
+
 
 # load previously determined beamsizes
 df_beamsize_file = Path.joinpath(data_dir, 'df_beamsize.csv')
@@ -3874,6 +3889,8 @@ def plot_CDCs(
 
     if do_plot_CDCs == True:
 
+        global df_CDC_results
+
         if use_different_colors == True:
             fittingcolor = 'red'
         else:
@@ -3884,6 +3901,9 @@ def plot_CDCs(
         xi_um_fit_column = xi_um_fit_column_and_label[0]
         xi_um_fit_label = xi_um_fit_column_and_label[1]
         gamma_fit_column = 'gamma_fit' + xi_um_fit_column[9:]
+
+        indexes = df_CDC_results[(df_CDC_results['fittingmethod']==xi_um_fit_column) & (df_CDC_results['deconvmethod']==xi_um_deconv_column)].index
+        df_CDC_results.drop(indexes, inplace=True)
 
         fig = plt.figure(figsize=[6, 8], constrained_layout=True)
 
@@ -4071,6 +4091,31 @@ def plot_CDCs(
             setting_undulators = df_settings[df_settings['dph_settings']==measurement]['setting_undulators'].iloc[0]
             settingtext = '$\lambda='+str(setting_wavelength_nm)+'\mathrm{nm}$\n'+str(setting_undulators)+' undulators'
 
+            
+            df_CDC_results = df_CDC_results.append(
+                {
+                    'dataset' : dataset,
+                    'orientation' : orientation,
+                    'fittingmethod' : xi_um_fit_column,
+                    'deconvmethod' : xi_um_deconv_column,
+                    'undulators' : setting_undulators,
+                    'wavelength_nm' : setting_wavelength_nm,
+                    'sigma_B_um' : sigma_B_um,
+                    'sigma_B_err_um' : sigma_B_err_um, 
+                    'xi_fitting_um' : xi_x_um_max_sigma_fitting, 
+                    'xi_fitting_std_um' : xi_x_um_max_sigma_fitting_std,  
+                    'xi_deconv_um' : xi_x_um_max_sigma_deconv, 
+                    'xi_deconv_std_um' : xi_x_um_max_sigma_deconv_std,
+                    'zeta_fitting_um' : zeta_fitting_max, 
+                    'zeta_fitting_std_um' : zeta_fitting_max_std,  
+                    'zeta_deconv_um' : zeta_deconv_max, 
+                    'zeta_deconv_std_um' : zeta_deconv_max_std
+                }, ignore_index = True
+            )
+            
+
+
+
             if j ==0:
 
                 props = dict(boxstyle='round', facecolor='white', alpha=0.8)
@@ -4101,8 +4146,13 @@ def plot_CDCs(
             else:
                 j=0
                 i=i+1
+    
+        plt.tight_layout()
 
-    plt.tight_layout()
+        for orientation in ['vertical','horizontal']:
+            display(df_CDC_results[(df_CDC_results['fittingmethod']==xi_um_fit_column) & \
+                (df_CDC_results['deconvmethod']==xi_um_deconv_column) & \
+                    (df_CDC_results['orientation']==orientation)])
 
 
 
