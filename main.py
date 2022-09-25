@@ -4001,7 +4001,7 @@ def plot_CDCs(
                 print(xi_x_um_max_sigma_std)
 
             y1 = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma) for x in xx]
-            ax.plot(xx, y1, '-', color='red', label='') # xi_x_um_max plot
+            ax.plot(xx, y1, '--', color='red', label='') # xi_x_um_max plot
             y_min = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma-xi_x_um_max_sigma_std) for x in xx]
             y_max = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma+xi_x_um_max_sigma_std) for x in xx]
             ax.fill_between(xx, y_min, y_max, facecolor='red', alpha=0.3)
