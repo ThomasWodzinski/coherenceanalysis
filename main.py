@@ -750,6 +750,21 @@ df_deconvmethod_2d_v2_results = pd.DataFrame(columns=['measurement','timestamp_p
 df_deconvmethod_1d_v3_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + list(set(fits_header_list7) - set(['xatol'])) + fits_header_list8_v3)
 df_deconvmethod_2d_v3_results = pd.DataFrame(columns=['measurement','timestamp_pulse_id','imageid','separation_um'] + fits_header_list7 + fits_header_list9_v3)
 
+df_CDC_results = pd.DataFrame(columns=[
+    'dataset',
+    'orientation',
+    'fittingmethod',
+    'deconvmethod',
+    'undulators',
+    'wavelength_nm',
+    'sigma_B_um', 'sigma_B_err_um', 
+    'xi_fitting_um', 'xi_fitting_std_um',  
+    'xi_deconv_um', 'xi_deconv_std_um',
+    'zeta_fitting_um', 'zeta_fitting_std_um',  
+    'zeta_deconv_um', 'zeta_deconv_std_um'
+    ] 
+    )
+
 
 # load previously determined beamsizes
 df_beamsize_file = Path.joinpath(data_dir, 'df_beamsize.csv')
@@ -3855,20 +3870,40 @@ def sort_imageids_by_chi2distance_widget_changed(change):
 sort_imageids_by_chi2distance_widget.observe(sort_imageids_by_chi2distance_widget_changed, names="value")
 
 
-# CDC from Deconvolution (green) and Fitting (red)
+def zeta(xi,s):
+    zeta = (xi/s) / np.sqrt(4 + (xi/s)**2)
+    return zeta
+
+
+plot_max_of_both_methods_widget = widgets.Checkbox(value=False, description="plot_max_of_both_methods")
+use_different_colors_widget = widgets.Checkbox(value=False, description="use_different_colors")
+
+# CDC from Deconvolution (green) and Fitting (red/dashed)
 def plot_CDCs(
     do_plot_CDCs,
     xi_um_deconv_column_and_label,
-    xi_um_fit_column_and_label
+    xi_um_fit_column_and_label,
+    plot_max_of_both_methods,
+    use_different_colors
 ):
 
     if do_plot_CDCs == True:
+
+        global df_CDC_results
+
+        if use_different_colors == True:
+            fittingcolor = 'red'
+        else:
+            fittingcolor = 'green'
 
         xi_um_deconv_column = xi_um_deconv_column_and_label[0]
         xi_um_deconv_label = xi_um_deconv_column_and_label[1]
         xi_um_fit_column = xi_um_fit_column_and_label[0]
         xi_um_fit_label = xi_um_fit_column_and_label[1]
         gamma_fit_column = 'gamma_fit' + xi_um_fit_column[9:]
+
+        indexes = df_CDC_results[(df_CDC_results['fittingmethod']==xi_um_fit_column) & (df_CDC_results['deconvmethod']==xi_um_deconv_column)].index
+        df_CDC_results.drop(indexes, inplace=True)
 
         fig = plt.figure(figsize=[6, 8], constrained_layout=True)
 
@@ -3937,14 +3972,23 @@ def plot_CDCs(
                         print('separation='+str(x))
                         print('imageids:')
                         display(y_nans)
-                y = [gaussian(x=x, amp=1, cen=0, sigma=df_deconvmethod_results_min[df_deconvmethod_results_min["separation_um"]==x][xi_um_deconv_column].max()) for x in x]
-                ax.scatter(x, y, marker='v', s=20, color='darkgreen', facecolors='none', label='maximum')
+                y_deconv_max = [gaussian(x=x, amp=1, cen=0, sigma=df_deconvmethod_results_min[df_deconvmethod_results_min["separation_um"]==x][xi_um_deconv_column].max()) for x in x]
+                
                 
                 # Fitting (red)
                 x = df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'].unique()
                 df_fitting_v2_results_min = pd.merge(df_fitting_v2_results,df_fitting_v2_results[(df_fitting_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min(), on=['timestamp_pulse_id','chi2distance_fitting'])[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance_fitting',gamma_fit_column]].sort_values('chi2distance_fitting',ascending=False)
-                y = [df_fitting_v2_results_min[(df_fitting_v2_results_min["separation_um"]==x)][gamma_fit_column].max() for x in x]
-                ax.scatter(x, y, marker='v', s=20, color='darkred', facecolors='none', label='maximum')
+                y_fitting_max = [df_fitting_v2_results_min[(df_fitting_v2_results_min["separation_um"]==x)][gamma_fit_column].max() for x in x]
+                
+                
+                if plot_max_of_both_methods == True:
+                    if y_deconv_max > y_fitting_max:
+                        ax.scatter(x,y_deconv_max, marker='v', s=20, color='darkgreen', facecolors='none', label='maximum')
+                    else:
+                        ax.scatter(x,y_fitting_max, marker='v', s=20, color='dark'+fittingcolor, facecolors='none', label='maximum') # xi_x_um_max scatter
+                else:
+                    ax.scatter(x, y_deconv_max, marker='v', s=20, color='darkgreen', facecolors='none', label='maximum')
+                    ax.scatter(x, y_fitting_max, marker='v', s=20, color='dark'+fittingcolor, facecolors='none', label='maximum')
                 
             
             # fit a gaussian on all max of each measurement
@@ -3963,15 +4007,15 @@ def plot_CDCs(
             gamma_xi_x_um_max = y
             d_gamma = x
             # gamma_xi_x_um_max = gamma_xi_x_um_max[~np.isnan(gamma_xi_x_um_max)]
-            (xi_x_um_max_sigma, xi_x_um_max_sigma_std) = find_sigma(d_gamma,gamma_xi_x_um_max,0, 400, False)
+            (xi_x_um_max_sigma_deconv, xi_x_um_max_sigma_deconv_std) = find_sigma(d_gamma,gamma_xi_x_um_max,0, 400, False)
             
-            y1 = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma) for x in xx]
+            y1 = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma_deconv) for x in xx]
             ax.plot(xx, y1, '-', color='green', label='') # xi_x_um_max plot
-            y_min = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma-xi_x_um_max_sigma_std) for x in xx]
-            y_max = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma+xi_x_um_max_sigma_std) for x in xx]
+            y_min = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma_deconv-xi_x_um_max_sigma_deconv_std) for x in xx]
+            y_max = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma_deconv+xi_x_um_max_sigma_deconv_std) for x in xx]
             ax.fill_between(xx, y_min, y_max, facecolor='green', alpha=0.3)
             # ax.hlines(0.606, 0, np.nanmean(xi_x_um_max), linestyles = '-', color='green')
-            ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma), linestyles = '-', color='green')
+            ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma_deconv), linestyles = '-', color='green', linewidth=2.5, alpha=0.5)
             # ax.hlines(0.606, 0, np.nanmean(sigma_B_um), linestyles = '-', color='black')
 
 
@@ -3986,37 +4030,129 @@ def plot_CDCs(
             gamma_fit_max = y
             d_gamma = x
                 
-            (xi_x_um_max_sigma, xi_x_um_max_sigma_std) = find_sigma(d_gamma,gamma_fit_max,0, 400, False)
+            (xi_x_um_max_sigma_fitting, xi_x_um_max_sigma_fitting_std) = find_sigma(d_gamma,gamma_fit_max,0, 400, False)
             
             
 
-            if xi_x_um_max_sigma_std is None:
-                xi_x_um_max_sigma_std = 0
-                print(xi_x_um_max_sigma)
-                print(xi_x_um_max_sigma_std)
+            if xi_x_um_max_sigma_fitting_std is None:
+                xi_x_um_max_sigma_fitting_std = 0
+                print(xi_x_um_max_sigma_fitting)
+                print(xi_x_um_max_sigma_fitting_std)
 
-            y1 = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma) for x in xx]
-            ax.plot(xx, y1, '-', color='red', label='') # xi_x_um_max plot
-            y_min = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma-xi_x_um_max_sigma_std) for x in xx]
-            y_max = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma+xi_x_um_max_sigma_std) for x in xx]
-            ax.fill_between(xx, y_min, y_max, facecolor='red', alpha=0.3)
+            y1 = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma_fitting) for x in xx]
+            ax.plot(xx, y1, '--', color=fittingcolor, label='') # xi_x_um_max plot
+            y_min = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma_fitting-xi_x_um_max_sigma_fitting_std) for x in xx]
+            y_max = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma_fitting+xi_x_um_max_sigma_fitting_std) for x in xx]
+            ax.fill_between(xx, y_min, y_max, facecolor=fittingcolor, alpha=0.3)
             # ax.hlines(0.606, 0, np.nanmean(xi_x_um_max), linestyles = '-', color='green')
-            ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma), linestyles = '-', color='red')
-            # ax.hlines(0.606, 0, np.nanmean(sigma_B_um), linestyles = '-', color='black')
+            ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma_fitting), linestyles = '-', color=fittingcolor)           
+
+
+            # plot beam rms with error
+
+            sigma_B_um = df_beamsize[df_beamsize['dataset']==dataset].sigma_B_um.iloc[0]
+            sigma_B_err_um = df_beamsize[df_beamsize['dataset']==dataset].sigma_B_err_um.iloc[0]
+
+            x = np.arange(0.0, 2000, 10)
+            y_B = [gaussian(x=x, amp=1, cen=0, sigma=sigma_B_um) for x in x]
+            ax.plot(x, y_B, '-', color='black', label='Intensity')
+            y2 = [gaussian(x=x, amp=1, cen=0, sigma=sigma_B_um-sigma_B_err_um) for x in x]
+            y3 = [gaussian(x=x, amp=1, cen=0, sigma=sigma_B_um+sigma_B_err_um) for x in x]
+            ax.fill_between(x, y2, y3, facecolor='black', alpha=0.3)
+            ax.hlines(0.606, 0, np.nanmean(sigma_B_um), linestyles = '-', color='black')
+
+
+            # coherence length zeta
+            
+            zeta_deconv_max = zeta(xi_x_um_max_sigma_deconv,sigma_B_um)
+            zeta_deconv_max_std = zeta(xi_x_um_max_sigma_deconv_std,sigma_B_um)
+
+            zeta_fitting_max = zeta(xi_x_um_max_sigma_fitting,sigma_B_um)
+            zeta_fitting_max_std = zeta(xi_x_um_max_sigma_fitting_std,sigma_B_um)
 
         
             ax.set_xlim(0,2000)
-            ax.set_ylim(0,1)
-            
-            ax.set_title(dataset)
+            ax.set_ylim(0,1.05)
             
             
+            if j == 0:
+                orientation = 'vertical'
+                if i == 0:
+                    ax.set_title(orientation+'ly oriented double pinholes')
+                
+            if j == 1:
+                orientation = 'horizontal'
+                if i == 0:
+                    ax.set_title(orientation+'ly oriented double pinholes')
+                
+                
+            measurement = datasets[dataset][0]
+            setting_wavelength_nm = df_settings[df_settings['dph_settings']==measurement]['setting_wavelength_nm'].iloc[0]
+            setting_undulators = df_settings[df_settings['dph_settings']==measurement]['setting_undulators'].iloc[0]
+            settingtext = '$\lambda='+str(setting_wavelength_nm)+'\mathrm{nm}$\n'+str(setting_undulators)+' undulators'
+
+            
+            df_CDC_results = df_CDC_results.append(
+                {
+                    'dataset' : dataset,
+                    'orientation' : orientation,
+                    'fittingmethod' : xi_um_fit_column,
+                    'deconvmethod' : xi_um_deconv_column,
+                    'undulators' : setting_undulators,
+                    'wavelength_nm' : setting_wavelength_nm,
+                    'sigma_B_um' : sigma_B_um,
+                    'sigma_B_err_um' : sigma_B_err_um, 
+                    'xi_fitting_um' : xi_x_um_max_sigma_fitting, 
+                    'xi_fitting_std_um' : xi_x_um_max_sigma_fitting_std,  
+                    'xi_deconv_um' : xi_x_um_max_sigma_deconv, 
+                    'xi_deconv_std_um' : xi_x_um_max_sigma_deconv_std,
+                    'zeta_fitting_um' : zeta_fitting_max, 
+                    'zeta_fitting_std_um' : zeta_fitting_max_std,  
+                    'zeta_deconv_um' : zeta_deconv_max, 
+                    'zeta_deconv_std_um' : zeta_deconv_max_std
+                }, ignore_index = True
+            )
+            
+
+
+
+            if j ==0:
+
+                props = dict(boxstyle='round', facecolor='white', alpha=0.8)
+                ax.text(-500,0.5,settingtext, fontsize=14, rotation=90, ha='center', rotation_mode='anchor', bbox=props)
+
+                ax.set_xticklabels([0,500,1000,1500])
+
+                ax.set_ylabel('$\gamma(d)$')
+
+            
+
+            
+            if j==1:
+                ax.set_yticklabels([])
+
+            if i!=3:
+                ax.set_xticklabels([])
+
+            if i == 3:
+                ax.set_xlabel('separation $ d~/~\mathrm{\mu m}$')
+
+            
+
+            
+            # j := column, i := row
             if j==0:
                 j+=1
             else:
                 j=0
                 i=i+1
+    
+        plt.tight_layout()
 
+        for orientation in ['vertical','horizontal']:
+            display(df_CDC_results[(df_CDC_results['fittingmethod']==xi_um_fit_column) & \
+                (df_CDC_results['deconvmethod']==xi_um_deconv_column) & \
+                    (df_CDC_results['orientation']==orientation)])
 
 
 
@@ -4615,7 +4751,9 @@ plot_CDCs_output = interactive_output(
     {
         "do_plot_CDCs": do_plot_CDCs_widget,
         "xi_um_deconv_column_and_label" : xi_um_deconv_column_and_label_widget,
-        "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget},
+        "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget,
+        'plot_max_of_both_methods' : plot_max_of_both_methods_widget,
+        'use_different_colors' : use_different_colors_widget},
 )
 
 plot_xi_um_fit_vs_I_Airy2_fit_output = interactive_output(
@@ -6278,7 +6416,9 @@ children_left = [plot_fitting_v2_interactive_output,
                       deconvmethod_ystep_widget, deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
                  plot_deconvmethod_2d_v1_interactive_output,
                  VBox([
-                     do_plot_CDCs_widget,
+                     HBox([
+                         do_plot_CDCs_widget, plot_max_of_both_methods_widget, use_different_colors_widget
+                     ]),
                      plot_CDCs_output
                  ]),
                  VBox([
