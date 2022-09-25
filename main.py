@@ -4041,6 +4041,15 @@ def plot_CDCs(
             ax.fill_between(x, y2, y3, facecolor='black', alpha=0.3)
             ax.hlines(0.606, 0, np.nanmean(sigma_B_um), linestyles = '-', color='black')
 
+
+            # coherence length zeta
+            
+            zeta_deconv_max = zeta(xi_x_um_max_sigma_deconv,sigma_B_um)
+            zeta_deconv_max_std = zeta(xi_x_um_max_sigma_deconv_std,sigma_B_um)
+
+            zeta_fitting_max = zeta(xi_x_um_max_sigma_fitting,sigma_B_um)
+            zeta_fitting_max_std = zeta(xi_x_um_max_sigma_fitting_std,sigma_B_um)
+
         
             ax.set_xlim(0,2000)
             ax.set_ylim(0,1.05)
