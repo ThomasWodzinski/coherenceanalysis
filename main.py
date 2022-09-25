@@ -3860,14 +3860,24 @@ def zeta(xi,s):
     return zeta
 
 
-# CDC from Deconvolution (green) and Fitting (red)
+plot_max_of_both_methods_widget = widgets.Checkbox(value=False, description="plot_max_of_both_methods")
+use_different_colors_widget = widgets.Checkbox(value=False, description="use_different_colors")
+
+# CDC from Deconvolution (green) and Fitting (red/dashed)
 def plot_CDCs(
     do_plot_CDCs,
     xi_um_deconv_column_and_label,
-    xi_um_fit_column_and_label
+    xi_um_fit_column_and_label,
+    plot_max_of_both_methods,
+    use_different_colors
 ):
 
     if do_plot_CDCs == True:
+
+        if use_different_colors == True:
+            fittingcolor = 'red'
+        else:
+            fittingcolor = 'green'
 
         xi_um_deconv_column = xi_um_deconv_column_and_label[0]
         xi_um_deconv_label = xi_um_deconv_column_and_label[1]
@@ -3942,14 +3952,23 @@ def plot_CDCs(
                         print('separation='+str(x))
                         print('imageids:')
                         display(y_nans)
-                y = [gaussian(x=x, amp=1, cen=0, sigma=df_deconvmethod_results_min[df_deconvmethod_results_min["separation_um"]==x][xi_um_deconv_column].max()) for x in x]
-                ax.scatter(x, y, marker='v', s=20, color='darkgreen', facecolors='none', label='maximum')
+                y_deconv_max = [gaussian(x=x, amp=1, cen=0, sigma=df_deconvmethod_results_min[df_deconvmethod_results_min["separation_um"]==x][xi_um_deconv_column].max()) for x in x]
+                
                 
                 # Fitting (red)
                 x = df_deconvmethod_results[(df_deconvmethod_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))]['separation_um'].unique()
                 df_fitting_v2_results_min = pd.merge(df_fitting_v2_results,df_fitting_v2_results[(df_fitting_v2_results["timestamp_pulse_id"].isin(timestamp_pulse_ids))].groupby(['timestamp_pulse_id'])[['chi2distance_fitting']].min(), on=['timestamp_pulse_id','chi2distance_fitting'])[['separation_um','imageid','mod_sigma_um', 'mod_sigma_um_fit','mod_shiftx_um','mod_shiftx_um_fit','chi2distance_fitting',gamma_fit_column]].sort_values('chi2distance_fitting',ascending=False)
-                y = [df_fitting_v2_results_min[(df_fitting_v2_results_min["separation_um"]==x)][gamma_fit_column].max() for x in x]
-                ax.scatter(x, y, marker='v', s=20, color='darkred', facecolors='none', label='maximum')
+                y_fitting_max = [df_fitting_v2_results_min[(df_fitting_v2_results_min["separation_um"]==x)][gamma_fit_column].max() for x in x]
+                
+                
+                if plot_max_of_both_methods == True:
+                    if y_deconv_max > y_fitting_max:
+                        ax.scatter(x,y_deconv_max, marker='v', s=20, color='darkgreen', facecolors='none', label='maximum')
+                    else:
+                        ax.scatter(x,y_fitting_max, marker='v', s=20, color='dark'+fittingcolor, facecolors='none', label='maximum') # xi_x_um_max scatter
+                else:
+                    ax.scatter(x, y_deconv_max, marker='v', s=20, color='darkgreen', facecolors='none', label='maximum')
+                    ax.scatter(x, y_fitting_max, marker='v', s=20, color='dark'+fittingcolor, facecolors='none', label='maximum')
                 
             
             # fit a gaussian on all max of each measurement
@@ -4001,12 +4020,12 @@ def plot_CDCs(
                 print(xi_x_um_max_sigma_std)
 
             y1 = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma) for x in xx]
-            ax.plot(xx, y1, '--', color='red', label='') # xi_x_um_max plot
+            ax.plot(xx, y1, '--', color=fittingcolor, label='') # xi_x_um_max plot
             y_min = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma-xi_x_um_max_sigma_std) for x in xx]
             y_max = [gaussian(x=x, amp=1, cen=0, sigma=xi_x_um_max_sigma+xi_x_um_max_sigma_std) for x in xx]
-            ax.fill_between(xx, y_min, y_max, facecolor='red', alpha=0.3)
+            ax.fill_between(xx, y_min, y_max, facecolor=fittingcolor, alpha=0.3)
             # ax.hlines(0.606, 0, np.nanmean(xi_x_um_max), linestyles = '-', color='green')
-            ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma), linestyles = '-', color='red')           
+            ax.hlines(0.606, 0, np.nanmean(xi_x_um_max_sigma), linestyles = '-', color=fittingcolor)           
 
 
             # plot beam rms with error
@@ -4669,7 +4688,9 @@ plot_CDCs_output = interactive_output(
     {
         "do_plot_CDCs": do_plot_CDCs_widget,
         "xi_um_deconv_column_and_label" : xi_um_deconv_column_and_label_widget,
-        "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget},
+        "xi_um_fit_column_and_label" : xi_um_fit_column_and_label_widget,
+        'plot_max_of_both_methods' : plot_max_of_both_methods_widget,
+        'use_different_colors' : use_different_colors_widget},
 )
 
 plot_xi_um_fit_vs_I_Airy2_fit_output = interactive_output(
@@ -6332,7 +6353,9 @@ children_left = [plot_fitting_v2_interactive_output,
                       deconvmethod_ystep_widget, deconvmethod_step_widget]), plot_deconvmethod_steps_interactive_output]),
                  plot_deconvmethod_2d_v1_interactive_output,
                  VBox([
-                     do_plot_CDCs_widget,
+                     HBox([
+                         do_plot_CDCs_widget, plot_max_of_both_methods_widget, use_different_colors_widget
+                     ]),
                      plot_CDCs_output
                  ]),
                  VBox([
