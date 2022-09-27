@@ -1,13 +1,12 @@
-opencv-python
-numpy
-matplotlib
-pandas
-lmfit
-wget
-scipy
-h5py
-ipywidgets
-
+# opencv-python
+# numpy
+# matplotlib
+# pandas
+# lmfit
+# wget
+# scipy
+# h5py
+# ipywidgets
 
 conda update conda
 conda create --name coherenceanalysis
